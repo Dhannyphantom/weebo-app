@@ -1,0 +1,389 @@
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Modal,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFormikContext } from "formik";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import colors from "../constants/colors";
+import AppText from "./AppText";
+import AppButton from "./AppButton";
+import AppPickerItem from "./AppPickerItem";
+
+const screen = Dimensions.get("window");
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const CreateForm = ({
+  headerA,
+  headerB,
+  headerC,
+  headerD,
+  headerE,
+  headerF,
+  headerZ,
+  header,
+  numColumns = 3,
+  dateTime,
+  dateTime2,
+  grow,
+  add = "",
+  place = "",
+  close,
+  placeholder,
+  dropdownA,
+  curr,
+  selectedItem,
+  mutable,
+  pass,
+  name,
+  onSelectItem,
+}) => {
+  const [dropDown, setDropDown] = useState(false);
+  const [show, setShow] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [height, setHeight] = useState("");
+  const [myDate, setMydate] = useState("Currently airing");
+
+  const {
+    handleChange,
+    errors,
+    setFieldTouched,
+    setFieldValue,
+    touched,
+  } = useFormikContext();
+
+  let addition = headerA
+    ? headerA + place
+    : headerB
+    ? headerB + place
+    : headerC
+    ? headerC + place
+    : headerD
+    ? headerD + place
+    : headerE
+    ? headerE + place
+    : headerF
+    ? headerF + place
+    : headerZ
+    ? headerZ + place
+    : "";
+
+  const today = new Date();
+  const y = date.getFullYear();
+  const m = date.getMonth();
+  const d = date.getDate();
+
+  const tY = today.getFullYear();
+  const tM = today.getMonth();
+  const tD = today.getDate();
+
+  let dateDisplay = dateTime2 ? `${months[m]} ${d}` : `${months[m]} ${y}`;
+
+  useEffect(() => {
+    if (curr && y == tY && m == tM) {
+      setFieldValue(name, myDate);
+    } else {
+      setMydate(dateDisplay);
+    }
+  }, []);
+
+  const handleDate = (e, selectedDate) => {
+    const datePick = selectedDate || date;
+    setShow(false);
+
+    if (e.type !== "dismissed") {
+      const y = datePick.getFullYear();
+      const m = datePick.getMonth();
+      const d = datePick.getDate();
+      const milli = today.getTime();
+      const newMilli = e.nativeEvent.timestamp;
+      let dateDisplay;
+      if (dateTime && !dateTime2 && newMilli >= milli) {
+        dateDisplay = "Currently airing";
+      } else if (dateTime && dateTime2 && newMilli < milli) {
+        dateDisplay = `${months[m]} ${d} `;
+      } else if (dateTime2 && dateTime && newMilli >= milli) {
+        dateDisplay = `${months[tM]} ${tD}`;
+      } else if (!dateTime2 && dateTime && newMilli < milli) {
+        dateDisplay = `${months[m]} ${y}`;
+      }
+      setDate(datePick);
+      setMydate(dateDisplay);
+      setFieldValue(name, dateDisplay);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <AppText bold>
+        {headerA
+          ? "Character's " + headerA + add + ":"
+          : headerB
+          ? "Character " + headerB + add + ":"
+          : headerC
+          ? "Show's " + headerC + add + ":"
+          : headerD
+          ? "Show " + headerD + add + ":"
+          : headerE
+          ? "Group's " + headerE + add + ":"
+          : headerF
+          ? "Group " + headerF + add + ":"
+          : headerZ
+          ? "Your " + headerZ + add + ":"
+          : header}
+      </AppText>
+      <View
+        style={{
+          ...styles.inputContainer,
+          height: Math.max(40, height),
+          backgroundColor:
+            placeholder && !grow ? colors.unChange : colors.extraLight,
+        }}
+      >
+        {!placeholder && !dropdownA && !grow && !mutable && !pass && (
+          <TextInput
+            placeholder={addition}
+            onBlur={() => setFieldTouched(name)}
+            style={styles.input}
+            onChangeText={handleChange(name)}
+          />
+        )}
+        {placeholder && !grow && (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingRight: 10,
+            }}
+          >
+            <TextInput
+              placeholder={placeholder + place}
+              onBlur={() => setFieldTouched(name)}
+              style={styles.inputTwo}
+              placeholderTextColor={colors.black}
+              editable={false}
+            />
+            {close && (
+              <TouchableOpacity onPress={close} activeOpacity={0.7}>
+                <MaterialCommunityIcons
+                  name="close-circle"
+                  size={18}
+                  color={colors.heart}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        {mutable && (
+          <TextInput
+            placeholder={mutable + place}
+            onBlur={() => setFieldTouched(name)}
+            style={styles.input}
+            placeholderTextColor={colors.medium}
+            onChangeText={handleChange(name)}
+          />
+        )}
+        {pass && (
+          <TextInput
+            placeholder={headerZ + place}
+            onBlur={() => setFieldTouched(name)}
+            style={styles.input}
+            placeholderTextColor={colors.medium}
+            onChangeText={handleChange(name)}
+            secureTextEntry
+          />
+        )}
+        {grow && (
+          <TextInput
+            style={styles.inputGrow}
+            placeholder={placeholder}
+            maxLength={80}
+            numberOfLines={4}
+            multiline
+            onChangeText={handleChange(name)}
+            onContentSizeChange={({ nativeEvent }) =>
+              setHeight(nativeEvent.contentSize.height)
+            }
+          />
+        )}
+        {dropdownA ? (
+          <TouchableOpacity
+            style={styles.dropDownCont}
+            onPress={() => setDropDown(true)}
+          >
+            <AppText style={styles.dropDownText}>
+              {selectedItem ? selectedItem.title : headerB || headerA}
+            </AppText>
+            <View style={styles.chevron}>
+              <MaterialCommunityIcons
+                name="chevron-down"
+                color={colors.medium}
+                size={16}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
+        {dateTime ? (
+          <TouchableOpacity
+            style={styles.dropDownCont}
+            onPress={() => setShow(true)}
+          >
+            <AppText style={styles.dropDownText}>{myDate}</AppText>
+            <View style={styles.chevron}>
+              <MaterialCommunityIcons
+                name="chevron-down"
+                color={colors.medium}
+                size={16}
+              />
+            </View>
+            {show && (
+              <DateTimePicker
+                value={date}
+                textColor={colors.primary}
+                display="spinner"
+                mode="date"
+                onChange={handleDate}
+              />
+            )}
+          </TouchableOpacity>
+        ) : null}
+      </View>
+      {errors[name] && touched[name] && (
+        <AppText style={{ color: "red" }}> {errors[name]} </AppText>
+      )}
+      {dropdownA && (
+        <Modal
+          style={styles.modalComp}
+          transparent
+          visible={dropDown}
+          statusBarTranslucent
+          animationType="slide"
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setDropDown(false)}
+            style={styles.modalWrapper}
+          >
+            <TouchableOpacity activeOpacity={1} style={styles.modalContainer}>
+              <AppButton
+                title="Close"
+                style={styles.modalBtn}
+                bare
+                onPress={() => setDropDown(false)}
+              />
+              <FlatList
+                data={dropdownA}
+                keyExtractor={(item) => item.id}
+                listKey="selectDrop"
+                renderItem={({ item }) => (
+                  <AppPickerItem
+                    text={item.title}
+                    desc={item.description}
+                    example={item.example}
+                    onPress={() => {
+                      onSelectItem(item);
+                      setDropDown(false);
+                      setFieldValue(name, item.title);
+                    }}
+                  />
+                )}
+                numColumns={numColumns}
+              />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+      )}
+    </View>
+  );
+};
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 7,
+  },
+  chevron: {
+    paddingHorizontal: 10,
+  },
+  dropDownCont: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  dropDownText: {
+    padding: 13,
+    color: colors.medium,
+    fontSize: 10,
+    textTransform: "capitalize",
+  },
+
+  inputContainer: {
+    width: "80%",
+    height: 40,
+    marginLeft: 14,
+    minHeight: 40,
+    maxHeight: 70,
+    justifyContent: "center",
+    borderRadius: 9,
+    overflow: "hidden",
+  },
+  inputGrow: {
+    flex: 1,
+    marginLeft: 10,
+    padding: 5,
+    lineHeight: 25,
+    fontSize: 11,
+  },
+  input: {
+    flex: 1,
+    height: "100%",
+    marginLeft: 12,
+    fontSize: 11,
+  },
+  inputTwo: {
+    flex: 1,
+    height: "100%",
+    marginLeft: 12,
+  },
+  modalContainer: {
+    backgroundColor: colors.white,
+    top: screen.height * 0.25,
+    flex: 1,
+    borderTopStartRadius: 30,
+    borderTopEndRadius: 30,
+  },
+  modalComp: {
+    // flex: 1,
+  },
+
+  modalBtn: {
+    width: "40%",
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  modalWrapper: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.09)",
+  },
+});
+export default CreateForm;

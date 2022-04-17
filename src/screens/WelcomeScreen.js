@@ -1,0 +1,77 @@
+import React from "react";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  Image,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+
+import AppButton from "../components/AppButton";
+import Spacer from "../components/Spacer";
+import AppLogo from "../components/AppLogo";
+import colors from "../constants/colors";
+
+const { width, height } = Dimensions.get("window");
+
+const WelcomeScreen = ({ navigation }) => {
+  return (
+    <View style={{ backgroundColor: colors.dark, flex: 1 }}>
+      <StatusBar style="light" translucent />
+      <ImageBackground
+        source={require("../../assets/cane10.jpg")}
+        style={styles.image}
+        blurRadius={width * 0.005}
+      >
+        <View style={styles.logoContainer}>
+          <AppLogo type="icon" />
+        </View>
+        <View style={styles.contents}>
+          <View style={styles.btnCont}>
+            <Spacer mv={width * 0.01}>
+              <AppButton
+                title="Sign In"
+                onPress={() => navigation.navigate("Login")}
+              />
+            </Spacer>
+            <Spacer mv={width * 0.01}>
+              <AppButton
+                title="Sign Up"
+                sec
+                onPress={() => navigation.navigate("Register")}
+              />
+            </Spacer>
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  image: {
+    width,
+    height,
+    alignItems: "center",
+  },
+  contents: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  btnCont: {
+    bottom: width * 0.1,
+  },
+  logoContainer: {
+    // width: 100,
+    // height: 100,
+    alignSelf: "center",
+    justifyContent: "center",
+    marginTop: width * 0.14,
+  },
+  logo: {
+    width: "100%",
+    height: "100%",
+  },
+});
+export default WelcomeScreen;

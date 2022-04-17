@@ -1,0 +1,205 @@
+import React, { useContext, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { Context as AuthContext } from "../config/AuthContext";
+
+import Avatar from "./Avatar";
+import colors from "../constants/colors";
+import AppText from "./AppText";
+import AppButton from "./AppButton";
+import ActivityIndicator from "./ActivityIndicator";
+
+const { width } = Dimensions.get("window");
+
+const FriendBox = ({
+  data,
+  onPress,
+  type = "weeb",
+  typeObj,
+  updateThisInstance,
+  instanceLogic,
+  length = 0.95,
+}) => {
+  const [errMsg, setErrMsg] = useState(null);
+  const {
+    addWeeb,
+    instanceTransfer,
+    updateMe,
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const RenderMyFriends = ({ item, isMine, isFriends }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [added, setAdded] = useState(isFriends);
+
+    const handleUnweebing = (userID, isFriends) => {
+      setIsLoading(true);
+      if (isFriends) {
+        //unWeeb
+        addWeeb(
+          userID,
+          "remove",
+          (resData) => {
+            //resData = [] of friends
+            // updateMe({ data: resData, prop: "friends" });
+            setAdded(false);
+            setErrMsg(null);
+            setIsLoading(false);
+          },
+          (err) => {
+            setIsLoading(false);
+            setErrMsg(err);
+          }
+        );
+      } else {
+        // add weeb
+        addWeeb(
+          userID,
+          "add",
+          (resData) => {
+            // updateMe({ data: resData, prop: "friends" });
+            setAdded(true);
+            setErrMsg(null);
+            setIsLoading(false);
+          },
+          (err) => {
+            setIsLoading(false);
+            setErrMsg(err);
+          }
+        );
+      }
+    };
+
+    const handleInstanceTransfer = (itemId) => {
+      setIsLoading(true);
+      const actionObj = {
+        to: itemId,
+        ...typeObj,
+      };
+      instanceTransfer(
+        actionObj,
+        (resData) => {
+          let instanceParam;
+          if (typeObj.instance === "show") {
+            instanceParam = "app_creator";
+          } else if (typeOj.instance === "character") {
+            instanceParam = "owner";
+          }
+          updateThisInstance(instanceParam, resData.currOwner);
+          typeObj.instance === "character" &&
+            updateMe(resData.prevOwner, "charactersOwned");
+          instanceLogic.setVisible(false);
+          setIsLoading(false);
+        },
+        (err) => {
+          setIsLoading(false);
+          instanceLogic.setErrMsg(err);
+        }
+      );
+    };
+
+    return (
+      <TouchableOpacity
+        activeOpacity={onPress ? 0.9 : 1}
+        onPress={onPress ? () => onPress(item) : null}
+        style={{ ...styles.container, width: width * length }}
+      >
+        <View style={styles.friend}>
+          <Avatar
+            size={45}
+            avatar={item.avatar}
+            borderRad={100}
+            name={item.username}
+            feederID={item._id}
+          />
+          <View style={styles.rightCont}>
+            <MaterialCommunityIcons
+              name="account-group"
+              size={15}
+              color={colors.medium}
+            />
+            {item.followers && <AppText> {item.followers.length} </AppText>}
+            {!isLoading ? (
+              <>
+                {type === "weeb" && (
+                  <AppButton
+                    title={isMine ? null : added ? "Unweeb" : "Add Weeb"}
+                    onPress={() => handleUnweebing(item._id, added)}
+                    naked
+                    style={styles.btn}
+                  />
+                )}
+                {type === "transfer" && (
+                  <AppButton
+                    title="Transfer"
+                    onPress={() => handleInstanceTransfer(item._id)}
+                    naked
+                    style={styles.btn}
+                  />
+                )}
+              </>
+            ) : (
+              <View style={{ height: 20 }}>
+                <ActivityIndicator type="spin" size={0.2} visible={isLoading} />
+              </View>
+            )}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderFriends = ({ item }) => {
+    let isFriends = false;
+
+    const finder = userInfo?.friends?.find((obj) => obj._id == item._id);
+    let isMine = item._id == userInfo._id;
+    if (finder) {
+      isFriends = true;
+    }
+    return (
+      <RenderMyFriends item={item} isMine={isMine} isFriends={isFriends} />
+    );
+  };
+  return (
+    <FlatList
+      data={data}
+      keyExtractor={(item) => item._id}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      renderItem={renderFriends}
+    />
+  );
+};
+const styles = StyleSheet.create({
+  btn: {
+    marginLeft: 20,
+  },
+  container: {
+    margin: 4,
+    alignSelf: "center",
+  },
+  friend: {
+    elevation: 3,
+    borderRadius: width * 0.06,
+    padding: 10,
+    overflow: "hidden",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.white,
+    // alignSelf: "center",
+  },
+  rightCont: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});
+export default FriendBox;

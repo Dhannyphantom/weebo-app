@@ -1,0 +1,890 @@
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  FlatList,
+  Modal,
+} from "react-native";
+import { Viewport } from "@skele/components";
+import * as ImagePicker from "expo-image-picker";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+
+import { Context as FeedContext } from "../config/FeedContext";
+import { Context as CharContext } from "../config/CharContext";
+import { Context as AuthContext } from "../config/AuthContext";
+import { Context as ChallContext } from "../config/ChallContext";
+
+import AppText from "../components/AppText";
+import Icon from "../components/Icon";
+import ProfilePic from "../components/ProfilePic";
+import colors from "../constants/colors";
+import ActivityIndicator from "../components/ActivityIndicator";
+import Separator from "../components/Separator";
+import AppFadeIn from "../components/AppFadeIn";
+import GroupCard from "../components/GroupCard";
+import AlertModal from "../components/AlertModal";
+import PopDownModal from "../components/PopDownModal";
+import Sticker from "../components/Sticker";
+import AppHeader from "../components/AppHeader";
+import DropDown from "../components/DropDown";
+import ChallengeCard from "../components/ChallengeCard";
+import PopMessage from "../components/PopMessage";
+import CharChallengerScreen from "./CharChallengerScreen";
+import Events from "../components/Events";
+import ChallengeForm from "../components/ChallengeForm";
+import showInfoProps from "../constants/showInfoProps";
+import PopModal from "../components/PopModal";
+import PopUpModal from "../components/PopUpModal";
+import showGenres from "../constants/showGenres";
+import subGenres from "../constants/subGenres";
+import TransferInstance from "../components/TransferInstance";
+import AppButton from "../components/AppButton";
+import ShowUpload from "../components/ShowUpload";
+import LoaderImage from "../components/LoaderImage";
+import InfoBox from "../components/InfoBox";
+import InstanceHeader from "../components/InstanceHeader";
+
+const { width, height } = Dimensions.get("window");
+const dayta = showInfoProps.map((obj) => obj.prop);
+const daytaObj = {};
+for (let i = 0; i < dayta.length; i++) {
+  const e = dayta[i];
+  daytaObj[e] = "";
+}
+const hider = [
+  "__v",
+  "cover_photo",
+  "_id",
+  "app_creator",
+  "verifiedList",
+  "name_j",
+  "name_e",
+];
+const counter = ["characters", "groups", "followers", "posts", "challengers"];
+
+const ViewView = Viewport.Aware(View);
+
+const ShowScreen = ({ route, navigation }) => {
+  const { getShows, followInstance } = useContext(FeedContext);
+  const {
+    charChallengeTwo,
+    startChallengeTwo,
+    startChallengeTwoB,
+    startInfoChallenge,
+    withdrawChallenge,
+  } = useContext(ChallContext);
+  const { instanceUpdater } = useContext(CharContext);
+
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const [dataState, setDataState] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCoverLoading, setIsCoverLoading] = useState(false);
+  const [stickerPop, setStickerPop] = useState(false);
+  const [newEvent, setNewEvent] = useState(false);
+  const [errMsg, setErrMsg] = useState(null);
+  const [transfer, setTransfer] = useState(false);
+  const [popper, setPopper] = useState({ vis: false });
+
+  const [challengerArr, setChallengerArr] = useState(
+    dataState?.challengers ?? []
+  );
+  const [alertModal, setAlertModal] = useState({ visible: false });
+  const [modalVis, setModalVis] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [pageInfo, setPageInfo] = useState([]);
+  const [challengeType, setChallengeType] = useState(null);
+  const [challengeModal, setChallengeModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [challenged, setChallenged] = useState(false);
+  const [challenger, setChallenger] = useState(null);
+  const [asset, setAsset] = useState({});
+  const [isStarting, setIsStarting] = useState(false);
+  const [badInfoData, setBadInfoData] = useState(showInfoProps);
+  const [infoContest, setInfoContest] = useState(daytaObj);
+  const [infoModal, setInfoModal] = useState({ vis: false, type: null });
+  const [showUpload, setShowUpload] = useState({ vis: false, data: null });
+
+  const show = route.params.show;
+  // show = { cover_photo, _id }
+  const isFollowing =
+    dataState.followers && dataState.followers.includes(userInfo._id);
+
+  const isMine =
+    dataState.app_creator && dataState.app_creator._id === userInfo._id;
+
+  const listItems = [
+    {
+      id: "5078",
+      name: "upload status",
+      onPress: () => handleUploadStaus(),
+      icon: "upload",
+      show: isMine,
+      selected: true,
+    },
+    {
+      id: "5",
+      name: "update cover",
+      selected: true,
+      onPress: () => handleNewCover(),
+      icon: "pencil",
+      show: isMine,
+    },
+    {
+      id: "2",
+      name: "posts",
+      onPress: null,
+      icon: "image-multiple",
+      selected: true,
+      show: true,
+    },
+    {
+      id: "1",
+      name: "challenge",
+      onPress: () => handleContest("fresh"),
+      icon: "trophy-outline",
+      selected: true,
+      show: !isMine && !challenged,
+    },
+    {
+      id: "169576",
+      name: "Withdraw challenge",
+      onPress: () => handleWithdrawChallenge(),
+      icon: "trophy-outline",
+      selected: true,
+      show: !isMine && challenged,
+    },
+    {
+      id: "7",
+      name: "challengers",
+      onPress: () => setModalVis(true),
+      icon: "trophy",
+      selected: true,
+      show: true,
+    },
+    {
+      id: "3",
+      name: "New event",
+      onPress: () => setNewEvent(true),
+      selected: true,
+      icon: "plus",
+      show: isMine,
+    },
+    {
+      id: "35t74085",
+      name: "Transfer show",
+      onPress: () => setTransfer(true),
+      selected: true,
+      icon: "transfer",
+      show: isMine,
+    },
+  ];
+
+  const headerObj = {
+    _id: dataState?._id,
+    name: dataState?.name_j || dataState?.name_e,
+    description: `By ${dataState.creator}`,
+    cover_photo: dataState?.cover_photo,
+    owner: dataState?.app_creator,
+    screenIcon: "ios-tv",
+    feedback: {
+      instanceID: dataState?._id,
+      finder: dataState?.verifiedList?.find((obj) => obj.user == userInfo._id),
+      instanceName: dataState?.name_j ?? dataState?.name_e,
+      instanceShow: null,
+      instance: "show",
+    },
+    namePosition: "left",
+    listItems,
+    coverLoading: isCoverLoading,
+    handleLeftPress: () => handleFollowShow(),
+    leftColor: isFollowed ? colors.heart : colors.medium,
+    subscribers: null,
+    verified: dataState.verified,
+    verifiedList: dataState?.verifiedList,
+    followers: dataState?.followers?.length,
+    handleRightPress: null,
+  };
+
+  const getMyShows = (type) => {
+    const isRefresh = type === "refresh";
+    const isFetch = type === "fetch";
+
+    isFetch && setIsLoading(true);
+    isRefresh && setRefreshing(true);
+
+    getShows(
+      show._id,
+      (data) => {
+        const dataArr = [];
+        setDataState(data);
+        //data = {};
+        for (const key in data) {
+          let name = key;
+          let val;
+
+          if (Object.hasOwnProperty.call(data, key)) {
+            const e = data[key];
+            val = e;
+            if (hider.includes(key)) continue;
+            switch (key) {
+              case "other_names":
+                name = "other names";
+                break;
+              case "subGenres":
+                name = "other genres";
+                break;
+              case "genres":
+                name = "main genres";
+                break;
+              case "releaseDate":
+                name = "release date";
+                break;
+
+              case "startDate":
+                name = "start date";
+                break;
+
+              default:
+                break;
+            }
+
+            if (counter.includes(key)) val = e?.length?.toString();
+
+            dataArr.push({ prop: name, value: val });
+          }
+        }
+        setPageInfo(dataArr);
+        isFetch && setIsLoading(false);
+        isRefresh && setRefreshing(false);
+      },
+      (err) => {
+        setErrMsg(err);
+        isFetch && setIsLoading(false);
+        isRefresh && setRefreshing(false);
+      }
+    );
+  };
+
+  const handleChangeTab = (type) => {
+    setChallengeModal(true);
+  };
+
+  const handleNewCover = async () => {
+    const res = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [25, 16],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
+    if (!res.cancelled) {
+      setIsCoverLoading(true);
+      const dataObj = {
+        action: "cover",
+        actionData: res,
+        instance: "show",
+        instanceID: dataState._id,
+        media: true,
+      };
+      instanceUpdater(
+        dataObj,
+        (resData) => {
+          const newData = { ...dataState };
+          newData.cover_photo = resData.cover_photo;
+          setDataState(newData);
+          setIsCoverLoading(false);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
+  };
+
+  const handleOkAlert = () => {
+    if (alertModal.type === "followC") {
+      //follow show
+      // followChar({ charID, userID }, "follow", () => follows(true));
+      console.log("Followed");
+    } else if (alertModal.type === "unfollowC") {
+      // unfollow show
+      // followChar({ charID, userID }, "unfollow", () => follows(false));
+      console.log("Un - Followed");
+    }
+  };
+
+  const handleContest = async (type) => {
+    if (type === "image") {
+      const result = await ImagePicker.launchImageLibraryAsync();
+      if (result.cancelled) return;
+      setAsset(result);
+    } else if (type === "video") {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      });
+      if (result.cancelled) return;
+      setAsset(result);
+    } else if (type === "info") {
+      setAsset({ type: "info" });
+    } else if (type === "fresh") {
+      isFollowing
+        ? setChallengeModal(true)
+        : setAlertModal({
+            visible: true,
+            title: "Follow Character?",
+            message: `You need to follow \n ${character.name.toUpperCase()} \n to challenge character`,
+            btn: "YES",
+            type: "followC",
+          });
+    }
+  };
+
+  const handleUploadStaus = async () => {
+    // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
+    // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      videoMaxDuration: 30,
+    });
+
+    if (!res.cancelled) {
+      // setIsCoverLoading(true);
+      const statusObj = {
+        instance: "show",
+        instanceID: dataState._id,
+        post: {
+          ...res,
+        },
+      };
+      delete statusObj.post.cancelled;
+
+      setShowUpload({ vis: true, data: statusObj });
+    }
+  };
+
+  const handleContestTextChange = (val, prop) => {
+    const addMore = ["genres", "subGenres"].includes(prop);
+    if (addMore) {
+      if (infoContest[prop].includes(val)) {
+        setInfoContest({
+          ...infoContest,
+          [prop]: infoContest[prop].replace(", " + val, ""),
+        });
+      } else {
+        let suffix = ", " + val;
+        if (infoContest[prop].length < 2) suffix = val;
+        setInfoContest({
+          ...infoContest,
+          [prop]: infoContest[prop] + suffix,
+        });
+      }
+    } else {
+      setInfoContest({ ...infoContest, [prop]: val });
+    }
+  };
+
+  const handleInfoPress = (item, show) => {
+    const editable = ["genres", "subGenres"].includes(item.prop);
+    if (editable && show) {
+      setInfoModal({ vis: true, type: item.prop });
+    }
+    const copyArr = [...badInfoData];
+    const ind = copyArr.findIndex((obj) => obj.prop === item.prop);
+    if (copyArr[ind].selected && !show) {
+      copyArr[ind] = { ...item, selected: false };
+      setInfoContest(daytaObj);
+    } else {
+      copyArr[ind] = { ...item, selected: true };
+    }
+    setBadInfoData(copyArr);
+  };
+
+  const handleWithdrawChallenge = () => {
+    const data = {
+      instanceID: dataState._id,
+      instance: "show",
+    };
+    withdrawChallenge(
+      data,
+      (res) => {
+        setChallenged(false);
+        setPopper({ vis: true, type: "success", msg: "Challenge withdrawn" });
+      },
+      (err) => {
+        setPopper({ vis: true, type: "failed", msg: err });
+      }
+    );
+  };
+
+  const updateThisInstance = (prop, val) => {
+    const oldCharObj = { ...dataState };
+    oldCharObj[prop] = val;
+    setDataState(oldCharObj);
+  };
+
+  const handleStartChallenge = (type) => {
+    setIsStarting(true);
+    if (type === "challenge" && asset.type !== "info") {
+      if (!asset.uri) return setErrMsg("Please provide your contest info");
+      const dataChallenge = {
+        instanceID: dataState._id,
+        instance: "show",
+        owner: dataState.app_creator._id,
+        media: asset,
+        type: asset.type,
+      };
+
+      charChallengeTwo(
+        dataChallenge,
+        () => {
+          setChallenged(true);
+          setModalVis(false);
+          setChallengeModal(false);
+          setErrMsg(null);
+          setIsStarting(false);
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Challenge sent successfully",
+          });
+        },
+        (err) => {
+          setErrMsg(err);
+          setIsStarting(false);
+        }
+      );
+    } else if (type === "challenge" && asset.type === "info") {
+      if (!infoContest) return setErrMsg("Please provide your contest info");
+      const cData = {
+        data: infoContest,
+        instanceID: dataState._id,
+        instance: "show",
+      };
+      startChallengeTwoB(
+        cData,
+        (data) => {
+          setChallenged(true);
+          setModalVis(false);
+          setChallengeModal(false);
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Challenge sent successfully",
+          });
+
+          setIsStarting(false);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    } else if (type === "accept") {
+      if (challengeType !== "info") {
+        if (!asset.uri) return setErrMsg("Please provide your contest info");
+        const dataAccept = {
+          instanceID: dataState._id,
+          instance: "show",
+          owner: dataState.app_creator._id,
+          challengerMedia: challenger.challengerMedia,
+          ownerMedia: asset,
+          challengeID: challenger._id,
+          challenger: challenger.user._id,
+          type: asset.type,
+        };
+
+        startChallengeTwo(
+          dataAccept,
+          () => {
+            getMyShows();
+            setChallenged(true);
+            setAsset(null);
+            setChallengeModal(false);
+            setPopper({
+              vis: true,
+              type: "success",
+              msg: "Challenge accepted",
+            });
+
+            setIsLoading(false);
+          },
+          (err) => {
+            setErrMsg(err?.response?.data);
+          }
+        );
+      } else {
+        setAsset({ type: "info_start" });
+        const dataAccept = {
+          instanceID: dataState._id,
+          instance: "show",
+          owner: dataState.app_creator._id,
+          challengeID: challenger._id,
+        };
+        startInfoChallenge(
+          dataAccept,
+          () => {
+            getMyShows();
+            setChallenged(true);
+            setAsset(null);
+            setModalVis(false);
+            setIsStarting(false);
+            setChallengeModal(false);
+            setPopper({
+              vis: true,
+              type: "success",
+              msg: "Challenge accepted",
+            });
+            setIsLoading(false);
+          },
+          (err) => {
+            setErrMsg(err);
+          }
+        );
+      }
+    }
+  };
+
+  const handleFollowShow = () => {
+    setIsCoverLoading(true);
+    console.log(isFollowed);
+    let followObj = {
+      instance: "show",
+      instanceID: dataState._id,
+    };
+    if (isFollowing) {
+      // UNFOLLOWS
+      followObj.action = "unfollow";
+    } else {
+      followObj.action = "follow";
+    }
+    followInstance(
+      followObj,
+      (resData) => {
+        console.log(resData);
+        setIsFollowed(isFollowing ? false : true);
+        setIsCoverLoading(false);
+      },
+      (err) => {
+        console.log(err);
+        setErrMsg(err?.response.data);
+        setIsCoverLoading(false);
+      }
+    );
+  };
+
+  const handleStatusVisibility = (bool) => {
+    if (bool) {
+      setPopper({ vis: true, type: "success", msg: "Status uploaded" });
+    }
+    setShowUpload({ vis: false, data: null });
+  };
+
+  const handleScreenRefresh = () => {
+    getMyShows("refresh");
+  };
+
+  const handleItemPress = (item) => {
+    console.log(item.prop);
+    switch (item.prop) {
+      case "challengers":
+        setModalVis(!challengeModal);
+        break;
+
+      default:
+        break;
+    }
+  };
+  const renderPageInfos = ({ item }) => {
+    return <InfoBox item={item} onPress={() => handleItemPress(item)} />;
+  };
+
+  useEffect(() => {
+    getMyShows("fetch");
+  }, []);
+
+  useEffect(() => {
+    const challengerIds = dataState?.challengers?.map((obj) => obj.user._id);
+    const challConst = challengerIds?.includes(userInfo._id);
+    setChallenged(challConst);
+    setChallengerArr(dataState.challengers);
+    setIsFollowed(isFollowing);
+  }, [dataState]);
+
+  const renderGroups = ({ item }) => {
+    const viewRoomData = {
+      instance: "group",
+      instanceID: item._id,
+    };
+
+    return (
+      <GroupCard
+        item={item}
+        onPress={() =>
+          navigation.navigate("Room", { roomID: item._id, data: viewRoomData })
+        }
+      />
+    );
+  };
+
+  const renderHome = () => {
+    if (isLoading) return null;
+    return (
+      <View style={styles.content}>
+        <View style={styles.list}>
+          <FlatList
+            data={pageInfo}
+            keyExtractor={(item) => item.prop}
+            renderItem={renderPageInfos}
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          />
+        </View>
+        <View>
+          {dataState.groups && dataState?.groups[0] && (
+            <>
+              <Separator h={1} />
+              <AppText style={{ marginLeft: 12 }} size="large" bold>
+                GROUPS & ORGANIZATIONS
+              </AppText>
+              <Separator h={1} />
+            </>
+          )}
+          <FlatList
+            data={dataState.groups}
+            listKey="groups"
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            keyExtractor={(i, ind) => i + ind}
+            renderItem={renderGroups}
+          />
+          {dataState.characters && dataState?.characters[0] && (
+            <>
+              <Separator h={1} />
+              <View style={styles.flatTitle}>
+                <AppText size="large" bold>
+                  CHARACTERS
+                </AppText>
+                <AppButton
+                  title="Enter room"
+                  onPress={() =>
+                    navigation.navigate("Room", {
+                      data: {
+                        instance: "show",
+                        instanceID: dataState._id,
+                      },
+                    })
+                  }
+                  naked
+                />
+              </View>
+              <Separator h={1} />
+            </>
+          )}
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            listKey="characters"
+            data={dataState.characters}
+            keyExtractor={(item, index) => (item + index).toString()}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.charCont}>
+                  <ChallengeCard
+                    large
+                    name={item.dpName}
+                    id={item._id}
+                    show={item?.show?.name_j ?? item?.show?.name_e}
+                    followers={item.followers}
+                    avatar={item?.owner?.avatar}
+                    owner={item.owner}
+                    image={item.cover_photo}
+                    onPress={() =>
+                      navigation.navigate("Character", {
+                        item: item._id,
+                      })
+                    }
+                  />
+                </View>
+              );
+            }}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <StatusBar style="light" />
+      {isLoading ? (
+        <ActivityIndicator
+          visible={isLoading}
+          type="spin"
+          style={styles.activity}
+        />
+      ) : (
+        <Viewport.Tracker>
+          <FlatList
+            data={["OTAKU"]}
+            ListHeaderComponent={<InstanceHeader instanceData={headerObj} />}
+            listKey="@home"
+            renderItem={renderHome}
+            refreshing={refreshing}
+            onRefresh={handleScreenRefresh}
+            overScrollMode="never"
+            keyExtractor={(item, index) => item + index}
+          />
+        </Viewport.Tracker>
+      )}
+      {stickerPop && (
+        <Sticker
+          title={dataState.name_j || dataState.name_e}
+          icon="television"
+          textStyle={{ textTransform: "capitalize" }}
+          pack="b"
+        />
+      )}
+      <AppFadeIn
+        RenderComponent={() => (
+          <Events
+            start={newEvent}
+            setStart={setNewEvent}
+            instance="show"
+            instanceID={dataState._id}
+          />
+        )}
+        visible={newEvent}
+        setVisible={setNewEvent}
+      />
+      <ChallengeForm
+        modalVis={challengeModal}
+        setModalVis={setChallengeModal}
+        handleContest={handleContest}
+        handleContestTextChange={handleContestTextChange}
+        handleStartChallenge={handleStartChallenge}
+        infoContest={infoContest}
+        challengeType={challengeType}
+        isMine={isMine}
+        badInfoData={badInfoData}
+        handleInfoPress={handleInfoPress}
+        errMsg={errMsg}
+        isStarting={isStarting}
+        character={dataState}
+        setAsset={setAsset}
+        asset={asset}
+      />
+      <TransferInstance
+        visible={transfer}
+        instance="show"
+        updateThisInstance={updateThisInstance}
+        instanceID={dataState._id}
+        setVisible={setTransfer}
+      />
+      <PopModal
+        modalVis={infoModal.vis}
+        setModalVis={setInfoModal}
+        data={infoModal.type === "genres" ? showGenres : subGenres}
+        handleDropdown={(val) => handleContestTextChange(val, infoModal.type)}
+      />
+      <PopUpModal
+        visible={modalVis}
+        setVisible={setModalVis}
+        ContentComponent={() => (
+          <CharChallengerScreen
+            challengerArr={challengerArr}
+            name={dataState.name_j + " show" ?? dataState.name_e + " show"}
+            handleChangeTab={handleChangeTab}
+            setChallengeType={setChallengeType}
+            setModalVis={setModalVis}
+            setChallenger={setChallenger}
+            isMine={isMine}
+          />
+        )}
+      />
+      <AlertModal
+        obj={alertModal}
+        setVisible={setAlertModal}
+        onPress={handleOkAlert}
+      />
+      <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
+    </View>
+  );
+};
+const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    bottom: width * 0.11,
+    minHeight: height * 0.4,
+  },
+  charCont: {
+    marginBottom: 18,
+    marginHorizontal: width * 0.01,
+  },
+  error: {
+    textAlign: "center",
+    marginTop: 8,
+    color: colors.heart,
+  },
+  flatTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 15,
+  },
+  imageContaineer: {
+    width: width,
+    height: height * 0.4,
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+  },
+  icons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    bottom: 130 / 2,
+  },
+  list: {
+    padding: 12,
+  },
+  modalCont: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  modalView: {
+    backgroundColor: colors.white,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+    paddingBottom: 20,
+  },
+  subTitle: {
+    textAlign: "center",
+    textTransform: "capitalize",
+  },
+  title: {
+    fontSize: 16,
+    textAlign: "center",
+    textTransform: "uppercase",
+    marginLeft: 3,
+    color: colors.primary,
+  },
+  user: {
+    textAlign: "center",
+    bottom: 52,
+  },
+});
+export default ShowScreen;
