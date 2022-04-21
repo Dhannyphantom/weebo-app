@@ -4,12 +4,13 @@ import {
   StyleSheet,
   Animated,
   Modal,
+  PanResponder,
   Image,
   Dimensions,
   TouchableOpacity,
 } from "react-native";
 import LottieView from "lottie-react-native";
-import { MaterialCommunityIcons, Feather, AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -56,6 +57,39 @@ const DisplayStatus = ({ modalObj, setVisible }) => {
 
   const lottieRef = useRef(null);
   const nextAnimRef = useRef(null);
+  const translator = useRef(new Animated.Value(0)).current;
+
+  const modalPanresponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => {
+        // DISABLE GESTURES FOR VIDEO DISPLAY
+        // if (params.type === "video") {
+        //   return false;
+        // }
+        return true;
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        if (gestureState.dy > 50) {
+          translator.setValue(gestureState.dy - 50);
+        } else {
+          // NOT A SWIPE GESTURE POSSIBLY
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dy > height * 0.35 || gestureState.vy > 0.8) {
+          Animated.timing(translator, {
+            toValue: height * 0.7,
+            useNativeDriver: true,
+          }).start(() => handleCloseModal());
+        } else {
+          Animated.spring(translator, {
+            toValue: 0,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   let currStatus = allStatuses?.find((obj) => obj._id == modalCurrID);
 
@@ -255,263 +289,278 @@ const DisplayStatus = ({ modalObj, setVisible }) => {
   return (
     <Modal
       visible={isVisible}
+      animationType="fade"
       statusBarTranslucent
       transparent
       onRequestClose={handleCloseModal}
     >
-      <Screen style={{ backgroundColor: colors.black }}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            lottieRef?.current?.pause();
-          }}
-          style={styles.container}
-        >
-          <View style={styles.activity}>
-            <LottieView
-              source={require("../../assets/animations/circe_countdown.json")}
-              autoPlay={false}
-              style={{ width: width * 0.075, height: width * 0.075 }}
-              speed={speedo}
-              ref={lottieRef}
-              autoSize
-              loop={false}
-              onAnimationFinish={() => handleAnimFinish(1)}
+      <Animated.View
+        style={{
+          backgroundColor: colors.black,
+          flex: 1,
+          transform: [{ translateY: translator }],
+          // opacity: 0.5,
+        }}
+      >
+        <Screen>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              lottieRef?.current?.pause();
+            }}
+            style={styles.container}
+          >
+            <View style={styles.headerContainer}>
+              <View style={styles.activity}>
+                <LottieView
+                  source={require("../../assets/animations/circe_countdown.json")}
+                  autoPlay={false}
+                  style={{ width: width * 0.075, height: width * 0.075 }}
+                  speed={speedo}
+                  ref={lottieRef}
+                  autoSize
+                  loop={false}
+                  onAnimationFinish={() => handleAnimFinish(1)}
+                />
+                {modalData && (
+                  <View style={styles.activityText}>
+                    <AppText style={{ color: colors.white }} bold size="xlarge">
+                      {(modalData.length - count).toString()}
+                    </AppText>
+                  </View>
+                )}
+              </View>
+              <TouchableOpacity activeOpacity={1} style={styles.header}>
+                {statuses && (
+                  <View style={styles.headerCont}>
+                    <View style={styles.headerTitles}>
+                      <AppText bold size="xlarge" style={styles.headerText}>
+                        {statuses[statuses.instance]?.dpName ??
+                          statuses[statuses.instance]?.name ??
+                          statuses[statuses.instance]?.name_j ??
+                          statuses[statuses.instance]?.name_e}
+                      </AppText>
+                      <AppText style={styles.headerInstance}>
+                        {statuses.instance}
+                      </AppText>
+                      {modalData && (
+                        <AppText style={styles.headerDate}>
+                          {getTimestamp(modalData[count]?._id, "status")}
+                        </AppText>
+                      )}
+                    </View>
+                    <ProfilePic
+                      source={statuses[statuses.instance]?.cover_photo?.uri}
+                      size={60}
+                      border={1.5}
+                      borderColor={colors.white}
+                      disabled
+                    />
+                    <TouchableOpacity
+                      onPress={handleMenuIcon}
+                      style={styles.menuIcon}
+                    >
+                      <Feather
+                        name="more-vertical"
+                        color={colors.white}
+                        size={width * 0.035}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+            {modalData && modalData[0] && (
+              <>
+                <View style={styles.mediaContainer}>
+                  <View
+                    style={{
+                      ...styles.mediaCont,
+                      aspectRatio:
+                        modalData[count]?.width / modalData[count]?.height,
+                    }}
+                  >
+                    {modalData[count]?.type === "image" && (
+                      <>
+                        <Image
+                          source={{ uri: modalData[count]?.uri }}
+                          onLoadEnd={handleMediaLoad}
+                          style={styles.image}
+                        />
+                        <ActivityIndicator
+                          visible={mediaLoading}
+                          size={0.3}
+                          type="loader"
+                          style={styles.loader}
+                          transparent
+                        />
+                      </>
+                    )}
+                  </View>
+                </View>
+                {modalData[count]?.type === "video" && (
+                  <View style={styles.vidContainer}>
+                    <PostVideo
+                      vidUri={modalData[count]?.uri}
+                      disableDoublePress
+                      disableLongPress
+                      viewable={false}
+                      onLoadEnd={handleMediaLoad}
+                      contStyle={styles.vidContStyle}
+                      showTimer={false}
+                      full
+                      style={styles.vidComp}
+                      playFunc={playVid}
+                    />
+                    <ActivityIndicator
+                      visible={mediaLoading}
+                      size={0.3}
+                      type="loader"
+                      style={styles.loader}
+                      transparent
+                    />
+                  </View>
+                )}
+              </>
+            )}
+          </TouchableOpacity>
+
+          <View
+            style={{
+              position: "absolute",
+              width,
+              height: height,
+              flexDirection: "row",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => handleStatusNav("left")}
+              style={{ flex: 0.6, height: height }}
             />
-            {modalData && (
-              <View style={styles.activityText}>
-                <AppText style={{ color: colors.white }} bold size="xlarge">
-                  {(modalData.length - count).toString()}
-                </AppText>
+            <TouchableOpacity
+              onPress={() => handleStatusNav("mid")}
+              onPressIn={() => handleModalPress("in")}
+              onPressOut={() => handleModalPress("out")}
+              activeOpacity={1}
+              style={{ flex: 1, height }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                <View style={styles.viewers}>
+                  <Feather
+                    name="eye"
+                    color={colors.white}
+                    size={width * 0.03}
+                  />
+                  <AppText
+                    bold
+                    size="large"
+                    style={{ color: colors.white, marginLeft: 4 }}
+                  >
+                    {" "}
+                    {Number.isNaN(viewCounter) ? "..." : viewCounter}
+                  </AppText>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleStatusNav("right")}
+              style={{
+                flex: 0.6,
+                height: height,
+                marginTop: height * 0.2,
+              }}
+              activeOpacity={1}
+            />
+          </View>
+          <View
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+            }}
+          >
+            {statusText?.text?.length > 0 && statusText.show && (
+              <View
+                style={{
+                  ...styles.statusDisplay,
+                  transform: [
+                    { translateX: statusText?.pos?.x + 10 || 0 },
+                    { translateY: statusText?.pos?.y + 10 || 0 },
+                  ],
+                }}
+              >
+                <>
+                  {statusText?.text?.map((text, idx) => {
+                    return (
+                      <AppText
+                        size="xxlarge"
+                        key={idx}
+                        bold
+                        style={{
+                          ...styles.statusText,
+                          backgroundColor: statusText.bg,
+                          color: statusText.tColor,
+                          bottom: idx !== 0 ? idx * 5 : 0,
+                        }}
+                      >
+                        {text}
+                      </AppText>
+                    );
+                  })}
+                </>
               </View>
             )}
           </View>
-          {modalData && modalData[0] && (
-            <>
-              <View style={styles.mediaContainer}>
-                <View
-                  style={{
-                    ...styles.mediaCont,
-                    aspectRatio:
-                      modalData[count]?.width / modalData[count]?.height,
-                  }}
-                >
-                  {modalData[count]?.type === "image" && (
-                    <>
-                      <Image
-                        source={{ uri: modalData[count]?.uri }}
-                        onLoadEnd={handleMediaLoad}
-                        style={styles.image}
-                      />
-                      <ActivityIndicator
-                        visible={mediaLoading}
-                        size={0.3}
-                        type="loader"
-                        style={styles.loader}
-                        transparent
-                      />
-                    </>
-                  )}
-                </View>
+          {showAnim.vis && (
+            <View style={styles.nextLottie}>
+              <View
+                style={{
+                  transform: [
+                    { rotate: showAnim.dir === 1 ? "0deg" : "180deg" },
+                  ],
+                }}
+              >
+                <LottieView
+                  source={require("../../assets/animations/next_arrow.json")}
+                  autoPlay
+                  style={{ width: width * 0.4, height: width * 0.4 }}
+                  speed={6}
+                  ref={nextAnimRef}
+                  autoSize
+                  loop={false}
+                  onAnimationFinish={() => handleNextAnimFinish()}
+                />
               </View>
-              {modalData[count]?.type === "video" && (
-                <View style={styles.vidContainer}>
-                  <PostVideo
-                    vidUri={modalData[count]?.uri}
-                    disableDoublePress
-                    disableLongPress
-                    viewable={false}
-                    onLoadEnd={handleMediaLoad}
-                    contStyle={styles.vidContStyle}
-                    showTimer={false}
-                    full
-                    style={styles.vidComp}
-                    playFunc={playVid}
-                  />
-                  <ActivityIndicator
-                    visible={mediaLoading}
-                    size={0.3}
-                    type="loader"
-                    style={styles.loader}
-                    transparent
-                  />
-                </View>
-              )}
-            </>
+            </View>
           )}
-        </TouchableOpacity>
 
-        <View
-          style={{
-            position: "absolute",
-            width,
-            height: height,
-            flexDirection: "row",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => handleStatusNav("left")}
-            style={{ flex: 0.6, height: height }}
+          <DropDown
+            visible={dropModal}
+            setVisible={setDropModal}
+            closeFunc={handleMenuIcon}
+            lists={dropModalList}
           />
-          <TouchableOpacity
-            onPress={() => handleStatusNav("mid")}
-            onPressIn={() => handleModalPress("in")}
-            onPressOut={() => handleModalPress("out")}
-            activeOpacity={1}
-            style={{ flex: 1, height }}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <View style={styles.viewers}>
-                <Feather name="eye" color={colors.white} size={width * 0.03} />
-                <AppText
-                  bold
-                  size="large"
-                  style={{ color: colors.white, marginLeft: 4 }}
-                >
-                  {" "}
-                  {Number.isNaN(viewCounter) ? "..." : viewCounter}
-                </AppText>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleStatusNav("right")}
-            style={{
-              flex: 0.6,
-              height: height,
-            }}
-            activeOpacity={1}
-          >
-            <TouchableOpacity activeOpacity={1} style={styles.header}>
-              {statuses && (
-                <View style={styles.headerCont}>
-                  <View style={styles.headerTitles}>
-                    <AppText bold size="xlarge" style={styles.headerText}>
-                      {statuses[statuses.instance]?.dpName ??
-                        statuses[statuses.instance]?.name ??
-                        statuses[statuses.instance]?.name_j ??
-                        statuses[statuses.instance]?.name_e}
-                    </AppText>
-                    <AppText style={styles.headerInstance}>
-                      {statuses.instance}
-                    </AppText>
-                    {modalData && (
-                      <AppText style={styles.headerDate}>
-                        {getTimestamp(modalData[count]?._id, "status")}
-                      </AppText>
-                    )}
-                  </View>
-                  <ProfilePic
-                    source={statuses[statuses.instance]?.cover_photo?.uri}
-                    size={60}
-                    border={1.5}
-                    borderColor={colors.white}
-                    disabled
-                  />
-                  <TouchableOpacity
-                    onPress={handleMenuIcon}
-                    style={styles.menuIcon}
-                  >
-                    <Feather
-                      name="more-vertical"
-                      color={colors.white}
-                      size={width * 0.035}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-          }}
-        >
-          {statusText?.text?.length > 0 && statusText.show && (
-            <View
-              style={{
-                ...styles.statusDisplay,
-                transform: [
-                  { translateX: statusText?.pos?.x + 10 || 0 },
-                  { translateY: statusText?.pos?.y + 10 || 0 },
-                ],
-              }}
-            >
-              <>
-                {statusText?.text?.map((text, idx) => {
-                  return (
-                    <AppText
-                      size="xxlarge"
-                      key={idx}
-                      bold
-                      style={{
-                        ...styles.statusText,
-                        backgroundColor: statusText.bg,
-                        color: statusText.tColor,
-                        bottom: idx !== 0 ? idx * 5 : 0,
-                      }}
-                    >
-                      {text}
-                    </AppText>
-                  );
-                })}
-              </>
-            </View>
-          )}
-        </View>
-        {showAnim.vis && (
-          <View style={styles.nextLottie}>
-            <View
-              style={{
-                transform: [{ rotate: showAnim.dir === 1 ? "0deg" : "180deg" }],
-              }}
-            >
-              <LottieView
-                source={require("../../assets/animations/next_arrow.json")}
-                autoPlay
-                style={{ width: width * 0.4, height: width * 0.4 }}
-                speed={6}
-                ref={nextAnimRef}
-                autoSize
-                loop={false}
-                onAnimationFinish={() => handleNextAnimFinish()}
-              />
-            </View>
-          </View>
-        )}
-
-        <DropDown
-          visible={dropModal}
-          setVisible={setDropModal}
-          closeFunc={handleMenuIcon}
-          lists={dropModalList}
-        />
-      </Screen>
+        </Screen>
+      </Animated.View>
     </Modal>
   );
 };
 const styles = StyleSheet.create({
   activity: {
-    position: "absolute",
-    marginTop: 12,
-    left: "4%",
-    zIndex: 5,
+    marginLeft: 15,
   },
   activityText: {
     position: "absolute",
-    zIndex: 6,
-    width: "100%",
-    height: "100%",
+    // zIndex: 6,
+    width: width * 0.075,
+    height: width * 0.075,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -524,13 +573,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  header: {
-    position: "absolute",
-    alignSelf: "flex-end",
-    zIndex: 700,
-    top: "4%",
-    right: "4%",
-  },
+  header: {},
   headerCont: {
     flexDirection: "row",
     alignItems: "center",
@@ -539,12 +582,17 @@ const styles = StyleSheet.create({
     color: colors.white,
     textTransform: "capitalize",
     textAlign: "right",
-    // backgroundColor: colors.black,
-    // paddingHorizontal: 5,
-    // borderRadius: 6,
   },
   headerTitles: {
     marginRight: 8,
+  },
+  headerContainer: {
+    width,
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    justifyContent: "space-between",
   },
   headerInstance: {
     textTransform: "capitalize",
@@ -594,7 +642,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 4,
     alignSelf: "center",
-    // borderWidth: 1.2,
     padding: 10,
     borderRadius: width * 0.02,
     justifyContent: "center",

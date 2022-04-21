@@ -790,10 +790,9 @@ const CharacterScreen = ({ route, navigation }) => {
         />
         <PopUpModal
           visible={characterTab.challengers}
-          setVisible={() =>
+          setter={() =>
             setCharacterTab({ ...characterTab, challengers: false })
           }
-          setter
           ContentComponent={() => (
             <CharChallengerScreen
               challengerArr={challengerArr}
@@ -808,10 +807,7 @@ const CharacterScreen = ({ route, navigation }) => {
         />
         <PopUpModal
           visible={characterTab.invites}
-          setVisible={() =>
-            setCharacterTab({ ...characterTab, invites: false })
-          }
-          setter
+          setter={() => setCharacterTab({ ...characterTab, invites: false })}
           ContentComponent={() => (
             <InstanceInvites
               data={character.invites}
