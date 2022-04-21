@@ -6,9 +6,8 @@ import {
   Modal,
   Dimensions,
   FlatList,
-  Image,
 } from "react-native";
-import { MaterialCommunityIcons, AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -16,7 +15,6 @@ import colors from "../constants/colors";
 import gradients from "../constants/gradients";
 import Search from "./Search";
 import Separator from "./Separator";
-import Link from "./Link";
 import AppText from "./AppText";
 import SelectItem from "./SelectItem";
 import AppButton from "./AppButton";

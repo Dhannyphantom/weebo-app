@@ -12,7 +12,7 @@ import Cards from "./Cards";
 import AppText from "./AppText";
 
 const screen = Dimensions.get("window");
-const wUse = screen.width * 0.56;
+const wUse = screen.width * 0.62;
 
 const ActionMenu = ({
   item: { title = "", bg, bg1, icon, iconPack, subTitle },
@@ -62,14 +62,10 @@ const ActionMenu = ({
               )}
             </View>
             <View style={styles.upText}>
-              <AppText bold style={styles.title}>
+              <AppText size="large" bold style={styles.title}>
                 {title}
               </AppText>
-              {subTitle && (
-                <AppText size="small" style={styles.subTxt}>
-                  {subTitle}
-                </AppText>
-              )}
+              {subTitle && <AppText style={styles.subTxt}>{subTitle}</AppText>}
             </View>
           </View>
         </LinearGradient>
@@ -97,6 +93,7 @@ const styles = StyleSheet.create({
   },
   subTxt: {
     color: colors.black,
+    width: "70%",
     opacity: 0.5,
     marginTop: 5,
   },

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, Dimensions } from "react-native";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import AlertBox from "../components/AlertBox";
@@ -10,6 +10,9 @@ import StatusRender from "../components/StatusRender";
 import AppButton from "../components/AppButton";
 import AppHeader from "../components/AppHeader";
 import Spacer from "../components/Spacer";
+
+const { height } = Dimensions.get("window");
+
 const AlertScreen = ({ navigation }) => {
   const {
     readNotification,
@@ -131,6 +134,7 @@ const AlertScreen = ({ navigation }) => {
             refreshing={refreshing}
             onRefresh={fetchScreenData}
             renderItem={renderAlerts}
+            contentContainerStyle={{ paddingBottom: height * 0.1 }}
             style={{ flex: 1 }}
           />
         </Spacer>

@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
   FlatList,
+  Animated,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
@@ -26,6 +27,8 @@ import AppFadeIn from "../components/AppFadeIn";
 import AppText from "../components/AppText";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import FeedRender from "../components/FeedRender";
+import Screen from "../components/Screen";
+import StickyHeader from "../components/StickyHeader";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,6 +58,8 @@ const ChannelPostScreen = ({ route, navigation }) => {
     state: { userInfo },
     updateMe,
   } = useContext(AuthContext);
+
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   if (page._id) {
     isSubscribed = page.subscribers.includes(userInfo._id);
@@ -409,7 +414,11 @@ const ChannelPostScreen = ({ route, navigation }) => {
         />
       );
     } else {
-      return <FeedRender item={item} user={userInfo._id} />;
+      return (
+        <View style={{ bottom: 45 }}>
+          <FeedRender item={item} user={userInfo._id} />
+        </View>
+      );
     }
   };
 
@@ -419,17 +428,23 @@ const ChannelPostScreen = ({ route, navigation }) => {
       {page._id ? (
         <>
           {/* MAKE A HEADER SHOW ANIMATION IN  THIS SCREEN */}
-          <FlatList
-            ListHeaderComponent={<InstanceHeader instanceData={headerObj} />}
+          <Animated.FlatList
+            ListHeaderComponent={
+              <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
+            }
             data={posts}
-            stickyHeaderIndices={[0.1]}
             refreshing={refreshing}
-            contentContainerStyle={{ paddingBottom: width * 0.13 }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true }
+            )}
+            contentContainerStyle={{ paddingBottom: height * 0.04 }}
             overScrollMode="never"
             onRefresh={handleScreenRefresh}
             keyExtractor={(item, index) => item._id + index}
             renderItem={renderPageLikeSo}
           />
+          <StickyHeader scrollY={scrollY} title={page.name} />
         </>
       ) : (
         <ActivityIndicator type="spin" visible={true} />

@@ -20,7 +20,6 @@ import ProfilePic from "./ProfilePic";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
-import Screen from "./Screen";
 
 const { width, height } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 3; // 3 WEEKS
@@ -317,140 +316,155 @@ const InstanceHeader = ({ instanceData }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          aspectRatio: cover_photo
-            ? cover_photo?.width / cover_photo?.height
-            : 1.5,
-        }}
-      >
-        <LoaderImage image={cover_photo} borderRadius={width * 0.05} />
+    <>
+      <View style={styles.container}>
         <View
           style={{
-            position: "absolute",
-            ...styles.image,
+            aspectRatio: cover_photo
+              ? cover_photo?.width / cover_photo?.height
+              : 1.5,
           }}
         >
-          <ActivityIndicator visible={coverLoading} type="spin" wTransparent />
-          {!verified && !isChannel && (
-            <View style={styles.unverified}>
-              <AppText
-                style={{
-                  color: colors.white,
-                }}
-                bold
-                size="xxlarge"
-              >
-                UNVERIFIED
-              </AppText>
-            </View>
-          )}
+          <LoaderImage image={cover_photo} borderRadius={width * 0.05} />
+          <View
+            style={{
+              position: "absolute",
+              ...styles.image,
+            }}
+          >
+            <ActivityIndicator
+              visible={coverLoading}
+              type="spin"
+              wTransparent
+            />
+            {!verified && !isChannel && (
+              <View style={styles.unverified}>
+                <AppText
+                  style={{
+                    color: colors.white,
+                  }}
+                  bold
+                  size="xxlarge"
+                >
+                  UNVERIFIED
+                </AppText>
+              </View>
+            )}
+          </View>
+
+          {/* <LinearGradient
+            style={{
+              position: "absolute",
+              bottom: (height * 0.59) / 2.1,
+              ...styles.image,
+            }}
+            colors={["black", "transparent"]}
+          /> */}
           <AppHeader
             style={{ position: "absolute", top: safeInset.top }}
             type="transparent"
+            title="Hello"
             dotPress={() => setDropDown(true)}
             iconColor={colors.white}
           />
         </View>
 
-        <LinearGradient
-          style={{
-            position: "absolute",
-            bottom: (height * 0.59) / 2.1,
-            ...styles.image,
-          }}
-          colors={["black", "transparent"]}
-        />
-      </View>
-
-      <View style={styles.icons}>
-        <Icon
-          name="account-star"
-          activeOpacity={0.9}
-          size={46}
-          onPress={() => handleLeftPress && handleLeftPress()}
-          color={leftColor}
-        />
-        <ProfilePic
-          source={owner?.avatar}
-          size={130}
-          border={4.5}
-          userID={owner?._id}
-          borderColor={colors.white}
-        />
-        {verified ? (
+        <View style={styles.icons}>
           <Icon
-            text={null}
-            name={feedbackColor ? "check-all" : null}
+            name="account-star"
+            activeOpacity={0.9}
             size={46}
-            color={colors.accentOld}
-            disablePress
-            onPress={null}
-            activeOpacity={1}
+            onPress={() => handleLeftPress && handleLeftPress()}
+            color={leftColor}
           />
-        ) : (
-          <Icon
-            text={subscribers ? subscribers : null}
-            name={feedbackColor && !subscribers ? "account-check" : null}
-            size={46}
-            color={feedbackColor}
-            onPress={handleRightIconPress}
-            disablePress={isChannel}
-            activeOpacity={1}
+          <ProfilePic
+            source={owner?.avatar}
+            size={130}
+            border={4.5}
+            userID={owner?._id}
+            borderColor={colors.white}
           />
-        )}
-      </View>
-      <View style={styles.textCont}>
-        <AppText style={styles.user} bold>
-          @{owner?.username}
-        </AppText>
-        {name && instance !== "character" && (
-          <View style={{ ...styles.headerBoxCont, ...posObj }}>
-            <Ionicons
-              name={screenIcon}
-              color={colors.primary}
-              size={width * 0.04}
+          {verified ? (
+            <Icon
+              text={null}
+              name={feedbackColor ? "check-all" : null}
+              size={46}
+              color={colors.accentOld}
+              disablePress
+              onPress={null}
+              activeOpacity={1}
             />
-            <AppText size="xlarge" style={styles.tvText} bold>
-              {name}
-            </AppText>
-            <RenderUnverifiedTag />
-          </View>
-        )}
-        <Separator h={1} />
-        <AppText style={{ textAlign: "center", textTransform: "capitalize" }}>
-          {description}
-        </AppText>
-        <Separator h={1} />
-        {name && instance === "character" && (
-          <View style={styles.nameContainer}>
-            <Fontisto name={name} color={colors.primary} size={width * 0.035} />
-            <AppText size="xlarge" style={styles.name} bold>
-              {instanceName}
-            </AppText>
-            <RenderUnverifiedTag />
-          </View>
-        )}
+          ) : (
+            <Icon
+              text={subscribers ? subscribers : null}
+              name={feedbackColor && !subscribers ? "account-check" : null}
+              size={46}
+              color={feedbackColor}
+              onPress={handleRightIconPress}
+              disablePress={isChannel}
+              activeOpacity={1}
+            />
+          )}
+        </View>
+        <View style={styles.textCont}>
+          <AppText style={styles.user} bold>
+            @{owner?.username}
+          </AppText>
+          {name && instance !== "character" && (
+            <View style={{ ...styles.headerBoxCont, ...posObj }}>
+              <Ionicons
+                name={screenIcon}
+                color={colors.primary}
+                size={width * 0.04}
+              />
+              <AppText size="xlarge" style={styles.tvText} bold>
+                {name}
+              </AppText>
+              <RenderUnverifiedTag />
+            </View>
+          )}
+          <Separator h={1} />
+          <AppText style={{ textAlign: "center", textTransform: "capitalize" }}>
+            {description}
+          </AppText>
+          <Separator h={1} />
+          {name && instance === "character" && (
+            <View style={styles.nameContainer}>
+              <Fontisto
+                name={name}
+                color={colors.primary}
+                size={width * 0.035}
+              />
+              <AppText size="xlarge" style={styles.name} bold>
+                {instanceName}
+              </AppText>
+              <RenderUnverifiedTag />
+            </View>
+          )}
+        </View>
+        <DropDown
+          lists={listItems}
+          visible={dropDown}
+          setVisible={setDropDown}
+        />
+        <PopDropDown
+          visible={fBackModal}
+          setter={() => setFBackModal(false)}
+          headerTitle="INSTANCE VERIFICATION"
+          RenderComponent={RenderFeedback}
+        />
+        <PopMessage
+          popData={popper}
+          setter={() => setPopper({ vis: false })}
+          timer={0.4}
+        />
+        <AppFadeIn
+          visible={verifyModal}
+          setVisible={setVerifyModal}
+          RenderComponent={RenderVerifyInfo}
+        />
       </View>
-      <DropDown lists={listItems} visible={dropDown} setVisible={setDropDown} />
-      <PopDropDown
-        visible={fBackModal}
-        setter={() => setFBackModal(false)}
-        headerTitle="INSTANCE VERIFICATION"
-        RenderComponent={RenderFeedback}
-      />
-      <PopMessage
-        popData={popper}
-        setter={() => setPopper({ vis: false })}
-        timer={0.4}
-      />
-      <AppFadeIn
-        visible={verifyModal}
-        setVisible={setVerifyModal}
-        RenderComponent={RenderVerifyInfo}
-      />
-    </View>
+    </>
   );
 };
 const styles = StyleSheet.create({

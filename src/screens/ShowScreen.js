@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Dimensions,
   FlatList,
   Modal,
+  Animated,
 } from "react-native";
 import { Viewport } from "@skele/components";
 import * as ImagePicker from "expo-image-picker";
@@ -47,6 +48,7 @@ import ShowUpload from "../components/ShowUpload";
 import LoaderImage from "../components/LoaderImage";
 import InfoBox from "../components/InfoBox";
 import InstanceHeader from "../components/InstanceHeader";
+import StickyHeader from "../components/StickyHeader";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -118,6 +120,7 @@ const ShowScreen = ({ route, navigation }) => {
 
   const isMine =
     dataState.app_creator && dataState.app_creator._id === userInfo._id;
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const listItems = [
     {
@@ -731,16 +734,26 @@ const ShowScreen = ({ route, navigation }) => {
         />
       ) : (
         <Viewport.Tracker>
-          <FlatList
-            data={["OTAKU"]}
-            ListHeaderComponent={<InstanceHeader instanceData={headerObj} />}
-            listKey="@home"
-            renderItem={renderHome}
-            refreshing={refreshing}
-            onRefresh={handleScreenRefresh}
-            overScrollMode="never"
-            keyExtractor={(item, index) => item + index}
-          />
+          <>
+            <Animated.FlatList
+              data={["OTAKU"]}
+              ListHeaderComponent={<InstanceHeader instanceData={headerObj} />}
+              listKey="@home"
+              onScroll={Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: true }
+              )}
+              renderItem={renderHome}
+              refreshing={refreshing}
+              onRefresh={handleScreenRefresh}
+              overScrollMode="never"
+              keyExtractor={(item, index) => item + index}
+            />
+            <StickyHeader
+              scrollY={scrollY}
+              title={dataState?.name_j || dataState?.name_e}
+            />
+          </>
         </Viewport.Tracker>
       )}
       {stickerPop && (

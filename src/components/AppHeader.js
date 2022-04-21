@@ -22,7 +22,7 @@ const AppHeader = ({
 }) => {
   const navigation = useNavigation();
   return (
-    <View style={style}>
+    <>
       {type == "background" && (
         <View style={styles.container}>
           <TouchableOpacity
@@ -45,7 +45,7 @@ const AppHeader = ({
         </View>
       )}
       {type === "transparent" && (
-        <Screen style={styles.bgContainer}>
+        <View style={{ ...styles.bgContainer, ...style }}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigation.goBack()}
@@ -70,10 +70,10 @@ const AppHeader = ({
               />
             </TouchableOpacity>
           )}
-        </Screen>
+        </View>
       )}
       <Separator h={1} m={0.1} />
-    </View>
+    </>
   );
 };
 const styles = StyleSheet.create({
@@ -86,13 +86,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bgContainer: {
-    backgroundColor: "transparent",
-    position: "absolute",
-    paddingHorizontal: width * 0.04,
-    marginTop: 12,
-    width,
     flexDirection: "row",
+    width,
     justifyContent: "space-between",
+    paddingHorizontal: 18,
   },
   bgIconCont: {
     backgroundColor: "rgba(0,0,0,0.09)",

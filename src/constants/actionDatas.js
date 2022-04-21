@@ -2,7 +2,7 @@ export default [
   {
     id: "1",
     title: "Channels",
-    subTitle: "See your subscribed channels!",
+    subTitle: "See your favorite channels!",
     info1: "Subscribe to different channels to get good feeds",
     nav: "Channel",
     bg: "#ffafbd",
