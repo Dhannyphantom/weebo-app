@@ -1,566 +1,298 @@
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  View,
-  StyleSheet,
   Animated,
-  Modal,
-  PanResponder,
-  Image,
   Dimensions,
+  Easing,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
   TouchableOpacity,
+  View,
 } from "react-native";
+import { Viewport } from "@skele/components";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import { Feather } from "@expo/vector-icons";
-
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
-
 import AppText from "./AppText";
-import ProfilePic from "./ProfilePic";
-import DropDown from "./DropDown";
 import colors from "../constants/colors";
-import Screen from "./Screen";
-import PostVideo from "./PostVideo";
+import ProfilePic from "./ProfilePic";
 import getTimestamp from "../constants/getTimestamp";
 import ActivityIndicator from "./ActivityIndicator";
+import PostVideo from "./PostVideo";
 
 const { width, height } = Dimensions.get("window");
+const CIRCLER = width * 0.1;
+const SCROLL_INTERVAL = height + height * 0.11;
+const viewabilityConfig = {
+  waitForInteraction: false,
+  minimumViewTime: 30,
+  viewAreaCoveragePercentThreshold: 50,
+};
 
-const DisplayStatus = ({ modalObj, setVisible }) => {
-  if (!modalObj) return null;
-  const {
-    state: { userInfo },
-  } = useContext(AuthContext);
-  const { viewStatus } = useContext(FeedContext);
-  const [count, setCount] = useState(0);
-  const [viewCounter, setViewCounter] = useState("...");
-  const [statuses, setStatuses] = useState(null);
-  const [mediaLoading, setMediaLoading] = useState(true);
-  const [dropModal, setDropModal] = useState(false);
-  const [showAnim, setShowAnim] = useState({ vis: false, dir: null });
-  const [statusText, setStatusText] = useState({
-    bg: null,
-    tColor: null,
-    show: false,
-    text: null,
-    pos: null,
-  });
-  const [playVid, setPlayVid] = useState(null);
-  const [speedo, setSpeedo] = useState(0.05);
+export default function DisplayStatus({ modalObj, setVisible }) {
+  const [active, setActive] = useState({ key: null, duration: 5000 });
+  const [player, setPlayer] = useState(false);
 
-  const isVisible = modalObj.vis;
-  const modalData = statuses && statuses.posts;
-  const modalCurrID = modalObj?.data?._id;
-  const allStatuses = modalObj?.data?.all;
-  // // modalData = [{type: "image/jpeg", uri, width, height, thumb}]
-  // if (!isVisible || !modalData) return null;
-
+  const safeInsets = useSafeAreaInsets();
+  const headerScroll = useRef(null);
+  const scrollRef = useRef(null);
   const lottieRef = useRef(null);
-  const nextAnimRef = useRef(null);
-  const translator = useRef(new Animated.Value(0)).current;
 
-  const modalPanresponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => {
-        // DISABLE GESTURES FOR VIDEO DISPLAY
-        // if (params.type === "video") {
-        //   return false;
-        // }
-        return true;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dy > 50) {
-          translator.setValue(gestureState.dy - 50);
-        } else {
-          // NOT A SWIPE GESTURE POSSIBLY
-        }
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        if (gestureState.dy > height * 0.35 || gestureState.vy > 0.8) {
-          Animated.timing(translator, {
-            toValue: height * 0.7,
-            useNativeDriver: true,
-          }).start(() => handleCloseModal());
-        } else {
-          Animated.spring(translator, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    })
-  ).current;
-
-  let currStatus = allStatuses?.find((obj) => obj._id == modalCurrID);
-
-  const dropModalList = [
-    {
-      id: "1",
-      name: "Remove Story",
-      icon: "delete",
-      show: true,
-      onPress: () => {
-        console.log("Deleted");
-      },
-      iconPack: "MCI",
-    },
-    {
-      id: "1428",
-      name: "Report Story",
-      icon: "message-minus-outline",
-      show: true,
-      onPress: () => {
-        console.log("Reported");
-      },
-      iconPack: "MCI",
-    },
-  ];
+  const modalData = modalObj?.data?.all;
+  const statuses = modalData && modalData[0].posts;
 
   const handleCloseModal = () => {
     setVisible({ vis: false, data: null });
-    setCount(0);
   };
 
-  const handleAnimFinish = (inc, isBtn) => {
-    // console.log("MODAL", modalData);
-    // console.log("STATUSES", allStatuses);
-    if (!modalData[count + inc]) {
-      const currIndex = allStatuses.findIndex((obj) => obj._id == statuses._id);
-      const nextIndex = allStatuses[currIndex + inc]; //
-      if (nextIndex) {
-        //go forward or backwards
-        const nextCount =
-          inc === -1 && isBtn ? nextIndex?.posts?.length - 1 : 0;
-        setShowAnim({ vis: true, dir: inc });
-        setCount(nextCount);
-        return setStatuses(nextIndex);
-      }
-      setCount(0);
-      if (isBtn) return null;
-      return handleCloseModal();
-    }
-    setCount(count + inc);
-    setMediaLoading(true);
-    // lottieRef?.current?.play();
-  };
-
-  const handleNextAnimFinish = () => {
-    setShowAnim({ vis: false, dir: null });
-  };
-
-  let timer;
-  const handleModalPress = (type) => {
-    clearTimeout(timer);
-    // REMOVE CODE BELOW AND SET IT RIGHT LATER
-    // TRY AND MAKE THE VIDEO PAUSE ON PRESS IN AND PLAY AND PRESS OUT
-    // if (modalData[count]?.type === "video") return;
-    // ADD LOGIC TO CHECK TIME FOR PRESS
-    if (type === "in") {
-      // lottieRef?.current?.pause();
-      timer = setTimeout(() => {
-        setPlayVid(true);
-      }, 500);
-    } else {
-      clearTimeout(timer);
-      // lottieRef?.current?.resume();
-      timer = setTimeout(() => {
-        setPlayVid(false);
-      }, 250);
-    }
-  };
-
-  const handleMediaLoad = () => {
-    lottieRef?.current?.play();
-    setMediaLoading(false);
-  };
-
-  const handleMenuIcon = () => {
-    // console.log("Icon pressed");
-    setDropModal(!dropModal);
-    if (playVid) {
-      setPlayVid(false);
-    } else {
-      setPlayVid(true);
-    }
-  };
-
-  const handleStatusViewer = () => {
-    const currCounter = modalData && modalData[count]?.viewers?.length;
-    const viewersArr = modalData && modalData[count]?.viewers;
-    const isViewed = viewersArr && viewersArr.includes(userInfo._id);
-    if (isViewed) {
-      setViewCounter(currCounter);
-    } else {
-      setViewCounter(currCounter + 1);
-    }
-    if (isVisible && !isViewed) {
-      // console.log(viewersArr, userInfo._id);
-      const viewData = {
-        user: userInfo._id,
-        status: modalCurrID,
-        post: modalData[count]?._id,
-      };
-      viewStatus(
-        viewData,
-        (resData) => {
-          // console.log(resData);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-    }
-  };
-
-  const handlePageStory = () => {
-    if (modalData) {
-      if (modalData[count]?.type === "image") {
-        setSpeedo(3);
-      } else if (modalData[count]?.type === "video") {
-        // console.log(modalData[count]);
-        const millis = modalData[count]?.durationMillis / 1000;
-        if (millis !== 0) {
-          const speed = 15 / millis;
-          setSpeedo(speed);
-        }
-      }
-
-      /// CAPTEXT
-      const capText =
-        modalData[count]?.text?.length > 0 ? modalData[count]?.text : null;
-
-      /// CAPBG
-      let capBg;
-      if (modalData[count]?.tColor === "normal") {
-        capBg = {
-          color: colors.black,
-          bg: colors.white,
-        };
-      } else if (modalData[count]?.tColor === "inverted") {
-        capBg = {
-          color: colors.white,
-          bg: colors.black,
-        };
-      }
-      const statusObj = {
-        pos: modalData[count]?.pos,
-        tColor: capBg.color,
-        bg: capBg.bg,
-        text: capText,
-        show: true,
-      };
-      setStatusText(statusObj);
-    }
-    handleStatusViewer();
-  };
-
-  const handleStatusNav = (type) => {
-    if (type === "right") {
-      handleAnimFinish(1, true);
-    } else if (type === "left") {
-      handleAnimFinish(-1, true);
-    }
-  };
-
-  useEffect(() => {
-    setStatuses(currStatus);
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (dropModal) {
+  const handleScrollActions = (type) => {
+    if (type === "begin") {
       lottieRef?.current?.pause();
-    } else {
+      console.log("begins");
+    } else if (type === "end") {
       lottieRef?.current?.resume();
+      console.log("ends");
     }
-  }, [dropModal]);
+  };
 
-  useEffect(() => {
-    if (playVid) {
-      lottieRef?.current?.pause();
-    } else {
-      lottieRef?.current?.resume();
+  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    if (!viewableItems[0]) {
+      // maybe the first screen
+      setPlayer(false);
+      setActive({ key: null, duration: 5000 });
+    } else if (viewableItems[0]?.item?.type === "video") {
+      // a video so play video
+      setPlayer(true);
+      setActive({
+        key: viewableItems[0]?.key,
+        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+      });
+    } else if (viewableItems[0]?.item?.type === "image") {
+      // an image so pause video
+      setPlayer(false);
+      setActive({
+        key: viewableItems[0]?.key,
+        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+      });
     }
-  }, [playVid]);
+  }, []);
 
-  useEffect(() => {
-    handlePageStory();
-  }, [count, statuses]);
+  const renderModalList = ({ item, index }) => {
+    return (
+      <RenderModalList
+        item={item}
+        idx={index}
+        scrollRefObj={scrollRef}
+        activeItem={active}
+        videoPlayer={player}
+      />
+    );
+  };
 
-  return (
-    <Modal
-      visible={isVisible}
-      animationType="fade"
-      statusBarTranslucent
-      transparent
-      onRequestClose={handleCloseModal}
-    >
-      <Animated.View
-        style={{
-          backgroundColor: colors.black,
-          flex: 1,
-          transform: [{ translateY: translator }],
-          // opacity: 0.5,
-        }}
-      >
-        <Screen>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              lottieRef?.current?.pause();
+  const renderHeaderList = ({ item }) => {
+    return <RenderHeaderList item={item} />;
+  };
+
+  const RenderModalList = ({
+    item,
+    activeItem,
+    videoPlayer,
+    scrollRefObj,
+    idx,
+  }) => {
+    const [mediaLoading, setMediaLoading] = useState(true);
+
+    const handleAnimFinish = () => {
+      scrollRefObj?.current?.scrollToOffset({
+        offset: SCROLL_INTERVAL * (idx + 1),
+        animated: true,
+      });
+    };
+
+    useEffect(() => {
+      if (activeItem?.key == item._id) {
+        lottieRef?.current?.play();
+      }
+    }, [activeItem]);
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.mediaContainer}>
+          <View
+            style={{
+              ...styles.mediaCont,
+              aspectRatio: item?.width / item?.height,
             }}
-            style={styles.container}
           >
-            <View style={styles.headerContainer}>
-              <View style={styles.activity}>
-                <LottieView
-                  source={require("../../assets/animations/circe_countdown.json")}
-                  autoPlay={false}
-                  style={{ width: width * 0.075, height: width * 0.075 }}
-                  speed={speedo}
-                  ref={lottieRef}
-                  autoSize
-                  loop={false}
-                  onAnimationFinish={() => handleAnimFinish(1)}
-                />
-                {modalData && (
-                  <View style={styles.activityText}>
-                    <AppText style={{ color: colors.white }} bold size="xlarge">
-                      {(modalData.length - count).toString()}
-                    </AppText>
-                  </View>
-                )}
-              </View>
-              <TouchableOpacity activeOpacity={1} style={styles.header}>
-                {statuses && (
-                  <View style={styles.headerCont}>
-                    <View style={styles.headerTitles}>
-                      <AppText bold size="xlarge" style={styles.headerText}>
-                        {statuses[statuses.instance]?.dpName ??
-                          statuses[statuses.instance]?.name ??
-                          statuses[statuses.instance]?.name_j ??
-                          statuses[statuses.instance]?.name_e}
-                      </AppText>
-                      <AppText style={styles.headerInstance}>
-                        {statuses.instance}
-                      </AppText>
-                      {modalData && (
-                        <AppText style={styles.headerDate}>
-                          {getTimestamp(modalData[count]?._id, "status")}
-                        </AppText>
-                      )}
-                    </View>
-                    <ProfilePic
-                      source={statuses[statuses.instance]?.cover_photo?.uri}
-                      size={60}
-                      border={1.5}
-                      borderColor={colors.white}
-                      disabled
-                    />
-                    <TouchableOpacity
-                      onPress={handleMenuIcon}
-                      style={styles.menuIcon}
-                    >
-                      <Feather
-                        name="more-vertical"
-                        color={colors.white}
-                        size={width * 0.035}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-            {modalData && modalData[0] && (
+            {item?.type === "image" && (
               <>
-                <View style={styles.mediaContainer}>
-                  <View
-                    style={{
-                      ...styles.mediaCont,
-                      aspectRatio:
-                        modalData[count]?.width / modalData[count]?.height,
-                    }}
-                  >
-                    {modalData[count]?.type === "image" && (
-                      <>
-                        <Image
-                          source={{ uri: modalData[count]?.uri }}
-                          onLoadEnd={handleMediaLoad}
-                          style={styles.image}
-                        />
-                        <ActivityIndicator
-                          visible={mediaLoading}
-                          size={0.3}
-                          type="loader"
-                          style={styles.loader}
-                          transparent
-                        />
-                      </>
-                    )}
-                  </View>
-                </View>
-                {modalData[count]?.type === "video" && (
-                  <View style={styles.vidContainer}>
-                    <PostVideo
-                      vidUri={modalData[count]?.uri}
-                      disableDoublePress
-                      disableLongPress
-                      viewable={false}
-                      onLoadEnd={handleMediaLoad}
-                      contStyle={styles.vidContStyle}
-                      showTimer={false}
-                      full
-                      style={styles.vidComp}
-                      playFunc={playVid}
-                    />
-                    <ActivityIndicator
-                      visible={mediaLoading}
-                      size={0.3}
-                      type="loader"
-                      style={styles.loader}
-                      transparent
-                    />
-                  </View>
-                )}
+                <Image
+                  source={{ uri: item?.uri }}
+                  // onLoadEnd={() => setMediaLoading(false)}
+                  style={styles.image}
+                />
               </>
             )}
-          </TouchableOpacity>
-
-          <View
-            style={{
-              position: "absolute",
-              width,
-              height: height,
-              flexDirection: "row",
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => handleStatusNav("left")}
-              style={{ flex: 0.6, height: height }}
-            />
-            <TouchableOpacity
-              onPress={() => handleStatusNav("mid")}
-              onPressIn={() => handleModalPress("in")}
-              onPressOut={() => handleModalPress("out")}
-              activeOpacity={1}
-              style={{ flex: 1, height }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                <View style={styles.viewers}>
-                  <Feather
-                    name="eye"
-                    color={colors.white}
-                    size={width * 0.03}
-                  />
-                  <AppText
-                    bold
-                    size="large"
-                    style={{ color: colors.white, marginLeft: 4 }}
-                  >
-                    {" "}
-                    {Number.isNaN(viewCounter) ? "..." : viewCounter}
-                  </AppText>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleStatusNav("right")}
-              style={{
-                flex: 0.6,
-                height: height,
-                marginTop: height * 0.2,
-              }}
-              activeOpacity={1}
-            />
-          </View>
-          <View
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              justifyContent: "center",
-            }}
-          >
-            {statusText?.text?.length > 0 && statusText.show && (
-              <View
-                style={{
-                  ...styles.statusDisplay,
-                  transform: [
-                    { translateX: statusText?.pos?.x + 10 || 0 },
-                    { translateY: statusText?.pos?.y + 10 || 0 },
-                  ],
-                }}
-              >
-                <>
-                  {statusText?.text?.map((text, idx) => {
-                    return (
-                      <AppText
-                        size="xxlarge"
-                        key={idx}
-                        bold
-                        style={{
-                          ...styles.statusText,
-                          backgroundColor: statusText.bg,
-                          color: statusText.tColor,
-                          bottom: idx !== 0 ? idx * 5 : 0,
-                        }}
-                      >
-                        {text}
-                      </AppText>
-                    );
-                  })}
-                </>
+            {item?.type === "video" && (
+              <View style={styles.vidContainer}>
+                <PostVideo
+                  vidUri={item?.uri}
+                  disableDoublePress
+                  disableLongPress
+                  viewable={false}
+                  // onLoadEnd={() => setMediaLoading(false)}
+                  showTimer={false}
+                  full
+                  autoPlayer={false}
+                  playFunc={videoPlayer}
+                />
+                {/* <ActivityIndicator
+                  visible={mediaLoading}
+                  size={0.3}
+                  type="loader"
+                  style={styles.loader}
+                  transparent
+                /> */}
               </View>
             )}
           </View>
-          {showAnim.vis && (
-            <View style={styles.nextLottie}>
-              <View
-                style={{
-                  transform: [
-                    { rotate: showAnim.dir === 1 ? "0deg" : "180deg" },
-                  ],
-                }}
-              >
-                <LottieView
-                  source={require("../../assets/animations/next_arrow.json")}
-                  autoPlay
-                  style={{ width: width * 0.4, height: width * 0.4 }}
-                  speed={6}
-                  ref={nextAnimRef}
-                  autoSize
-                  loop={false}
-                  onAnimationFinish={() => handleNextAnimFinish()}
-                />
-              </View>
-            </View>
-          )}
+        </View>
+      </View>
+    );
+  };
+  const RenderEmptyComponent = () => {
+    return (
+      <View>
+        <AppText>EMPTYYYYYYYYYYYYYY</AppText>
+      </View>
+    );
+  };
 
-          <DropDown
-            visible={dropModal}
-            setVisible={setDropModal}
-            closeFunc={handleMenuIcon}
-            lists={dropModalList}
+  const RenderHeaderList = ({ item, progress }) => {
+    return (
+      <View style={styles.headerList}>
+        <View>
+          <LottieView
+            source={require("../../assets/animations/circe_countdown.json")}
+            autoPlay={false}
+            duration={active?.duration}
+            style={{ width: CIRCLER, height: CIRCLER }}
+            ref={lottieRef}
+            loop={false}
+            // autoSize
+            // onAnimationFinish={() => handleAnimFinish(1)}
           />
-        </Screen>
-      </Animated.View>
-    </Modal>
+          <View style={styles.activityText}>
+            <AppText style={{ color: colors.white }} bold size="xlarge">
+              {modalData.length.toString()}
+            </AppText>
+          </View>
+        </View>
+        <View style={styles.headerCont}>
+          <View style={styles.headerTitles}>
+            <AppText bold size="xlarge" style={styles.headerText}>
+              {item[item.instance]?.dpName ??
+                item[item.instance]?.name ??
+                item[item.instance]?.name_j ??
+                item[item.instance]?.name_e}
+            </AppText>
+            <AppText style={styles.headerInstance}>{item.instance}</AppText>
+            {modalData && (
+              <AppText style={styles.headerDate}>
+                {getTimestamp(modalData[0]?._id, "status")}
+              </AppText>
+            )}
+          </View>
+          <ProfilePic
+            source={item[item.instance]?.cover_photo?.uri}
+            size={60}
+            border={1.5}
+            borderColor={colors.white}
+            disabled
+          />
+          <TouchableOpacity
+            // onPress={handleMenuIcon}
+            style={styles.menuIcon}
+          >
+            <Feather
+              name="more-vertical"
+              color={colors.white}
+              size={width * 0.035}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  const RenderHeader = () => {
+    return (
+      <View style={{ ...styles.header, paddingTop: safeInsets.top + 5 }}>
+        <FlatList
+          data={modalData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          snapToAlignment="center"
+          ref={headerScroll}
+          snapToInterval={width}
+          scrollEnabled={false}
+          decelerationRate={0.2}
+          keyExtractor={(item) => item._id}
+          renderItem={renderHeaderList}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <>
+      <StatusBar style="light" />
+      <Modal
+        visible={modalObj.vis}
+        onRequestClose={handleCloseModal}
+        statusBarTranslucent
+        style={{ flex: 1 }}
+        transparent
+      >
+        <View style={styles.container}>
+          <Viewport.Tracker style={{ flex: 1 }}>
+            <>
+              <FlatList
+                data={statuses}
+                snapToAlignment="center"
+                ref={scrollRef}
+                showsVerticalScrollIndicator={false}
+                snapToInterval={SCROLL_INTERVAL}
+                viewabilityConfig={viewabilityConfig}
+                onViewableItemsChanged={onViewableItemsChanged}
+                overScrollMode="never"
+                pagingEnabled
+                decelerationRate={0.3}
+                onScrollBeginDrag={() => handleScrollActions("begin")}
+                onScrollEndDrag={() => handleScrollActions("end")}
+                keyExtractor={(item) => item._id}
+                ListEmptyComponent={RenderEmptyComponent}
+                renderItem={renderModalList}
+              />
+            </>
+          </Viewport.Tracker>
+          <RenderHeader />
+        </View>
+      </Modal>
+    </>
   );
-};
+}
+
 const styles = StyleSheet.create({
-  activity: {
-    marginLeft: 15,
-  },
   activityText: {
     position: "absolute",
-    // zIndex: 6,
-    width: width * 0.075,
-    height: width * 0.075,
+    width: CIRCLER,
+    height: CIRCLER,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -568,12 +300,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.black,
   },
-  flatList: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  header: {
+    position: "absolute",
+    width,
   },
-  header: {},
+  headerList: {
+    width,
+    flexDirection: "row",
+    paddingLeft: 8,
+    paddingRight: 5,
+    justifyContent: "space-between",
+  },
   headerCont: {
     flexDirection: "row",
     alignItems: "center",
@@ -603,78 +340,30 @@ const styles = StyleSheet.create({
     textAlign: "right",
     color: colors.extraLight,
   },
+  itemContainer: {
+    // backgroundColor: colors.primary,
+    // marginTop: 15,
+    alignSelf: "center",
+    borderRadius: 25,
+    justifyContent: "center",
+    marginVertical: height * 0.05,
+    alignItems: "center",
+  },
   image: {
     width: "100%",
     height: "100%",
-  },
-  loader: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-  },
-
-  mediaCont: {
-    width,
-    justifyContent: "center",
   },
   mediaContainer: {
     width,
     height,
     justifyContent: "center",
   },
-  menuIcon: {
-    borderRadius: 100,
-    width: width * 0.06,
-    justifyContent: "center",
-    alignItems: "center",
-    height: width * 0.06,
-    marginRight: 12,
-  },
-  nextLottie: {
-    position: "absolute",
-    width: "100%",
-    height: "105%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.8)",
-  },
-  statusDisplay: {
-    position: "absolute",
-    zIndex: 4,
-    alignSelf: "center",
-    padding: 10,
-    borderRadius: width * 0.02,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  statusText: {
-    backgroundColor: colors.white,
-    textAlign: "center",
-    padding: 6,
-    borderRadius: 7,
-    color: colors.black,
-  },
-  viewers: {
-    flexDirection: "row",
-    top: width * 0.06,
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.15)",
-    borderRadius: width * 0.05,
-    padding: 10,
-    paddingHorizontal: 15,
-  },
-  vidContainer: {
-    flex: 1,
+  loader: {
     position: "absolute",
     width: "100%",
     height: "100%",
   },
-  vidComp: {
-    maxHeight: height * 0.95,
-  },
-  vidContStyle: {
-    justifyContent: "center",
-    alignItems: "center",
+  vidContainer: {
+    flex: 1,
   },
 });
-export default DisplayStatus;

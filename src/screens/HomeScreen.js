@@ -18,12 +18,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
-import { Context as ChallContext } from "../config/ChallContext";
 
 import ActivityIndicator from "../components/ActivityIndicator";
 import HomeHeader from "../components/HomeHeader";
 import Shows from "../components/Shows";
-import Feed from "../components/Feed";
 import actionDatas from "../constants/actionDatas";
 import ActionMenu from "../components/ActionMenu";
 import Screen from "../components/Screen";
@@ -248,8 +246,8 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <>
+      <StatusBar style="dark" />
       <Screen style={styles.container}>
-        <StatusBar style="dark" />
         <HomeHeader characters={userInfo.charactersOwned} />
 
         {!feeds?.results[0] ? (

@@ -51,6 +51,7 @@ const PostVideo = ({
   disableLongPress,
   disableDoublePress,
   disableTouch = false,
+  autoPlayer = true,
   disableThumb = false,
   onLoadEnd,
   onLoadStart,
@@ -220,7 +221,7 @@ const PostVideo = ({
   const onReadyForDisplay = ({ naturalSize }) => {
     const { orientation } = naturalSize;
     setOrient(orientation);
-    if (full) {
+    if (full && autoPlayer) {
       setPlayAction(true);
     }
     onLoadEnd && onLoadEnd(vidObj.durationMillis);
@@ -405,13 +406,9 @@ const PostVideo = ({
 
   useEffect(() => {
     if (playFunc !== null) {
-      if (playFunc === true) {
-        handleContPress();
-      } else if (playFunc === false) {
-        handleContPress();
-      }
+      setPlayAction(playFunc);
     }
-  }, [playFunc]);
+  }, [playFunc, orient]);
 
   return (
     <View
