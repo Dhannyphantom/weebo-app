@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     readyHomeScreen(() => setRefreshing(false));
-  });
+  }, []);
 
   const handleHomeScreenGuide = async (type) => {
     const getGuides = await AsyncStorage.getItem("guides");
@@ -104,10 +104,6 @@ const HomeScreen = ({ navigation, route }) => {
     );
   };
 
-  useEffect(() => {
-    readyHomeScreen();
-  }, []);
-
   const renderHome = useCallback(({ item }) => {
     // if (!feeds) return null;
 
@@ -125,12 +121,7 @@ const HomeScreen = ({ navigation, route }) => {
         />
       );
     }
-  });
-
-  const handleStatusShowPress = () => {
-    actionFlatRef.current.scrollToOffset(0);
-    setScreenBool({ ...screenBool, showStatus: true });
-  };
+  }, []);
 
   const handleEndReached = (cb) => {
     if (feeds.hasOwnProperty("next")) {
@@ -153,20 +144,6 @@ const HomeScreen = ({ navigation, route }) => {
       setScreenBool({ ...screenBool, loadMore: false });
     }
   };
-  const RenderHeader = () => {
-    if (showStatus) return null;
-    return (
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={handleStatusShowPress}
-        style={styles.statusHeader}
-      >
-        <Cards style={styles.statusHeaderCard}>
-          <AppText bold>STORIES</AppText>
-        </Cards>
-      </TouchableOpacity>
-    );
-  };
 
   const RenderLoadMore = () => {
     if (loadMore) {
@@ -187,9 +164,15 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const renderActions = ({ item, index }) => {
-    return (
-      <ActionMenu item={item} onPress={() => navigation.navigate(item.nav)} />
-    );
+    const handleNav = () => {
+      if (item.nav === "modal") {
+        setScreenBool({ ...screenBool, showStatus: true });
+      } else {
+        navigation.navigate(item.nav);
+      }
+    };
+
+    return <ActionMenu item={item} onPress={handleNav} />;
   };
 
   const keyExtractor = useCallback((item, index) => {
@@ -225,7 +208,6 @@ const HomeScreen = ({ navigation, route }) => {
           data={actionDatas}
           keyExtractor={(item) => item.id}
           horizontal
-          ListFooterComponent={RenderHeader}
           showsHorizontalScrollIndicator={false}
           renderItem={renderActions}
           overScrollMode="never"
@@ -243,6 +225,10 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
     );
   };
+
+  useEffect(() => {
+    readyHomeScreen();
+  }, []);
 
   return (
     <>

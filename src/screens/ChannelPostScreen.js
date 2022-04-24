@@ -465,7 +465,11 @@ const ChannelPostScreen = ({ route, navigation }) => {
         setVisible={setOpenMedia}
       />
 
-      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
+      <PopMessage
+        popData={popper}
+        timer={0.1}
+        setter={() => setPopper({ vis: false })}
+      />
     </View>
   );
 };

@@ -456,7 +456,7 @@ const InstanceHeader = ({ instanceData }) => {
         <PopMessage
           popData={popper}
           setter={() => setPopper({ vis: false })}
-          timer={0.4}
+          timer={0.2}
         />
         <AppFadeIn
           visible={verifyModal}

@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
+  Modal,
   FlatList,
   Dimensions,
   Image,
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { getThumbnailAsync } from "expo-video-thumbnails";
+import { Feather } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppText from "./AppText";
 import Cards from "./Cards";
-import characterTypes from "../constants/characterTypes";
-
-import ProfilePic from "./ProfilePic";
 import colors from "../constants/colors";
 import DisplayStatus from "./DisplayStatus";
+import Screen from "./Screen";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { height, width } = Dimensions.get("window");
 // const gradientColors = ["#18acbb", "#e8ffe6", "#4abb0b"];
@@ -24,6 +26,8 @@ const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
 const StatusRender = ({ data, show, setter }) => {
   const [display, setDisplay] = useState({ vis: false, data: null });
+
+  const safeInset = useSafeAreaInsets();
 
   if (!show) return null;
   const CircularGradient = ({ children, diameter }) => {
@@ -39,7 +43,14 @@ const StatusRender = ({ data, show, setter }) => {
     );
   };
 
+  const handleCloseModal = () => {
+    setter && setter();
+  };
+
   const StatusCardItem = ({ item, all }) => {
+    const [imager, setImager] = useState({});
+    // const [loading, setLoading] = useState(true);
+
     let cardName;
     switch (item.instance) {
       case "character":
@@ -52,43 +63,49 @@ const StatusRender = ({ data, show, setter }) => {
         cardName = "name";
         break;
     }
-    return (
-      <TouchableOpacity
-        onPress={() => handleCardPress(item, all)}
-        activeOpacity={0.9}
-      >
-        <Cards style={styles.cards}>
-          <CircularGradient diameter={width * 0.16}>
-            <Image
-              source={{ uri: item[item.instance]?.cover_photo?.uri }}
-              resizeMethod="resize"
-              style={styles.image}
-            />
-          </CircularGradient>
-          <View>
-            <AppText style={styles.title} bold>
-              {item[item.instance][cardName] ?? item[item.instance].name_e}
-            </AppText>
-            <AppText style={styles.subTitle}>{item.instance}</AppText>
-          </View>
-        </Cards>
-      </TouchableOpacity>
-    );
-  };
 
-  const RenderHeader = () => {
+    const fetchThumb = async () => {
+      if (imager.uri) return;
+      const lastPost = item.posts[0];
+      if (lastPost.type == "video") {
+        const res = await getThumbnailAsync(lastPost.uri, {
+          time: 5000,
+          quality: 0.1,
+        });
+        setImager(res);
+      } else {
+        setImager(lastPost);
+      }
+    };
+
+    useEffect(() => {
+      fetchThumb();
+    }, []);
     return (
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() => setter()}
-        style={styles.statusHeader}
-      >
-        <Cards style={styles.statusHeaderCard}>
-          <AppText bold style={styles.statusText}>
-            STORIES
-          </AppText>
-        </Cards>
-      </TouchableOpacity>
+      <View style={{ minHeight: height * 0.4 }}>
+        <TouchableOpacity
+          onPress={() => handleCardPress(item, all)}
+          style={styles.statusItem}
+          activeOpacity={1}
+        >
+          <View style={styles.media}>
+            <Image
+              source={imager}
+              blurRadius={3}
+              style={{ width: "100%", height: "100%", borderRadius: 10 }}
+            />
+          </View>
+          <View style={styles.profile}>
+            <CircularGradient diameter={width * 0.16}>
+              <Image
+                source={{ uri: item[item.instance]?.cover_photo?.uri }}
+                resizeMethod="scale"
+                style={styles.image}
+              />
+            </CircularGradient>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -96,59 +113,84 @@ const StatusRender = ({ data, show, setter }) => {
     return <View style={styles.spacer} />;
   };
 
+  const ListEmptyComponent = () => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <AppText style={styles.empty} bold>
+          You don't have any recent stories
+        </AppText>
+      </View>
+    );
+  };
+
   const renderStatuses = ({ item }) => {
     return <StatusCardItem item={item} all={data} />;
   };
 
   const handleCardPress = (item, all) => {
-    setDisplay({ vis: true, data: { _id: item._id, all } });
-    //item: item.posts,
+    const statuses = [];
+    all?.forEach((obj) => {
+      obj.posts.forEach((post) => {
+        statuses.push(post);
+      });
+    });
+    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        ListHeaderComponent={RenderHeader}
-        ListFooterComponent={RenderFooter}
-        data={data}
-        listKey="@statuses"
-        ListEmptyComponent={
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <AppText style={styles.empty} bold>
-              You don't have any recent stories
-            </AppText>
-          </View>
-        }
-        keyExtractor={(item) => item._id}
-        renderItem={renderStatuses}
-      />
-      <DisplayStatus modalObj={display} setVisible={setDisplay} />
-    </View>
+    <Modal visible={show} statusBarTranslucent transparent>
+      <View style={{ ...styles.container, paddingTop: safeInset.top }}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={handleCloseModal}
+          style={styles.header}
+        >
+          <Feather name="x-circle" size={20} color={colors.medium} />
+          <AppText size="large" bold style={styles.headerText}>
+            {" "}
+            CLOSE{" "}
+          </AppText>
+        </TouchableOpacity>
+        <FlatList
+          showsHorizontalScrollIndicator={false}
+          ListFooterComponent={RenderFooter}
+          data={data}
+          numColumns={2}
+          listKey="@statuses"
+          ListEmptyComponent={ListEmptyComponent}
+          keyExtractor={(item) => item._id}
+          renderItem={renderStatuses}
+        />
+        <DisplayStatus modalObj={display} setVisible={setDisplay} />
+      </View>
+    </Modal>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    // flexDirection: "row",
-    // alignItems: "center",
-    minHeight: width * 0.15,
+    flex: 1,
+    backgroundColor: "rgba(255,255,255,0.95)",
   },
   circularInner: {
-    backgroundColor: colors.white,
+    // backgroundColor: "transparent",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 900,
-    width: width * 0.14,
-    height: width * 0.14,
+    // borderRadius: 900,
+    // width: width * 0.14,
+    // height: width * 0.14,
   },
   circular: {
     borderRadius: 900,
     width: width * 0.15,
     height: width * 0.15,
-    backgroundColor: colors.white,
+    backgroundColor: "transparent",
     alignSelf: "center",
     padding: 3,
   },
@@ -168,16 +210,54 @@ const styles = StyleSheet.create({
     color: colors.medium,
     marginLeft: 35,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 5,
+    marginBottom: 12,
+  },
+  headerText: {
+    marginLeft: 3,
+    color: colors.primary,
+  },
   image: {
-    width: width * 0.122,
-    height: width * 0.122,
+    width: width * 0.13,
+    height: width * 0.13,
     borderRadius: 900,
+    borderWidth: 3,
+    borderColor: colors.white,
+  },
+  media: {
+    flex: 1,
+    backgroundColor: colors.extraLight,
+  },
+  profile: {
+    position: "absolute",
+    height: 100,
+    width: width * 0.45,
+    top: height * 0.35 - 50,
+  },
+  loader: {
+    position: "absolute",
+    borderRadius: 10,
+    width: "100%",
+    height: "100%",
   },
   subTitle: {
     textAlign: "center",
     top: 3,
     color: colors.primary,
     textTransform: "capitalize",
+  },
+
+  statusItem: {
+    width: width * 0.45,
+    height: height * 0.35,
+    backgroundColor: colors.white,
+    marginLeft: width * 0.03,
+    elevation: 2,
+    borderRadius: 10,
   },
   statusHeader: {
     flex: 1,

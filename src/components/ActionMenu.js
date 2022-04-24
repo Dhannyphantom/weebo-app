@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   subTxt: {
     color: colors.black,
-    width: "70%",
+    width: "100%",
     opacity: 0.5,
     marginTop: 5,
   },
@@ -102,11 +102,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   upText: {
+    flex: 1,
     marginTop: 6,
-    marginLeft: 10,
+    marginLeft: 6,
+    marginRight: 5,
   },
   title: {
-    fontSize: wUse / 23,
+    width: "100%",
     color: colors.white,
     textTransform: "uppercase",
   },

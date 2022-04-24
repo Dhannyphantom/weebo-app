@@ -11,6 +11,17 @@ export default [
     iconPack: "I",
   },
   {
+    id: "48d",
+    title: "Stories",
+    subTitle: "Daily feeds!",
+    info1: "Have fun with watching stories",
+    nav: "modal",
+    bg: "#36d1dc",
+    bg1: "#5b86e5",
+    icon: "circle",
+    iconPack: "F",
+  },
+  {
     id: "4",
     title: "Merchandise",
     subTitle: "Shop our otaku merchandise!",

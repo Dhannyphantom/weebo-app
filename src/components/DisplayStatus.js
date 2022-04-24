@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  Easing,
   FlatList,
   Image,
   Modal,
@@ -22,11 +21,13 @@ import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import getTimestamp from "../constants/getTimestamp";
 import ActivityIndicator from "./ActivityIndicator";
+import Screen from "./Screen";
 import PostVideo from "./PostVideo";
+const ViewportView = Viewport.Aware(View);
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
-const SCROLL_INTERVAL = height + height * 0.11;
+const SCROLL_INTERVAL = height + height * 0.06;
 const viewabilityConfig = {
   waitForInteraction: false,
   minimumViewTime: 30,
@@ -39,54 +40,20 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const safeInsets = useSafeAreaInsets();
   const headerScroll = useRef(null);
-  const scrollRef = useRef(null);
-  const lottieRef = useRef(null);
+  const listScrollRef = useRef(null);
 
   const modalData = modalObj?.data?.all;
-  const statuses = modalData && modalData[0].posts;
+  const statuses = modalObj?.data?.posts;
 
   const handleCloseModal = () => {
     setVisible({ vis: false, data: null });
   };
-
-  const handleScrollActions = (type) => {
-    if (type === "begin") {
-      lottieRef?.current?.pause();
-      console.log("begins");
-    } else if (type === "end") {
-      lottieRef?.current?.resume();
-      console.log("ends");
-    }
-  };
-
-  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
-    if (!viewableItems[0]) {
-      // maybe the first screen
-      setPlayer(false);
-      setActive({ key: null, duration: 5000 });
-    } else if (viewableItems[0]?.item?.type === "video") {
-      // a video so play video
-      setPlayer(true);
-      setActive({
-        key: viewableItems[0]?.key,
-        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
-      });
-    } else if (viewableItems[0]?.item?.type === "image") {
-      // an image so pause video
-      setPlayer(false);
-      setActive({
-        key: viewableItems[0]?.key,
-        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
-      });
-    }
-  }, []);
 
   const renderModalList = ({ item, index }) => {
     return (
       <RenderModalList
         item={item}
         idx={index}
-        scrollRefObj={scrollRef}
         activeItem={active}
         videoPlayer={player}
       />
@@ -97,68 +64,104 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     return <RenderHeaderList item={item} />;
   };
 
-  const RenderModalList = ({
-    item,
-    activeItem,
-    videoPlayer,
-    scrollRefObj,
-    idx,
-  }) => {
+  const RenderModalList = ({ item, activeItem, videoPlayer, idx }) => {
     const [mediaLoading, setMediaLoading] = useState(true);
+    const [changer, setChanger] = useState(0);
+
+    const timer = item?.durationMillis == 0 ? 5000 : item.durationMillis;
+    const lottieRef = useRef(null);
 
     const handleAnimFinish = () => {
-      scrollRefObj?.current?.scrollToOffset({
-        offset: SCROLL_INTERVAL * (idx + 1),
+      listScrollRef.current?.scrollToOffset({
         animated: true,
+        offset: SCROLL_INTERVAL * (idx + 1),
       });
     };
 
+    // const handleViewportActions = (type) => {
+    //   if (type === "enter") {
+    //     lottieRef?.current?.play();
+    //     console.log("ENTER");
+    //   } else if (type === "leave") {
+    //     lottieRef?.current?.play();
+    //     console.log("LEAVE");
+    //     // lottieRef?.current?.reset();
+    //   }
+    // };
+
     useEffect(() => {
-      if (activeItem?.key == item._id) {
-        lottieRef?.current?.play();
-      }
-    }, [activeItem]);
+      lottieRef?.current?.play();
+    }, [player, activeItem]);
 
     return (
-      <View style={styles.itemContainer}>
-        <View style={styles.mediaContainer}>
-          <View
-            style={{
-              ...styles.mediaCont,
-              aspectRatio: item?.width / item?.height,
-            }}
-          >
-            {item?.type === "image" && (
-              <>
-                <Image
-                  source={{ uri: item?.uri }}
-                  // onLoadEnd={() => setMediaLoading(false)}
-                  style={styles.image}
-                />
-              </>
-            )}
-            {item?.type === "video" && (
-              <View style={styles.vidContainer}>
-                <PostVideo
-                  vidUri={item?.uri}
-                  disableDoublePress
-                  disableLongPress
-                  viewable={false}
-                  // onLoadEnd={() => setMediaLoading(false)}
-                  showTimer={false}
-                  full
-                  autoPlayer={false}
-                  playFunc={videoPlayer}
-                />
-                {/* <ActivityIndicator
+      <View
+      // ViewportView
+      // onViewportEnter={() => handleViewportActions("enter")}
+      // onViewportLeave={() => handleViewportActions("leave")}
+      >
+        <View style={{ ...styles.itemContainer, top: safeInsets.top }}>
+          <View style={styles.mediaContainer}>
+            <View
+              style={{
+                ...styles.mediaCont,
+                aspectRatio: item?.width / item?.height,
+              }}
+            >
+              {item?.type === "image" && (
+                <>
+                  <Image
+                    source={{ uri: item?.uri }}
+                    // onLoadEnd={() => setMediaLoading(false)}
+                    style={styles.image}
+                  />
+                </>
+              )}
+              {item?.type === "video" && (
+                <View style={styles.vidContainer}>
+                  <PostVideo
+                    vidUri={item?.uri}
+                    disableDoublePress
+                    disableLongPress
+                    viewable={false}
+                    // onLoadEnd={() => setMediaLoading(false)}
+                    showTimer={false}
+                    full
+                    style={styles.vidContainer}
+                    autoPlayer={false}
+                    playFunc={videoPlayer}
+                  />
+                  {/* <ActivityIndicator
                   visible={mediaLoading}
                   size={0.3}
                   type="loader"
                   style={styles.loader}
                   transparent
                 /> */}
-              </View>
-            )}
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
+        <View
+          style={{
+            position: "absolute",
+            top: safeInsets.top + 20,
+            marginLeft: 20,
+          }}
+        >
+          <LottieView
+            source={require("../../assets/animations/circe_countdown.json")}
+            autoPlay={false}
+            duration={timer}
+            style={{ width: CIRCLER, height: CIRCLER }}
+            ref={lottieRef}
+            loop={false}
+            onAnimationFinish={handleAnimFinish}
+          />
+          <View style={styles.activityText}>
+            <AppText style={{ color: colors.white }} bold size="large">
+              {modalData.length.toString()}
+            </AppText>
           </View>
         </View>
       </View>
@@ -172,26 +175,14 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     );
   };
 
-  const RenderHeaderList = ({ item, progress }) => {
+  const RenderHeaderList = ({ item }) => {
+    const handleMenu = () => {
+      console.log("menun pressed");
+    };
+
     return (
       <View style={styles.headerList}>
-        <View>
-          <LottieView
-            source={require("../../assets/animations/circe_countdown.json")}
-            autoPlay={false}
-            duration={active?.duration}
-            style={{ width: CIRCLER, height: CIRCLER }}
-            ref={lottieRef}
-            loop={false}
-            // autoSize
-            // onAnimationFinish={() => handleAnimFinish(1)}
-          />
-          <View style={styles.activityText}>
-            <AppText style={{ color: colors.white }} bold size="xlarge">
-              {modalData.length.toString()}
-            </AppText>
-          </View>
-        </View>
+        <View />
         <View style={styles.headerCont}>
           <View style={styles.headerTitles}>
             <AppText bold size="xlarge" style={styles.headerText}>
@@ -215,14 +206,11 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             disabled
           />
           <TouchableOpacity
-            // onPress={handleMenuIcon}
+            activeOpacity={0.5}
+            onPress={handleMenu}
             style={styles.menuIcon}
           >
-            <Feather
-              name="more-vertical"
-              color={colors.white}
-              size={width * 0.035}
-            />
+            <Feather name="more-vertical" color={colors.white} size={20} />
           </TouchableOpacity>
         </View>
       </View>
@@ -260,27 +248,22 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         transparent
       >
         <View style={styles.container}>
-          <Viewport.Tracker style={{ flex: 1 }}>
-            <>
-              <FlatList
-                data={statuses}
-                snapToAlignment="center"
-                ref={scrollRef}
-                showsVerticalScrollIndicator={false}
-                snapToInterval={SCROLL_INTERVAL}
-                viewabilityConfig={viewabilityConfig}
-                onViewableItemsChanged={onViewableItemsChanged}
-                overScrollMode="never"
-                pagingEnabled
-                decelerationRate={0.3}
-                onScrollBeginDrag={() => handleScrollActions("begin")}
-                onScrollEndDrag={() => handleScrollActions("end")}
-                keyExtractor={(item) => item._id}
-                ListEmptyComponent={RenderEmptyComponent}
-                renderItem={renderModalList}
-              />
-            </>
-          </Viewport.Tracker>
+          {/* <Viewport.Tracker> */}
+          <FlatList
+            data={statuses}
+            ref={listScrollRef}
+            snapToAlignment="center"
+            showsVerticalScrollIndicator={false}
+            snapToInterval={SCROLL_INTERVAL}
+            overScrollMode="never"
+            pagingEnabled
+            decelerationRate={0.3}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ paddingBottom: height * 0.05 }}
+            ListEmptyComponent={RenderEmptyComponent}
+            renderItem={renderModalList}
+          />
+          {/* </Viewport.Tracker> */}
           <RenderHeader />
         </View>
       </Modal>
@@ -341,12 +324,10 @@ const styles = StyleSheet.create({
     color: colors.extraLight,
   },
   itemContainer: {
-    // backgroundColor: colors.primary,
-    // marginTop: 15,
     alignSelf: "center",
     borderRadius: 25,
     justifyContent: "center",
-    marginVertical: height * 0.05,
+    marginBottom: height * 0.05,
     alignItems: "center",
   },
   image: {
@@ -356,7 +337,11 @@ const styles = StyleSheet.create({
   mediaContainer: {
     width,
     height,
+    alignItems: "center",
     justifyContent: "center",
+  },
+  menuIcon: {
+    paddingHorizontal: 10,
   },
   loader: {
     position: "absolute",
@@ -364,6 +349,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   vidContainer: {
-    flex: 1,
+    // flex: 1,
+    // height,
+    // // backgroundColor: "cyan",
+    // alignSelf: "center",
   },
 });
