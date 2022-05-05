@@ -74,10 +74,13 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   // const [visibility, setVisibility] = useState(false);
 
   const flatRef = useRef(null);
-  const slider = useRef(new Animated.Value(0)).current;
-  const sliderBack = useRef(new Animated.Value(-width)).current;
-  const imageTranslator = useRef(new Animated.Value(0.2)).current;
   const modalTranslator = useRef(new Animated.Value(-height)).current;
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  const dotsTranslator = scrollX.interpolate({
+    inputRange: [0, width],
+    outputRange: [0, width * 0.07 + 16],
+  });
 
   const handleCloseModal = () => {
     Animated.timing(modalTranslator, {
@@ -97,14 +100,15 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
           // backgroundColor: index == slideIndex ? bgColor : colors.light,
         }}
       >
-        <View style={styles.dots} />
-        <View style={styles.dots} />
-        <View style={styles.dots} />
-        <View
+        {HomeArr.slice(2).map((item, idx) => {
+          return <View style={styles.dots} key={idx} />;
+        })}
+        <Animated.View
           style={{
             ...styles.dots,
             backgroundColor: colors.primary,
             position: "absolute",
+            transform: [{ translateX: dotsTranslator }],
           }}
         />
       </View>
@@ -152,13 +156,6 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     }
   }, [visible]);
 
-  useEffect(() => {
-    Animated.spring(imageTranslator, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  }, [slideIndex]);
-
   return (
     <Modal visible={visible} transparent statusBarTranslucent>
       <Screen
@@ -180,11 +177,15 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             }),
           }}
         >
-          <FlatList
+          <Animated.FlatList
             data={HomeArr}
             keyExtractor={(item) => item.id}
             renderItem={RenderBoxContent}
             horizontal
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true }
+            )}
             snapToInterval={CONTENT_WIDTH}
             ref={flatRef}
             decelerationRate={0.02}
@@ -231,8 +232,8 @@ const styles = StyleSheet.create({
   },
   dots: {
     width: width * 0.07,
-    height: width * 0.005,
-    borderRadius: width * 0.9,
+    height: width * 0.01,
+    borderRadius: 21,
     backgroundColor: colors.light,
     margin: 8,
   },
