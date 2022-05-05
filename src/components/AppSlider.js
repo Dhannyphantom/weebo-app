@@ -73,54 +73,11 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   const [slideIndex, setSlideIndex] = useState(0);
   // const [visibility, setVisibility] = useState(false);
 
+  const flatRef = useRef(null);
   const slider = useRef(new Animated.Value(0)).current;
   const sliderBack = useRef(new Animated.Value(-width)).current;
   const imageTranslator = useRef(new Animated.Value(0.2)).current;
   const modalTranslator = useRef(new Animated.Value(-height)).current;
-
-  const isLastSlide = slideIndex === sliderData.length - 1;
-  const isFirstSlide = slideIndex === 0;
-
-  const handleNextBtn = (type) => {
-    const sliderLength = sliderData.length - 1;
-    if (type === "next") {
-      if (isLastSlide) {
-        handleCloseModal();
-      }
-      if (slideIndex >= sliderLength) return;
-      Animated.parallel([
-        Animated.spring(imageTranslator, {
-          toValue: 0.2,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slider, {
-          toValue: -width,
-          duration: 400,
-          easing: Easing.circle,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        //
-        setSlideIndex(slideIndex + 1);
-        slider.setValue(0);
-      });
-    } else {
-      if (slideIndex <= 0) return;
-      Animated.parallel([
-        Animated.spring(imageTranslator, {
-          toValue: 0.2,
-          useNativeDriver: true,
-        }),
-        Animated.timing(sliderBack, {
-          toValue: 0,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setSlideIndex(slideIndex - 1);
-        sliderBack.setValue(-width);
-      });
-    }
-  };
 
   const handleCloseModal = () => {
     Animated.timing(modalTranslator, {
@@ -136,51 +93,20 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
       <View
         style={{
           ...styles.dotsContainer,
+          marginBottom: 20,
           // backgroundColor: index == slideIndex ? bgColor : colors.light,
         }}
       >
-        <TouchableOpacity
-          onPress={() => handleNextBtn("prev")}
-          activeOpacity={0.8}
-          style={styles.btn}
-        >
-          <MaterialCommunityIcons
-            name="chevron-left"
-            color={colors.primary}
-            size={width * 0.07}
-          />
-          <AppText style={{ color: colors.primary }} bold>
-            PREV
-          </AppText>
-        </TouchableOpacity>
+        <View style={styles.dots} />
+        <View style={styles.dots} />
+        <View style={styles.dots} />
         <View
-          style={{ ...styles.dotsContainer, marginHorizontal: width * 0.05 }}
-        >
-          <View style={styles.dots} />
-          <View style={styles.dots} />
-          <View style={styles.dots} />
-          <View
-            style={{
-              ...styles.dots,
-              backgroundColor: colors.primary,
-              position: "absolute",
-            }}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={() => handleNextBtn("prev")}
-          activeOpacity={0.8}
-          style={styles.btn}
-        >
-          <AppText style={{ color: colors.primary }} bold>
-            NEXT
-          </AppText>
-          <MaterialCommunityIcons
-            name="chevron-right"
-            color={colors.primary}
-            size={width * 0.07}
-          />
-        </TouchableOpacity>
+          style={{
+            ...styles.dots,
+            backgroundColor: colors.primary,
+            position: "absolute",
+          }}
+        />
       </View>
     );
   };
@@ -260,6 +186,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             renderItem={RenderBoxContent}
             horizontal
             snapToInterval={CONTENT_WIDTH}
+            ref={flatRef}
             decelerationRate={0.02}
             snapToAlignment="center"
             pagingEnabled
