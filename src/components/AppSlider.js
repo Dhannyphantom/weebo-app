@@ -70,8 +70,6 @@ const CONTENT_WIDTH = width;
 
 const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   if (!sliderData) return null;
-  const [slideIndex, setSlideIndex] = useState(0);
-  // const [visibility, setVisibility] = useState(false);
 
   const flatRef = useRef(null);
   const modalTranslator = useRef(new Animated.Value(-height)).current;
@@ -115,14 +113,24 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     );
   };
 
-  const RenderBoxContent = ({ item }) => {
+  const RenderBoxContent = ({ item, index }) => {
     if (item.text == "spacer") return <View style={styles.spacer} />;
+    const contentTranslator = scrollX.interpolate({
+      inputRange: [
+        (index - 2) * CONTENT_WIDTH,
+        (index - 1) * CONTENT_WIDTH,
+        index * CONTENT_WIDTH,
+      ],
+      outputRange: [0.8, 1, 0.8],
+      extrapolate: "clamp",
+    });
 
     return (
-      <View
+      <Animated.View
         style={{
           ...styles.box,
           backgroundColor: item.bg,
+          transform: [{ scale: contentTranslator }],
         }}
       >
         <AppText
@@ -142,7 +150,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             ...styles.image,
           }}
         />
-      </View>
+      </Animated.View>
     );
   };
 
@@ -187,6 +195,8 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
               { useNativeDriver: true }
             )}
             snapToInterval={CONTENT_WIDTH}
+            overScrollMode="never"
+            bounces={false}
             ref={flatRef}
             decelerationRate={0.02}
             snapToAlignment="center"
