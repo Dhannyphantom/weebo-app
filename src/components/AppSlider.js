@@ -27,10 +27,10 @@ import { FlatList } from "react-native-gesture-handler";
 const { width, height } = Dimensions.get("window");
 
 const HomeArr = [
-  // {
-  //   id: "ifhdfoih",
-  //   text: "spacer",
-  // },
+  {
+    id: "ifhdfoih",
+    text: "spacer",
+  },
   {
     id: "9686981",
     title: "Welcome to Otaku Socials (Beta)",
@@ -65,6 +65,8 @@ const HomeArr = [
     text: "spacer",
   },
 ];
+
+const CONTENT_WIDTH = width;
 
 const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   if (!sliderData) return null;
@@ -130,14 +132,56 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   };
 
   const RenderDots = ({ data, index }) => {
-    const bgColor = sliderData[index].bg;
     return (
       <View
         style={{
-          ...styles.dots,
-          backgroundColor: index == slideIndex ? bgColor : colors.light,
+          ...styles.dotsContainer,
+          // backgroundColor: index == slideIndex ? bgColor : colors.light,
         }}
-      />
+      >
+        <TouchableOpacity
+          onPress={() => handleNextBtn("prev")}
+          activeOpacity={0.8}
+          style={styles.btn}
+        >
+          <MaterialCommunityIcons
+            name="chevron-left"
+            color={colors.primary}
+            size={width * 0.07}
+          />
+          <AppText style={{ color: colors.primary }} bold>
+            PREV
+          </AppText>
+        </TouchableOpacity>
+        <View
+          style={{ ...styles.dotsContainer, marginHorizontal: width * 0.05 }}
+        >
+          <View style={styles.dots} />
+          <View style={styles.dots} />
+          <View style={styles.dots} />
+          <View
+            style={{
+              ...styles.dots,
+              backgroundColor: colors.primary,
+              position: "absolute",
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={() => handleNextBtn("prev")}
+          activeOpacity={0.8}
+          style={styles.btn}
+        >
+          <AppText style={{ color: colors.primary }} bold>
+            NEXT
+          </AppText>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            color={colors.primary}
+            size={width * 0.07}
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -215,9 +259,13 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             keyExtractor={(item) => item.id}
             renderItem={RenderBoxContent}
             horizontal
+            snapToInterval={CONTENT_WIDTH}
+            decelerationRate={0.02}
+            snapToAlignment="center"
             pagingEnabled
             showsHorizontalScrollIndicator={false}
           />
+          <RenderDots />
         </Animated.View>
       </Screen>
     </Modal>
@@ -229,8 +277,8 @@ const styles = StyleSheet.create({
     height: height * 0.9,
     backgroundColor: colors.primary,
     padding: 10,
-    marginHorizontal: width * 0.08,
     alignItems: "center",
+    marginRight: width * 0.03,
     justifyContent: "space-around",
     borderRadius: width * 0.03,
     elevation: 1.5,
@@ -277,9 +325,8 @@ const styles = StyleSheet.create({
     height: height * 0.32,
   },
   spacer: {
-    width: width * 0.1,
+    width: width * 0.015,
     height: 200,
-    backgroundColor: colors.accent,
   },
   text: {
     color: colors.white,
