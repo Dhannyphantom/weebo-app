@@ -418,7 +418,7 @@ const PostVideo = ({
       }}
     >
       {allowVideoEditing && false && <VideoTrimmer />}
-      <View>
+      <View style={{ flex: 1 }}>
         <TouchableOpacity
           activeOpacity={0.99}
           onPress={handleContPress}

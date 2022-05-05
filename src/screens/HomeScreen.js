@@ -5,13 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, FlatList, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,7 +20,6 @@ import actionDatas from "../constants/actionDatas";
 import ActionMenu from "../components/ActionMenu";
 import Screen from "../components/Screen";
 import EventRender from "../components/EventRender";
-import Cards from "../components/Cards";
 import AppText from "../components/AppText";
 import StatusRender from "../components/StatusRender";
 import colors from "../constants/colors";
@@ -265,7 +258,7 @@ const HomeScreen = ({ navigation, route }) => {
         )}
       </Screen>
       <AppSlider
-        visible={showSlide}
+        visible={!showSlide}
         goCallBackFunc={() => handleHomeScreenGuide("set")}
       />
       <ActivityIndicator

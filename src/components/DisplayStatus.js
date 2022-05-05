@@ -49,6 +49,28 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     setVisible({ vis: false, data: null });
   };
 
+  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    if (!viewableItems[0]) {
+      // maybe the first screen
+      setPlayer(false);
+      setActive({ key: null, duration: 5000 });
+    } else if (viewableItems[0]?.item?.type === "video") {
+      // a video so play video
+      setPlayer(true);
+      setActive({
+        key: viewableItems[0]?.key,
+        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+      });
+    } else if (viewableItems[0]?.item?.type === "image") {
+      // an image so pause video
+      setPlayer(false);
+      setActive({
+        key: viewableItems[0]?.key,
+        duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+      });
+    }
+  }, []);
+
   const renderModalList = ({ item, index }) => {
     return (
       <RenderModalList
@@ -70,6 +92,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
     const timer = item?.durationMillis == 0 ? 5000 : item.durationMillis;
     const lottieRef = useRef(null);
+    const isKey = activeItem.key == item._id;
 
     const handleAnimFinish = () => {
       listScrollRef.current?.scrollToOffset({
@@ -127,6 +150,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
                     showTimer={false}
                     full
                     style={styles.vidContainer}
+                    contStyle={styles.vidCont}
                     autoPlayer={false}
                     playFunc={videoPlayer}
                   />
@@ -142,28 +166,30 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             </View>
           </View>
         </View>
-        <View
-          style={{
-            position: "absolute",
-            top: safeInsets.top + 20,
-            marginLeft: 20,
-          }}
-        >
-          <LottieView
-            source={require("../../assets/animations/circe_countdown.json")}
-            autoPlay={false}
-            duration={timer}
-            style={{ width: CIRCLER, height: CIRCLER }}
-            ref={lottieRef}
-            loop={false}
-            onAnimationFinish={handleAnimFinish}
-          />
-          <View style={styles.activityText}>
-            <AppText style={{ color: colors.white }} bold size="large">
-              {modalData.length.toString()}
-            </AppText>
+        {isKey && (
+          <View
+            style={{
+              position: "absolute",
+              top: safeInsets.top + 20,
+              marginLeft: 20,
+            }}
+          >
+            <LottieView
+              source={require("../../assets/animations/circe_countdown.json")}
+              autoPlay={false}
+              duration={timer}
+              style={{ width: CIRCLER, height: CIRCLER }}
+              ref={lottieRef}
+              loop={false}
+              onAnimationFinish={handleAnimFinish}
+            />
+            <View style={styles.activityText}>
+              <AppText style={{ color: colors.white }} bold size="large">
+                {modalData.length.toString()}
+              </AppText>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     );
   };
@@ -255,6 +281,11 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             snapToAlignment="center"
             showsVerticalScrollIndicator={false}
             snapToInterval={SCROLL_INTERVAL}
+            viewabilityConfig={viewabilityConfig}
+            onViewableItemsChanged={onViewableItemsChanged}
+            removeClippedSubviews
+            maxToRenderPerBatch={3}
+            initialNumToRender={4}
             overScrollMode="never"
             pagingEnabled
             decelerationRate={0.3}
@@ -349,9 +380,16 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   vidContainer: {
-    // flex: 1,
+    flex: 1,
+    justifyContent: "center",
     // height,
     // // backgroundColor: "cyan",
     // alignSelf: "center",
+  },
+  vidCont: {
+    justifyContent: "center",
+    // backgroundColor: "pink",
+    paddingTop: height * 0.035,
+    height,
   },
 });

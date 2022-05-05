@@ -22,10 +22,15 @@ import narutoChibi from "../../assets/arts/naruto_2.png";
 import leviChibi from "../../assets/arts/levi_1.png";
 import luffyChibi from "../../assets/arts/luffy_1.png";
 import togaChibi from "../../assets/arts/toga_1.png";
+import { FlatList } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
 const HomeArr = [
+  // {
+  //   id: "ifhdfoih",
+  //   text: "spacer",
+  // },
   {
     id: "9686981",
     title: "Welcome to Otaku Socials (Beta)",
@@ -54,6 +59,10 @@ const HomeArr = [
     text: "You can support the Otaku team to help improve this app. \n The Otaku developer team is in need of your support for a better app management and user experience",
     bg: colors.facebook,
     image: luffyChibi,
+  },
+  {
+    id: "sshsi",
+    text: "spacer",
   },
 ];
 
@@ -132,24 +141,13 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     );
   };
 
-  const RenderBoxContent = ({ indexer, item, slideIndexer }) => {
-    let translator = 0;
-
-    if (indexer == slideIndexer) {
-      translator = slider;
-    } else if (indexer == slideIndexer - 1) {
-      translator = sliderBack;
-    } else if (indexer < slideIndexer) {
-      return null;
-    }
+  const RenderBoxContent = ({ item }) => {
+    if (item.text == "spacer") return <View style={styles.spacer} />;
 
     return (
-      <Animated.View
+      <View
         style={{
           ...styles.box,
-          position: "absolute",
-          transform: [{ translateX: translator }],
-
           backgroundColor: item.bg,
         }}
       >
@@ -168,19 +166,9 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
           resizeMode="contain"
           style={{
             ...styles.image,
-            opacity: imageTranslator.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            }),
-            transform: [
-              {
-                scale: imageTranslator,
-              },
-            ],
           }}
         />
-        {/* <Image source={item.image} resizeMode="contain" style={styles.image} /> */}
-      </Animated.View>
+      </View>
     );
   };
 
@@ -222,7 +210,89 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             }),
           }}
         >
-          <View style={styles.boxContainer}>
+          <FlatList
+            data={HomeArr}
+            keyExtractor={(item) => item.id}
+            renderItem={RenderBoxContent}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+          />
+        </Animated.View>
+      </Screen>
+    </Modal>
+  );
+};
+const styles = StyleSheet.create({
+  box: {
+    width: width * 0.97,
+    height: height * 0.9,
+    backgroundColor: colors.primary,
+    padding: 10,
+    marginHorizontal: width * 0.08,
+    alignItems: "center",
+    justifyContent: "space-around",
+    borderRadius: width * 0.03,
+    elevation: 1.5,
+  },
+  boxContainer: {
+    width: width * 0.96,
+    height: height * 0.85,
+  },
+  btn: {
+    // backgroundColor: "cyan",
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dots: {
+    width: width * 0.07,
+    height: width * 0.005,
+    borderRadius: width * 0.9,
+    backgroundColor: colors.light,
+    margin: 8,
+  },
+  footer: {
+    flexDirection: "row",
+    width,
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  headerContainer: {
+    width,
+    marginLeft: 30,
+  },
+  headerText: {},
+  image: {
+    width: width * 0.6,
+    height: height * 0.32,
+  },
+  spacer: {
+    width: width * 0.1,
+    height: 200,
+    backgroundColor: colors.accent,
+  },
+  text: {
+    color: colors.white,
+    width: width * 0.72,
+    textAlign: "center",
+    lineHeight: 30,
+  },
+});
+
+export default AppSlider;
+
+/*
+ <View style={styles.boxContainer}>
             {sliderData
               .map((item, idx) => {
                 return (
@@ -277,69 +347,56 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
               )}
             </TouchableOpacity>
           </View>
-        </Animated.View>
-      </Screen>
-    </Modal>
-  );
-};
-const styles = StyleSheet.create({
-  box: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: colors.primary,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-    borderRadius: width * 0.03,
-    elevation: 1.5,
-  },
-  boxContainer: {
-    width: width * 0.96,
-    height: height * 0.85,
-  },
-  btn: {
-    // backgroundColor: "cyan",
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  dotsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  dots: {
-    width: width * 0.07,
-    height: width * 0.005,
-    borderRadius: width * 0.9,
-    backgroundColor: colors.light,
-    margin: 8,
-  },
-  footer: {
-    flexDirection: "row",
-    width,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  headerContainer: {
-    width,
-    marginLeft: 30,
-  },
-  headerText: {},
-  image: {
-    width: width * 0.6,
-    height: height * 0.32,
-  },
-  text: {
-    color: colors.white,
-    width: width * 0.72,
-    textAlign: "center",
-    lineHeight: 30,
-  },
-});
 
-export default AppSlider;
+          ////////////////////////////////
+            const RenderBoxContent = ({ indexer, item, slideIndexer }) => {
+    let translator = 0;
+
+    if (indexer == slideIndexer) {
+      translator = slider;
+    } else if (indexer == slideIndexer - 1) {
+      translator = sliderBack;
+    } else if (indexer < slideIndexer) {
+      return null;
+    }
+
+    return (
+      <Animated.View
+        style={{
+          ...styles.box,
+          position: "absolute",
+          transform: [{ translateX: translator }],
+
+          backgroundColor: item.bg,
+        }}
+      >
+        <AppText
+          style={{ color: colors.white, textAlign: "center" }}
+          size="xxlarge"
+          bold
+        >
+          {item.title}
+        </AppText>
+        <AppText style={styles.text} size="large">
+          {item.text}
+        </AppText>
+        <Animated.Image
+          source={item.image}
+          resizeMode="contain"
+          style={{
+            ...styles.image,
+            opacity: imageTranslator.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            }),
+            transform: [
+              {
+                scale: imageTranslator,
+              },
+            ],
+          }}
+        />
+      </Animated.View>
+      );
+    }
+*/
