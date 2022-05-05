@@ -109,6 +109,22 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             transform: [{ translateX: dotsTranslator }],
           }}
         />
+        <TouchableOpacity
+          onPress={() => handleNextBtn("next")}
+          activeOpacity={0.8}
+          style={styles.btn}
+        >
+          <AppText style={{ color: colors.primary }} bold>
+            GO
+          </AppText>
+          {
+            <MaterialCommunityIcons
+              name="chevron-right"
+              color={colors.primary}
+              size={width * 0.07}
+            />
+          }
+        </TouchableOpacity>
       </View>
     );
   };
@@ -121,7 +137,16 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
         (index - 1) * CONTENT_WIDTH,
         index * CONTENT_WIDTH,
       ],
-      outputRange: [0.8, 1, 0.8],
+      outputRange: [0.85, 1, 0.85],
+      extrapolate: "clamp",
+    });
+    const imageTranslator = scrollX.interpolate({
+      inputRange: [
+        (index - 2) * CONTENT_WIDTH,
+        (index - 1) * CONTENT_WIDTH,
+        index * CONTENT_WIDTH,
+      ],
+      outputRange: [0.1, 1, 0.1],
       extrapolate: "clamp",
     });
 
@@ -146,8 +171,10 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
         <Animated.Image
           source={item.image}
           resizeMode="contain"
+          resizeMethod="scale"
           style={{
             ...styles.image,
+            transform: [{ scale: imageTranslator }],
           }}
         />
       </Animated.View>
