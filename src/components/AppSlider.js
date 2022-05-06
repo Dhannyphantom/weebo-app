@@ -1,17 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
-  Text,
   Dimensions,
-  Image,
   TouchableOpacity,
   Animated,
   Modal,
-  Easing,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AppButton from "./AppButton";
 
 import AppText from "./AppText";
 import Screen from "./Screen";
@@ -22,7 +17,6 @@ import narutoChibi from "../../assets/arts/naruto_2.png";
 import leviChibi from "../../assets/arts/levi_1.png";
 import luffyChibi from "../../assets/arts/luffy_1.png";
 import togaChibi from "../../assets/arts/toga_1.png";
-import { FlatList } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
@@ -100,7 +94,6 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
           style={{
             ...styles.dotsContainer,
             marginBottom: 20,
-            // backgroundColor: index == slideIndex ? bgColor : colors.light,
           }}
         >
           <View
@@ -296,7 +289,6 @@ const styles = StyleSheet.create({
     width,
     marginLeft: 30,
   },
-  headerText: {},
   image: {
     width: width * 0.6,
     height: height * 0.32,
@@ -314,113 +306,3 @@ const styles = StyleSheet.create({
 });
 
 export default AppSlider;
-
-/*
- <View style={styles.boxContainer}>
-            {sliderData
-              .map((item, idx) => {
-                return (
-                  <RenderBoxContent
-                    item={item}
-                    slideIndexer={slideIndex}
-                    indexer={idx}
-                    key={idx}
-                  />
-                );
-              })
-              .reverse()}
-          </View>
-          <View style={styles.footer}>
-            {!isFirstSlide ? (
-              <TouchableOpacity
-                onPress={() => handleNextBtn("prev")}
-                activeOpacity={0.8}
-                style={styles.btn}
-              >
-                <MaterialCommunityIcons
-                  name="chevron-left"
-                  color={sliderData[slideIndex].bg}
-                  size={width * 0.07}
-                />
-                <AppText style={{ color: sliderData[slideIndex].bg }} bold>
-                  PREV
-                </AppText>
-              </TouchableOpacity>
-            ) : (
-              <View style={{ width: width * 0.1 }} />
-            )}
-            <View style={styles.dotsContainer}>
-              {sliderData.map((dot, idx) => {
-                return <RenderDots data={dot} index={idx} key={idx} />;
-              })}
-            </View>
-            <TouchableOpacity
-              onPress={() => handleNextBtn("next")}
-              activeOpacity={0.8}
-              style={styles.btn}
-            >
-              <AppText style={{ color: sliderData[slideIndex]?.bg }} bold>
-                {isLastSlide ? "GO" : "NEXT"}
-              </AppText>
-              {!isLastSlide && (
-                <MaterialCommunityIcons
-                  name="chevron-right"
-                  color={sliderData[slideIndex].bg}
-                  size={width * 0.07}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
-
-          ////////////////////////////////
-            const RenderBoxContent = ({ indexer, item, slideIndexer }) => {
-    let translator = 0;
-
-    if (indexer == slideIndexer) {
-      translator = slider;
-    } else if (indexer == slideIndexer - 1) {
-      translator = sliderBack;
-    } else if (indexer < slideIndexer) {
-      return null;
-    }
-
-    return (
-      <Animated.View
-        style={{
-          ...styles.box,
-          position: "absolute",
-          transform: [{ translateX: translator }],
-
-          backgroundColor: item.bg,
-        }}
-      >
-        <AppText
-          style={{ color: colors.white, textAlign: "center" }}
-          size="xxlarge"
-          bold
-        >
-          {item.title}
-        </AppText>
-        <AppText style={styles.text} size="large">
-          {item.text}
-        </AppText>
-        <Animated.Image
-          source={item.image}
-          resizeMode="contain"
-          style={{
-            ...styles.image,
-            opacity: imageTranslator.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            }),
-            transform: [
-              {
-                scale: imageTranslator,
-              },
-            ],
-          }}
-        />
-      </Animated.View>
-      );
-    }
-*/
