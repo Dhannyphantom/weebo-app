@@ -9,10 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Viewport } from "@skele/components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import LottieView from "lottie-react-native";
 import { Feather } from "@expo/vector-icons";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -20,13 +18,9 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import getTimestamp from "../constants/getTimestamp";
-import ActivityIndicator from "./ActivityIndicator";
-import Screen from "./Screen";
-import PostVideo from "./PostVideo";
-const ViewportView = Viewport.Aware(View);
+import RenderStoryList from "./RenderStoryList";
 
 const { width, height } = Dimensions.get("window");
-const CIRCLER = width * 0.1;
 const SCROLL_INTERVAL = height + height * 0.06;
 const viewabilityConfig = {
   waitForInteraction: false,
@@ -35,7 +29,11 @@ const viewabilityConfig = {
 };
 
 export default function DisplayStatus({ modalObj, setVisible }) {
-  const [active, setActive] = useState({ key: null, duration: 5000 });
+  const [active, setActive] = useState({
+    key: null,
+    type: null,
+    duration: 5000,
+  });
 
   const safeInsets = useSafeAreaInsets();
   const headerScroll = useRef(null);
@@ -51,124 +49,39 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
     if (!viewableItems[0]) {
       // maybe the first screen
-      setActive({ key: null, duration: 5000 });
+      setActive({ key: null, type: null, duration: 5000 });
     } else if (viewableItems[0]?.item?.type === "video") {
       // a video so play video
       setActive({
         key: viewableItems[0]?.key,
+        type: "play",
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
       });
     } else if (viewableItems[0]?.item?.type === "image") {
       // an image so pause video
       setActive({
         key: viewableItems[0]?.key,
+        type: "pause",
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
       });
     }
   }).current;
 
   const renderModalList = ({ item, index }) => {
-    return <RenderModalList item={item} idx={index} activeItem={active?.key} />;
+    return (
+      <RenderStoryList
+        item={item}
+        idx={index}
+        listScrollRef={listScrollRef}
+        activeItem={active?.key}
+      />
+    );
   };
 
   const renderHeaderList = ({ item }) => {
     return <RenderHeaderList item={item} />;
   };
 
-  const RenderModalList = ({ item, activeItem, idx }) => {
-    const timer = item?.durationMillis == 0 ? 5000 : item.durationMillis;
-    const lottieRef = useRef(null);
-    const isKey = activeItem == item._id;
-
-    const handleAnimFinish = () => {
-      listScrollRef.current?.scrollToOffset({
-        animated: true,
-        offset: SCROLL_INTERVAL * (idx + 1),
-      });
-    };
-
-    useEffect(() => {
-      if (isKey) {
-        lottieRef?.current?.play();
-      }
-    }, [activeItem]);
-
-    return (
-      <View>
-        <View style={{ ...styles.itemContainer, top: safeInsets.top }}>
-          <View style={styles.mediaContainer}>
-            <View
-              style={{
-                ...styles.mediaCont,
-                aspectRatio: item?.width / item?.height,
-              }}
-            >
-              {item?.type === "image" && (
-                <>
-                  <Image
-                    source={{ uri: item?.uri }}
-                    // onLoadEnd={() => setMediaLoading(false)}
-                    style={{
-                      ...styles.image,
-                      aspectRatio: item?.width / item?.height,
-                    }}
-                  />
-                </>
-              )}
-              {item?.type === "video" && (
-                <View style={styles.vidContainer}>
-                  <PostVideo
-                    vidUri={item?.uri}
-                    disableDoublePress
-                    disableLongPress
-                    viewable={false}
-                    // onLoadEnd={() => setMediaLoading(false)}
-                    showTimer={false}
-                    full
-                    style={styles.vidContainer}
-                    contStyle={styles.vidCont}
-                    autoPlayer={false}
-                    playFunc={isKey}
-                  />
-                  {/* <ActivityIndicator
-                  visible={mediaLoading}
-                  size={0.3}
-                  type="loader"
-                  style={styles.loader}
-                  transparent
-                /> */}
-                </View>
-              )}
-            </View>
-          </View>
-        </View>
-        {isKey && (
-          <View
-            style={{
-              position: "absolute",
-              top: safeInsets.top + 20,
-              marginLeft: 20,
-            }}
-          >
-            <LottieView
-              source={require("../../assets/animations/circe_countdown.json")}
-              autoPlay={false}
-              duration={timer}
-              style={{ width: CIRCLER, height: CIRCLER }}
-              ref={lottieRef}
-              loop={false}
-              onAnimationFinish={handleAnimFinish}
-            />
-            <View style={styles.activityText}>
-              <AppText style={{ color: colors.white }} bold size="large">
-                {modalData.length.toString()}
-              </AppText>
-            </View>
-          </View>
-        )}
-      </View>
-    );
-  };
   const RenderEmptyComponent = () => {
     return (
       <View>
@@ -279,13 +192,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 }
 
 const styles = StyleSheet.create({
-  activityText: {
-    position: "absolute",
-    width: CIRCLER,
-    height: CIRCLER,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   container: {
     flex: 1,
     backgroundColor: colors.black,
@@ -337,11 +243,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.05,
     alignItems: "center",
   },
-  image: {
-    width: "100%",
-    maxHeight: height * 0.95,
-    // height: "100%",
-  },
+
   mediaContainer: {
     width,
     height,
