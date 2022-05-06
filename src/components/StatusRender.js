@@ -24,65 +24,59 @@ const { height, width } = Dimensions.get("window");
 // const gradientColors = ["#00ffff", "#17c8ff", "#329bff"];
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
-const StatusRender = ({ data, show, setter }) => {
-  const [display, setDisplay] = useState({ vis: false, data: null });
+const StatusCardItem = ({ item, setDisplay, all }) => {
+  const [imager, setImager] = useState({});
 
-  const safeInset = useSafeAreaInsets();
+  let cardName = "";
+  switch (item.instance) {
+    case "character":
+      cardName = "dpName";
+      break;
+    case "show":
+      cardName = "name_j";
+      break;
+    default:
+      cardName = "name";
+      break;
+  }
 
-  if (!show) return null;
-  const CircularGradient = ({ children, diameter }) => {
-    return (
-      <LinearGradient
-        style={styles.circular}
-        start={[1, 0.5]}
-        end={[0, 0]}
-        colors={gradientColors}
-      >
-        <View style={styles.circularInner}>{children}</View>
-      </LinearGradient>
-    );
-  };
-
-  const handleCloseModal = () => {
-    setter && setter();
-  };
-
-  const StatusCardItem = ({ item, all }) => {
-    const [imager, setImager] = useState({});
-    // const [loading, setLoading] = useState(true);
-
-    let cardName;
-    switch (item.instance) {
-      case "character":
-        cardName = "dpName";
-        break;
-      case "show":
-        cardName = "name_j";
-        break;
-      default:
-        cardName = "name";
-        break;
-    }
-
-    const fetchThumb = async () => {
-      if (imager.uri) return;
-      const lastPost = item.posts[0];
-      if (lastPost.type == "video") {
-        const res = await getThumbnailAsync(lastPost.uri, {
-          time: 5000,
-          quality: 0.1,
+  const handleCardPress = (item, all) => {
+    const statuses = [];
+    all?.forEach((obj, idx) => {
+      obj.posts.forEach((post, idxer) => {
+        const lastStory = idxer == obj.posts.length - 1;
+        statuses.push({
+          ...post,
+          storyLength: obj.posts.length,
+          storyNumber: idxer,
+          lastStory,
         });
-        setImager(res);
-      } else {
-        setImager(lastPost);
-      }
-    };
+      });
+    });
+    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
+  };
 
-    useEffect(() => {
-      fetchThumb();
-    }, []);
-    return (
-      <View style={{ minHeight: height * 0.4 }}>
+  const fetchThumb = async () => {
+    if (imager.uri) return;
+    const lastPost = item.posts[0];
+    if (lastPost.type == "video") {
+      const res = await getThumbnailAsync(lastPost.uri, {
+        time: 5000,
+        quality: 0.1,
+      });
+      setImager(res);
+    } else {
+      setImager(lastPost);
+    }
+  };
+
+  useEffect(() => {
+    fetchThumb();
+  }, []);
+
+  return (
+    <View style={styles.cardsContainer}>
+      <>
         <TouchableOpacity
           onPress={() => handleCardPress(item, all)}
           style={styles.statusItem}
@@ -95,22 +89,42 @@ const StatusRender = ({ data, show, setter }) => {
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
             />
           </View>
-          <View style={styles.profile}>
-            <CircularGradient diameter={width * 0.16}>
-              <Image
-                source={{ uri: item[item.instance]?.cover_photo?.uri }}
-                resizeMethod="scale"
-                style={styles.image}
-              />
-            </CircularGradient>
-          </View>
         </TouchableOpacity>
+      </>
+      <View style={styles.profile}>
+        <CircularGradient diameter={width * 0.16}>
+          <Image
+            source={{ uri: item[item.instance]?.cover_photo?.uri }}
+            resizeMethod="scale"
+            style={styles.image}
+          />
+        </CircularGradient>
       </View>
-    );
-  };
+    </View>
+  );
+};
+const CircularGradient = ({ children, diameter }) => {
+  return (
+    <LinearGradient
+      style={styles.circular}
+      start={[1, 0.5]}
+      end={[0, 0]}
+      colors={gradientColors}
+    >
+      <View style={styles.circularInner}>{children}</View>
+    </LinearGradient>
+  );
+};
 
-  const RenderFooter = () => {
-    return <View style={styles.spacer} />;
+const StatusRender = ({ data, show, setter }) => {
+  const [display, setDisplay] = useState({ vis: false, data: null });
+
+  const safeInset = useSafeAreaInsets();
+
+  if (!show) return null;
+
+  const handleCloseModal = () => {
+    setter && setter();
   };
 
   const ListEmptyComponent = () => {
@@ -130,17 +144,7 @@ const StatusRender = ({ data, show, setter }) => {
   };
 
   const renderStatuses = ({ item }) => {
-    return <StatusCardItem item={item} all={data} />;
-  };
-
-  const handleCardPress = (item, all) => {
-    const statuses = [];
-    all?.forEach((obj) => {
-      obj.posts.forEach((post) => {
-        statuses.push(post);
-      });
-    });
-    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
+    return <StatusCardItem item={item} all={data} setDisplay={setDisplay} />;
   };
 
   return (
@@ -159,7 +163,7 @@ const StatusRender = ({ data, show, setter }) => {
         </TouchableOpacity>
         <FlatList
           showsHorizontalScrollIndicator={false}
-          ListFooterComponent={RenderFooter}
+          // ListFooterComponent={RenderFooter}
           data={data}
           numColumns={2}
           listKey="@statuses"
@@ -204,6 +208,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
+  cardsContainer: {
+    elevation: 2,
+  },
   empty: {
     textAlign: "center",
     alignSelf: "center",
@@ -233,10 +240,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.extraLight,
   },
   profile: {
-    position: "absolute",
-    height: 100,
-    width: width * 0.45,
-    top: height * 0.35 - 50,
+    alignSelf: "center",
+    bottom: (width * 0.16) / 2,
+    marginLeft: width * 0.03,
   },
   loader: {
     position: "absolute",
@@ -256,7 +262,7 @@ const styles = StyleSheet.create({
     height: height * 0.35,
     backgroundColor: colors.white,
     marginLeft: width * 0.03,
-    elevation: 2,
+    // elevation: 2,
     borderRadius: 10,
   },
   statusHeader: {

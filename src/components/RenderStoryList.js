@@ -19,7 +19,10 @@ export default function RenderStoryList({
   idx,
 }) {
   const safeInsets = useSafeAreaInsets();
-  const timer = item?.durationMillis == 0 ? 5000 : item.durationMillis;
+  const timer =
+    item?.durationMillis == 0 || !item.durationMillis
+      ? 5000
+      : item.durationMillis;
   const lottieRef = useRef(null);
   const isKey = activeItem == item._id;
 
@@ -104,7 +107,7 @@ export default function RenderStoryList({
           />
           <View style={styles.activityText}>
             <AppText style={{ color: colors.white }} bold size="large">
-              3
+              {item.storyLength - item.storyNumber}
             </AppText>
           </View>
         </View>
