@@ -20,8 +20,6 @@ import Screen from "./Screen";
 import ActivityIndicator from "./ActivityIndicator";
 
 const { height, width } = Dimensions.get("window");
-// const gradientColors = ["#18acbb", "#e8ffe6", "#4abb0b"];
-// const gradientColors = ["#00ffff", "#17c8ff", "#329bff"];
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
 const StatusCardItem = ({ item, setDisplay, all }) => {
@@ -50,6 +48,7 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
           storyLength: obj.posts.length,
           storyNumber: idxer,
           lastStory,
+          counter: lastStory ? post.counter + 1 ?? 0 : post.counter ?? 0,
         });
       });
     });

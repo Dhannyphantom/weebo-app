@@ -15,6 +15,7 @@ const SCROLL_INTERVAL = height + height * 0.06;
 export default function RenderStoryList({
   item,
   listScrollRef,
+  headerScroll,
   activeItem,
   idx,
 }) {
@@ -31,7 +32,15 @@ export default function RenderStoryList({
       animated: true,
       offset: SCROLL_INTERVAL * (idx + 1),
     });
+    if (item.lastStory) {
+      headerScroll.current?.scrollToOffset({
+        animated: true,
+        offset: width,
+      });
+    }
   };
+
+  console.log(item.counter);
 
   useEffect(() => {
     if (isKey) {

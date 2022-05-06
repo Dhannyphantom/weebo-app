@@ -37,6 +37,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const safeInsets = useSafeAreaInsets();
   const headerScroll = useRef(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
   const listScrollRef = useRef(null);
 
   const modalData = modalObj?.data?.all;
@@ -73,6 +74,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         item={item}
         idx={index}
         listScrollRef={listScrollRef}
+        headerScroll={headerScroll}
         activeItem={active?.key}
       />
     );
@@ -163,8 +165,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         transparent
       >
         <View style={styles.container}>
-          {/* <Viewport.Tracker> */}
-          <FlatList
+          <Animated.FlatList
             data={statuses}
             ref={listScrollRef}
             snapToAlignment="center"
@@ -174,6 +175,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             onViewableItemsChanged={onViewableItemsChanged}
             removeClippedSubviews
             maxToRenderPerBatch={3}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollY } } }],
+              { useNativeDriver: true }
+            )}
             initialNumToRender={4}
             overScrollMode="never"
             pagingEnabled
@@ -183,7 +188,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             ListEmptyComponent={RenderEmptyComponent}
             renderItem={renderModalList}
           />
-          {/* </Viewport.Tracker> */}
           <RenderHeader />
         </View>
       </Modal>
