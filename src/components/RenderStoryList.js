@@ -1,5 +1,5 @@
 import { StyleSheet, Image, View, Dimensions } from "react-native";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import ActivityIndicator from "./ActivityIndicator";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
@@ -10,6 +10,7 @@ import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
+const SCROLL_INTERVAL = height + height * 0.06;
 
 export default function RenderStoryList({
   item,
@@ -29,11 +30,11 @@ export default function RenderStoryList({
     });
   };
 
-  // useEffect(() => {
-  //   if (isKey) {
-  //     lottieRef?.current?.play();
-  //   }
-  // }, [activeItem]);
+  useEffect(() => {
+    if (isKey) {
+      lottieRef?.current?.play();
+    }
+  }, [activeItem]);
 
   return (
     <View>
