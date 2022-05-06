@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import DisplayImageScreen from "../screens/DisplayImageScreen";
 import ChatUserScreen from "../screens/ChatUserScreen";
@@ -8,7 +8,7 @@ import TabNavigator from "./TabNavigator";
 
 // SCREEN PACK THAT SHOWS WHEN YOU'RE LOGGED IN
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 // SCREENS HERE WILL NOT DISPLAY THE BOTTOM TABS
 

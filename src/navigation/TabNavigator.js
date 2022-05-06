@@ -1,21 +1,19 @@
 import React, { useContext } from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
-import { Constants } from "expo-constants";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
 import ChallengeStack from "./ChallengeStack";
 import colors from "../constants/colors";
-import AppText from "../components/AppText";
 import AccountNavigator from "./AccountNavigator";
 import AlertNavigator from "./AlertNavigator";
 import HomeStack from "./HomeStack";
 import ProfilePic from "../components/ProfilePic";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const Tab = createBottomTabNavigator();
 
@@ -129,12 +127,5 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  tabText: {
-    color: colors.white,
-    letterSpacing: 0.7,
-  },
-});
 
 export default TabNavigator;

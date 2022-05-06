@@ -1,11 +1,11 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import ChallengeScreen from "../screens/ChallengeScreen";
 import MyChallengeScreen from "../screens/MyChallengeScreen";
 import CharacterScreen from "../screens/CharacterScreen";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const ChallengeStack = () => {
   return (

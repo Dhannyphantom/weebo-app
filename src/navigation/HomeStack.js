@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import CharacterScreen from "../screens/CharacterScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -22,7 +22,7 @@ import FriendListScreen from "../screens/FriendListScreen";
 import ChannelPostScreen from "../screens/ChannelPostScreen";
 import EventScreen from "../screens/EventScreen";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   return (

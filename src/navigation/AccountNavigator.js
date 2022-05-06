@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import AccountScreen from "../screens/AccountScreen";
 import EditProfileScreen from "../screens/EditProfieScreen";
@@ -13,7 +13,7 @@ import SavedCollectionScreen from "../screens/SavedCollectionScreen";
 import ChallengePointScreen from "../screens/ChallengePointScreen";
 import CollectionScreen from "../screens/CollectionScreen";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AccountNavigator = () => {
   return (
