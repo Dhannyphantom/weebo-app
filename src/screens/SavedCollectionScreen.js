@@ -94,7 +94,7 @@ const SavedCollectionScreen = ({ navigation }) => {
         title="Saved Collection"
         RightComponent={() => (
           <AppButton
-            title="New Collection"
+            title="New"
             onPress={() => setModalVis(true)}
             naked
             style={styles.newCollBtn}

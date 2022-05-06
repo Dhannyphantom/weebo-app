@@ -36,7 +36,6 @@ const viewabilityConfig = {
 
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState({ key: null, duration: 5000 });
-  const [player, setPlayer] = useState(false);
 
   const safeInsets = useSafeAreaInsets();
   const headerScroll = useRef(null);
@@ -49,50 +48,37 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     setVisible({ vis: false, data: null });
   };
 
-  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+  const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
     if (!viewableItems[0]) {
       // maybe the first screen
-      setPlayer(false);
       setActive({ key: null, duration: 5000 });
     } else if (viewableItems[0]?.item?.type === "video") {
       // a video so play video
-      setPlayer(true);
       setActive({
         key: viewableItems[0]?.key,
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
       });
     } else if (viewableItems[0]?.item?.type === "image") {
       // an image so pause video
-      setPlayer(false);
       setActive({
         key: viewableItems[0]?.key,
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
       });
     }
-  }, []);
+  }).current;
 
   const renderModalList = ({ item, index }) => {
-    return (
-      <RenderModalList
-        item={item}
-        idx={index}
-        activeItem={active}
-        videoPlayer={player}
-      />
-    );
+    return <RenderModalList item={item} idx={index} activeItem={active?.key} />;
   };
 
   const renderHeaderList = ({ item }) => {
     return <RenderHeaderList item={item} />;
   };
 
-  const RenderModalList = ({ item, activeItem, videoPlayer, idx }) => {
-    const [mediaLoading, setMediaLoading] = useState(true);
-    const [changer, setChanger] = useState(0);
-
+  const RenderModalList = ({ item, activeItem, idx }) => {
     const timer = item?.durationMillis == 0 ? 5000 : item.durationMillis;
     const lottieRef = useRef(null);
-    const isKey = activeItem.key == item._id;
+    const isKey = activeItem == item._id;
 
     const handleAnimFinish = () => {
       listScrollRef.current?.scrollToOffset({
@@ -101,27 +87,14 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       });
     };
 
-    // const handleViewportActions = (type) => {
-    //   if (type === "enter") {
-    //     lottieRef?.current?.play();
-    //     console.log("ENTER");
-    //   } else if (type === "leave") {
-    //     lottieRef?.current?.play();
-    //     console.log("LEAVE");
-    //     // lottieRef?.current?.reset();
-    //   }
-    // };
-
     useEffect(() => {
-      lottieRef?.current?.play();
-    }, [player, activeItem]);
+      if (isKey) {
+        lottieRef?.current?.play();
+      }
+    }, [activeItem]);
 
     return (
-      <View
-      // ViewportView
-      // onViewportEnter={() => handleViewportActions("enter")}
-      // onViewportLeave={() => handleViewportActions("leave")}
-      >
+      <View>
         <View style={{ ...styles.itemContainer, top: safeInsets.top }}>
           <View style={styles.mediaContainer}>
             <View
@@ -135,7 +108,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
                   <Image
                     source={{ uri: item?.uri }}
                     // onLoadEnd={() => setMediaLoading(false)}
-                    style={styles.image}
+                    style={{
+                      ...styles.image,
+                      aspectRatio: item?.width / item?.height,
+                    }}
                   />
                 </>
               )}
@@ -152,7 +128,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
                     style={styles.vidContainer}
                     contStyle={styles.vidCont}
                     autoPlayer={false}
-                    playFunc={videoPlayer}
+                    playFunc={isKey}
                   />
                   {/* <ActivityIndicator
                   visible={mediaLoading}
@@ -363,7 +339,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "100%",
+    maxHeight: height * 0.95,
+    // height: "100%",
   },
   mediaContainer: {
     width,

@@ -142,7 +142,12 @@ const HomeScreen = ({ navigation, route }) => {
     if (loadMore) {
       return (
         <View>
-          <ActivityIndicator visible={loadMore} type="spin" transparent />
+          <ActivityIndicator
+            visible={loadMore}
+            type="spin"
+            size={0.2}
+            transparent
+          />
         </View>
       );
     } else {
@@ -246,8 +251,6 @@ const HomeScreen = ({ navigation, route }) => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: height * 0.1 }}
                 onRefresh={onRefresh}
-                // onScroll={(e) => handleFlatScroll(e)}
-                // overScrollMode="never"
                 onEndReached={handleEndReached}
                 onEndReachedThreshold={0}
                 keyExtractor={keyExtractor}

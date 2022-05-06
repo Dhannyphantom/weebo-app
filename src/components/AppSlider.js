@@ -27,30 +27,30 @@ const HomeArr = [
   },
   {
     id: "9686981",
-    title: "Welcome to Otaku Socials (Beta)",
-    text: "Hello Weeb, Otaku Socials welcomes you to the Anime community where you get to create Otaku Instances and challenge others \n Have fun and connect with your fellow weebs in this Beta version, Official version of the app will be released very soon",
+    title: "Weebo welcomes You!",
+    text: "Hello Weeb, Weebo welcomes you to the Manga and Anime community of degenerate weebs just like you \n Have fun and connect with your fellow weebs in this Beta version, a more stable version of the app will be released soon",
     bg: "#C45D33",
     image: narutoChibi,
   },
   {
     id: "2986",
-    title: "Otaku Instances",
-    text: "Otaku Instances represents existing Anime or Manga Series, Characters, Groups and even your own Channels \n These Otaku Instances will be managed by you when created, or won in Challenges. \n So please do not create already created instance as they will not be verified and removed",
+    title: "Weebo Instances",
+    text: "Weebo Instances represents existing Anime or Manga Series, Characters, Groups and even your own Channels \n These Weebo Instances will be managed by you when created, or won in Challenges. \n Please do not create existing instance as they will not be verified and consequently removed",
     bg: "#A40D4E",
     // bg: "#9E6B59",
     image: togaChibi,
   },
   {
     id: "986082",
-    title: "Otaku Socials on Android",
-    text: "Yo weeb, Otaku Social is currently only available on the android platform. \n The team is working really hard for the iOS platform, please be patient and stay updated",
+    title: "Weebo on Android",
+    text: "Yo weeb, Weebo is currently only available on the android platform. \n The team is working really hard for the iOS platform, please be patient and stay updated",
     bg: "#77472E",
     image: leviChibi,
   },
   {
     id: "276",
-    title: "Support Otaku Social",
-    text: "You can support the Otaku team to help improve this app. \n The Otaku developer team is in need of your support for a better app management and user experience",
+    title: "Support Weebo",
+    text: "You can support the Weebo team to help improve this app. \n The Weebo developer team requires support for a better app management and user experience",
     bg: colors.facebook,
     image: luffyChibi,
   },
@@ -71,7 +71,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
 
   const dotsTranslator = scrollX.interpolate({
     inputRange: [0, width],
-    outputRange: [0, width * 0.07 + 16],
+    outputRange: [-5, width * 0.07 + 11],
   });
 
   const handleCloseModal = () => {
@@ -87,6 +87,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     const closeOpaciter = scrollX.interpolate({
       inputRange: [0, width, width * 3 - 20, width * 3],
       outputRange: [width, width, width, 1],
+      extrapolate: "clamp",
     });
     return (
       <>
@@ -109,6 +110,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             style={{
               ...styles.dots,
               backgroundColor: colors.primary,
+              width: width * 0.08,
               position: "absolute",
               transform: [{ translateX: dotsTranslator }],
             }}
@@ -198,7 +200,12 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   }, [visible]);
 
   return (
-    <Modal visible={visible} transparent statusBarTranslucent>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      statusBarTranslucent
+    >
       <Screen
         style={{
           backgroundColor: colors.black,

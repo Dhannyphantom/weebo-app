@@ -118,7 +118,7 @@ const getMyData = (dispatch) => async (sc, cb) => {
 
 const tryLocalSignin = (dispatch) => async (callback, errCb) => {
   const token = await AsyncStorage.getItem("token");
-  if (!token) return callback && callback();
+  if (!token) return errCb && errCb();
 
   try {
     const user = await authApi.get("/me", {
