@@ -62,14 +62,18 @@ const RequestAuth = ({ navigation }) => {
 
   const run = () => {
     clearMessage();
-    tryLocalSignin(async () => {
-      // const token = await registerForPushNotificationsAsync();
-      // if (token) {
-      //   setPushToken({ token });
-      // }
-      // console.log(token);
-      navigation.navigate("Welcome");
-    });
+    tryLocalSignin(
+      async () => {
+        // const token = await registerForPushNotificationsAsync();
+        // if (token) {
+        //   setPushToken({ token });
+        // }
+        // console.log(token);
+      },
+      () => {
+        navigation.navigate("Welcome");
+      }
+    );
   };
 
   useEffect(() => {
