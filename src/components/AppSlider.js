@@ -89,43 +89,56 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     });
   };
 
-  const RenderDots = ({ data, index }) => {
+  const RenderDots = () => {
+    const closeOpaciter = scrollX.interpolate({
+      inputRange: [0, width, width * 3 - 20, width * 3],
+      outputRange: [width, width, width, 1],
+    });
     return (
-      <View
-        style={{
-          ...styles.dotsContainer,
-          marginBottom: 20,
-          // backgroundColor: index == slideIndex ? bgColor : colors.light,
-        }}
-      >
-        {HomeArr.slice(2).map((item, idx) => {
-          return <View style={styles.dots} key={idx} />;
-        })}
-        <Animated.View
+      <>
+        <View
           style={{
-            ...styles.dots,
-            backgroundColor: colors.primary,
-            position: "absolute",
-            transform: [{ translateX: dotsTranslator }],
+            ...styles.dotsContainer,
+            marginBottom: 20,
+            // backgroundColor: index == slideIndex ? bgColor : colors.light,
           }}
-        />
-        <TouchableOpacity
-          onPress={() => handleNextBtn("next")}
-          activeOpacity={0.8}
-          style={styles.btn}
         >
-          <AppText style={{ color: colors.primary }} bold>
-            GO
-          </AppText>
-          {
-            <MaterialCommunityIcons
-              name="chevron-right"
-              color={colors.primary}
-              size={width * 0.07}
-            />
-          }
-        </TouchableOpacity>
-      </View>
+          <View
+            style={{
+              ...styles.dotsContainer,
+            }}
+          >
+            {HomeArr.slice(2).map((item, idx) => {
+              return <View style={styles.dots} key={idx} />;
+            })}
+          </View>
+          <Animated.View
+            style={{
+              ...styles.dots,
+              backgroundColor: colors.primary,
+              position: "absolute",
+              transform: [{ translateX: dotsTranslator }],
+            }}
+          />
+          <Animated.View
+            style={{
+              position: "absolute",
+              left: width / 2.1,
+              transform: [{ translateX: closeOpaciter }],
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleCloseModal}
+              activeOpacity={0.8}
+              style={styles.btn}
+            >
+              <AppText style={{ color: colors.white }} bold>
+                CLOSE
+              </AppText>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </>
     );
   };
 
@@ -253,10 +266,9 @@ const styles = StyleSheet.create({
     height: height * 0.85,
   },
   btn: {
-    // backgroundColor: "cyan",
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    padding: 12,
+    backgroundColor: colors.heart,
+    borderRadius: 12,
   },
   container: {
     flex: 1,

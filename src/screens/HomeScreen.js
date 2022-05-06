@@ -258,7 +258,7 @@ const HomeScreen = ({ navigation, route }) => {
         )}
       </Screen>
       <AppSlider
-        visible={!showSlide}
+        visible={showSlide}
         goCallBackFunc={() => handleHomeScreenGuide("set")}
       />
       <ActivityIndicator
