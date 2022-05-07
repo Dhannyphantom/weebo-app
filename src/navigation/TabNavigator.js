@@ -1,5 +1,10 @@
-import React, { useContext } from "react";
-import { Dimensions } from "react-native";
+import React, { useContext, useEffect, useRef } from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   MaterialCommunityIcons,
@@ -21,6 +26,45 @@ const { width } = Dimensions.get("window");
 
 const Tab = createBottomTabNavigator();
 
+const TabArr = [
+  {
+    id: "1",
+    name: "HomeStack",
+    component: HomeStack,
+    iconName: "appstore-o",
+    iconPack: "AD",
+    iconFName: "appstore1",
+    iconFPack: "AD",
+  },
+  {
+    id: "1",
+    name: "ChallengeStack",
+    component: ChallengeStack,
+    iconName: "trophy-variant-outline",
+    iconPack: "MCI",
+    iconFName: "trophy-variant",
+    iconFPack: "MCI",
+  },
+  {
+    id: "1",
+    name: "AlertStack",
+    component: AlertNavigator,
+    iconName: "bell-outline",
+    iconPack: "MCI",
+    iconFName: "bell",
+    iconFPack: "MCI",
+  },
+  {
+    id: "1",
+    name: "AccountStack",
+    component: AccountNavigator,
+    iconName: "",
+    iconPack: "",
+    iconFName: "",
+    iconFPack: "",
+  },
+];
+
 const tabStyle = {
   borderRadius: width * 0.015,
   height: width * 0.09,
@@ -33,17 +77,20 @@ const tabStyle = {
 // console.log(width * 0.12);
 
 const style = {
-  minHeight: width * 0.12,
+  // minHeight: width * 0.12,
+  height: 62,
   backgroundColor: colors.white,
   borderWidth: -1,
   position: "absolute", //THIS WILL MAKE THE BACKGROUND TAB-BAR TRANSPARENT
-  marginBottom: 9,
+  // marginBottom: 9,
   // marginHorizontal: width * 0.05,
-  borderRadius: width * 0.022,
+  borderRadius: 12,
   width: width * 0.7,
   left: width / 2 - (width * 0.7) / 2,
   elevation: 12,
   shadowRadius: 6,
+  bottom: 16,
+
   shadowColor: "black",
   shadowOpacity: 0.15,
   shadowOffset: {
@@ -67,98 +114,132 @@ const screenOptions = {
   tabBarShowLabel: false,
 };
 
-const TabNavigator = () => {
+const TabIcon = ({ focused, color, size = 35, item }) => {
+  const { iconName, name, iconPack, iconFName, iconFPack } = item;
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+
+  let Icon, IconFocused;
+  switch (iconPack) {
+    case "AD":
+      Icon = AntDesign;
+      break;
+    case "MCI":
+      Icon = MaterialCommunityIcons;
+  }
+  switch (iconFPack) {
+    case "AD":
+      IconFocused = AntDesign;
+      break;
+    case "MCI":
+      IconFocused = MaterialCommunityIcons;
+      break;
+  }
+
+  if (name.toLowerCase() == "accountstack") {
+    return (
+      <ProfilePic
+        source={userInfo.avatar}
+        size={size}
+        border={1.1}
+        borderRad={size / 2}
+        borderColor={focused ? colors.primary : colors.white}
+        disabled
+      />
+    );
+  }
+
+  return (
+    <>
+      {focused ? (
+        <IconFocused name={iconFName} color={color} size={size / 1.5} />
+      ) : (
+        <Icon name={iconName} color="black" size={size / 1.5} />
+      )}
+    </>
+  );
+};
+
+const TabButton = (props) => {
+  const { item, onPress, accessibilityState } = props;
+  const focused = accessibilityState?.selected;
+
+  const scaler = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    if (focused) {
+      Animated.timing(scaler, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(scaler, {
+        toValue: 0.7,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [focused]);
+
+  return (
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={onPress}
+      style={styles.container}
+    >
+      <Animated.View
+        style={{
+          transform: [{ scale: scaler }],
+        }}
+      >
+        <TabIcon
+          item={item}
+          color={focused ? colors.primary : colors.medium}
+          focused={focused}
+        />
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
+const TabNavigator = () => {
   // console.log(insets);
   return (
     <Tab.Navigator screenOptions={screenOptions} backBehavior="none">
-      <Tab.Screen
-        name="HomeStack"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({ color, focused, size }) => (
-            <>
-              {focused ? (
-                <AntDesign name="appstore1" color={color} size={size - 5} />
-              ) : (
-                <AntDesign name="appstore-o" color={color} size={size - 5} />
-              )}
-            </>
-          ),
-          tabBarLabel: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="ChallengeStack"
-        component={ChallengeStack}
-        options={{
-          tabBarIcon: ({ color, focused, size }) => (
-            <>
-              {focused ? (
-                <MaterialCommunityIcons
-                  name="trophy-variant"
-                  color={color}
-                  size={size - 5}
-                />
-              ) : (
-                <MaterialCommunityIcons
-                  name="trophy-variant-outline"
-                  color={color}
-                  size={size - 5}
-                />
-              )}
-            </>
-          ),
-          tabBarLabel: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="AlertStack"
-        component={AlertNavigator}
-        options={{
-          tabBarIcon: ({ color, focused, size }) => (
-            <>
-              {focused ? (
-                <MaterialCommunityIcons
-                  name="bell"
-                  color={color}
-                  size={size - 5}
-                />
-              ) : (
-                <MaterialCommunityIcons
-                  name="bell-outline"
-                  color={color}
-                  size={size - 5}
-                />
-              )}
-            </>
-          ),
-          tabBarLabel: () => null,
-          tabBarBadge: 3,
-        }}
-      />
-      <Tab.Screen
-        name="AccountStack"
-        component={AccountNavigator}
-        options={{
-          tabBarIcon: ({ color, focused, size }) => (
-            // <AntDesign name="user" color={color} size={size - 8} />
-            <ProfilePic
-              source={userInfo.avatar}
-              size={focused ? size : size + width * 0.008}
-              border={1.1}
-              borderRad={size / 2}
-              borderColor={focused ? colors.primary : colors.white}
-              disabled
-            />
-          ),
-          tabBarLabel: () => null,
-        }}
-      />
+      {TabArr.map((obj, idx) => {
+        return (
+          <Tab.Screen
+            key={idx}
+            name={obj.name}
+            component={obj.component}
+            options={{
+              tabBarIcon: ({ focused, size, color }) => {
+                return (
+                  <TabIcon
+                    color={color}
+                    size={size}
+                    focused={focused}
+                    item={obj}
+                  />
+                );
+              },
+              tabBarButton: (props) => <TabButton {...props} item={obj} />,
+            }}
+          />
+        );
+      })}
     </Tab.Navigator>
   );
 };
 
 export default TabNavigator;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
