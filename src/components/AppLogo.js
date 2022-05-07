@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Image, Dimensions } from "react-native";
 
 import header from "../../assets/otaku3.png";
-import icon from "../../assets/icon.png";
+import icon from "../../assets/icon_dark.png";
 
 const { width } = Dimensions.get("window");
 
@@ -10,8 +10,8 @@ const AppLogo = ({ style, type = "header" }) => {
   let logoDefaultStyle, logoSource;
   if (type === "header") {
     logoDefaultStyle = {
-      width: width * 0.18,
-      height: width * 0.05,
+      width: width * 0.25,
+      height: width * 0.08,
     };
     logoSource = header;
   } else if (type === "icon") {

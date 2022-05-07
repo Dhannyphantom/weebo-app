@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ImageBackground,
-  Image,
-} from "react-native";
+import { View, StyleSheet, Dimensions, ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import AppButton from "../components/AppButton";
 import Spacer from "../components/Spacer";
-import AppLogo from "../components/AppLogo";
 import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("window");
@@ -24,9 +17,6 @@ const WelcomeScreen = ({ navigation }) => {
         style={styles.image}
         blurRadius={width * 0.005}
       >
-        <View style={styles.logoContainer}>
-          <AppLogo type="icon" />
-        </View>
         <View style={styles.contents}>
           <View style={styles.btnCont}>
             <Spacer mv={width * 0.01}>
@@ -61,13 +51,6 @@ const styles = StyleSheet.create({
   },
   btnCont: {
     bottom: width * 0.1,
-  },
-  logoContainer: {
-    // width: 100,
-    // height: 100,
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: width * 0.14,
   },
   logo: {
     width: "100%",

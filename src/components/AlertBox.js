@@ -11,7 +11,7 @@ import Avatar from "./Avatar";
 import Cards from "./Cards";
 
 //files
-import appLogo from "../../assets/icon.png";
+import appLogo from "../../assets/icon_dark.png";
 
 const screen = Dimensions.get("window");
 
@@ -36,7 +36,7 @@ const AlertBox = ({
   let border, owner, ownerImage, nameStyles, atSymbol;
   active ? (border = { borderColor: colors.primary, borderWidth: 0.8 }) : null;
   if (!character && !user) {
-    owner = username = "OTAKU";
+    owner = username = "WEEBO";
     atSymbol = noAt = true;
     ownerImage = avatar = appLogo;
     nameStyles = { ...styles.name, color: colors.heart };

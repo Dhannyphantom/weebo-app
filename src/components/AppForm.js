@@ -159,7 +159,7 @@ const AppForm = ({
         <AppLogo type="icon" />
         {/* <AppText style={{ marginTop: 16 }}>Welcome to the Community! </AppText> */}
         <AppText style={{ marginTop: 7, marginBottom: 14 }}>
-          Otaku Social welcomes you to it's Community{" "}
+          Weebo welcomes you into it's community
         </AppText>
       </View>
       <Spacer style={styles.headerTitleCont}>
