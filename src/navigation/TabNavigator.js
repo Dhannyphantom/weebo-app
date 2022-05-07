@@ -6,12 +6,7 @@ import {
   Animated,
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  MaterialCommunityIcons,
-  Feather,
-  FontAwesome5,
-  AntDesign,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -73,8 +68,6 @@ const tabStyle = {
   alignSelf: "center",
   justifyContent: "space-evenly",
 };
-
-// console.log(width * 0.12);
 
 const style = {
   // minHeight: width * 0.12,
@@ -201,7 +194,7 @@ const TabButton = (props) => {
       >
         <TabIcon
           item={item}
-          color={focused ? colors.primary : colors.medium}
+          color={focused ? colors.primary : colors.light}
           focused={focused}
         />
       </Animated.View>

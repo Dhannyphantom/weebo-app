@@ -21,6 +21,7 @@ import colors from "../constants/colors";
 import Points from "../components/Points";
 import Separator from "../components/Separator";
 import AlertModal from "../components/AlertModal";
+import { StatusBar } from "expo-status-bar";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {
@@ -171,6 +172,7 @@ const AccountScreen = ({ navigation, route }) => {
 
   return (
     <Screen style={{ flex: 1 }}>
+      <StatusBar style="dark" />
       <FlatList
         data={account}
         extraData={userInfo}
@@ -231,6 +233,7 @@ const AccountScreen = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => navigation.navigate("Points")}
                 activeOpacity={0.8}
+                style={{ paddingVertical: 10 }}
               >
                 <Points type="account" prog={userInfo.points} />
               </TouchableOpacity>

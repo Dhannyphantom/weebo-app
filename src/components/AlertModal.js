@@ -7,9 +7,7 @@ import Separator from "./Separator";
 
 const { width, height } = Dimensions.get("window");
 
-const BOX_WIDTH = width * 0.8;
-const BOX_HEIGHT = width * 0.5;
-const MOVE_BOX = height * 0.5 + BOX_HEIGHT / 2;
+const BOX_WIDTH = width * 0.88;
 
 const AlertModal = ({ obj, setVisible, onPress }) => {
   // obj has a title, btn,  message, visible
@@ -22,16 +20,20 @@ const modalShow = {
   type: "signout",
 };
   */
-  const translator = useRef(new Animated.Value(0)).current;
+  const translator = useRef(new Animated.Value(height)).current;
 
   const translatorStyles = {
     ...styles.mbox,
     transform: [{ translateY: translator }],
+    opacity: translator.interpolate({
+      inputRange: [0, height],
+      outputRange: [1, 0],
+    }),
   };
 
   const onDiscard = () => {
     Animated.timing(translator, {
-      toValue: 0,
+      toValue: height,
       useNativeDriver: true,
     }).start(() => setVisible({ visible: false }));
   };
@@ -39,7 +41,7 @@ const modalShow = {
   useEffect(() => {
     if (obj.visible) {
       Animated.spring(translator, {
-        toValue: -MOVE_BOX,
+        toValue: 0,
         speed: 5,
         useNativeDriver: true,
       }).start();
@@ -63,7 +65,7 @@ const modalShow = {
             <AppText size="large" style={styles.message}>
               {obj.message}
             </AppText>
-            <View>
+            <View style={{ marginTop: 25 }}>
               <AppButton
                 title={obj.btn}
                 onPress={() => {
@@ -85,20 +87,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "center",
   },
   mbox: {
     width: BOX_WIDTH,
-    height: BOX_HEIGHT,
-    top: BOX_HEIGHT,
     backgroundColor: colors.extraLight,
     alignItems: "center",
     elevation: 2,
+    paddingBottom: 12,
     borderRadius: width * 0.03,
   },
   mboxIn: {
-    flex: 1,
-    justifyContent: "space-around",
+    alignSelf: "center",
   },
   message: {
     textAlign: "center",

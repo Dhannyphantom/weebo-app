@@ -161,7 +161,7 @@ const MansonryList = ({ images, columns = 2 }) => {
   }, [images]);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <MasonryList
         images={posts}
         imageContainerStyle={styles.image}
@@ -170,7 +170,10 @@ const MansonryList = ({ images, columns = 2 }) => {
         sorted={true}
         columns={columns}
         initialColToRender={4}
-        masonryFlatListColProps={{ showsVerticalScrollIndicator: false }}
+        masonryFlatListColProps={{
+          showsVerticalScrollIndicator: false,
+          overScrollMode: "never",
+        }}
         initialNumInColsToRender={8}
         onEndReached={handleEndReach}
         renderIndividualFooter={FooterComponent}
@@ -178,13 +181,12 @@ const MansonryList = ({ images, columns = 2 }) => {
         customImageComponent={ImageComponent}
       />
       <MediaModal modalObject={displayMedia} setVisible={setDisplayMedia} />
-    </>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   image: {
     borderRadius: 10,
-    opacity: 1,
   },
   footer: {
     flexDirection: "row",

@@ -134,7 +134,7 @@ const AlertScreen = ({ navigation }) => {
             refreshing={refreshing}
             onRefresh={fetchScreenData}
             renderItem={renderAlerts}
-            contentContainerStyle={{ paddingBottom: height * 0.1 }}
+            contentContainerStyle={{ paddingBottom: height * 0.12 }}
             style={{ flex: 1 }}
           />
         </Spacer>
