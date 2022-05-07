@@ -166,18 +166,23 @@ const TabButton = (props) => {
   const focused = accessibilityState?.selected;
 
   const scaler = useRef(new Animated.Value(0.4)).current;
+  const rotater = scaler.interpolate({
+    inputRange: [0.7, 1],
+    outputRange: ["0deg", "360deg"],
+    extrapolate: "clamp",
+  });
 
   useEffect(() => {
     if (focused) {
       Animated.timing(scaler, {
         toValue: 1,
-        duration: 500,
+        duration: 450,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(scaler, {
         toValue: 0.7,
-        duration: 500,
+        duration: 450,
         useNativeDriver: true,
       }).start();
     }
@@ -191,7 +196,7 @@ const TabButton = (props) => {
     >
       <Animated.View
         style={{
-          transform: [{ scale: scaler }],
+          transform: [{ scale: scaler }, { rotate: rotater }],
         }}
       >
         <TabIcon
@@ -215,16 +220,6 @@ const TabNavigator = () => {
             name={obj.name}
             component={obj.component}
             options={{
-              tabBarIcon: ({ focused, size, color }) => {
-                return (
-                  <TabIcon
-                    color={color}
-                    size={size}
-                    focused={focused}
-                    item={obj}
-                  />
-                );
-              },
               tabBarButton: (props) => <TabButton {...props} item={obj} />,
             }}
           />
