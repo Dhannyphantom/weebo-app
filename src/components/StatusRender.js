@@ -24,6 +24,7 @@ const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
 const StatusCardItem = ({ item, setDisplay, all }) => {
   const [imager, setImager] = useState({});
+  const [loading, setLoading] = useState(true);
 
   let cardName = "";
   switch (item.instance) {
@@ -59,13 +60,19 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
     if (imager.uri) return;
     const lastPost = item.posts[0];
     if (lastPost.type == "video") {
-      const res = await getThumbnailAsync(lastPost.uri, {
-        time: 5000,
-        quality: 0.1,
-      });
-      setImager(res);
+      try {
+        const res = await getThumbnailAsync(lastPost.uri, {
+          time: 5000,
+          quality: 0.1,
+        });
+        setImager(res);
+        setLoading(false);
+      } catch (err) {
+        setLoading(true);
+      }
     } else {
       setImager(lastPost);
+      setLoading(false);
     }
   };
 
@@ -88,6 +95,13 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
             />
           </View>
+          <ActivityIndicator
+            type="spin"
+            transparent
+            style={styles.activity}
+            size={0.25}
+            visible={loading}
+          />
         </TouchableOpacity>
       </>
       <View style={styles.profile}>
@@ -176,6 +190,11 @@ const StatusRender = ({ data, show, setter }) => {
   );
 };
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.95)",

@@ -40,8 +40,6 @@ export default function RenderStoryList({
     }
   };
 
-  console.log(item.counter);
-
   useEffect(() => {
     if (isKey) {
       lottieRef?.current?.play();

@@ -1,8 +1,12 @@
 import React, { useContext } from "react";
 import { Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  Feather,
+  FontAwesome5,
+  AntDesign,
+} from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -64,7 +68,6 @@ const screenOptions = {
 };
 
 const TabNavigator = () => {
-  const insets = useSafeAreaInsets();
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -75,8 +78,14 @@ const TabNavigator = () => {
         name="HomeStack"
         component={HomeStack}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="appstore-o" color={color} size={size - 8} />
+          tabBarIcon: ({ color, focused, size }) => (
+            <>
+              {focused ? (
+                <AntDesign name="appstore1" color={color} size={size - 5} />
+              ) : (
+                <AntDesign name="appstore-o" color={color} size={size - 5} />
+              )}
+            </>
           ),
           tabBarLabel: () => null,
         }}
@@ -85,8 +94,22 @@ const TabNavigator = () => {
         name="ChallengeStack"
         component={ChallengeStack}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="Trophy" color={color} size={size - 8} />
+          tabBarIcon: ({ color, focused, size }) => (
+            <>
+              {focused ? (
+                <MaterialCommunityIcons
+                  name="trophy-variant"
+                  color={color}
+                  size={size - 5}
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="trophy-variant-outline"
+                  color={color}
+                  size={size - 5}
+                />
+              )}
+            </>
           ),
           tabBarLabel: () => null,
         }}
@@ -95,12 +118,22 @@ const TabNavigator = () => {
         name="AlertStack"
         component={AlertNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="bell-outline"
-              color={color}
-              size={size - 8}
-            />
+          tabBarIcon: ({ color, focused, size }) => (
+            <>
+              {focused ? (
+                <MaterialCommunityIcons
+                  name="bell"
+                  color={color}
+                  size={size - 5}
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="bell-outline"
+                  color={color}
+                  size={size - 5}
+                />
+              )}
+            </>
           ),
           tabBarLabel: () => null,
           tabBarBadge: 3,
