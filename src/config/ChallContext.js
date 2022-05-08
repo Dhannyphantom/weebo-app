@@ -46,7 +46,7 @@ const charChallengeTwo = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("challenger", imageObject);
-  formData.append("data", JSON.stringify(data));
+  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -73,7 +73,7 @@ const startChallengeTwo = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("challenger", imageObject);
-  formData.append("data", JSON.stringify(data));
+  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");

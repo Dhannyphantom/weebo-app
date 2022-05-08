@@ -44,7 +44,7 @@ const handleNewEvents = (dispatch) => async (data, sc, cb) => {
     };
     fd.append("uploader", imageObject);
   }
-  fd.append("data", JSON.stringify(data));
+  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -73,7 +73,7 @@ const handleJoinEvent = (dispatch) => async (data, sc, cb) => {
     };
     fd.append("uploader", imageObject);
   }
-  fd.append("data", JSON.stringify(data));
+  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
