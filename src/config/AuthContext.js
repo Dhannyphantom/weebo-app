@@ -159,7 +159,7 @@ const updateAvatar = (dispatch) => async (data, sc, cb, prog) => {
   };
   const formData = new FormData();
   formData.append("avatar", imageObject);
-  const sendData = { ...data };
+  const sendData = { ...data, bucket: "avatars" };
   delete sendData.uri;
   formData.append("data", JSON.stringify(sendData));
 
