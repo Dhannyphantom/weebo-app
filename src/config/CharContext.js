@@ -31,7 +31,7 @@ const createCharacter = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("uploader", imageObject);
-  formData.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "characters" }));
 
   const token = await AsyncStorage.getItem("token");
 
@@ -67,7 +67,7 @@ const createShow = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("uploader", imageObject);
-  formData.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "shows" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -95,7 +95,7 @@ const createGroup = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("uploader", imageObject);
-  formData.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "groups" }));
 
   const token = await AsyncStorage.getItem("token");
 
@@ -265,8 +265,11 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
   }
   //
   const formData = new FormData();
-  formData.append("data", JSON.stringify({ ...data, bucket: "characters" }));
-  if (data.isMedia) {
+  formData.append(
+    "data",
+    JSON.stringify({ ...data, bucket: `${data.instance}s` })
+  );
+  if (data.media) {
     const imageObject = {
       name: data?.actionData?.uri.slice(-40),
       fileName: data?.actionData?.uri.slice(-40),
@@ -280,7 +283,7 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
       },
     };
   }
-  const contentType = data.isMedia ? "multipart/form-data" : "application/json";
+  const contentType = data.media ? "multipart/form-data" : "application/json";
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -313,7 +316,7 @@ const createChannel = (dispatch) => async (data, sc, cb) => {
   };
   const formData = new FormData();
   formData.append("uploader", imageObject);
-  formData.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "channels" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -404,7 +407,7 @@ const updateChannel = (dispatch) => async (data, sc, cb) => {
     };
     formData.append("uploader", imageObject);
   }
-  formData.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "channels" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
