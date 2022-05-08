@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Image, Dimensions } from "react-native";
 
-import header from "../../assets/otaku3.png";
+import header from "../../assets/otaku-name.png";
 import icon from "../../assets/icon_dark.png";
 
 const { width } = Dimensions.get("window");

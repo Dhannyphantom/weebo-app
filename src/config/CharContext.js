@@ -249,17 +249,23 @@ const deleteInstance = () => async (data, sc, cb) => {
 };
 
 const instanceUpdater = (dispatch) => async (data, sc, cb) => {
-  let router;
-  if (data.instance === "character") {
-    router = "updateCharacterInstance";
-  } else if (data.instance === "show") {
-    router = "updateShowInstance";
-  } else if (data.instance === "group") {
-    router = "updateGroupInstance";
+  let router,
+    requestObj = {};
+
+  switch (data.instance) {
+    case "character":
+      router = "updateCharacterInstance";
+      break;
+    case "show":
+      router = "updateShowInstance";
+      break;
+    case "group":
+      router = "updateGroupInstance";
+      break;
   }
   //
   const formData = new FormData();
-  fd.append("data", JSON.stringify(data));
+  formData.append("data", JSON.stringify({ ...data, bucket: "characters" }));
   if (data.isMedia) {
     const imageObject = {
       name: data?.actionData?.uri.slice(-40),
@@ -267,25 +273,33 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
       type: data.c_type === "image" ? "image/jpeg" : "video/mp4",
       uri: data?.actionData?.uri,
     };
-    fd.append("uploader", imageObject);
+    formData.append("uploader", imageObject);
+    requestObj = {
+      transformRequest: () => {
+        return formData;
+      },
+    };
   }
-  const token = await AsyncStorage.getItem("token");
+  const contentType = data.isMedia ? "multipart/form-data" : "application/json";
 
-  fetch(`${baseURL.uri}/create/${router}`, {
-    method: "PUT",
-    body: formData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-      "x-auth-token": token,
-      Accept: "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      sc && sc(data);
-    })
-    .catch((err) => cb && cb({ err, msg: "Error updating instance info" }));
-  // =======================================
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await instanceApi.put(
+      `${baseURL.uri}/create/${router}`,
+      formData,
+      {
+        headers: {
+          "x-auth-token": token,
+          Accept: "application/json",
+          "Content-Type": contentType,
+        },
+        ...requestObj,
+      }
+    );
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error updating instance info" });
+  }
 };
 
 /// ---------------  CHANNELS ========================================

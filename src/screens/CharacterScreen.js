@@ -207,7 +207,7 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const handleStatusVisibility = (bool) => {
     if (bool) {
-      setPopper({ vis: true, type: "success", msg: "Status uploaded" });
+      setPopper({ vis: true, type: "success", msg: "Story uploaded" });
     }
     setShowUpload({ vis: false, data: null });
   };
@@ -564,7 +564,7 @@ const CharacterScreen = ({ route, navigation }) => {
           setOpenMedia(false);
         },
         (err) => {
-          console.log(err);
+          console.log(err?.err?.response?.data);
           setErrMsg(err);
           setIsCoverLoading(false);
         }
