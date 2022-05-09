@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import AppText from "./AppText";
@@ -28,23 +28,60 @@ const viewabilityConfig = {
   viewAreaCoveragePercentThreshold: 50,
 };
 
+const RenderFloater = ({ handleCloseModal }) => {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        width,
+        height,
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "flex-end",
+          marginRight: 20,
+          opacity: 0.5,
+        }}
+      >
+        <TouchableOpacity activeOpacity={1} onPress={handleCloseModal}>
+          <Feather name="x-circle" size={width * 0.08} color={colors.medium} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState({
     key: null,
     type: null,
     duration: 5000,
   });
-
+  const [endList, setEndList] = useState(false);
   const safeInsets = useSafeAreaInsets();
   const headerScroll = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const translator = useRef(new Animated.Value(0)).current;
   const listScrollRef = useRef(null);
+  const opaciter = translator.interpolate({
+    inputRange: [0, height / 1.5],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
 
   const modalData = modalObj?.data?.all;
   const statuses = modalObj?.data?.posts;
 
   const handleCloseModal = () => {
-    setVisible({ vis: false, data: null });
+    Animated.timing(translator, {
+      toValue: height,
+      useNativeDriver: true,
+    }).start(() => {
+      setVisible({ vis: false, data: null });
+    });
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
@@ -73,11 +110,17 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       <RenderStoryList
         item={item}
         idx={index}
+        handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
         headerScroll={headerScroll}
+        onEnd={{ endList, setEndList }}
         activeItem={active?.key}
       />
     );
+  };
+
+  const handleEndReached = () => {
+    setEndList(true);
   };
 
   const renderHeaderList = ({ item }) => {
@@ -154,6 +197,15 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     );
   };
 
+  useEffect(() => {
+    if (modalObj.vis) {
+      Animated.timing(translator, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [modalObj]);
+
   return (
     <>
       <StatusBar style="light" />
@@ -164,7 +216,13 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         style={{ flex: 1 }}
         transparent
       >
-        <View style={styles.container}>
+        <Animated.View
+          style={{
+            ...styles.container,
+            opacity: opaciter,
+            transform: [{ translateY: translator }],
+          }}
+        >
           <Animated.FlatList
             data={statuses}
             ref={listScrollRef}
@@ -172,6 +230,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             showsVerticalScrollIndicator={false}
             snapToInterval={SCROLL_INTERVAL}
             viewabilityConfig={viewabilityConfig}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
             removeClippedSubviews
             maxToRenderPerBatch={3}
@@ -189,7 +249,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             renderItem={renderModalList}
           />
           <RenderHeader />
-        </View>
+          <RenderFloater handleCloseModal={handleCloseModal} />
+        </Animated.View>
       </Modal>
     </>
   );

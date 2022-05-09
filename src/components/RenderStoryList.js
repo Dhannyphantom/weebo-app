@@ -17,6 +17,8 @@ export default function RenderStoryList({
   listScrollRef,
   headerScroll,
   activeItem,
+  onEnd,
+  handleCloseModal,
   idx,
 }) {
   const safeInsets = useSafeAreaInsets();
@@ -28,15 +30,19 @@ export default function RenderStoryList({
   const isKey = activeItem == item._id;
 
   const handleAnimFinish = () => {
-    listScrollRef.current?.scrollToOffset({
-      animated: true,
-      offset: SCROLL_INTERVAL * (idx + 1),
-    });
-    if (item.lastStory) {
-      headerScroll.current?.scrollToOffset({
-        animated: true,
-        offset: width,
-      });
+    if (onEnd.endList) {
+      handleCloseModal();
+    } else {
+      if (item.lastStory) {
+        listScrollRef.current?.scrollToOffset({
+          animated: true,
+          offset: SCROLL_INTERVAL * (idx + 1),
+        });
+        headerScroll.current?.scrollToOffset({
+          animated: true,
+          offset: width,
+        });
+      }
     }
   };
 
