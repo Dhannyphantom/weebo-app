@@ -67,7 +67,7 @@ const AppCarousel = ({
             : SLIDER_CONTAINER_WIDTH + SLIDER_MARGIN
         }
         pagingEnabled
-        decelerationRate={0.5}
+        decelerationRate={0.2}
         initialNumToRender={5}
         contentContainerStyle={{
           alignSelf: "center",

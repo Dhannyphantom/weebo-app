@@ -91,10 +91,7 @@ const FeedImage = ({
         style={[style, { aspectRatio: image.width / image.height }]}
         disabled={disableTouch}
       >
-        <LoaderImage
-          image={image}
-          borderRadius={full ? 0 : image.width * 0.02}
-        />
+        <LoaderImage image={image} full={full} />
         <Animated.View
           style={{
             ...styles.heartPop,
@@ -140,32 +137,3 @@ const styles = StyleSheet.create({
   },
 });
 export default FeedImage;
-
-/*
-   <FeedImage
-          translator={translator}
-          feed={feed}
-          showMediaFunc={showMediaFunc}
-          image={item}
-          style={full ? { width: width } : { width: SLIDER_CONTAINER_WIDTH }}
-          handleLike={handleLike}
-          full={full}
-          liked={liked}
-        />
-  const mover = useRef(new Animated.Value(0)).current;
-  const mediaMoverResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => {
-        console.log("GRANTED");
-        return true;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        console.log(gestureState);
-        if (gestureState.dy > 50) {
-          mover.setValue(gestureState.dy);
-        }
-      },
-      onPanResponderRelease: (evt, gestureState) => {},
-    })
-  ).current;
-*/

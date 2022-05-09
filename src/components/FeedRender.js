@@ -4,8 +4,7 @@ import FeedFooter from "./FeedFooter";
 import FeedHeader from "./FeedHeader";
 import FeedText from "./FeedText";
 import MediaModal from "./MediaModal";
-import Separator from "./Separator";
-import CarouselDisplay from "./CarouselDisplay";
+import AppCarousel from "./AppCarousel";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as FeedContext } from "../config/FeedContext";
@@ -104,13 +103,14 @@ const FeedRender = ({ item, user }) => {
       />
       <View>
         {item.type === "image" ? (
-          <CarouselDisplay
-            feed={item}
-            handleLike={handleLike}
-            showMediaFunc={handleShowMedia}
-            activeSlide={activeSlide}
-            setActiveSlide={setActiveSlide}
-            liked={post.liked}
+          <AppCarousel
+            data={item.posts}
+            imager={{
+              feed: item,
+              showMediaFunc: handleShowMedia,
+              handleLike,
+              liked: post.liked,
+            }}
             activeSetter={{ activeSlide, setActiveSlide }}
           />
         ) : item.type === "video" ? (

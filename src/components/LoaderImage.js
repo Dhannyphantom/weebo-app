@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get("window");
 const LoaderImage = ({
   image,
   imageStyle,
-  borderRadius,
+  full,
   containerStyle,
   loading = false,
   noAspect,
@@ -18,25 +18,12 @@ const LoaderImage = ({
   const [isLoading, setIsLoading] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
 
-  // const [progress, setProgress] = useState(0);
-  // image = {width, height, uri, thumb}
-  const BORDER_RADIUS = image ? image.width * 0.02 : 5;
-
-  // const handleLoadStart = () => {
-  //   setIsLoading(true);
-  // };
-
   const handleLoadEnd = () => {
     setIsLoading(false);
     setLoadedOnce(true);
   };
 
-  const handleProgress = (prog) => {
-    console.log(prog);
-  };
-
   useEffect(() => {
-    // loadedOnce && setIsLoading(true);
     setIsLoading(true);
   }, []);
 
@@ -46,7 +33,7 @@ const LoaderImage = ({
         <View
           style={{
             ...styles.container,
-            borderRadius: borderRadius ? borderRadius : BORDER_RADIUS + 2,
+            borderRadius: full ? 1 : 15,
             aspectRatio: noAspect ? null : image.width / image.height,
           }}
         >
@@ -55,7 +42,7 @@ const LoaderImage = ({
             {...otherProps}
             style={{
               ...styles.image,
-              borderRadius: borderRadius ? borderRadius : BORDER_RADIUS,
+              borderRadius: full ? 1 : 15,
             }}
             blurRadius={12}
             resizeMode="cover"
@@ -66,7 +53,7 @@ const LoaderImage = ({
             style={{
               ...styles.image,
               ...styles.imageOverlay,
-              borderRadius: borderRadius ? borderRadius : BORDER_RADIUS,
+              borderRadius: full ? 1 : 15,
             }}
             onLoadEnd={handleLoadEnd}
             resizeMode="cover"
@@ -78,7 +65,7 @@ const LoaderImage = ({
             type="loader"
             style={{
               ...styles.activity,
-              borderRadius: borderRadius ? borderRadius : BORDER_RADIUS,
+              borderRadius: full ? 1 : 15,
             }}
             transparent
           />
@@ -87,7 +74,7 @@ const LoaderImage = ({
             type="spin"
             style={{
               ...styles.activity,
-              borderRadius: borderRadius ? borderRadius : BORDER_RADIUS,
+              borderRadius: full ? 1 : 15,
             }}
             wTransparent
           />
@@ -99,7 +86,7 @@ const LoaderImage = ({
           type="spin"
           style={{
             ...styles.activity,
-            borderRadius: borderRadius ? borderRadius : BORDER_RADIUS,
+            borderRadius: full ? 1 : 15,
           }}
           transparent
         />
