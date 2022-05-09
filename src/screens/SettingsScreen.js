@@ -224,6 +224,7 @@ const SettingsScreen = () => {
       setSettings(JSON.parse(getSettings));
       // await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
     } else {
+      setSettings(settingsData);
       await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
     }
   };
