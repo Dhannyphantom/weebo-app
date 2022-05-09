@@ -58,16 +58,10 @@ const PostScreen = ({ route, navigation }) => {
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
   //get rid of one below
-  const [stuffs, setStuffs] = useState(writer ? [] : [asset.uri]);
+  const [media, setMedia] = useState(writer ? [] : [asset.uri]);
   const [flatStuffs, setFlatStuffs] = useState(writer ? [] : [asset]);
 
   const flatt = useRef();
-  const meta = flatStuffs.map((obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-    };
-  });
   const searchInputRef = useRef(null);
   const mainFlatListRef = useRef(null);
   const textRef = useRef(null);
@@ -92,9 +86,9 @@ const PostScreen = ({ route, navigation }) => {
   const data = {
     title: writer ? textObj : text.trim(),
     type: writer ? "text" : asset.type,
-    post: stuffs,
+    post: media,
     instancePost: router.type ? instanceData : null,
-    meta,
+    meta: flatStuffs,
     tags: tagged,
   };
 
@@ -145,9 +139,9 @@ const PostScreen = ({ route, navigation }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.5,
     });
-    if (result.cancelled || stuffs.length > 9) return;
+    if (result.cancelled || media.length > 9) return;
     setDisplay(result);
-    setStuffs([...stuffs, result.uri]);
+    setMedia([...media, result.uri]);
     setFlatStuffs([...flatStuffs, result]);
   };
 
@@ -164,10 +158,10 @@ const PostScreen = ({ route, navigation }) => {
     if (!res.cancelled) {
       const { bool, vidErr } = vidMaxChecker(res.duration, 5);
       if (bool) {
-        setStuffs([]);
+        setMedia([]);
         return setErrMsg(vidErr);
       }
-      setStuffs(res);
+      setMedia(res);
       setDisplay(res);
     } else {
       setDisplay(prevPost);
@@ -180,7 +174,7 @@ const PostScreen = ({ route, navigation }) => {
 
   const handleRemoveImage = (item) => {
     setFlatStuffs(flatStuffs.filter((obj) => obj.uri !== item.uri));
-    setStuffs(stuffs.filter((uri) => uri !== item.uri));
+    setMedia(media.filter((uri) => uri !== item.uri));
     display.uri == item.uri ? setDisplay(flatStuffs[0]) : null;
   };
 
@@ -504,7 +498,7 @@ const PostScreen = ({ route, navigation }) => {
                     onContentSizeChange={() => flatt.current.scrollToEnd()}
                     horizontal
                     ListFooterComponent={
-                      stuffs.length <= 25 && (
+                      media.length <= 25 && (
                         <TouchableOpacity
                           style={styles.addMore}
                           activeOpacity={0.78}
