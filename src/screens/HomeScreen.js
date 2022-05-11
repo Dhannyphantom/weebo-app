@@ -90,7 +90,7 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (err) => {
-        console.log(err);
+        console.log(err?.response?.data);
         setErrMsg("Error fetching feeds");
         cb && cb();
       }
