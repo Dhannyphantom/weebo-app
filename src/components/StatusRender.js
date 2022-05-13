@@ -162,7 +162,7 @@ const StatusRender = ({ data, show, setter }) => {
 
   return (
     <Modal visible={show} statusBarTranslucent transparent>
-      <View style={{ ...styles.container, paddingTop: safeInset.top }}>
+      <View style={{ ...styles.container, paddingTop: safeInset.top + 10 }}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={handleCloseModal}

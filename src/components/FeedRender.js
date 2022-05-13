@@ -116,7 +116,7 @@ const FeedRender = ({ item, user }) => {
         ) : item.type === "video" ? (
           <View style={{ flex: 1 }}>
             <PostVideo
-              vidUri={item?.posts[0]?.uri}
+              source={item?.posts[0]}
               feed={item}
               handleLike={handleLike}
               handleViewPost={handleViewPost}

@@ -77,7 +77,7 @@ export default function RenderStoryList({
             {item?.type === "video" && (
               <View style={styles.vidContainer}>
                 <PostVideo
-                  vidUri={item?.uri}
+                  vidUri={item}
                   disableDoublePress
                   disableLongPress
                   viewable={false}

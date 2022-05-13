@@ -31,7 +31,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
   // data = {uri, type, height, width }
   const { vis, data } = visObj;
   if (!data) return null;
-
   /// =--
   const { statusUploader } = useContext(FeedContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -126,9 +125,9 @@ const ShowUpload = ({ visObj, setVisible }) => {
         setPopData({
           vis: true,
           type: "failed",
-          msg:
-            "Something went wrong with uploading story" + err?.response?.data,
+          msg: err.msg,
         });
+        console.log(err.err);
         setIsLoading(false);
       }
     );
@@ -316,7 +315,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
         ) : (
           <View style={styles.vidContainer}>
             <PostVideo
-              vidUri={post.uri}
+              source={post}
               disableDoublePress
               onLoadEnd={handleVidLoad}
               viewable={false}
@@ -342,7 +341,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
           >
             <TextInput
               value={statusInput}
-              onChangeText={(val) => setStatusInput(val)}
               onChangeText={(val) => setStatusInput(val)}
               placeholder="Add a caption..."
               ref={textInputRef}

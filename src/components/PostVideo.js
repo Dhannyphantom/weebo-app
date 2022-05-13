@@ -38,7 +38,7 @@ const BAR_MARGIN = (width - BAR_WIDTH) / 2 - 20;
 const ViewportAwareVideo = Viewport.Aware(Video);
 
 const PostVideo = ({
-  vidUri,
+  source,
   feed,
   full,
   posProp,
@@ -65,9 +65,9 @@ const PostVideo = ({
   const autoPos = posProp ? posProp : 0;
   const [playAction, setPlayAction] = useState(false);
   const [overlay, setOverlay] = useState(true);
+  const [thumbUri, setThumbUri] = useState(source?.thumb);
   const [orient, setOrient] = useState(null);
   const [pos, setPos] = useState(autoPos);
-  const [thumber, setThumber] = useState(null);
   const [vidObj, setVidObj] = useState({
     positionMillis: 0,
     durationMillis: 0,
@@ -193,7 +193,7 @@ const PostVideo = ({
     //   data: { ...feed, pos: vidObj.positionMillis },
     // });
     const modalData = {
-      item: feed?.posts.find((obj) => obj.uri == vidUri),
+      item: feed?.posts.find((obj) => obj.uri == source.uri),
       feed: { ...feed, pos: vidObj.positionMillis },
     };
     showMediaFunc(modalData);
@@ -228,13 +228,15 @@ const PostVideo = ({
   };
 
   const handleThumbGenerator = async () => {
-    try {
-      const { uri } = await VideoThumbnails.getThumbnailAsync(vidUri, {
-        time: 4500,
-      });
-      !thumber && setThumber(uri);
-    } catch (err) {
-      console.log("THUMB", err);
+    if (!thumbUri) {
+      try {
+        const { uri } = await VideoThumbnails.getThumbnailAsync(source.uri, {
+          time: 4500,
+        });
+        setThumbUri(uri);
+      } catch (err) {
+        console.log("THUMB", err);
+      }
     }
   };
 
@@ -417,98 +419,107 @@ const PostVideo = ({
         ...contStyle,
       }}
     >
-      {allowVideoEditing && false && <VideoTrimmer />}
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          activeOpacity={0.99}
-          onPress={handleContPress}
-          onLongPress={handleContLongPress}
-          disabled={disableTouch}
+      <TouchableOpacity
+        activeOpacity={0.99}
+        onPress={handleContPress}
+        onLongPress={handleContLongPress}
+        disabled={disableTouch}
+        style={{
+          ...styles.vidContainer,
+          height: vidHeight,
+          width: vidWidth,
+          ...style,
+        }}
+      >
+        <ViewportAwareVideo
+          source={{ uri: source.uri }}
+          shouldPlay={playAction}
           style={{
-            ...styles.vidContainer,
-            height: vidHeight,
-            width: vidWidth,
-            ...style,
+            ...styles.video,
+            opacity: overlay ? 0.85 : 1,
+          }}
+          resizeMode="contain"
+          onLoad={handlePlayback}
+          onLoadStart={handleLoadStart}
+          onPlaybackStatusUpdate={handlePlayback}
+          onReadyForDisplay={(e) => onReadyForDisplay(e)}
+          progressUpdateIntervalMillis={100}
+          positionMillis={pos}
+          onViewportEnter={() => handleViewport("e")}
+          onViewportLeave={() => handleViewport("l")}
+        />
+
+        <Animated.View
+          style={{
+            ...styles.heartPop,
+            opacity: opaciter,
           }}
         >
-          <ViewportAwareVideo
-            source={{ uri: vidUri }}
-            shouldPlay={playAction}
-            style={{
-              ...styles.video,
-              opacity: overlay ? 0.85 : 1,
-            }}
-            resizeMode="contain"
-            onLoad={handlePlayback}
-            onLoadStart={handleLoadStart}
-            onPlaybackStatusUpdate={handlePlayback}
-            onReadyForDisplay={(e) => onReadyForDisplay(e)}
-            progressUpdateIntervalMillis={100}
-            positionMillis={pos}
-            onViewportEnter={() => handleViewport("e")}
-            onViewportLeave={() => handleViewport("l")}
+          <LottieView
+            source={heartPop}
+            speed={1.25}
+            autoPlay={false}
+            onAnimationFinish={handleAnimFinish}
+            ref={lotRefLike}
+            loop={false}
+            style={styles.heartIcon}
           />
-
-          <Animated.View
+        </Animated.View>
+        <Animated.View style={{ ...styles.vidIcons, opacity: opaciterPlay }}>
+          <Lottie
+            source={require("../../assets/animations/play_pause_white.json")}
+            autoPlay={false}
+            onAnimationFinish={() => handleAnimFinish("play")}
+            ref={lotRef}
+            loop={false}
             style={{
-              ...styles.heartPop,
-              opacity: opaciter,
+              width: LOTTIE_SIZE,
+              height: LOTTIE_SIZE,
+              alignSelf: "center",
             }}
-          >
-            <LottieView
-              source={heartPop}
-              speed={1.25}
-              autoPlay={false}
-              onAnimationFinish={handleAnimFinish}
-              ref={lotRefLike}
-              loop={false}
-              style={styles.heartIcon}
+          />
+        </Animated.View>
+        <View
+          style={{
+            ...styles.sliderCont,
+            width: sliderWidth ? sliderWidth : vidWidth,
+          }}
+        >
+          {showTimer && (playAction || !posBool) ? (
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              animateTransitions
+              animationType="timing"
+              thumbTouchSize={{ width: 0.5, height: 0.5 }}
+              maximumValue={vidObj.durationMillis}
+              value={vidObj.positionMillis}
+              onValueChange={handleSliderChange}
+              minimumTrackTintColor={colors.white}
+              maximumTrackTintColor={colors.white}
+              thumbTintColor={null}
             />
-          </Animated.View>
-          <Animated.View style={{ ...styles.vidIcons, opacity: opaciterPlay }}>
-            <Lottie
-              source={require("../../assets/animations/play_pause_white.json")}
-              autoPlay={false}
-              onAnimationFinish={() => handleAnimFinish("play")}
-              ref={lotRef}
-              loop={false}
+          ) : (
+            <View style={styles.slider}></View>
+          )}
+        </View>
+        {showTimer && overlay && posBool && !playAction && (
+          <View style={styles.playIconCont}>
+            <View
               style={{
-                width: LOTTIE_SIZE,
-                height: LOTTIE_SIZE,
-                alignSelf: "center",
+                ...styles.imageThumb,
+                width: vidWidth,
+                height: vidHeight,
               }}
-            />
-          </Animated.View>
-          <View
-            style={{
-              ...styles.sliderCont,
-              width: sliderWidth ? sliderWidth : vidWidth,
-            }}
-          >
-            {showTimer && (playAction || !posBool) ? (
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                animateTransitions
-                animationType="timing"
-                thumbTouchSize={{ width: 0.5, height: 0.5 }}
-                maximumValue={vidObj.durationMillis}
-                value={vidObj.positionMillis}
-                onValueChange={handleSliderChange}
-                minimumTrackTintColor={colors.white}
-                maximumTrackTintColor={colors.white}
-                thumbTintColor={null}
-              />
-            ) : (
-              <View style={styles.slider}></View>
-            )}
-          </View>
-          {showTimer && overlay && posBool && !playAction && (
-            <View style={styles.playIconCont}>
+            >
               <Image
-                source={{ uri: thumber }}
-                style={styles.imageThumb}
-                blurRadius={10}
+                source={{ uri: thumbUri }}
+                style={{
+                  width: source.width,
+                  aspectRatio: source?.width / source?.height,
+                  maxHeight: vidHeight,
+                }}
+                blurRadius={8}
               />
               <View style={styles.playIcons}>
                 <MaterialCommunityIcons
@@ -521,9 +532,9 @@ const PostVideo = ({
                 </AppText>
               </View>
             </View>
-          )}
-        </TouchableOpacity>
-      </View>
+          </View>
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -541,18 +552,20 @@ const styles = StyleSheet.create({
   },
   playIconCont: {
     position: "absolute",
-    width: "100%",
+    alignItems: "center",
     height: "100%",
   },
   playIcons: {
+    position: "absolute",
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
   },
   imageThumb: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
+    // position: "absolute",
+    alignSelf: "center",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   heartPop: {
     position: "absolute",
