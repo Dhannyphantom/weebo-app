@@ -2,9 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
-  ImageBackground,
   Image,
-  Alert,
   Dimensions,
   TouchableOpacity,
 } from "react-native";
@@ -20,6 +18,8 @@ import konstants from "../constants/konstants";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
 import { Context as FeedContext } from "../config/FeedContext";
+import AlertModal from "./AlertModal";
+import PopMessage from "./PopMessage";
 const screen = Dimensions.get("window");
 
 const CARD_WIDTH = screen.width * 0.6;
@@ -50,155 +50,154 @@ const Card = ({
     tryLocalSignin,
     state: { userInfo },
   } = useContext(AuthContext);
-
-  const charID = id;
-  const userID = userInfo._id;
-
   const { followChar } = useContext(CharContext);
   const { getShows } = useContext(FeedContext);
 
-  const followingArr = series
-    ? series
-    : userInfo.following.map((obj) => obj._id);
-  const isFollowing = followingArr.includes(series ? userID : charID);
-
+  let followingArr = series ? series : userInfo.following.map((obj) => obj._id);
+  const [alertData, setAlertData] = useState({ visible: false });
+  const [popper, setPopper] = useState({ vis: false });
   const [cardState, setCardState] = useState({
     liked: followers.length,
-    selected: false,
+    isFollowing: followingArr.includes(series ? userInfo._id : id),
   });
 
-  useEffect(() => {
-    setCardState({
-      ...cardState,
-      selected: isFollowing,
-      liked: followers.length,
-    });
-  }, [isFollowing]);
+  const { isFollowing } = cardState;
+  const charID = id;
+  const userID = userInfo._id;
 
   let cardFollowers = getNumberFormat(cardState.liked);
 
-  const follows = (bool) => {
+  const updateCardState = (bool) => {
     setCardState({
       ...cardState,
-      selected: bool,
-      liked: bool ? followers.length + 1 : followers.length - 1,
+      isFollowing: bool,
+      liked: bool ? cardState.liked + 1 : cardState.liked - 1,
     });
-    getShows();
-    tryLocalSignin();
   };
 
   const handleFollowPress = () => {
     if (isFollowing) {
-      Alert.alert(
-        "Unfollow Character",
-        "Are you sure you want to unfollow " + name,
-        [
-          {
-            text: "Yes",
-            style: "destructive",
-            onPress: () =>
-              followChar({ charID, userID }, "unfollow", () => follows(false)),
-          },
-          {
-            text: "No",
-            style: "cancel",
-          },
-        ]
-      );
+      // console.log(followingArr);
+      setAlertData({
+        title: "Unfollow Character",
+        visible: true,
+        message: `Are you sure you want to unfollow ${
+          name[0].toUpperCase() + name.slice(1)
+        }`,
+        btn: "Yes",
+      });
     } else {
-      followChar({ charID, userID }, "follow", () => follows(true));
+      updateCardState(true);
+      followChar({ charID, userID, type: "follow" }, null, (err) =>
+        setPopper({
+          vis: true,
+          type: "failed",
+          msg: err.msg,
+        })
+      );
     }
   };
 
-  const handleTick = () => {
-    console.log(owner);
+  const handleConfirmAlert = () => {
+    updateCardState(false);
+    followChar({ charID, userID, type: "unfollow" }, null, (err) => {
+      console.log(err.err.response.data);
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: err.msg,
+      });
+    });
   };
 
   return (
     <>
-      <View>
-        <View style={[styles.card, style]}>
-          <TouchableOpacity
-            activeOpacity={0.94}
-            style={styles.imageContainer}
-            onPress={onPress}
-          >
-            <Image
-              resizeMethod="resize"
-              resizeMode="stretch"
-              source={{ uri: image.uri }}
-              style={styles.image}
-            />
-            <View style={styles.proPic}>
-              {owner && owner?._id === konstants.appID ? null : (
-                <Spacer p={10}>
-                  <ProfilePic
-                    source={avatar}
-                    border={1.2}
-                    borderRad={100}
-                    borderColor={colors.white}
-                    userID={owner?._id}
-                    size={avaterSize}
-                  />
-                </Spacer>
-              )}
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.btmCard, btmStyle]}>
-          <View
-            style={{
-              ...styles.iconContainer,
-              bottom: mIcon / 2,
-              ...iconContainerStyle,
-            }}
-          >
-            <Icon
-              name="star"
-              style={styles.icon}
-              color={cardState.selected ? colors.heart : colors.medium}
-              onPress={handleFollowPress}
-              size={bIcon}
-            />
-            <Icon
-              text={`${cardFollowers}`}
-              size={mIcon}
-              textSize={mSize}
-              style={styles.icon}
-              activeOpacity={1}
-            />
-            <Icon
-              name="check-all"
-              color={isVerified ? colors.accentOld : colors.medium}
-              style={styles.icon}
-              size={bIcon}
-              iconSize={bIcon / 2.2}
-              disablePress
-              onPress={handleTick}
-            />
+      <View style={[styles.card, style]}>
+        <TouchableOpacity
+          activeOpacity={0.94}
+          style={styles.imageContainer}
+          onPress={onPress}
+        >
+          <Image
+            resizeMethod="resize"
+            resizeMode="stretch"
+            source={{ uri: image.uri }}
+            style={styles.image}
+          />
+          <View style={styles.proPic}>
+            {owner && owner?._id === konstants.appID ? null : (
+              <Spacer p={10}>
+                <ProfilePic
+                  source={avatar}
+                  border={1.2}
+                  borderRad={100}
+                  borderColor={colors.white}
+                  userID={owner?._id}
+                  size={avaterSize}
+                />
+              </Spacer>
+            )}
           </View>
-          <View style={[styles.info, infoStyle]}>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.btmCard, btmStyle]}>
+        <View
+          style={{
+            ...styles.iconContainer,
+            bottom: mIcon / 2,
+            ...iconContainerStyle,
+          }}
+        >
+          <Icon
+            name="star"
+            style={styles.icon}
+            color={isFollowing ? colors.heart : colors.medium}
+            onPress={handleFollowPress}
+            size={bIcon}
+          />
+          <Icon
+            text={`${cardFollowers}`}
+            size={mIcon}
+            textSize={mSize}
+            style={styles.icon}
+            activeOpacity={1}
+          />
+          <Icon
+            name="check-all"
+            color={isVerified ? colors.accentOld : colors.medium}
+            style={styles.icon}
+            size={bIcon}
+            iconSize={bIcon / 2.2}
+            disablePress
+          />
+        </View>
+        <View style={[styles.info, infoStyle]}>
+          <AppText
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.title}
+            bold
+          >
+            {name}
+          </AppText>
+          <View style={styles.showText}>
             <AppText
               numberOfLines={1}
-              // ellipsizeMode="tail"
-              style={styles.title}
-              bold
+              size="xsmall"
+              ellipsizeMode="tail"
+              style={{ ...styles.subTitle, ...subTitleStyle }}
             >
-              {name}
+              {show}
             </AppText>
-            <View style={styles.showText}>
-              <AppText
-                numberOfLines={1}
-                size="xsmall"
-                ellipsizeMode="tail"
-                style={{ ...styles.subTitle, ...subTitleStyle }}
-              >
-                {show}
-              </AppText>
-            </View>
           </View>
         </View>
       </View>
+      <AlertModal
+        obj={alertData}
+        setVisible={setAlertData}
+        onPress={handleConfirmAlert}
+      />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </>
   );
 };

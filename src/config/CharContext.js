@@ -176,29 +176,34 @@ const getTheCharacter = (dispatch) => async (id, sc, cb) => {
   }
 };
 
-const followChar = (dispatch) => async (data, type, sc, cb) => {
+const followChar = (dispatch) => async (data, sc, cb) => {
+  let route = "";
+  switch (data.type) {
+    case "follow":
+      route = "followChar";
+      break;
+
+    case "unfollow":
+      route = "unfollowChar";
+      break;
+
+    case "favorite":
+      route = "favorite";
+      break;
+  }
   try {
     const token = await AsyncStorage.getItem("token");
-    const headers = {
-      "x-auth-token": token,
-    };
-    if (type === "follow") {
-      await followApi.put("/followChar", data, {
-        headers,
-      });
-      if (sc) sc();
-    } else if (type === "unfollow") {
-      await followApi.put("/unfollowChar", data, {
-        headers,
-      });
-      if (sc) sc();
-    } else if (type === "favorite") {
-      await followApi.put("/favorite", data, {
-        headers,
-      });
-    }
+    const res = await followApi.put(`/${route}`, data, {
+      headers: {
+        "x-auth-token": token,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
+      },
+    });
+    sc && sc(res.data);
   } catch (err) {
-    cb && cb("Error updating character" + err?.response?.data);
+    cb && cb({ err, msg: "Error updating character" });
   }
 };
 
