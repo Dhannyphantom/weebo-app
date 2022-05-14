@@ -178,7 +178,7 @@ const getTheCharacter = (dispatch) => async (id, sc, cb) => {
 
 const followChar = (dispatch) => async (data, sc, cb) => {
   let route = "";
-  switch (data.type) {
+  switch (data.route) {
     case "follow":
       route = "followChar";
       break;

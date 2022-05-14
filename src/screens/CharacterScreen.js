@@ -284,9 +284,23 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const handleOkAlert = () => {
     if (alertModal.type === "followC") {
-      followChar({ charID, userID }, "follow", () => follows(true));
+      updateCardState(true);
+      followChar({ charID, userID, route: "follow" }, null, (err) =>
+        setPopper({
+          vis: true,
+          msg: err.msg,
+          type: "failed",
+        })
+      );
     } else if (alertModal.type === "unfollowC") {
-      followChar({ charID, userID }, "unfollow", () => follows(false));
+      updateCardState(false);
+      followChar({ charID, userID, route: "unfollow" }, null, (err) =>
+        setPopper({
+          vis: true,
+          msg: err.msg,
+          type: "failed",
+        })
+      );
     }
   };
 
@@ -431,17 +445,34 @@ const CharacterScreen = ({ route, navigation }) => {
     }
   };
 
-  const follows = (bool) => {
-    setCardState({
-      ...cardState,
-      selected: bool,
-      liked: bool
-        ? character?.followers?.length + 1
-        : character?.followers?.length - 1,
-    });
+  const updateCardState = (bool = null, fav = null) => {
+    if (bool !== null) {
+      setCardState({
+        ...cardState,
+        selected: bool,
+        liked: bool ? cardState.liked + 1 : cardState.liked - 1,
+      });
+    } else if (fav != null) {
+      setCardState({
+        ...cardState,
+        fav,
+        favNum:
+          fav === null
+            ? cardState.favNum
+            : fav
+            ? cardState.favNum + 1
+            : cardState.favNum - 1,
+      });
+      if (fav) {
+        setPopper({
+          vis: true,
+          type: "success",
+          msg: "Character added to favorites",
+        });
+      }
+    }
     ////  SOMETHING WRONG BELOW
     getShows();
-    tryLocalSignin();
   };
 
   const handleFollowPress = () => {
@@ -462,7 +493,14 @@ const CharacterScreen = ({ route, navigation }) => {
         type: "unfollowC",
       });
     } else {
-      followChar({ charID, userID }, "follow", () => follows(true));
+      updateCardState(true);
+      followChar({ charID, userID, route: "follow" }, null, (err) => {
+        setPopper({
+          vis: true,
+          msg: err.msg,
+          type: "failed",
+        });
+      });
     }
   };
 
@@ -575,32 +613,25 @@ const CharacterScreen = ({ route, navigation }) => {
   const handleFavPress = () => {
     const data = {
       character: character?._id,
+      route: "favorite",
     };
+    let bool = false;
     if (cardState.fav) {
-      /// unFav
-      setCardState({
-        ...cardState,
-        favNum: charFavs,
-        fav: false,
-      });
+      bool = false;
       data.type = "remove";
     } else {
       //fav
-      setCardState({
-        ...cardState,
-        favNum: charFavs + 1,
-        fav: true,
-      });
+      bool = true;
       data.type = "add";
     }
-    followChar(
-      data,
-      "favorite",
-      (data) => console.log(data),
-      (err) => {
-        console.log(err);
-      }
-    );
+    updateCardState(null, bool);
+    followChar(data, null, (err) => {
+      setPopper({
+        type: "failed",
+        vis: true,
+        msg: err.msg,
+      });
+    });
   };
 
   const renderPage = ({ item }) => {

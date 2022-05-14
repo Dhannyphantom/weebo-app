@@ -88,7 +88,7 @@ const Card = ({
       });
     } else {
       updateCardState(true);
-      followChar({ charID, userID, type: "follow" }, null, (err) =>
+      followChar({ charID, userID, route: "follow" }, null, (err) =>
         setPopper({
           vis: true,
           type: "failed",
@@ -100,7 +100,7 @@ const Card = ({
 
   const handleConfirmAlert = () => {
     updateCardState(false);
-    followChar({ charID, userID, type: "unfollow" }, null, (err) => {
+    followChar({ charID, userID, route: "unfollow" }, null, (err) => {
       console.log(err.err.response.data);
       setPopper({
         vis: true,

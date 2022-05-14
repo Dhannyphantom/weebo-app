@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingVertical: 15,
     elevation: 1.1,
-    borderRadius: width * 0.014,
+    borderRadius: 10,
     bottom: 50,
   },
   text: {

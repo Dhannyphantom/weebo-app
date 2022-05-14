@@ -42,9 +42,9 @@ const handleNewEvents = (dispatch) => async (data, sc, cb) => {
       type: data.c_type === "image" ? "image/jpeg" : "video/mp4",
       uri: data?.challengeInfo?.uri,
     };
-    fd.append("uploader", imageObject);
+    formData.append("uploader", imageObject);
   }
-  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
+  formData.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -71,9 +71,9 @@ const handleJoinEvent = (dispatch) => async (data, sc, cb) => {
       type: data.c_type === "image" ? "image/jpeg" : "video/mp4",
       uri: data?.challengeInfo?.uri,
     };
-    fd.append("uploader", imageObject);
+    formData.append("uploader", imageObject);
   }
-  fd.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
+  formData.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
