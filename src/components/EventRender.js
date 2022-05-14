@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useContext, useState } from "react";
+import { FlatList, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 import { Context as AcctContext } from "../config/AcctContext";
@@ -14,10 +14,12 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
   const [joiner, setJoiner] = useState(false);
   const [joinData, setJoinData] = useState({ vis: false });
   const [popper, setPopper] = useState({ vis: false });
+  const [challengerNum, setChallengerNum] = useState(item?.challengers?.length);
 
   const finder = item.challengers[0];
   const participant = item.challengers.find((obj) => obj.user == userID);
   const isParticipant = participant ? true : false;
+  const fullParticipants = challengerNum == item.challengersNum;
   let imgData = finder.media;
   const info = finder.info;
   let mediaType;
@@ -81,7 +83,7 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
     cb && cb();
   };
 
-  const statLeft = `${item.challengers.length}/${item.challengersNum} participants`;
+  const statLeft = `${challengerNum}/${item.challengersNum} participants`;
   const statRight = getFormatTime(item.eventTime, null, "event");
 
   const isExpired = new Date(item.eventTime) <= Date.now();
@@ -107,7 +109,11 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
         mediaType={mediaType}
         onPress={null}
         midBtnPress={() => handleJoin(item._id)}
-        midBtn={isExpired || isParticipant || joiner ? null : "JOIN"}
+        midBtn={
+          isExpired || isParticipant || joiner || fullParticipants
+            ? null
+            : "JOIN"
+        }
         statMid={
           joiner || isParticipant ? "JOINED" : isExpired ? "EXPIRED" : null
         }
@@ -119,6 +125,7 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
         setter={handleCloseEventModal}
         joinData={joinData}
         setJoiner={setJoiner}
+        challengerState={{ challengerNum, setChallengerNum }}
         // handleJoinEventCb={handleCallback}
         handleJoinEvent={handleJoinEvent}
       />
@@ -161,9 +168,5 @@ const EventRender = ({ eventData, renderType = "multiple", userID }) => {
     );
   }
 };
-const styles = StyleSheet.create({
-  container: {},
-});
-export default EventRender;
 
-// CHECK APP.TXT FOR JUNKS 2162
+export default EventRender;

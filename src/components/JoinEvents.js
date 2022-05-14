@@ -22,6 +22,7 @@ const JoinEvents = ({
   visible,
   joinData,
   setter,
+  challengerState,
   setJoiner,
   handleJoinEvent,
 }) => {
@@ -48,7 +49,10 @@ const JoinEvents = ({
         data,
         (resData) => {
           setjoinLoading(false);
-          setter(() => setJoiner(true));
+          setter(() => {
+            setJoiner(true);
+            challengerState.setChallengerNum(challengerState.challengerNum + 1);
+          });
         },
         (err) => {
           console.log(err);
