@@ -32,9 +32,6 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   const modalData = modalObject.data;
   if (!isVisible || !modalData) return null;
 
-  const {
-    state: { userInfo },
-  } = useContext(AuthContext);
   const { viewPostVideo } = useContext(FeedContext);
 
   const [errMsg, setErrMsg] = useState(null);
@@ -81,15 +78,6 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   // data = {type,pos(isVid), }
   const item = modalData.item;
   // item = {uri, width, height}
-
-  // const mediaArr = [...params?.posts];
-
-  // const activeIndex = mediaArr.findIndex((obj) => obj._id == item._id);
-  // if (activeIndex >= 0) {
-  //   const initial = mediaArr[0];
-  //   mediaArr[0] = mediaArr[activeIndex];
-  //   mediaArr[activeIndex] = initial;
-  // }
 
   const handleViewPost = () => {
     setPost({ ...post, viewed: true, views: post.views + 1 });

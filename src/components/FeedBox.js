@@ -31,7 +31,17 @@ const FeedBox = ({
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
 
   const handleShowMedia = (mediaObj) => {
-    setDisplayMedia({ vis: true, data: mediaObj });
+    setDisplayMedia({
+      vis: true,
+      data: { item: mediaObj, feed: { type: mediaType } },
+    });
+  };
+
+  const handleMediaPress = () => {
+    if (mediaType == "image") {
+      handleShowMedia(image);
+    }
+    onPress && onPress();
   };
 
   return (
@@ -67,7 +77,7 @@ const FeedBox = ({
       {mediaType == "image" && (
         <TouchableOpacity
           activeOpacity={onPress ? 0.96 : 1}
-          onPress={onPress}
+          onPress={handleMediaPress}
           style={{
             ...styles.bgImage,
             aspectRatio: image.width / image.height,
