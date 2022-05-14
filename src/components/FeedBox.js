@@ -118,8 +118,8 @@ const FeedBox = ({
           <AppButton
             title={midBtn}
             onPress={midBtnPress}
-            style={styles.statText}
-            bare
+            style={{ ...styles.statText, justifyContent: "center" }}
+            naked
           />
         )}
         {statRight ? (
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
   statText: {
     width: width * 0.33,
     textAlign: "center",
+    alignSelf: "center",
   },
   title: {
     textTransform: "capitalize",

@@ -41,7 +41,6 @@ const HomeScreen = ({ navigation, route }) => {
   const {
     tryLocalSignin,
     notificationSender,
-    updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
 
@@ -97,7 +96,7 @@ const HomeScreen = ({ navigation, route }) => {
     );
   };
 
-  const renderHome = useCallback(({ item }) => {
+  const renderHome = ({ item }) => {
     // if (!feeds) return null;
 
     if (item.instanceType === "show") {
@@ -107,14 +106,13 @@ const HomeScreen = ({ navigation, route }) => {
     } else if (item.instanceType === "challenge") {
       return (
         <EventRender
-          updateMe={updateMe}
           userID={userInfo._id}
           renderType="single"
           eventData={item}
         />
       );
     }
-  }, []);
+  };
 
   const handleEndReached = (cb) => {
     if (feeds.hasOwnProperty("next")) {

@@ -22,8 +22,8 @@ const JoinEvents = ({
   visible,
   joinData,
   setter,
+  setJoiner,
   handleJoinEvent,
-  handleJoinEventCb,
 }) => {
   const JoinComponent = () => {
     const [joinLoading, setjoinLoading] = useState(false);
@@ -48,15 +48,12 @@ const JoinEvents = ({
         data,
         (resData) => {
           setjoinLoading(false);
-          setter();
-          handleJoinEventCb(1, resData.points);
+          setter(() => setJoiner(true));
         },
         (err) => {
-          // setErrMsg(err);
           console.log(err);
+          setErrMsg(err.msg);
           setjoinLoading(false);
-          setter();
-          handleJoinEventCb(0);
         }
       );
     };
