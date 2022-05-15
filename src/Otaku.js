@@ -19,12 +19,30 @@ import AuthNavigator from "./navigation/AuthNavigator";
 import navigationTheme from "./navigation/navigationTheme";
 import HomeNavigator from "./navigation/HomeNavigator";
 import ThemeContext from "./config/themeContext";
+import colors from "./constants/colors";
 
 const Otaku = () => {
   const {
     state: { token },
   } = useContext(AuthContext);
   const [themeMode, setThemeMode] = useState(false);
+
+  const lightTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme,
+      primary: colors.primary,
+      background: themeMode ? theme.dark.background : theme.light.background,
+    },
+  };
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme,
+      primary: colors.primary,
+      background: themeMode ? theme.dark.background : theme.light.background,
+    },
+  };
 
   useEffect(() => {
     const eventListener = EventRegister.on("changeTheme", (mode) => {
@@ -37,7 +55,7 @@ const Otaku = () => {
   });
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer theme={themeMode ? darkTheme : lightTheme}>
       {token ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

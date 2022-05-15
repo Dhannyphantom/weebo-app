@@ -267,7 +267,9 @@ const SettingsScreen = () => {
     };
 
     return (
-      <View style={styles.itemContainer}>
+      <View
+        style={[styles.itemContainer, { backgroundColor: theme.background }]}
+      >
         <View style={styles.eachItem}>
           <AppText> {item.name} </AppText>
           <View>
@@ -340,7 +342,6 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: width * 0.95,
-    backgroundColor: colors.white,
     justifyContent: "center",
     borderWidth: 0.8,
     borderColor: colors.primary,

@@ -25,9 +25,7 @@ const Link = ({
       style={[
         {
           ...styles.container,
-          backgroundColor: clickable
-            ? theme.backgroundExtralight
-            : colors.unChange,
+          backgroundColor: clickable ? theme.extralight : colors.unChange,
         },
         style,
       ]}

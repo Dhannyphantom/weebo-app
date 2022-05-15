@@ -1,17 +1,27 @@
 export default {
   light: {
     color: "#000",
+    mode: "light",
     background: "#fff",
     backgroundLight: "#dddddd",
     medium: "#707070",
     backgroundExtralight: "#F5F2F2",
+    extralight: "#F5F2F2",
+    transparent: "rgba(255,255,255, 0.3)",
+    transparentBold: "rgba(255,255,255, 0.95)",
+    unchange: "#e3d8f0",
   },
   dark: {
     color: "#fff",
     // background: "#1c2a3b",
     medium: "#253850",
+    mode: "dark",
+    transparent: "rgba(37,56,80, 0.3)",
+    transparentBold: "rgba(37,56,80, 0.95)",
     background: "#131e2a",
     backgroundLight: "#263950",
-    backgroundExtralight: "#2f4765",
+    backgroundExtralight: "#131e2a",
+    extralight: "#2f4765",
+    unchange: "#2f4765",
   },
 };

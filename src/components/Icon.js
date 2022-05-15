@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, Fontisto } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../constants/colors";
+import ThemeContext from "../config/themeContext";
 
 const Icon = ({
   size = 40,
@@ -22,6 +23,7 @@ const Icon = ({
 }) => {
   let borRadius;
   curve ? (borRadius = 5) : (borRadius = 2);
+  const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
       activeOpacity={disablePress ? 1 : activeOpacity}
@@ -30,7 +32,12 @@ const Icon = ({
       <View
         style={[
           styles.container,
-          { width: size, height: size, borderRadius: size / borRadius },
+          {
+            width: size,
+            height: size,
+            backgroundColor: theme.background,
+            borderRadius: size / borRadius,
+          },
           style,
         ]}
       >

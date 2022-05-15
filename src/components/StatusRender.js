@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ import colors from "../constants/colors";
 import DisplayStatus from "./DisplayStatus";
 import Screen from "./Screen";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/themeContext";
 
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
@@ -132,6 +133,7 @@ const CircularGradient = ({ children, diameter }) => {
 const StatusRender = ({ data, show, setter }) => {
   const [display, setDisplay] = useState({ vis: false, data: null });
 
+  const theme = useContext(ThemeContext);
   const safeInset = useSafeAreaInsets();
 
   if (!show) return null;
@@ -162,7 +164,13 @@ const StatusRender = ({ data, show, setter }) => {
 
   return (
     <Modal visible={show} statusBarTranslucent transparent>
-      <View style={{ ...styles.container, paddingTop: safeInset.top + 10 }}>
+      <View
+        style={{
+          ...styles.container,
+          backgroundColor: theme.transparentBold,
+          paddingTop: safeInset.top + 10,
+        }}
+      >
         <TouchableOpacity
           activeOpacity={1}
           onPress={handleCloseModal}
@@ -197,7 +205,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "rgba(255,255,255,0.95)",
   },
   circularInner: {
     // backgroundColor: "transparent",

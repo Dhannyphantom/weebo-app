@@ -33,7 +33,7 @@ const AppHeader = ({
             activeOpacity={icon ? 0.66 : 1}
           >
             {icon && (
-              <Feather name="chevron-left" size={29} color={iconColor} />
+              <Feather name="chevron-left" size={29} color={theme.medium} />
             )}
             <AppText
               size="xlarge"
@@ -56,7 +56,7 @@ const AppHeader = ({
             <Feather
               name="chevron-left"
               size={width * 0.045}
-              color={theme.backgroundExtralight}
+              color={iconColor}
             />
           </TouchableOpacity>
           {dotPress && (

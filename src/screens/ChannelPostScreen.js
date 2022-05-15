@@ -29,6 +29,7 @@ import vidMaxChecker from "../constants/vidMaxChecker";
 import FeedRender from "../components/FeedRender";
 import Screen from "../components/Screen";
 import StickyHeader from "../components/StickyHeader";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -58,6 +59,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     state: { userInfo },
     updateMe,
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -423,7 +425,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundExtralight },
+      ]}
+    >
       <StatusBar style="dark" />
       {page._id ? (
         <>
@@ -482,7 +489,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.extraLight,
   },
   error: {
     textAlign: "center",

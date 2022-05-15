@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import Separator from "./Separator";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,6 +34,7 @@ const DropDown = ({
   if (!visible) return null;
 
   const translator = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const theme = useContext(ThemeContext);
 
   const renderDropLists = ({ item }) => {
     if (!item.show) return null;
@@ -50,7 +52,7 @@ const DropDown = ({
           <MaterialCommunityIcons
             name={item.icon}
             size={18}
-            color={item.selected ? colors.primary : colors.medium}
+            color={item.selected ? colors.primary : theme.medium}
           />
           <AppText size="large" style={styles.itemTitle} bold>
             {item.name}
@@ -103,6 +105,7 @@ const DropDown = ({
       <Animated.View
         style={{
           ...styles.content,
+          backgroundColor: theme.background,
           transform: translator.getTranslateTransform(),
         }}
       >
@@ -135,7 +138,6 @@ const styles = StyleSheet.create({
     width: BOX_SIZE,
     left: BOX_SIZE,
     // flexDirection: "row",
-    backgroundColor: colors.white,
   },
   closer: {
     position: "absolute",
@@ -153,7 +155,6 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     textTransform: "capitalize",
-    color: colors.black,
     marginLeft: 8,
   },
   itemWrapper: {
@@ -167,7 +168,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "95%",
     alignItems: "center",
-    backgroundColor: colors.white,
     paddingVertical: 12,
   },
 });

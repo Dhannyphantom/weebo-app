@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 
@@ -9,6 +9,7 @@ import LoaderImage from "./LoaderImage";
 import Separator from "./Separator";
 import PostVideo from "./PostVideo";
 import MediaModal from "./MediaModal";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,7 +30,7 @@ const FeedBox = ({
   statRight,
 }) => {
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
-
+  const theme = useContext(ThemeContext);
   const handleShowMedia = (mediaObj) => {
     setDisplayMedia({
       vis: true,
@@ -110,7 +111,7 @@ const FeedBox = ({
           <AppText
             style={{
               ...styles.statText,
-              color: rightColored ? colors.primary : colors.black,
+              color: rightColored ? colors.primary : theme.color,
             }}
           >
             {" "}

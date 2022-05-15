@@ -32,6 +32,7 @@ import CoverUpload from "../components/CoverUpload";
 import SubmitButton from "../components/SubmitButton";
 import ActivityIndicator from "../components/ActivityIndicator";
 import LoaderImage from "../components/LoaderImage";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -43,6 +44,7 @@ const ChannelScreen = ({ navigation }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [channels, setChannels] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -83,26 +85,26 @@ const ChannelScreen = ({ navigation }) => {
   const searchRef = useRef(null);
 
   if (boxState.s) {
-    sBg = colors.unChange;
-    mBg = colors.white;
+    sBg = theme.unchange;
+    mBg = theme.background;
     channelHeaderTitle = "Unsubscribed Channels";
     // console.log(checkUnSubbedChannels);
     checkSubChannels ? (shouldShowHeader = false) : (shouldShowHeader = true);
     sColor = colors.primary;
-    mColor = colors.medium;
+    mColor = theme.medium;
   } else if (boxState.m) {
-    sBg = colors.white;
-    mBg = colors.unChange;
+    sBg = theme.background;
+    mBg = theme.unchange;
     checkOwnerChannels ? (shouldShowHeader = true) : (shouldShowHeader = false);
     channelHeaderTitle = "Channels";
-    sColor = colors.medium;
+    sColor = theme.medium;
     mColor = colors.primary;
   }
 
   const ChannelHeaderComp = () => {
     return (
       <View>
-        <Cards style={styles.boxCont}>
+        <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => handleBoxChange("s")}
@@ -413,7 +415,7 @@ const ChannelScreen = ({ navigation }) => {
           <View style={styles.headerBtnCont}>
             <TouchableOpacity
               activeOpacity={1}
-              style={[styles.headerBtn, styles.headerBtnRight]}
+              style={styles.headerBtn}
               onPress={() => setShowSearch(!showSearch)}
             >
               <Feather
@@ -423,13 +425,13 @@ const ChannelScreen = ({ navigation }) => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.headerBtn, styles.headerBtnLeft]}
+              style={styles.headerBtn}
               activeOpacity={1}
               onPress={handleNewChannel}
             >
               <MaterialCommunityIcons
                 name="plus"
-                size={width * 0.03}
+                size={width * 0.035}
                 color={colors.primary}
               />
             </TouchableOpacity>
@@ -558,9 +560,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     overflow: "hidden",
     borderRadius: width * 0.02,
-    height: width * 0.12,
   },
   box: {
+    paddingVertical: 30,
     flexDirection: "row",
     flex: 1,
     alignItems: "center",
@@ -607,21 +609,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   headerBtn: {
-    backgroundColor: colors.extraLight,
     width: width * 0.085,
     height: width * 0.085,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: width * 0.003,
-    borderRadius: width * 0.02,
-  },
-  headerBtnRight: {
-    borderTopStartRadius: width * 0.08,
-    borderBottomStartRadius: width * 0.08,
-  },
-  headerBtnLeft: {
-    borderBottomEndRadius: width * 0.08,
-    borderTopEndRadius: width * 0.08,
   },
   headerTitle: {
     textAlign: "center",
