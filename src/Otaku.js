@@ -20,6 +20,7 @@ import navigationTheme from "./navigation/navigationTheme";
 import HomeNavigator from "./navigation/HomeNavigator";
 import ThemeContext from "./config/themeContext";
 import colors from "./constants/colors";
+import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
 const Otaku = () => {
   const {
@@ -54,6 +55,14 @@ const Otaku = () => {
     };
   });
 
+  useEffect(async () => {
+    const settingsStr = await AsyncStorageLib.getItem("settings");
+    if (settingsStr) {
+      const settingsData = JSON.parse(settingsStr);
+      setThemeMode(settingsData[1].data[0].default);
+    }
+  }, []);
+
   return (
     <NavigationContainer theme={themeMode ? darkTheme : lightTheme}>
       {token ? <HomeNavigator /> : <AuthNavigator />}
@@ -73,6 +82,14 @@ export default function Providers() {
       EventRegister.removeEventListener(eventListener);
     };
   });
+
+  useEffect(async () => {
+    const settingsStr = await AsyncStorageLib.getItem("settings");
+    if (settingsStr) {
+      const settingsData = JSON.parse(settingsStr);
+      setThemeMode(settingsData[1].data[0].default);
+    }
+  }, []);
 
   return (
     <FeedProvider>

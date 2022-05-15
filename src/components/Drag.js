@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import ThemeContext from "../config/themeContext";
 import colors from "../constants/colors";
 
 const { width } = Dimensions.get("window");
 
 const Drag = ({ style, panHandlers, onPress }) => {
+  const theme = useContext(ThemeContext);
+
   return (
-    <View style={[styles.container, style]} onPress={onPress} {...panHandlers}>
+    <View
+      style={[styles.container, { backgroundColor: theme.extralight }, style]}
+      onPress={onPress}
+      {...panHandlers}
+    >
       <TouchableOpacity
         activeOpacity={1}
         onPress={onPress}
@@ -19,7 +26,6 @@ const styles = StyleSheet.create({
   container: {
     paddingBottom: 15,
     paddingTop: 10,
-    backgroundColor: colors.extraLight,
     borderTopStartRadius: width * 0.03,
     borderTopEndRadius: width * 0.03,
   },

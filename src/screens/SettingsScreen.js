@@ -263,7 +263,7 @@ const SettingsScreen = () => {
       editSettings(section.title, item.name, !isEnabled);
 
       // code
-      EventRegister.emit("changeTheme", isEnabled);
+      EventRegister.emit("changeTheme", !isEnabled);
     };
 
     return (

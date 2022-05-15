@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Modal, Dimensions, Animated } from "react-native";
+import ThemeContext from "../config/themeContext";
 import colors from "../constants/colors";
 import AppButton from "./AppButton";
 import AppText from "./AppText";
@@ -21,9 +22,11 @@ const modalShow = {
 };
   */
   const translator = useRef(new Animated.Value(height)).current;
+  const theme = useContext(ThemeContext);
 
   const translatorStyles = {
     ...styles.mbox,
+    backgroundColor: theme.backgroundExtralight,
     transform: [{ translateY: translator }],
     opacity: translator.interpolate({
       inputRange: [0, height],
@@ -93,8 +96,8 @@ const styles = StyleSheet.create({
     width: BOX_WIDTH,
     backgroundColor: colors.extraLight,
     alignItems: "center",
-    elevation: 2,
-    paddingBottom: 12,
+    elevation: 10,
+    paddingBottom: 15,
     borderRadius: width * 0.03,
   },
   mboxIn: {
@@ -103,6 +106,7 @@ const styles = StyleSheet.create({
   message: {
     textAlign: "center",
     width: width * 0.5,
+    paddingVertical: 30,
     alignSelf: "center",
   },
   title: {

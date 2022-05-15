@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
 
 import Drag from "./Drag";
 import colors from "../constants/colors";
+import ThemeContext from "../config/themeContext";
 
 const { height, width } = Dimensions.get("window");
 
@@ -53,6 +54,7 @@ const PopUpModal = ({
       onPanResponderGrant: (evt, gestureState) => {},
     })
   ).current;
+  const theme = useContext(ThemeContext);
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -103,6 +105,7 @@ const PopUpModal = ({
           activeOpacity={1}
           style={{
             ...styles.modalContent,
+            backgroundColor: theme.background,
             ...style,
             transform: [{ translateY: translator }],
             height: height,
@@ -147,7 +150,6 @@ const styles = StyleSheet.create({
     // backgroundColor: "rgba(0,0,0,0.3)",
   },
   modalContent: {
-    backgroundColor: colors.white,
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
     paddingBottom: 20,
