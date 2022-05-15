@@ -26,6 +26,7 @@ import colors from "../constants/colors";
 import Separator from "../components/Separator";
 import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 const boolsObj = {
@@ -43,6 +44,7 @@ const HomeScreen = ({ navigation, route }) => {
     notificationSender,
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [feeds, setFeeds] = useState(null);
   const [stories, setStories] = useState([]);
@@ -229,7 +231,12 @@ const HomeScreen = ({ navigation, route }) => {
   return (
     <>
       <StatusBar style="dark" />
-      <Screen style={styles.container}>
+      <Screen
+        style={{
+          ...styles.container,
+          backgroundColor: theme.backgroundExtralight,
+        }}
+      >
         <HomeHeader characters={userInfo.charactersOwned} />
 
         {!feeds?.results[0] ? (
@@ -278,7 +285,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.extraLight,
   },
   noContent: {
     width,

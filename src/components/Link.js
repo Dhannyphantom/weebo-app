@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
@@ -7,6 +7,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import AppText from "./AppText";
 import colors from "../constants/colors";
+import ThemeContext from "../config/themeContext";
 
 const Link = ({
   name,
@@ -16,6 +17,7 @@ const Link = ({
   iconName,
   style,
 }) => {
+  const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
       activeOpacity={clickable ? 0.6 : 1}
@@ -23,7 +25,9 @@ const Link = ({
       style={[
         {
           ...styles.container,
-          backgroundColor: clickable ? colors.extraLight : colors.unChange,
+          backgroundColor: clickable
+            ? theme.backgroundExtralight
+            : colors.unChange,
         },
         style,
       ]}

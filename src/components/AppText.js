@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Dimensions, StyleSheet, Text } from "react-native";
+import ThemeContext from "../config/themeContext";
 const { width, fontScale } = Dimensions.get("window");
 
 const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
+  const theme = useContext(ThemeContext);
   //size = ["normal", "small", "xsmall", "large", "xlarge", "xxlarge"]
   let scaledSize;
   switch (size) {
@@ -44,7 +46,11 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
       {!bold && (
         <Text
           {...otherProps}
-          style={[styles.text, { ...style, fontSize: scaledSize }]}
+          style={[
+            styles.text,
+            { color: theme.color },
+            { ...style, fontSize: scaledSize },
+          ]}
         >
           {children}
         </Text>
@@ -52,7 +58,11 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
       {bold && (
         <Text
           {...otherProps}
-          style={[styles.bold, { ...style, fontSize: scaledSize }]}
+          style={[
+            styles.bold,
+            { color: theme.color },
+            { ...style, fontSize: scaledSize },
+          ]}
         >
           {children}
         </Text>

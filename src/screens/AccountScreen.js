@@ -22,6 +22,7 @@ import Points from "../components/Points";
 import Separator from "../components/Separator";
 import AlertModal from "../components/AlertModal";
 import { StatusBar } from "expo-status-bar";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {
@@ -44,6 +45,8 @@ const AccountScreen = ({ navigation, route }) => {
   const [imageProgress, setImageProgress] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [account, setAccount] = useState([userInfo]);
+
+  const theme = useContext(ThemeContext);
 
   let prefixPro;
   const isProfileCompleted =
@@ -171,7 +174,7 @@ const AccountScreen = ({ navigation, route }) => {
   }, [userInfo, navigation]);
 
   return (
-    <Screen style={{ flex: 1 }}>
+    <Screen style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar style="dark" />
       <FlatList
         data={account}
@@ -291,7 +294,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "tomato",
   },
   coolName: {
     fontSize: 14,

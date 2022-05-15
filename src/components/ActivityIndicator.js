@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import LottieView from "lottie-react-native";
 import colors from "../constants/colors";
@@ -6,6 +6,7 @@ import AppText from "./AppText";
 
 // FILES
 import loaderAnim from "../../assets/animations/two_dotted_spinner.json";
+import ThemeContext from "../config/themeContext";
 
 const screen = Dimensions.get("window");
 
@@ -21,6 +22,8 @@ const ActivityIndicator = ({
   wTransparent,
 }) => {
   if (!visible) return null;
+  const theme = useContext(ThemeContext);
+
   return (
     <View
       style={{
@@ -31,7 +34,7 @@ const ActivityIndicator = ({
           ? "rgba(255, 255, 255, 0.65)"
           : bTransparent
           ? "rgba(0, 0, 0, 0.4)"
-          : colors.white,
+          : theme.background,
         justifyContent: type === "page" ? "flex-start" : "center",
         alignItems: type === "page" ? "stretch" : "center",
         ...style,

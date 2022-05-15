@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,7 @@ import AppText from "./AppText";
 import Separator from "./Separator";
 import Screen from "./Screen";
 import colors from "../constants/colors";
+import ThemeContext from "../config/themeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +22,7 @@ const AppHeader = ({
   iconColor = colors.black,
 }) => {
   const navigation = useNavigation();
+  const theme = useContext(ThemeContext);
   return (
     <>
       {type == "background" && (
@@ -35,7 +37,7 @@ const AppHeader = ({
             )}
             <AppText
               size="xlarge"
-              style={{ ...styles.title, ...titleStyle }}
+              style={{ ...styles.title, color: theme.color, ...titleStyle }}
               bold
             >
               {title}
@@ -54,7 +56,7 @@ const AppHeader = ({
             <Feather
               name="chevron-left"
               size={width * 0.045}
-              color={iconColor}
+              color={theme.backgroundExtralight}
             />
           </TouchableOpacity>
           {dotPress && (
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
   },
   title: {
-    color: colors.black,
     textTransform: "capitalize",
     marginLeft: 4,
   },

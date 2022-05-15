@@ -16,6 +16,7 @@ import AccountNavigator from "./AccountNavigator";
 import AlertNavigator from "./AlertNavigator";
 import HomeStack from "./HomeStack";
 import ProfilePic from "../components/ProfilePic";
+import ThemeContext from "../config/themeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -100,15 +101,15 @@ const screenOptions = {
     marginLeft: 3,
   },
   tabBarStyle: style,
-  tabBarItemStyle: tabStyle,
   tabBarActiveTintColor: colors.primary,
-  tabBarInactiveTintColor: colors.medium,
+  tabBarItemStyle: tabStyle,
   tabBarHideOnKeyboard: true,
   tabBarShowLabel: false,
 };
 
 const TabIcon = ({ focused, color, size = 35, item }) => {
   const { iconName, name, iconPack, iconFName, iconFPack } = item;
+  const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -137,7 +138,7 @@ const TabIcon = ({ focused, color, size = 35, item }) => {
         size={size}
         border={1.1}
         borderRad={size / 2}
-        borderColor={focused ? colors.primary : colors.white}
+        borderColor={focused ? colors.primary : theme.backgroundLight}
         disabled
       />
     );
@@ -148,13 +149,14 @@ const TabIcon = ({ focused, color, size = 35, item }) => {
       {focused ? (
         <IconFocused name={iconFName} color={color} size={size / 1.5} />
       ) : (
-        <Icon name={iconName} color="black" size={size / 1.5} />
+        <Icon name={iconName} color={color} size={size / 1.5} />
       )}
     </>
   );
 };
 
 const TabButton = (props) => {
+  const theme = useContext(ThemeContext);
   const { item, onPress, accessibilityState } = props;
   const focused = accessibilityState?.selected;
 
@@ -194,7 +196,7 @@ const TabButton = (props) => {
       >
         <TabIcon
           item={item}
-          color={focused ? colors.primary : colors.light}
+          color={focused ? colors.primary : theme.medium}
           focused={focused}
         />
       </Animated.View>
@@ -204,8 +206,19 @@ const TabButton = (props) => {
 
 const TabNavigator = () => {
   // console.log(insets);
+  const theme = useContext(ThemeContext);
   return (
-    <Tab.Navigator screenOptions={screenOptions} backBehavior="none">
+    <Tab.Navigator
+      screenOptions={{
+        ...screenOptions,
+        tabBarStyle: {
+          ...screenOptions.tabBarStyle,
+          backgroundColor: theme.background,
+          borderColor: theme.background,
+        },
+      }}
+      backBehavior="none"
+    >
       {TabArr.map((obj, idx) => {
         return (
           <Tab.Screen

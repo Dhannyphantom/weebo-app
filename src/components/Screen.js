@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ThemeContext from "../config/themeContext";
 //
 const Screen = ({ children, panHandlers, style, ...otherProps }) => {
+  const theme = useContext(ThemeContext);
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: style?.backgroundColor || "transparent",
+        backgroundColor: theme.background,
+        ...style,
       }}
     >
       <Animated.View

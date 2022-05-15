@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
+import ThemeContext from "../config/themeContext";
 
 import colors from "../constants/colors";
 
 const Cards = ({ children, elevation = true, style }) => {
+  const theme = useContext(ThemeContext);
   return (
     <View
-      style={{ ...styles.container, elevation: elevation ? 5 : 0, ...style }}
+      style={{
+        ...styles.container,
+        backgroundColor: theme.background,
+        elevation: elevation ? 5 : 0,
+        ...style,
+      }}
     >
       {children}
     </View>
@@ -14,7 +21,6 @@ const Cards = ({ children, elevation = true, style }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     shadowRadius: 6,
     shadowColor: "black",
     shadowOpacity: 0.15,

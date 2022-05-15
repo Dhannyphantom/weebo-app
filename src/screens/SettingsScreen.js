@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EventRegister } from "react-native-event-listeners";
 
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
@@ -17,6 +18,7 @@ import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import PopDropDown from "../components/PopDropDown";
 import AlertModal from "../components/AlertModal";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -217,6 +219,7 @@ const RenderHeader = ({ section: { title } }) => {
 
 const SettingsScreen = () => {
   const [settings, setSettings] = useState([]);
+  const theme = useContext(ThemeContext);
 
   const readyScreen = async () => {
     const getSettings = await AsyncStorage.getItem("settings");
@@ -258,6 +261,9 @@ const SettingsScreen = () => {
     const handleToggle = () => {
       setIsEnabled((prevBool) => !prevBool);
       editSettings(section.title, item.name, !isEnabled);
+
+      // code
+      EventRegister.emit("changeTheme", isEnabled);
     };
 
     return (
@@ -293,7 +299,7 @@ const SettingsScreen = () => {
   }, []);
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={{ ...styles.container }}>
       <AppHeader title="App Settings" />
 
       <SectionList
@@ -306,7 +312,9 @@ const SettingsScreen = () => {
   );
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
   dropdown: {
     marginVertical: 8,
     flexDirection: "row",

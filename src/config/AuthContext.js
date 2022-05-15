@@ -472,6 +472,7 @@ export const { Context, Provider } = createDataContext(
     token: null,
     errMsg: "",
     userInfo: {},
+    userSettings: [],
     appLoader: () => null,
   }
 );
