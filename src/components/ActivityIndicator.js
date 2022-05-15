@@ -6,7 +6,7 @@ import AppText from "./AppText";
 
 // FILES
 import loaderAnim from "../../assets/animations/two_dotted_spinner.json";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 

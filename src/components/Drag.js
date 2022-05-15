@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 
 const { width } = Dimensions.get("window");

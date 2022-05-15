@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, Fontisto } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../constants/colors";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const Icon = ({
   size = 40,

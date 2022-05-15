@@ -20,7 +20,7 @@ import { Context as CharContext } from "../config/CharContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 const screen = Dimensions.get("window");
 
 const CARD_WIDTH = screen.width * 0.6;

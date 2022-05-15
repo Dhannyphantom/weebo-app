@@ -9,7 +9,7 @@ import LoaderImage from "./LoaderImage";
 import Separator from "./Separator";
 import PostVideo from "./PostVideo";
 import MediaModal from "./MediaModal";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 

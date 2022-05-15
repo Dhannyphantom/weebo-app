@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, Animated } from "react-native";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import BallIcon from "./BallIcon";

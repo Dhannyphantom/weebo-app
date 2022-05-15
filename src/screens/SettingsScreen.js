@@ -18,7 +18,7 @@ import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import PopDropDown from "../components/PopDropDown";
 import AlertModal from "../components/AlertModal";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 

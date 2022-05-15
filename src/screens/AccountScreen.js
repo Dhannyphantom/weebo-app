@@ -22,7 +22,7 @@ import Points from "../components/Points";
 import Separator from "../components/Separator";
 import AlertModal from "../components/AlertModal";
 import { StatusBar } from "expo-status-bar";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {

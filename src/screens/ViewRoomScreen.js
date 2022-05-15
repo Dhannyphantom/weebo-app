@@ -32,7 +32,7 @@ import AlertModal from "../components/AlertModal";
 import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
 import PopDownModal from "../components/PopDownModal";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 

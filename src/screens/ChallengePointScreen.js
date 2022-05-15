@@ -16,6 +16,7 @@ import colors from "../constants/colors";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
 import calendar from "../constants/calendar";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -201,6 +202,7 @@ const ChallengePointScreen = ({ navigation }) => {
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
   //
   const [adLoaded, setAdLoaded] = useState({ vis: false, firstLoad: false });
   const [adInfo, setAdInfo] = useState(null);
@@ -237,7 +239,9 @@ const ChallengePointScreen = ({ navigation }) => {
             style={{ opacity: 0.2 }}
           />
         </View>
-        <View style={styles.cardDetails}>
+        <View
+          style={[styles.cardDetails, { backgroundColor: theme.extralight }]}
+        >
           <AppText>You {pointsWord}</AppText>
           <Separator h={1} />
           <AppText size="large" style={{ color: pointsColor }} bold>
@@ -444,7 +448,7 @@ const ChallengePointScreen = ({ navigation }) => {
         renderItem={renderPointsData}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <View style={styles.stats}>
+          <View style={[styles.stats, { backgroundColor: theme.background }]}>
             <AppText style={styles.statsText} bold>
               Your current CP{" "}
             </AppText>
@@ -522,7 +526,6 @@ const styles = StyleSheet.create({
     width: width * 0.7,
     height: width * 0.27,
     alignSelf: "center",
-    backgroundColor: colors.extraLight,
     borderRadius: width * 0.03,
     alignItems: "center",
     justifyContent: "space-evenly",
@@ -546,7 +549,6 @@ const styles = StyleSheet.create({
   },
   stats: {
     alignSelf: "center",
-    backgroundColor: colors.white,
     width: width * 0.4,
     height: width * 0.2,
     borderRadius: width * 0.03,

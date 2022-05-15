@@ -7,7 +7,7 @@ import AppText from "./AppText";
 import Separator from "./Separator";
 import Screen from "./Screen";
 import colors from "../constants/colors";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 

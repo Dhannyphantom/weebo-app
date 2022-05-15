@@ -26,7 +26,7 @@ import colors from "../constants/colors";
 import Separator from "../components/Separator";
 import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 const boolsObj = {

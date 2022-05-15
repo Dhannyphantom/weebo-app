@@ -16,9 +16,8 @@ import { Provider as ChallContext } from "./config/ChallContext";
 import theme from "./constants/theme";
 
 import AuthNavigator from "./navigation/AuthNavigator";
-import navigationTheme from "./navigation/navigationTheme";
 import HomeNavigator from "./navigation/HomeNavigator";
-import ThemeContext from "./config/themeContext";
+import ThemeContext from "./config/ThemeContext";
 import colors from "./constants/colors";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
 

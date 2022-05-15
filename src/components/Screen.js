@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { StyleSheet, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 //
 const Screen = ({ children, panHandlers, style, ...otherProps }) => {
   const theme = useContext(ThemeContext);

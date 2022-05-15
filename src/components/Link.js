@@ -7,7 +7,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import AppText from "./AppText";
 import colors from "../constants/colors";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const Link = ({
   name,

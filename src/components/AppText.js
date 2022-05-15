@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Dimensions, StyleSheet, Text } from "react-native";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 const { width, fontScale } = Dimensions.get("window");
 
 const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {

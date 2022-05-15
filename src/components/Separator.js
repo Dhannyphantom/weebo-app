@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import ThemeContext from "../config/themeContext";
-import colors from "../constants/colors";
+import ThemeContext from "../config/ThemeContext";
 
 const Separator = ({ h = 2, m, style }) => {
   const theme = useContext(ThemeContext);

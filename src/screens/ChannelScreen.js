@@ -32,7 +32,7 @@ import CoverUpload from "../components/CoverUpload";
 import SubmitButton from "../components/SubmitButton";
 import ActivityIndicator from "../components/ActivityIndicator";
 import LoaderImage from "../components/LoaderImage";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -490,8 +490,14 @@ const ChannelScreen = ({ navigation }) => {
           onPress={() => setModal(false)}
           style={styles.modalCont}
         >
-          <TouchableOpacity activeOpacity={1} style={styles.border}>
-            <TouchableOpacity activeOpacity={1} style={styles.content}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.border, { backgroundColor: theme.backgroundLight }]}
+          >
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[styles.content, { backgroundColor: theme.background }]}
+            >
               <AppText style={styles.title} bold>
                 Create new channel
               </AppText>
@@ -501,7 +507,7 @@ const ChannelScreen = ({ navigation }) => {
                 validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
               >
-                <AppText style={{ color: colors.medium }} bold>
+                <AppText style={{ color: theme.medium }} bold>
                   Will require 150CP
                 </AppText>
                 <View style={{ padding: 12 }}>
@@ -540,7 +546,6 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   border: {
-    backgroundColor: colors.light,
     padding: 8,
     alignSelf: "center",
     elevation: 3,
@@ -570,7 +575,6 @@ const styles = StyleSheet.create({
   },
   content: {
     maxHeight: height * 0.75,
-    backgroundColor: colors.white,
     alignItems: "center",
     overflow: "hidden",
     paddingBottom: 20,

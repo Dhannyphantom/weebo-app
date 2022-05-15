@@ -16,7 +16,7 @@ import AccountNavigator from "./AccountNavigator";
 import AlertNavigator from "./AlertNavigator";
 import HomeStack from "./HomeStack";
 import ProfilePic from "../components/ProfilePic";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 

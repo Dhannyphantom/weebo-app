@@ -13,12 +13,10 @@ import { getThumbnailAsync } from "expo-video-thumbnails";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppText from "./AppText";
-import Cards from "./Cards";
 import colors from "../constants/colors";
 import DisplayStatus from "./DisplayStatus";
-import Screen from "./Screen";
 import ActivityIndicator from "./ActivityIndicator";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];

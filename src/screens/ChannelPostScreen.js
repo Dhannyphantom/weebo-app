@@ -29,7 +29,7 @@ import vidMaxChecker from "../constants/vidMaxChecker";
 import FeedRender from "../components/FeedRender";
 import Screen from "../components/Screen";
 import StickyHeader from "../components/StickyHeader";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 

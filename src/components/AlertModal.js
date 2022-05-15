@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Modal, Dimensions, Animated } from "react-native";
-import ThemeContext from "../config/themeContext";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 import AppButton from "./AppButton";
 import AppText from "./AppText";
