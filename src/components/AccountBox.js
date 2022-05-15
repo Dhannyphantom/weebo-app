@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -20,6 +20,7 @@ import ActivityIndicator from "./ActivityIndicator";
 //// ----------- FILES
 import malePlaceholder from "../../assets/male.jpg";
 import femalePlaceholder from "../../assets/female.jpg";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -35,6 +36,8 @@ const AccountBox = ({
   const [profileData, setProfileData] = useState([]);
   const [added, setAdded] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+
+  const theme = useContext(ThemeContext);
 
   const info = profileData[0];
   let imgUri, isMine, pNoun;
@@ -112,8 +115,17 @@ const AccountBox = ({
       activeOpacity={1}
       style={styles.container}
     >
-      <TouchableOpacity activeOpacity={1} style={styles.outerContent}>
-        <TouchableOpacity activeOpacity={1} style={styles.content}>
+      <TouchableOpacity
+        activeOpacity={1}
+        style={[
+          styles.outerContent,
+          { backgroundColor: theme.backgroundLight },
+        ]}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={[styles.content, { backgroundColor: theme.background }]}
+        >
           {profileData.length > 0 ? (
             <ScrollView>
               <View style={styles.header}>
@@ -126,7 +138,7 @@ const AccountBox = ({
                     borderWidth: info.avatar ? 3 : 2,
                   }}
                 />
-                <AppText style={styles.userText} bold>
+                <AppText style={styles.userText} size="xlarge" bold>
                   @{info.username}
                 </AppText>
                 {info.name && info.second_name && (
@@ -228,7 +240,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   content: {
-    backgroundColor: colors.white,
     width: screen.width * 0.94,
     overflow: "hidden",
     minHeight: screen.height * 0.35,
@@ -238,7 +249,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   outerContent: {
-    backgroundColor: colors.light,
     borderRadius: 20,
     elevation: 3,
     padding: 7,
@@ -267,10 +277,11 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 17,
     textTransform: "capitalize",
+    paddingBottom: 6,
   },
   otherText: {
     textTransform: "capitalize",
-    color: "black",
+    paddingVertical: 5,
   },
   proPic: {
     width: 150,
@@ -280,8 +291,8 @@ const styles = StyleSheet.create({
   userText: {
     color: colors.primary,
     textTransform: "uppercase",
-    fontSize: 14,
     marginVertical: 5,
+    paddingBottom: 5,
   },
 });
 export default AccountBox;

@@ -22,6 +22,7 @@ import ActivityIndicator from "../components/ActivityIndicator";
 import SearchBar from "../components/SearchBar";
 import colors from "../constants/colors";
 import AppText from "../components/AppText";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +30,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
   const navigation = useNavigation();
   const { getShows, getGroups } = useContext(FeedContext);
   const { searchStuffs } = useContext(AcctContext);
+  const theme = useContext(ThemeContext);
 
   const [screenData, setScreenData] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -169,7 +171,12 @@ const ShowGroup = ({ screen, headerTitle }) => {
             ref={searchRef}
             placeholder={`Search ${headerTitle}`}
           />
-          <View style={styles.searchView}>
+          <View
+            style={[
+              styles.searchView,
+              { backgroundColor: theme.backgroundExtralight },
+            ]}
+          >
             <AppText style={styles.searchTitle} bold>
               Search Result
             </AppText>
@@ -213,17 +220,14 @@ const styles = StyleSheet.create({
   search: {
     width: width * 0.075,
     height: width * 0.075,
-    borderRadius: width * 0.015,
     marginRight: 8,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.extraLight,
   },
   searchView: {
     width,
     height,
     alignSelf: "center",
-    backgroundColor: colors.extraLight,
     marginTop: 4,
     borderRadius: width * 0.02,
   },

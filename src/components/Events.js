@@ -27,6 +27,7 @@ import PopMessage from "./PopMessage";
 import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -53,6 +54,7 @@ const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
 const Events = ({ closer, instance, instanceID }) => {
   const { handleNewEvents } = useContext(AcctContext);
   const { updateMe } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [type, setType] = useState(eventTypeArr);
   const [asset, setAsset] = useState(null);
@@ -175,7 +177,7 @@ const Events = ({ closer, instance, instanceID }) => {
   };
 
   const renderEventTypes = ({ item }) => {
-    const isSelected = item.selected ? colors.primary : colors.medium;
+    const isSelected = item.selected ? colors.primary : theme.medium;
     const handleTypePress = () => {
       const copyArr = [...type];
       const index = copyArr.findIndex((obj) => obj.id == item.id);

@@ -1,9 +1,10 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useContext } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import Spacer from "./Spacer";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const SearchBar = (
   { setSearchBar, searchBar, loading, closeCb, pressCb, placeholder, style },
@@ -13,15 +14,23 @@ const SearchBar = (
     setSearchBar(textVal);
     pressCb && pressCb();
   };
+  const theme = useContext(ThemeContext);
   return (
-    <View style={{ ...styles.search, ...style }}>
+    <View
+      style={{
+        ...styles.search,
+        backgroundColor: theme.backgroundLight,
+        ...style,
+      }}
+    >
       <Spacer ml={12} mr={6}>
         <Feather name="search" size={16} color={colors.primary} />
       </Spacer>
       <TextInput
         ref={ref}
-        style={styles.input}
+        style={[styles.input, { color: theme.color }]}
         placeholder={placeholder}
+        placeholderTextColor={colors.medium}
         onChangeText={handleTextChange}
         value={searchBar}
       />
@@ -67,12 +76,10 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     fontFamily: "sen",
-    fontSize: 13,
   },
   search: {
     width: "100%",
     flexDirection: "row",
-    backgroundColor: colors.search,
     height: 40,
     borderRadius: 9,
     alignItems: "center",

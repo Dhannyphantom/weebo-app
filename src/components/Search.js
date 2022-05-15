@@ -20,6 +20,7 @@ import PopMessage from "./PopMessage";
 import FeedHeader from "./FeedHeader";
 import GroupCard from "./GroupCard";
 import Spacer from "./Spacer";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 const searchProto = {
@@ -48,6 +49,7 @@ const Search = ({
   const [popper, setPopper] = useState({ vis: false });
   const [show, setShow] = useState(false);
   const [searchRes, setSearchRes] = useState(searchProto);
+  const theme = useContext(ThemeContext);
 
   const { users, characters, series, groups } = searchRes;
 
@@ -136,7 +138,9 @@ const Search = ({
       />
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       {show && (
-        <View style={styles.searchResult}>
+        <View
+          style={[styles.searchResult, { backgroundColor: theme.extralight }]}
+        >
           {characters.length > 0 && (
             <View style={styles.characters}>
               <Shows data={characters} searchResult />
@@ -206,7 +210,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchResult: {
-    backgroundColor: colors.extraLight,
     borderRadius: 15,
     width: screen.width * 0.97,
     marginLeft: (screen.width * 0.03) / 2,

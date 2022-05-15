@@ -1,6 +1,7 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 
 const screen = Dimensions.get("window");
@@ -11,6 +12,7 @@ const GrowInput = (
   ref
 ) => {
   const [height, setHeight] = useState(1);
+  const theme = useContext(ThemeContext);
 
   useEffect(() => {
     setHeight(4);
@@ -18,8 +20,13 @@ const GrowInput = (
 
   return (
     <TextInput
-      style={[styles.input, style]}
+      style={[
+        styles.input,
+        { backgroundColor: theme.extralight, color: theme.color },
+        style,
+      ]}
       placeholder={placeholder}
+      placeholderTextColor={theme.medium}
       maxLength={80}
       ref={ref}
       {...otherProps}
@@ -47,6 +54,7 @@ const styles = StyleSheet.create({
     borderColor: colors.unChange,
     borderRadius: screen.width * 0.02,
     width: screen.width * 0.8,
+    fontFamily: "sen",
     alignSelf: "center",
     padding: 5,
     paddingLeft: 10,
