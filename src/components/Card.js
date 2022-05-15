@@ -20,6 +20,7 @@ import { Context as CharContext } from "../config/CharContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
+import ThemeContext from "../config/themeContext";
 const screen = Dimensions.get("window");
 
 const CARD_WIDTH = screen.width * 0.6;
@@ -47,11 +48,10 @@ const Card = ({
   bIcon = 50,
 }) => {
   const {
-    tryLocalSignin,
     state: { userInfo },
   } = useContext(AuthContext);
   const { followChar } = useContext(CharContext);
-  const { getShows } = useContext(FeedContext);
+  const theme = useContext(ThemeContext);
 
   let followingArr = series ? series : userInfo.following.map((obj) => obj._id);
   const [alertData, setAlertData] = useState({ visible: false });
@@ -115,7 +115,10 @@ const Card = ({
       <View style={[styles.card, style]}>
         <TouchableOpacity
           activeOpacity={0.94}
-          style={styles.imageContainer}
+          style={[
+            styles.imageContainer,
+            { backgroundColor: theme.backgroundExtralight },
+          ]}
           onPress={onPress}
         >
           <Image
@@ -140,7 +143,13 @@ const Card = ({
           </View>
         </TouchableOpacity>
       </View>
-      <View style={[styles.btmCard, btmStyle]}>
+      <View
+        style={[
+          styles.btmCard,
+          { backgroundColor: theme.background },
+          btmStyle,
+        ]}
+      >
         <View
           style={{
             ...styles.iconContainer,
@@ -207,7 +216,6 @@ const styles = StyleSheet.create({
     height: 390,
   },
   btmCard: {
-    backgroundColor: "#fff",
     elevation: 2,
     shadowRadius: 3,
     shadowColor: "black",
@@ -233,7 +241,6 @@ const styles = StyleSheet.create({
 
   imageContainer: {
     borderRadius: 10,
-    backgroundColor: colors.extraLight,
     // overflow: "hidden",
   },
 

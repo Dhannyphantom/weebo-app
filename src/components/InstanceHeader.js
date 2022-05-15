@@ -20,6 +20,7 @@ import ProfilePic from "./ProfilePic";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 3; // 3 WEEKS
@@ -51,6 +52,7 @@ const InstanceHeader = ({ instanceData }) => {
   const [verifyModal, setVerifyModal] = useState(false);
 
   const safeInset = useSafeAreaInsets();
+  const theme = useContext(ThemeContext);
 
   let posObj = {};
 
@@ -351,15 +353,6 @@ const InstanceHeader = ({ instanceData }) => {
               </View>
             )}
           </View>
-
-          {/* <LinearGradient
-            style={{
-              position: "absolute",
-              bottom: (height * 0.59) / 2.1,
-              ...styles.image,
-            }}
-            colors={["black", "transparent"]}
-          /> */}
           <AppHeader
             style={{ position: "absolute", top: safeInset.top }}
             type="transparent"

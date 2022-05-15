@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, Animated } from "react-native";
+import ThemeContext from "../config/themeContext";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import BallIcon from "./BallIcon";
@@ -35,6 +36,7 @@ const FloatIcons = ({ data }) => {
   const showData = data.filter((obj) => obj.show === true);
   const showDataLength = showData.length;
   const CHANGE_MOVE = BALLER * showDataLength;
+  const theme = useContext(ThemeContext);
 
   const getMoveY = (index) => {
     const sub = (showDataLength - (index + 1)) * BALLER;
@@ -106,6 +108,7 @@ const FloatIcons = ({ data }) => {
                 <AppText
                   style={{
                     marginLeft: 5,
+                    backgroundColor: theme.background,
                     ...styles.text,
                   }}
                   bold
@@ -135,7 +138,6 @@ const FloatIcons = ({ data }) => {
 const styles = StyleSheet.create({
   container: {},
   text: {
-    backgroundColor: colors.white,
     padding: 6,
     borderRadius: width * 0.018,
   },

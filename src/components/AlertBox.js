@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    width: screen.width * 0.95,
+    width: screen.width * 0.92,
     padding: 12,
     alignSelf: "center",
     minHeight: 70,

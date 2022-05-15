@@ -32,6 +32,7 @@ import AlertModal from "../components/AlertModal";
 import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
 import PopDownModal from "../components/PopDownModal";
+import ThemeContext from "../config/themeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -77,6 +78,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   // params = { instance}
   const scrollX = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
+  const theme = useContext(ThemeContext);
   let isManager;
   if (params?.instance?.manager == userInfo._id) {
     isManager = true;
@@ -88,11 +90,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
     showInviteIcon = false;
   } else if (pageData.type === "group") {
     showInviteIcon = true;
-    // if (isManager) {
-    //   showInviteIcon = true;
-    // } else {
-    //   showInviteIcon = false;
-    // }
   }
 
   const floatData = [
@@ -307,7 +304,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
             padding: SPACING * 2,
             alignItems: "center",
             transform: [{ translateY }],
-            backgroundColor: "white",
+            backgroundColor: theme.background,
             borderRadius: width * 0.08,
           }}
         >

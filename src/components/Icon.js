@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    color: colors.black,
   },
   topText: {
     color: colors.medium,
