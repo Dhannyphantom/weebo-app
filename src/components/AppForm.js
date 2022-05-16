@@ -352,7 +352,7 @@ const AppForm = ({
               </AppText>
             )}
             <AppText style={{ marginLeft: 10 }}>
-              Type your registered Email:{" "}
+              Enter your registered e-mail:{" "}
             </AppText>
             <GrowInput
               mLine={false}

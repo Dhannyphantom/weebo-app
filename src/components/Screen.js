@@ -5,12 +5,14 @@ import ThemeContext from "../config/ThemeContext";
 //
 const Screen = ({ children, panHandlers, style, ...otherProps }) => {
   const theme = useContext(ThemeContext);
+  const contentBg = style.backgroundColor
+    ? style.backgroundColor
+    : theme.background;
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: theme.background,
-        ...style,
+        backgroundColor: contentBg,
       }}
     >
       <Animated.View

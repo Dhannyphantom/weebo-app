@@ -17,11 +17,11 @@ import SearchBar from "../components/SearchBar";
 import colors from "../constants/colors";
 import ChatFile from "../components/ChatFile";
 import getTimeStamp from "../constants/getTimestamp";
-import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import AppButton from "../components/AppButton";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,7 +29,6 @@ const ChatScreen = ({ navigation }) => {
   const {
     joinRoom,
     getUserData,
-    getSocket,
     state: { userInfo },
   } = useContext(AuthContext);
 
@@ -41,6 +40,7 @@ const ChatScreen = ({ navigation }) => {
   const [searchUsers, setSearchUsers] = useState([]);
 
   const searchRef = useRef(null);
+  const theme = useContext(ThemeContext);
 
   const renderChatPeople = ({ item }) => {
     return <ChatFile item={item} onPress={handleChatPress} />;
@@ -138,7 +138,7 @@ const ChatScreen = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={{ ...styles.container, backgroundColor: theme.chat }}>
       <StatusBar style="light" />
       <View style={styles.littleCont}>
         <View style={styles.chatHeader}>
@@ -160,14 +160,14 @@ const ChatScreen = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.actionIcons}>
             <TouchableOpacity
-              style={{ ...styles.topIcons, ...styles.searchIcon }}
+              style={styles.topIcons}
               activeOpacity={0.88}
               onPress={handleSearchPress}
             >
               <Feather name="search" color={colors.primary} size={18} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...styles.topIcons, ...styles.plusIcon }}
+              style={styles.topIcons}
               activeOpacity={0.88}
               onPress={handlePlusPress}
             >
@@ -190,7 +190,12 @@ const ChatScreen = ({ navigation }) => {
           />
         )}
 
-        <View style={styles.header}>
+        <View
+          style={[
+            styles.header,
+            { backgroundColor: theme.backgroundExtralight },
+          ]}
+        >
           <View style={{ flex: 1 }}>
             {chatUsers.length > 0 ? (
               <FlatList
@@ -237,7 +242,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.chat,
   },
   chatText: {
     color: colors.white,
@@ -254,8 +258,8 @@ const styles = StyleSheet.create({
   },
   header: {
     marginTop: 15,
-    backgroundColor: colors.extraLight,
     paddingTop: 15,
+    elevation: 5,
     borderTopStartRadius: width * 0.045,
     borderTopEndRadius: width * 0.045,
     flex: 1,
@@ -270,24 +274,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   topIcons: {
-    backgroundColor: colors.extraLight,
     width: 40,
     height: 40,
+    padding: 10,
+    marginHorizontal: 10,
     justifyContent: "center",
     alignItems: "center",
-  },
-  searchIcon: {
-    borderTopStartRadius: width * 0.025,
-    borderBottomStartRadius: width * 0.025,
-    borderBottomEndRadius: width * 0.008,
-    borderTopEndRadius: width * 0.008,
-    marginRight: 3,
-  },
-  plusIcon: {
-    borderTopStartRadius: width * 0.008,
-    borderBottomStartRadius: width * 0.008,
-    borderBottomEndRadius: width * 0.025,
-    borderTopEndRadius: width * 0.025,
   },
 });
 export default ChatScreen;
