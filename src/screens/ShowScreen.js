@@ -1,17 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  FlatList,
-  Modal,
-  Animated,
-} from "react-native";
+import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import { Viewport } from "@skele/components";
 import * as ImagePicker from "expo-image-picker";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as FeedContext } from "../config/FeedContext";
@@ -20,18 +10,12 @@ import { Context as AuthContext } from "../config/AuthContext";
 import { Context as ChallContext } from "../config/ChallContext";
 
 import AppText from "../components/AppText";
-import Icon from "../components/Icon";
-import ProfilePic from "../components/ProfilePic";
 import colors from "../constants/colors";
 import ActivityIndicator from "../components/ActivityIndicator";
 import Separator from "../components/Separator";
 import AppFadeIn from "../components/AppFadeIn";
 import GroupCard from "../components/GroupCard";
 import AlertModal from "../components/AlertModal";
-import PopDownModal from "../components/PopDownModal";
-import Sticker from "../components/Sticker";
-import AppHeader from "../components/AppHeader";
-import DropDown from "../components/DropDown";
 import ChallengeCard from "../components/ChallengeCard";
 import PopMessage from "../components/PopMessage";
 import CharChallengerScreen from "./CharChallengerScreen";
@@ -45,7 +29,6 @@ import subGenres from "../constants/subGenres";
 import TransferInstance from "../components/TransferInstance";
 import AppButton from "../components/AppButton";
 import ShowUpload from "../components/ShowUpload";
-import LoaderImage from "../components/LoaderImage";
 import InfoBox from "../components/InfoBox";
 import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
@@ -88,7 +71,6 @@ const ShowScreen = ({ route, navigation }) => {
   const [dataState, setDataState] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
-  const [stickerPop, setStickerPop] = useState(false);
   const [newEvent, setNewEvent] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [transfer, setTransfer] = useState(false);
@@ -755,14 +737,6 @@ const ShowScreen = ({ route, navigation }) => {
             />
           </>
         </Viewport.Tracker>
-      )}
-      {stickerPop && (
-        <Sticker
-          title={dataState.name_j || dataState.name_e}
-          icon="television"
-          textStyle={{ textTransform: "capitalize" }}
-          pack="b"
-        />
       )}
       <AppFadeIn
         RenderComponent={() => (

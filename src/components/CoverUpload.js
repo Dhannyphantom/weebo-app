@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -12,6 +12,7 @@ import { useFormikContext } from "formik";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +30,7 @@ const CoverUpload = ({ show, type = "character", name }) => {
   } else {
     aspectR = [12, 14];
   }
+  const theme = useContext(ThemeContext);
 
   const handleCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -59,9 +61,9 @@ const CoverUpload = ({ show, type = "character", name }) => {
         <View
           style={{
             ...styles.coverZone,
+            backgroundColor: theme.extralight,
             width: show ? PICW : PICH,
             height: show ? PICH : PICW,
-            borderRadius: coverImage ? 14 : 0,
           }}
         >
           {!coverImage && (
@@ -73,7 +75,7 @@ const CoverUpload = ({ show, type = "character", name }) => {
               <MaterialCommunityIcons
                 name="camera"
                 size={35}
-                color={colors.medium}
+                color={theme.medium}
               />
               <AppText>Upload {type} cover image</AppText>
             </TouchableOpacity>
@@ -85,12 +87,12 @@ const CoverUpload = ({ show, type = "character", name }) => {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => setCoverImage(null)}
-          style={styles.reloadBtn}
+          style={[styles.reloadBtn, { backgroundColor: theme.extralight }]}
         >
           <MaterialCommunityIcons
             name="reload"
-            size={18}
-            color={colors.medium}
+            size={25}
+            color={theme.backgroundExtralight}
           />
         </TouchableOpacity>
       </View>
@@ -104,13 +106,10 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginVertical: 7,
-    // flexDirection: "row",
     justifyContent: "center",
   },
   coverZone: {
-    backgroundColor: colors.extraLight,
-    justifyContent: "center",
-    alignItems: "center",
+    borderRadius: 14,
     overflow: "hidden",
   },
   errorText: {
@@ -118,6 +117,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   iconContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -127,13 +127,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   reloadBtn: {
-    height: 35,
-    width: 35,
-    backgroundColor: colors.extraLight,
+    height: 50,
+    width: 50,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 5,
-    borderRadius: 100,
+    borderRadius: 25,
   },
 });
 export default CoverUpload;

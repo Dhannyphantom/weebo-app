@@ -1,13 +1,15 @@
 import { Animated, Dimensions, StyleSheet } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
 export default function StickyHeader({ scrollY, title = "DANNY" }) {
   const safeInsets = useSafeAreaInsets();
+  const theme = useContext(ThemeContext);
   const scroller = scrollY?.interpolate({
     inputRange: [0, 100, 200],
     outputRange: [-100, -100, 0],
@@ -26,6 +28,7 @@ export default function StickyHeader({ scrollY, title = "DANNY" }) {
         transform: [{ translateY: scroller }],
         opacity: opaciter,
         height: safeInsets.top + 20,
+        backgroundColor: theme.background,
         ...styles.container,
       }}
     >
@@ -38,7 +41,6 @@ export default function StickyHeader({ scrollY, title = "DANNY" }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     position: "absolute",
     width,
     justifyContent: "flex-end",

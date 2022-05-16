@@ -39,10 +39,13 @@ const FeedBox = ({
   };
 
   const handleMediaPress = () => {
-    if (mediaType == "image") {
-      handleShowMedia(image);
+    if (onPress) {
+      onPress();
+    } else {
+      if (mediaType == "image") {
+        handleShowMedia(image);
+      }
     }
-    onPress && onPress();
   };
 
   return (
