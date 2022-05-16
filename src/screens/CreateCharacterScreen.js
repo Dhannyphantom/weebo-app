@@ -29,6 +29,7 @@ import subGenres from "../constants/subGenres";
 import schemas from "../constants/yupSchema";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const {
   characterValidationSchema,
@@ -128,6 +129,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   const [changeD, setChangeD] = useState(false);
   // createName helps render the whole as a flatlist
   const [createName, setCreateName] = useState([{ id: "1", name }]);
+  const theme = useContext(ThemeContext);
 
   const handleCardState = (stateObj, value) => {
     setCardState(stateObj);
@@ -174,13 +176,13 @@ const CreateCharacterScreen = ({ route, navigation }) => {
       <View style={styles.container}>
         <AppText bold> {name} instance requires 25CP to create</AppText>
         <Separator h={1} />
-        <Cards style={styles.card}>
+        <Cards style={{ ...styles.card, backgroundColor: theme.background }}>
           <TouchableOpacity
             style={{
               ...styles.select,
               backgroundColor: cardState.character
-                ? colors.unChange
-                : colors.white,
+                ? theme.unchange
+                : theme.background,
             }}
             activeOpacity={0.8}
             onPress={() => handleCardPress("character")}
@@ -188,14 +190,14 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             <View style={styles.selector}>
               <FontAwesome5
                 name="dot-circle"
-                color={cardState.character ? colors.primary : colors.medium}
+                color={cardState.character ? colors.primary : theme.medium}
                 size={12}
               />
             </View>
             <AppText
               style={{
                 ...styles.headerTitle,
-                color: cardState.character ? colors.primary : colors.medium,
+                color: cardState.character ? colors.primary : theme.medium,
               }}
             >
               Character
@@ -205,7 +207,9 @@ const CreateCharacterScreen = ({ route, navigation }) => {
           <TouchableOpacity
             style={{
               ...styles.select,
-              backgroundColor: cardState.group ? colors.unChange : colors.white,
+              backgroundColor: cardState.group
+                ? theme.unchange
+                : theme.background,
             }}
             activeOpacity={0.7}
             onPress={() => handleCardPress("group")}
@@ -213,14 +217,14 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             <View style={styles.selector}>
               <FontAwesome5
                 name="dot-circle"
-                color={cardState.group ? colors.primary : colors.medium}
+                color={cardState.group ? colors.primary : theme.medium}
                 size={12}
               />
             </View>
             <AppText
               style={{
                 ...styles.headerTitle,
-                color: cardState.group ? colors.primary : colors.medium,
+                color: cardState.group ? colors.primary : theme.medium,
               }}
             >
               Group
@@ -230,7 +234,9 @@ const CreateCharacterScreen = ({ route, navigation }) => {
           <TouchableOpacity
             style={{
               ...styles.select,
-              backgroundColor: cardState.show ? colors.unChange : colors.white,
+              backgroundColor: cardState.show
+                ? theme.unchange
+                : theme.background,
             }}
             activeOpacity={0.7}
             onPress={() => handleCardPress("show")}
@@ -238,14 +244,14 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             <View style={styles.selector}>
               <FontAwesome5
                 name="dot-circle"
-                color={cardState.show ? colors.primary : colors.medium}
+                color={cardState.show ? colors.primary : theme.medium}
                 size={12}
               />
             </View>
             <AppText
               style={{
                 ...styles.headerTitle,
-                color: cardState.show ? colors.primary : colors.medium,
+                color: cardState.show ? colors.primary : theme.medium,
               }}
             >
               Show

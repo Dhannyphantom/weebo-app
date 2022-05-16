@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ import AppPickerItem from "./AppPickerItem";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import grabApi from "../api/grabApi";
+import ThemeContext from "../config/ThemeContext";
 const screen = Dimensions.get("window");
 
 const CreateFormAdd = ({
@@ -88,6 +89,7 @@ const CreateFormAdd = ({
 
   const named = picked.name_j || picked.name || picked.name_e;
   const tagListName = [...selectedTag].join(" ");
+  const theme = useContext(ThemeContext);
 
   const onChangeSearch = (text) => {
     setUserInput(text);
@@ -260,7 +262,12 @@ const CreateFormAdd = ({
         </AppText>
       </View>
       {typeTagUpdate && (
-        <View style={{ ...styles.tagTextCont, paddingLeft: 10 }}>
+        <View
+          style={{
+            ...styles.tagTextCont,
+            paddingLeft: 10,
+          }}
+        >
           <FlatList
             data={tagList}
             keyExtractor={(item, index) => item + index}
@@ -269,7 +276,13 @@ const CreateFormAdd = ({
           />
         </View>
       )}
-      <View style={{ ...styles.inputContainer, alignItems: "center" }}>
+      <View
+        style={{
+          ...styles.inputContainer,
+          backgroundColor: theme.extralight,
+          alignItems: "center",
+        }}
+      >
         {typeTagUpdate && <AppText bold>{tagListName}</AppText>}
         {!selectedTag[0] && typeTagUpdate && (
           <AppText style={{ color: colors.medium }}>
@@ -601,14 +614,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 6,
-    backgroundColor: colors.extraLight,
     borderRadius: 100,
   },
   inputContainer: {
     width: "80%",
     height: 40,
     flexDirection: "row",
-    backgroundColor: colors.extraLight,
     marginLeft: 14,
     justifyContent: "center",
     borderRadius: 9,
@@ -650,7 +661,6 @@ const styles = StyleSheet.create({
   },
   tagTextCont: {
     flexDirection: "row",
-    backgroundColor: colors.extraLight,
     height: 40,
     alignItems: "center",
     borderRadius: 18,

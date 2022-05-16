@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,6 +16,7 @@ import colors from "../constants/colors";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import AppPickerItem from "./AppPickerItem";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -65,13 +66,8 @@ const CreateForm = ({
   const [height, setHeight] = useState("");
   const [myDate, setMydate] = useState("Currently airing");
 
-  const {
-    handleChange,
-    errors,
-    setFieldTouched,
-    setFieldValue,
-    touched,
-  } = useFormikContext();
+  const { handleChange, errors, setFieldTouched, setFieldValue, touched } =
+    useFormikContext();
 
   let addition = headerA
     ? headerA + place
@@ -88,6 +84,8 @@ const CreateForm = ({
     : headerZ
     ? headerZ + place
     : "";
+
+  const theme = useContext(ThemeContext);
 
   const today = new Date();
   const y = date.getFullYear();
@@ -158,14 +156,15 @@ const CreateForm = ({
           ...styles.inputContainer,
           height: Math.max(40, height),
           backgroundColor:
-            placeholder && !grow ? colors.unChange : colors.extraLight,
+            placeholder && !grow ? theme.unchange : theme.extralight,
         }}
       >
         {!placeholder && !dropdownA && !grow && !mutable && !pass && (
           <TextInput
             placeholder={addition}
+            placeholderTextColor={colors.medium}
             onBlur={() => setFieldTouched(name)}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
             onChangeText={handleChange(name)}
           />
         )}
@@ -181,8 +180,8 @@ const CreateForm = ({
             <TextInput
               placeholder={placeholder + place}
               onBlur={() => setFieldTouched(name)}
-              style={styles.inputTwo}
-              placeholderTextColor={colors.black}
+              style={[styles.inputTwo, { color: theme.color }]}
+              placeholderTextColor={theme.color}
               editable={false}
             />
             {close && (
@@ -200,7 +199,7 @@ const CreateForm = ({
           <TextInput
             placeholder={mutable + place}
             onBlur={() => setFieldTouched(name)}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
             placeholderTextColor={colors.medium}
             onChangeText={handleChange(name)}
           />
@@ -209,7 +208,7 @@ const CreateForm = ({
           <TextInput
             placeholder={headerZ + place}
             onBlur={() => setFieldTouched(name)}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
             placeholderTextColor={colors.medium}
             onChangeText={handleChange(name)}
             secureTextEntry
@@ -217,7 +216,7 @@ const CreateForm = ({
         )}
         {grow && (
           <TextInput
-            style={styles.inputGrow}
+            style={[styles.inputGrow, { color: theme.color }]}
             placeholder={placeholder}
             maxLength={80}
             numberOfLines={4}
@@ -286,7 +285,13 @@ const CreateForm = ({
             onPress={() => setDropDown(false)}
             style={styles.modalWrapper}
           >
-            <TouchableOpacity activeOpacity={1} style={styles.modalContainer}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[
+                styles.modalContainer,
+                { backgroundColor: theme.background },
+              ]}
+            >
               <AppButton
                 title="Close"
                 style={styles.modalBtn}
@@ -368,6 +373,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: colors.white,
     top: screen.height * 0.25,
+    elevation: 4,
     flex: 1,
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
