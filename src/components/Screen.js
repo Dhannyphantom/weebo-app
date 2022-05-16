@@ -1,28 +1,24 @@
 import React, { useContext } from "react";
 import { StyleSheet, Animated } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ThemeContext from "../config/ThemeContext";
 //
 const Screen = ({ children, panHandlers, style, ...otherProps }) => {
   const theme = useContext(ThemeContext);
-  const contentBg = style.backgroundColor
-    ? style.backgroundColor
-    : theme.background;
+  const safeInsets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: contentBg,
-      }}
+    <Animated.View
+      style={[
+        styles.container,
+        { paddingTop: safeInsets.top, backgroundColor: theme.background },
+        style,
+      ]}
+      {...otherProps}
+      {...panHandlers}
     >
-      <Animated.View
-        style={[styles.container, style]}
-        {...otherProps}
-        {...panHandlers}
-      >
-        {children}
-      </Animated.View>
-    </SafeAreaView>
+      {children}
+    </Animated.View>
   );
 };
 const styles = StyleSheet.create({

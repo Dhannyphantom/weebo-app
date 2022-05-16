@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -17,6 +17,7 @@ import narutoChibi from "../../assets/arts/naruto_2.png";
 import leviChibi from "../../assets/arts/levi_1.png";
 import luffyChibi from "../../assets/arts/luffy_1.png";
 import togaChibi from "../../assets/arts/toga_1.png";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -68,6 +69,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   const flatRef = useRef(null);
   const modalTranslator = useRef(new Animated.Value(-height)).current;
   const scrollX = useRef(new Animated.Value(0)).current;
+  const theme = useContext(ThemeContext);
 
   const dotsTranslator = scrollX.interpolate({
     inputRange: [0, width],
@@ -208,7 +210,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     >
       <Screen
         style={{
-          backgroundColor: colors.black,
+          marginTop: 10,
           opacity: modalTranslator.interpolate({
             inputRange: [-height, 0, height],
             outputRange: [0, 1, 0],
@@ -252,7 +254,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
 const styles = StyleSheet.create({
   box: {
     width: width * 0.97,
-    height: height * 0.9,
+    height: height * 0.89,
     backgroundColor: colors.primary,
     padding: 10,
     alignItems: "center",
