@@ -30,6 +30,7 @@ import ActivityIndicator from "../components/ActivityIndicator";
 import PopMessage from "../components/PopMessage";
 import SearchInstance from "../components/SearchInstance";
 import colorSet from "../constants/postColors";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -73,6 +74,7 @@ const PostScreen = ({ route, navigation }) => {
   const tagShows = tagLists.filter((obj) => obj.type === "show");
   const tagCharacters = tagLists.filter((obj) => obj.type === "character");
   //
+  const theme = useContext(ThemeContext);
   const getBgColor = () => {
     const data = color.find((item) => item.active === true);
     return data;
@@ -501,7 +503,10 @@ const PostScreen = ({ route, navigation }) => {
                     ListFooterComponent={
                       media.length <= 25 && (
                         <TouchableOpacity
-                          style={styles.addMore}
+                          style={[
+                            styles.addMore,
+                            { backgroundColor: theme.extralight },
+                          ]}
                           activeOpacity={0.78}
                           onPress={handleAddMore}
                         >
@@ -578,7 +583,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 4,
     marginLeft: 14,
-    backgroundColor: colors.extraLight,
   },
   box: {
     height: 400,

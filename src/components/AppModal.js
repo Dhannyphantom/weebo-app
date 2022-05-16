@@ -21,6 +21,7 @@ import GrowInput from "./GrowInput";
 import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
 import PopMessage from "./PopMessage";
+import ThemeContext from "../config/ThemeContext";
 
 const { height, width } = Dimensions.get("window");
 
@@ -58,6 +59,7 @@ const AppModal = ({
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
   let collBtnText = "New Collection";
+  const theme = useContext(ThemeContext);
 
   const RenderCollection = () => {
     //
@@ -243,7 +245,10 @@ const AppModal = ({
         style={styles.bg}
       >
         {boxState.caption && (
-          <TouchableOpacity activeOpacity={1} style={styles.caption}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.caption, { backgroundColor: theme.background }]}
+          >
             <AppText style={styles.headerTitle} bold>
               Edit Caption
             </AppText>
@@ -274,7 +279,10 @@ const AppModal = ({
           </TouchableOpacity>
         )}
         {(boxState.save || boxState.saveAll) && (
-          <TouchableOpacity activeOpacity={1} style={styles.captionTwo}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.captionTwo, { backgroundColor: theme.background }]}
+          >
             <AppText style={styles.headerTitle} bold>
               Save {boxState.save ? "This" : boxState.saveAll ? "All" : null} To
               My Collection
@@ -295,7 +303,10 @@ const AppModal = ({
             </View>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.content} activeOpacity={1}>
+        <TouchableOpacity
+          style={[styles.content, { backgroundColor: theme.background }]}
+          activeOpacity={1}
+        >
           <AppText style={styles.headerTitle} bold>
             {" "}
             POst Actions{" "}

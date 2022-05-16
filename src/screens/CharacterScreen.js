@@ -672,9 +672,9 @@ const CharacterScreen = ({ route, navigation }) => {
     setInfoContest({ ...infoContest, [prop]: val });
   };
 
-  const RenderInstanceMedia = () => {
+  const RenderInstanceMedia = ({ style }) => {
     return (
-      <View style={styles.instanceMedia}>
+      <View style={[styles.instanceMedia, style]}>
         <View>
           <TouchableOpacity
             onPress={() => handleCoverChange("cover")}

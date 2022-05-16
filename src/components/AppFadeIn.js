@@ -1,17 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Animated,
-  TouchableOpacity,
-} from "react-native";
-import AppText from "./AppText";
+import React, { useContext, useEffect, useRef } from "react";
+import { StyleSheet, Modal, Animated, TouchableOpacity } from "react-native";
+import ThemeContext from "../config/ThemeContext";
 
 const AppFadeIn = ({ visible, RenderComponent, setVisible }) => {
   if (!visible) return null;
 
   const scaler = useRef(new Animated.Value(0.75)).current;
+  const theme = useContext(ThemeContext);
 
   const handleCloseModal = () => {
     Animated.spring(scaler, {
@@ -51,7 +46,12 @@ const AppFadeIn = ({ visible, RenderComponent, setVisible }) => {
         >
           <TouchableOpacity activeOpacity={1}>
             <Animated.View style={{ transform: [{ scale: scaler }] }}>
-              {RenderComponent && <RenderComponent closer={handleCloseModal} />}
+              {RenderComponent && (
+                <RenderComponent
+                  closer={handleCloseModal}
+                  style={{ backgroundColor: theme.background }}
+                />
+              )}
             </Animated.View>
           </TouchableOpacity>
         </Animated.View>

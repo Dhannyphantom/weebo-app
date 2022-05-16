@@ -14,6 +14,7 @@ import AppText from "./AppText";
 import FriendBox from "./FriendBox";
 import Separator from "./Separator";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +30,7 @@ const TransferInstance = ({
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [errMsg, setErrMsg] = useState(null);
 
@@ -44,8 +46,13 @@ const TransferInstance = ({
         onPress={() => setVisible(false)}
         activeOpacity={1}
       >
-        <TouchableOpacity style={styles.content} activeOpacity={1}>
-          <View style={styles.container}>
+        <TouchableOpacity
+          style={[styles.content, { backgroundColor: theme.extralight }]}
+          activeOpacity={1}
+        >
+          <View
+            style={[styles.container, { backgroundColor: theme.background }]}
+          >
             <AppText
               size="large"
               style={{
@@ -89,7 +96,6 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.03,
   },
   content: {
-    backgroundColor: colors.extraLight,
     width: width * 0.95,
     minHeight: height * 0.4,
     borderRadius: width * 0.04,

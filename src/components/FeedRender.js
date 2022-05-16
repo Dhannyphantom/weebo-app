@@ -12,6 +12,7 @@ import PostVideo from "./PostVideo";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import AppText from "./AppText";
+import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("window");
 
 const FeedRender = ({ item, user }) => {
@@ -40,6 +41,7 @@ const FeedRender = ({ item, user }) => {
     loading: false,
   });
   const [errMsg, setErrMsg] = useState(null);
+  const theme = useContext(ThemeContext);
 
   const isMultiple = item?.posts?.length > 1;
 
@@ -84,7 +86,7 @@ const FeedRender = ({ item, user }) => {
   }, [item]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.white }]}>
       <FeedHeader
         avatar={item.user.avatar}
         feederID={item.user._id}
@@ -181,7 +183,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.white,
     width: width * 0.97,
     borderRadius: width * 0.04,
     marginVertical: width * 0.01,
