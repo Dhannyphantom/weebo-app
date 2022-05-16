@@ -26,7 +26,7 @@ const AppHeader = ({
   return (
     <>
       {type == "background" && (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "center" }}
             onPress={() => (icon ? navigation.pop() : null)}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -9,15 +9,17 @@ import {
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import AppText from "./AppText";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
 const ChatFile = ({ item, onPress }) => {
+  const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
       activeOpacity={0.85}
       onPress={() => onPress(item)}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
       <View style={styles.box1}>
         <ProfilePic source={item.avatar} size={45} userID={item.recipientId} />
@@ -47,10 +49,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     width: width * 0.96,
     alignSelf: "center",
-    backgroundColor: colors.white,
     padding: 10,
     borderRadius: 8,
-    elevation: 3,
+    elevation: 8,
+    shadowRadius: 8,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 0,
+      height: 1.8,
+    },
   },
   box1: {
     flex: 1,

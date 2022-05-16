@@ -103,8 +103,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
     width: width * 0.07,
     height: width * 0.07,
-    backgroundColor: colors.extraLight,
-    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },

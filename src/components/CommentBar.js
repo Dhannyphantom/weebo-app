@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useContext, useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Cards from "./Cards";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -27,6 +28,7 @@ const CommentBar = (
 ) => {
   const [text, setText] = useState("");
   const [height, setHeight] = useState("");
+  const theme = useContext(ThemeContext);
 
   const handleSend = () => {
     if (text.length < 1) return;
@@ -49,7 +51,9 @@ const CommentBar = (
             style={styles.avatar}
           />
         </View>
-        <View style={styles.inputBox}>
+        <View
+          style={[styles.inputBox, { backgroundColor: theme.backgroundLight }]}
+        >
           <TouchableOpacity activeOpacity={1} style={styles.emoji}>
             <Ionicons name="happy-outline" size={20} color={colors.medium} />
           </TouchableOpacity>
@@ -60,6 +64,7 @@ const CommentBar = (
             returnKeyType="send"
             onFocus={onFocus}
             multiline
+            placeholderTextColor={colors.medium}
             maxLength={500}
             onChangeText={(textVal) => setText(textVal)}
             value={text}
@@ -67,7 +72,7 @@ const CommentBar = (
               setHeight(nativeEvent.contentSize.height)
             }
             placeholder={placeholder}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
           />
         </View>
         <TouchableOpacity

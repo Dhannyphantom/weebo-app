@@ -17,6 +17,8 @@ import Screen from "../components/Screen";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
+import ThemeContext from "../config/ThemeContext";
+import AppHeader from "../components/AppHeader";
 
 const { width } = Dimensions.get("window");
 
@@ -37,6 +39,7 @@ const ChatUserScreen = ({ route, navigation }) => {
 
   const flatRef = useRef();
   const { _id, username, avatar } = route.params.item;
+  const theme = useContext(ThemeContext);
   // ABOVE IS RECIPIENT
 
   const handleSendChatMsg = (message, chatId) => {
@@ -148,7 +151,7 @@ const ChatUserScreen = ({ route, navigation }) => {
     };
   });
 
-  //TODO - try caching chats and getting them locally
+  //TODO:: - try caching chats and getting them locally
   useEffect(() => {
     joinRoom(userInfo._id, _id);
 
@@ -164,34 +167,15 @@ const ChatUserScreen = ({ route, navigation }) => {
   }, []);
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={{ ...styles.container, backgroundColor: theme.chat }}>
       <StatusBar style="light" />
-      <View style={styles.header}>
-        <View style={styles.headerRight}>
-          <TouchableOpacity
-            activeOpacity={0.65}
-            onPress={() => navigation.goBack()}
-          >
-            <Feather name="chevron-left" size={29} color={colors.white} />
-          </TouchableOpacity>
-          <AppText style={styles.headerText} size="large" bold>
-            {username}
-          </AppText>
-        </View>
-        <TouchableOpacity style={{ paddingHorizontal: 12 }}>
-          <MaterialCommunityIcons
-            name="dots-vertical"
-            size={25}
-            color={colors.white}
-          />
-        </TouchableOpacity>
-      </View>
+      <AppHeader title={username} style={{ marginTop: 15 }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.comment}
       >
         {chatLoaded ? (
-          <View style={styles.content}>
+          <View style={[styles.content, { backgroundColor: theme.background }]}>
             <FlatList
               data={chats}
               ref={flatRef}
@@ -239,7 +223,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.chat,
   },
   comment: {
     flex: 1,
@@ -247,29 +230,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: colors.white,
     borderTopStartRadius: width * 0.045,
     borderTopEndRadius: width * 0.045,
     paddingTop: 15,
     elevation: 10,
-  },
-  header: {
-    backgroundColor: colors.chat,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginRight: 15,
-    marginLeft: 7,
-    paddingBottom: 15,
-  },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerText: {
-    textTransform: "capitalize",
-    color: colors.white,
-    marginLeft: 7,
   },
 });
 export default ChatUserScreen;

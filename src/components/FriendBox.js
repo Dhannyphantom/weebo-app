@@ -15,6 +15,7 @@ import colors from "../constants/colors";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -34,6 +35,7 @@ const FriendBox = ({
     updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const RenderMyFriends = ({ item, isMine, isFriends }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -111,7 +113,7 @@ const FriendBox = ({
         onPress={onPress ? () => onPress(item) : null}
         style={{ ...styles.container, width: width * length }}
       >
-        <View style={styles.friend}>
+        <View style={[styles.friend, { backgroundColor: theme.background }]}>
           <Avatar
             size={45}
             avatar={item.avatar}
@@ -187,7 +189,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   friend: {
-    elevation: 3,
+    elevation: 5,
+    shadowRadius: 6,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 0,
+      height: 1.8,
+    },
     borderRadius: width * 0.06,
     padding: 10,
     overflow: "hidden",
