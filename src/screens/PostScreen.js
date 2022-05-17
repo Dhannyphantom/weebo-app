@@ -128,6 +128,7 @@ const PostScreen = ({ route, navigation }) => {
       },
       (err) => {
         setErrMsg(err.msg);
+        console.log(err);
         console.log(err.err?.response?.data);
         setIsLoading(false);
       },
@@ -447,7 +448,7 @@ const PostScreen = ({ route, navigation }) => {
                 <View style={{ flex: 1 }}>
                   {display && (
                     <PostVideo
-                      vidUri={display.uri}
+                      source={display}
                       allowVideoEditing
                       viewable={false}
                       disableDoublePress

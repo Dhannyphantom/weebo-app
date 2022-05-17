@@ -7,7 +7,7 @@ import MediaModal from "./MediaModal";
 
 const { width, height } = Dimensions.get("window");
 
-const MansonryItem = ({ item, setDisplayMedia }) => {
+const MansonryItem = ({ item, mediaType, setDisplayMedia }) => {
   const handlePress = () => {
     setDisplayMedia({
       vis: true,
@@ -20,6 +20,8 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
     });
   };
 
+  const isVideoImage = item.type != "image";
+
   return (
     <>
       <TouchableOpacity
@@ -27,7 +29,7 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
         activeOpacity={1}
         onPress={handlePress}
       >
-        <LoaderImage image={item} />
+        <LoaderImage image={item} isVideoImage={isVideoImage} />
       </TouchableOpacity>
     </>
   );
@@ -45,6 +47,8 @@ export default function MansonryList({ data, media }) {
     }, 1500);
   };
 
+  console.log(data[0].type);
+
   const onEndReached = () => {
     // console.log("End Reached");
   };
@@ -58,7 +62,11 @@ export default function MansonryList({ data, media }) {
         style={styles.mansonry}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, i }) => (
-          <MansonryItem item={item} setDisplayMedia={setDisplayMedia} />
+          <MansonryItem
+            item={item}
+            setDisplayMedia={setDisplayMedia}
+            mediaType={data.type}
+          />
         )}
         refreshing={refreshing}
         onRefresh={onRefresh}

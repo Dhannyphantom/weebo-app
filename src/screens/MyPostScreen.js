@@ -110,7 +110,7 @@ const MyPostScreen = ({ navigation, route }) => {
           </AppText>
         </View>
       )}
-      {!isPostEmpty && <MansonryList data={postsArr} media={media} />}
+      {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"

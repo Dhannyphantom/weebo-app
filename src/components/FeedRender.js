@@ -128,7 +128,12 @@ const FeedRender = ({ item, user }) => {
           </View>
         ) : item.type === "text" ? null : null}
         {item.type !== "text" && isMultiple && (
-          <View style={styles.imageMultiple}>
+          <View
+            style={[
+              styles.imageMultiple,
+              { backgroundColor: theme.extralight },
+            ]}
+          >
             <MaterialCommunityIcons
               name="image-multiple"
               color={colors.primary}
@@ -192,14 +197,13 @@ const styles = StyleSheet.create({
   },
   imageMultiple: {
     position: "absolute",
-    backgroundColor: colors.extraLight,
     padding: 10,
     top: "1.5%",
     right: 12,
     alignSelf: "flex-end",
     borderRadius: width * 0.02,
     flexDirection: "row",
-    opacity: 0.7,
+    opacity: 0.8,
     alignItems: "center",
   },
 });

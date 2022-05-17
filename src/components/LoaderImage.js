@@ -10,6 +10,7 @@ const { width, height } = Dimensions.get("window");
 const LoaderImage = ({
   image,
   imageStyle,
+  isVideoImage,
   full,
   containerStyle,
   loading = false,
@@ -29,6 +30,12 @@ const LoaderImage = ({
     setIsLoading(true);
   }, []);
 
+  useEffect(() => {
+    if (isVideoImage) {
+      setIsLoading(false);
+    }
+  }, [isVideoImage]);
+
   return (
     <>
       {image ? (
@@ -47,21 +54,24 @@ const LoaderImage = ({
               ...styles.image,
               borderRadius: full ? 1 : 12,
             }}
-            blurRadius={12}
+            blurRadius={isVideoImage ? 5 : 12}
             resizeMode="cover"
           />
-          <Image
-            source={{ uri: image.uri }}
-            {...otherProps}
-            style={{
-              ...styles.image,
-              ...styles.imageOverlay,
-              borderRadius: full ? 1 : 12,
-            }}
-            onLoadEnd={handleLoadEnd}
-            resizeMode="cover"
-            resizeMethod="resize"
-          />
+
+          {!isVideoImage && (
+            <Image
+              source={{ uri: image.uri }}
+              {...otherProps}
+              style={{
+                ...styles.image,
+                ...styles.imageOverlay,
+                borderRadius: full ? 1 : 12,
+              }}
+              onLoadEnd={handleLoadEnd}
+              resizeMode="cover"
+              resizeMethod="resize"
+            />
+          )}
           <ActivityIndicator
             visible={isLoading}
             size={0.26}

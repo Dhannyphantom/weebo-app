@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -22,6 +22,7 @@ import AppLogo from "./AppLogo";
 import ActionMenu from "./ActionMenu";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -54,6 +55,8 @@ const HomeHeader = ({ characters }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [cMode, setCMode] = useState(false);
+
+  const theme = useContext(ThemeContext);
 
   const handleNav = async (type) => {
     if (type === "post") {
@@ -128,21 +131,21 @@ const HomeHeader = ({ characters }) => {
         <View style={styles.headerIcons}>
           <TouchableOpacity
             activeOpacity={0.6}
-            style={[styles.buttonContainer, styles.buttonLeft]}
+            style={styles.buttonContainer}
             onPress={handleShowSearch}
           >
             <Feather name="search" size={18} color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.6}
-            style={[styles.buttonContainer, styles.buttonMid]}
+            style={styles.buttonContainer}
             onPress={() => navigation.navigate("Chat")}
           >
             <Feather name="message-circle" size={18} color={colors.chat} />
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.6}
-            style={[styles.buttonContainer, styles.buttonRight]}
+            style={styles.buttonContainer}
             onPress={handlePlusBtn}
           >
             <AntDesign name="plus" size={18} color={colors.primary} />
@@ -177,7 +180,10 @@ const HomeHeader = ({ characters }) => {
           onPress={() => setModalVis(false)}
           style={styles.modalBox}
         >
-          <TouchableOpacity activeOpacity={1} style={styles.modalBg}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.modalBg, { backgroundColor: theme.background }]}
+          >
             <View style={styles.links}>
               {!cMode && (
                 <View style={{ flexDirection: "row" }}>
@@ -282,19 +288,6 @@ const styles = StyleSheet.create({
   },
   buttonMid: {
     borderRadius: screen.width * 0.01,
-    // transform: [{ rotate: "270deg" }],
-  },
-  buttonRight: {
-    // borderTopEndRadius: screen.width * 0.1,
-    // borderBottomEndRadius: screen.width * 0.1,
-    // borderTopStartRadius: screen.width * 0.02,
-    // borderBottomStartRadius: screen.width * 0.02,
-  },
-  buttonLeft: {
-    // borderTopEndRadius: screen.width * 0.02,
-    // borderBottomEndRadius: screen.width * 0.02,
-    // borderTopStartRadius: screen.width * 0.1,
-    // borderBottomStartRadius: screen.width * 0.1,
   },
   error: {
     textAlign: "center",
@@ -317,10 +310,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalBg: {
-    backgroundColor: colors.white,
     borderRadius: 18,
-    padding: 10,
-    paddingHorizontal: 20,
+    padding: 15,
   },
   modalBtn: {
     alignSelf: "center",

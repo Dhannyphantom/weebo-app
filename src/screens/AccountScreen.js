@@ -42,7 +42,6 @@ const AccountScreen = ({ navigation, route }) => {
   } = useContext(AuthContext);
   const [imageLoading, setImageLoading] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
-  const [imageProgress, setImageProgress] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [account, setAccount] = useState([userInfo]);
 
@@ -118,7 +117,10 @@ const AccountScreen = ({ navigation, route }) => {
           <View style={styles.editIcon}>
             <TouchableOpacity
               activeOpacity={0.9}
-              style={styles.editIconTouch}
+              style={[
+                styles.editIconTouch,
+                { backgroundColor: theme.extralight },
+              ]}
               onPress={selectProfileImage}
             >
               <MaterialCommunityIcons
@@ -349,7 +351,6 @@ const styles = StyleSheet.create({
   },
   editIconTouch: {
     padding: 15,
-    backgroundColor: colors.extraLight,
     borderRadius: 100,
     alignSelf: "flex-end",
     elevation: 2,

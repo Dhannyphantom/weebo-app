@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 
@@ -8,6 +9,7 @@ const BAR_WIDTH = screen.width * 0.9;
 
 const Points = ({ prog = 0, type, style }) => {
   const [progress, setProgress] = useState(prog);
+  const theme = useContext(ThemeContext);
 
   let title, suffix, max, barWidth;
   if (type === "account") {
@@ -39,7 +41,7 @@ const Points = ({ prog = 0, type, style }) => {
           {Math.min(1000, progress) + suffix}
         </AppText>
       </View>
-      <View style={styles.barCont}>
+      <View style={{ ...styles.barCont, backgroundColor: theme.extralight }}>
         <View style={{ flex: 1, flexDirection: "row", width: `${barWidth}%` }}>
           <View style={{ ...styles.bar }}></View>
         </View>
@@ -56,7 +58,6 @@ const styles = StyleSheet.create({
 
   barCont: {
     width: BAR_WIDTH,
-    backgroundColor: colors.extraLight,
     height: 8,
     borderRadius: 15,
     marginTop: 8,
