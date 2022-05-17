@@ -137,6 +137,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   };
 
   const actionCallback = (obj) => {
+    console.log(obj);
     if (obj.data.hasOwnProperty("ERR_MSG")) {
       setErrText(obj.data.ERR_MSG);
     } else {

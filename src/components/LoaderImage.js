@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
+import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 
 import ActivityIndicator from "./ActivityIndicator";
@@ -17,6 +18,7 @@ const LoaderImage = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
+  const theme = useContext(ThemeContext);
 
   const handleLoadEnd = () => {
     setIsLoading(false);
@@ -33,7 +35,8 @@ const LoaderImage = ({
         <View
           style={{
             ...styles.container,
-            borderRadius: full ? 1 : 15,
+            backgroundColor: theme.extralight,
+            borderRadius: full ? 1 : 12,
             aspectRatio: noAspect ? null : image.width / image.height,
           }}
         >
@@ -42,7 +45,7 @@ const LoaderImage = ({
             {...otherProps}
             style={{
               ...styles.image,
-              borderRadius: full ? 1 : 15,
+              borderRadius: full ? 1 : 12,
             }}
             blurRadius={12}
             resizeMode="cover"
@@ -53,7 +56,7 @@ const LoaderImage = ({
             style={{
               ...styles.image,
               ...styles.imageOverlay,
-              borderRadius: full ? 1 : 15,
+              borderRadius: full ? 1 : 12,
             }}
             onLoadEnd={handleLoadEnd}
             resizeMode="cover"
@@ -65,7 +68,7 @@ const LoaderImage = ({
             type="loader"
             style={{
               ...styles.activity,
-              borderRadius: full ? 1 : 15,
+              borderRadius: full ? 1 : 12,
             }}
             transparent
           />
@@ -74,7 +77,7 @@ const LoaderImage = ({
             type="spin"
             style={{
               ...styles.activity,
-              borderRadius: full ? 1 : 15,
+              borderRadius: full ? 1 : 12,
             }}
             wTransparent
           />
@@ -86,7 +89,7 @@ const LoaderImage = ({
           type="spin"
           style={{
             ...styles.activity,
-            borderRadius: full ? 1 : 15,
+            borderRadius: full ? 1 : 12,
           }}
           transparent
         />

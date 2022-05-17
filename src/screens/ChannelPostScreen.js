@@ -323,7 +323,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
       <View
         style={{
           width: width * 0.5,
-          backgroundColor: colors.white,
+          backgroundColor: theme.background,
           borderRadius: width * 0.03,
           justifyContent: "center",
           paddingVertical: width * 0.04,

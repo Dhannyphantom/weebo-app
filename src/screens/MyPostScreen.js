@@ -9,7 +9,6 @@ import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
-import getTimeStamp from "../constants/getTimestamp";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
@@ -17,15 +16,17 @@ const MyPostScreen = ({ navigation, route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
 
-  const [masonryUris, setMasonryUris] = useState([]);
   const [postsArr, setPostArr] = useState([]);
+  const [media, setMedia] = useState([]);
   const [isPostEmpty, setIsPostEmpty] = useState(true);
   const [screenTitle, setScreenTitle] = useState(null);
+  const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const params = route.params;
   const fromScreen = params?.screen;
-  const arrC = [];
+  let counter = 0;
+  let allUris = [];
 
   const addNewPost = async () => {
     // LIMIT INSTANCE POSTS
@@ -89,17 +90,14 @@ const MyPostScreen = ({ navigation, route }) => {
   useEffect(() => {
     for (let i = 0; i < postsArr.length; i++) {
       const e = postsArr[i];
-      const time = getTimeStamp(e._id, "raw");
+      allUris = allUris.concat(e.uris);
       for (let j = 0; j < e?.uris.length; j++) {
-        const f = e?.uris[j];
-        const findInd = arrC.findIndex((obj) => obj.uri === f.uri);
-        if (findInd === -1) {
-          arrC.push({ ...f, postId: e._id, time, index: i });
-        }
+        counter++;
       }
     }
-    setMasonryUris(arrC);
-    arrC[0] && setIsPostEmpty(false);
+    setCount(counter);
+    setMedia(allUris);
+    counter > 0 && setIsPostEmpty(false);
   }, [postsArr]);
 
   return (
@@ -108,11 +106,11 @@ const MyPostScreen = ({ navigation, route }) => {
       {fromScreen === "character" && (
         <View>
           <AppText style={styles.postStat} bold>
-            {params?.info?.name} has {masonryUris.length} posts
+            {params?.info?.name} has {count} posts
           </AppText>
         </View>
       )}
-      {!isPostEmpty && <MansonryList images={masonryUris} />}
+      {!isPostEmpty && <MansonryList data={postsArr} media={media} />}
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"

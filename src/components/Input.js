@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   TextInput,
   StyleSheet,
@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Cards from "./Cards";
 import colors from "../constants/colors";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -23,6 +24,8 @@ const Input = ({
 }) => {
   const [eyeState, setEyestate] = useState(false);
   const [iconState, setIconState] = useState(false);
+
+  const theme = useContext(ThemeContext);
 
   const handleToggle = () => {
     setEyestate(!eyeState);
@@ -40,7 +43,8 @@ const Input = ({
       </View>
       <TextInput
         placeholder={placeholder}
-        style={styles.input}
+        placeholderTextColor={colors.medium}
+        style={[styles.input, { color: theme.color }]}
         onFocus={() => setIconState(true)}
         onBlur={() => setIconState(false)}
         {...otherProps}
