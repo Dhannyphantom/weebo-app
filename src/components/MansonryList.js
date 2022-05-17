@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import MasonryList from "@react-native-seoul/masonry-list";
-import AppText from "./AppText";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import LoaderImage from "./LoaderImage";
 import MediaModal from "./MediaModal";
+import AppText from "./AppText";
+import colors from "../constants/colors";
+import getVideoTime from "../constants/getVideoTime";
 
 const { width, height } = Dimensions.get("window");
 
-const MansonryItem = ({ item, mediaType, setDisplayMedia }) => {
+const MansonryItem = ({ item, setDisplayMedia }) => {
+  const isVideoImage = item.type != "image";
   const handlePress = () => {
     setDisplayMedia({
       vis: true,
       data: {
         item,
         feed: {
-          type: "image",
+          type: isVideoImage ? "video" : "image",
         },
       },
     });
   };
-
-  const isVideoImage = item.type != "image";
 
   return (
     <>
@@ -30,6 +33,18 @@ const MansonryItem = ({ item, mediaType, setDisplayMedia }) => {
         onPress={handlePress}
       >
         <LoaderImage image={item} isVideoImage={isVideoImage} />
+        {isVideoImage && (
+          <View style={styles.videoImage}>
+            <MaterialCommunityIcons
+              name="play-circle"
+              size={width * 0.055}
+              color="white"
+            />
+            <AppText style={styles.vidTime} bold>
+              {getVideoTime(64858)}
+            </AppText>
+          </View>
+        )}
       </TouchableOpacity>
     </>
   );
@@ -46,8 +61,6 @@ export default function MansonryList({ data, media }) {
       setRefreshing(false);
     }, 1500);
   };
-
-  console.log(data[0].type);
 
   const onEndReached = () => {
     // console.log("End Reached");
@@ -94,4 +107,17 @@ const styles = StyleSheet.create({
     paddingBottom: height * 0.11,
   },
   mediaContainer: {},
+  vidTime: {
+    color: colors.white,
+    marginLeft: 4,
+  },
+  videoImage: {
+    position: "absolute",
+    top: 15,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    height: "100%",
+  },
 });

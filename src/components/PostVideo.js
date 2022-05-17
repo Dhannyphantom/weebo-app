@@ -503,7 +503,7 @@ const PostVideo = ({
             <View style={styles.slider}></View>
           )}
         </View>
-        {showTimer && overlay && posBool && !playAction && (
+        {showTimer && overlay && posBool && !full && !playAction && (
           <View style={styles.playIconCont}>
             <View
               style={{

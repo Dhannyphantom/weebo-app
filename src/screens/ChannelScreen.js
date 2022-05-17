@@ -451,7 +451,12 @@ const ChannelScreen = ({ navigation }) => {
             ref={searchRef}
             style={styles.searchBar}
           />
-          <View style={styles.searchResContainer}>
+          <View
+            style={[
+              styles.searchResContainer,
+              { backgroundColor: theme.extralight },
+            ]}
+          >
             <AppText size="large" style={styles.searchText} bold>
               Search Results
             </AppText>
@@ -674,7 +679,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   searchResContainer: {
-    backgroundColor: colors.extraLight,
     borderRadius: width * 0.03,
     marginBottom: width * 0.01,
     height,

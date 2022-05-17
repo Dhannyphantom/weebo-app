@@ -129,7 +129,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               />
             </Animated.View>
           ) : params.type === "video" ? (
-            <Screen
+            <Animated.View
               panHandlers={{ ...mediaMoverResponder.panHandlers }}
               style={{
                 ...styles.vidCont,
@@ -137,7 +137,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               }}
             >
               <PostVideo
-                vidUri={item.uri}
+                source={item}
                 contStyle={styles.vidComp}
                 disableTouch
                 posProp={params.pos}
@@ -146,7 +146,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
                 full
                 disableLongPress
               />
-            </Screen>
+            </Animated.View>
           ) : params.type === "text" ? (
             <Animated.View
               {...mediaMoverResponder.panHandlers}
