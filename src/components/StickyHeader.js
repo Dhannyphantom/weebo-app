@@ -28,7 +28,7 @@ export default function StickyHeader({ scrollY, title = "DANNY" }) {
         transform: [{ translateY: scroller }],
         opacity: opaciter,
         height: safeInsets.top + 20,
-        backgroundColor: theme.background,
+        backgroundColor: theme.transparentBold,
         ...styles.container,
       }}
     >

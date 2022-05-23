@@ -11,6 +11,9 @@ const fetchFonts = async () => {
     "open-sans-b1": require("./assets/fonts/OpenSans-Bold.ttf"),
     "open-sans-b2": require("./assets/fonts/OpenSans-ExtraBold.ttf"),
     sen: require("./assets/fonts/sen/Sen-Regular.ttf"),
+    "reglise-black": require("./assets/fonts/reglise/ReglisseBack-eZewm.otf"),
+    reglise: require("./assets/fonts/reglise/Reglisse-0WOD9.otf"),
+    fonter: require("./assets/fonts/SnackerComicPersonalUseOnly-g3Z5.ttf"),
     "sen-bold-b1": require("./assets/fonts/sen/Sen-Bold.ttf"),
     "sen-bold-b2": require("./assets/fonts/sen/Sen-ExtraBold.ttf"),
   });

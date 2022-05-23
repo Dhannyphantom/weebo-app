@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import AppText from "./AppText";
 import Separator from "./Separator";
-import Screen from "./Screen";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 

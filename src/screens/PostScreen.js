@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textTransform: "capitalize",
     color: colors.heart,
-    marginBottom: 9,
+    marginVertical: 9,
   },
   header: {},
   imageCont: {
