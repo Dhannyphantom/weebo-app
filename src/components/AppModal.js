@@ -336,13 +336,13 @@ const AppModal = ({
             {!isText && (
               <>
                 <Link
-                  name="Add This To My Saved Collection"
+                  name="Add To My Collection"
                   iconName="star-outline"
                   onPress={() => onPress("save_one")}
                 />
                 {!isVideo && postUris.length > 1 && (
                   <Link
-                    name="Add All To My Saved Collection"
+                    name="Add All To My Collection"
                     iconName="star"
                     onPress={() => onPress("save")}
                   />

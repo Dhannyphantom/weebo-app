@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AlertScreen from "../screens/AlertScreen";
-import AlertDetailScreen from "../screens/AlertDetailScreen";
+// import AlertDetailScreen from "../screens/AlertDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +15,7 @@ const AlertNavigator = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="AlertDetail" component={AlertDetailScreen} />
+      {/* <Stack.Screen name="AlertDetail" component={AlertDetailScreen} /> */}
     </Stack.Navigator>
   );
 };

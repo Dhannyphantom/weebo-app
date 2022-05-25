@@ -60,7 +60,7 @@ const AlertScreen = ({ navigation }) => {
         //character challenge
         navigation.navigate("Character", { item: item.character._id });
       } else {
-        navigation.navigate("AlertDetail", { item });
+        // navigation.navigate("AlertDetail", { item });
       }
 
       handleReadNotification(item._id, "read");

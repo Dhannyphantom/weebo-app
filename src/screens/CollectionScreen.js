@@ -7,30 +7,35 @@ import AppHeader from "../components/AppHeader";
 import getTimeStamp from "../constants/getTimestamp";
 
 const CollectionScreen = ({ route }) => {
-  const [gallery, setGallery] = useState([]);
+  const [postsArr, setPostArr] = useState([]);
+  const [media, setMedia] = useState([]);
+  const [isPostEmpty, setIsPostEmpty] = useState(true);
   const pageData = route?.params?.item;
+  let counter = 0;
+  let allUris = [];
 
   useEffect(() => {
-    const elem = pageData.posts;
-    const postUris = [];
-    if (elem[0]) {
-      for (let i = 0; i < elem.length; i++) {
-        const e = elem[i];
-        const time = getTimeStamp(e._id, "raw");
-
-        for (let j = 0; j < e.uris.length; j++) {
-          const f = e.uris[j];
-          postUris.push({ ...f, postId: e.postId, time });
-        }
+    for (let i = 0; i < postsArr.length; i++) {
+      const e = postsArr[i];
+      allUris = allUris.concat(e.uris);
+      for (let j = 0; j < e?.uris.length; j++) {
+        counter++;
       }
     }
-    setGallery(postUris);
+    setMedia(allUris);
+    counter > 0 && setIsPostEmpty(false);
+  }, [postsArr]);
+
+  useEffect(() => {
+    setPostArr(pageData.posts);
   }, [route]);
 
   return (
     <Screen style={styles.container}>
       <AppHeader title={`${pageData.name} Collections`} />
-      <MansonryList images={gallery} />
+      {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}
+
+      {/* <MansonryList images={gallery} /> */}
     </Screen>
   );
 };
