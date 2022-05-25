@@ -41,18 +41,22 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
   const handleCardPress = (item, all) => {
     const statuses = [];
     all?.forEach((obj, idx) => {
+      // let newStory = true;
       obj.posts.forEach((post, idxer) => {
         const lastStory = idxer == obj.posts.length - 1;
+        let counter = obj.posts.length - idxer;
+
         statuses.push({
           ...post,
           storyLength: obj.posts.length,
           storyNumber: idxer,
           lastStory,
-          counter: lastStory ? post.counter + 1 ?? 0 : post.counter ?? 0,
+          counter,
         });
       });
     });
-    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
+    console.log(statuses);
+    // setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
   };
 
   const fetchThumb = async () => {

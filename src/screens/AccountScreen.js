@@ -177,7 +177,7 @@ const AccountScreen = ({ navigation, route }) => {
 
   return (
     <Screen style={{ flex: 1, backgroundColor: theme.background }}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.bar} />
       <FlatList
         data={account}
         extraData={userInfo}
