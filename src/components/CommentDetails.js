@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
@@ -9,6 +9,7 @@ import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimeStamp from "../constants/getTimestamp";
 import getFormatTime from "../constants/getFormatTime";
+import ThemeContext from "../config/ThemeContext";
 
 const handleReplies = (item) => {
   console.log(item);
@@ -54,6 +55,8 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
     ? getFormatTime(item.timer, null, "format").short
     : getTimeStamp(item._id);
 
+  const theme = useContext(ThemeContext);
+
   return (
     <View style={styles.commentBox}>
       <Avatar
@@ -63,7 +66,12 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
         bold
       />
       <View style={styles.commentTextCont}>
-        <AppText style={styles.commentText}> {item.comment} </AppText>
+        <AppText
+          style={{ ...styles.commentText, backgroundColor: theme.extralight }}
+        >
+          {" "}
+          {item.comment}{" "}
+        </AppText>
         <View style={styles.commentDown}>
           <Entypo name="dot-single" size={12} color={colors.medium} />
           {item.pending ? (
@@ -138,8 +146,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 9,
   },
   commentText: {
-    color: "#201C1C",
-    backgroundColor: colors.extraLight,
     padding: 10,
     alignSelf: "flex-start",
     borderRadius: 12,

@@ -7,14 +7,12 @@ import {
   Dimensions,
   PanResponder,
   TextInput,
-  ImageBackground,
   TouchableOpacity,
   FlatList,
   Animated,
 } from "react-native";
-import { BlurView } from "expo-blur";
 import { Context as FeedContext } from "../config/FeedContext";
-import { MaterialCommunityIcons, Feather, AntDesign } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
@@ -25,7 +23,7 @@ import AppText from "./AppText";
 import Screen from "./Screen";
 import PopMessage from "./PopMessage";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const ShowUpload = ({ visObj, setVisible }) => {
   // data = {uri, type, height, width }

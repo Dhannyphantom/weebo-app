@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   StyleSheet,
   Dimensions,
   KeyboardAvoidingView,
-  Modal,
   Platform,
-  Keyboard,
   FlatList,
   TouchableOpacity,
 } from "react-native";
@@ -17,12 +15,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
-import Drag from "./Drag";
 import AppText from "./AppText";
 import CommentBar from "./CommentBar";
 import Separator from "./Separator";
 import CommentDetails from "./CommentDetails";
 import PopUpModal from "./PopUpModal";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -44,17 +42,10 @@ const Comments = ({
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const {
-    commentPost,
-    replyComments,
-    getComments,
-    getPosts,
-    getMoreReplies,
-    editPostCaption,
-    deletePosts,
-  } = useContext(FeedContext);
+  const { commentPost, replyComments } = useContext(FeedContext);
   const [reply, setReply] = useState({});
 
+  const theme = useContext(ThemeContext);
   const textInputRef = useRef(null);
   const flatRef = useRef(null);
 
@@ -247,7 +238,12 @@ const Comments = ({
     return (
       <View style={{ maxHeight: 150 }}>
         {reply._id && (
-          <View style={styles.commentReplyBox}>
+          <View
+            style={{
+              ...styles.commentReplyBox,
+              backgroundColor: theme.extralight,
+            }}
+          >
             <AppText>Replying @{reply.user.username}</AppText>
             <TouchableOpacity
               style={styles.commentClose}
@@ -262,7 +258,12 @@ const Comments = ({
           </View>
         )}
         {error && (
-          <View style={styles.commentReplyBox}>
+          <View
+            style={{
+              ...styles.commentReplyBox,
+              backgroundColor: theme.extralight,
+            }}
+          >
             <AppText style={styles.errorText}> {error} </AppText>
           </View>
         )}
@@ -296,7 +297,6 @@ const styles = StyleSheet.create({
   },
 
   commentReplyBox: {
-    backgroundColor: colors.extraLight,
     flexDirection: "row",
     height: 30,
     paddingHorizontal: 10,

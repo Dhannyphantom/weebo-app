@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
   media: {
     flex: 1,
     backgroundColor: colors.extraLight,
+    borderRadius: 11,
   },
   profile: {
     alignSelf: "center",
