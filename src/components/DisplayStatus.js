@@ -81,7 +81,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       toValue: height,
       useNativeDriver: true,
     }).start(() => {
-      setVisible({ vis: false, data: null });
+      setVisible({ ...modalObj, vis: false });
     });
   };
 
@@ -250,7 +250,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             renderItem={renderModalList}
           />
           <RenderHeader />
-          <RenderFloater handleCloseModal={handleCloseModal} />
+          {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}
         </Animated.View>
       </Modal>
     </>

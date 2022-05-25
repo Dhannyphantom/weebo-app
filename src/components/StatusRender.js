@@ -21,9 +21,10 @@ import ThemeContext from "../config/ThemeContext";
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
-const StatusCardItem = ({ item, setDisplay, all }) => {
+const StatusCardItem = ({ item, display, setDisplay, all }) => {
   const [imager, setImager] = useState({});
   const [loading, setLoading] = useState(true);
+  const theme = useContext(ThemeContext);
 
   let cardName;
   switch (item.instance) {
@@ -39,23 +40,15 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
   }
 
   const handleCardPress = (item, all) => {
-    const statuses = [];
-    all?.forEach((obj, idx) => {
-      // let newStory = true;
-      obj.posts.reverse().forEach((post, idxer) => {
-        const lastStory = idxer == obj.posts.length - 1;
-        let counter = obj.posts.length - idxer;
+    const allStory = display.data.all;
+    const finder = allStory.findIndex((obj) => obj._id == item._id);
+    const finderId =
+      allStory[finder].posts[allStory[finder].posts.length - 1]._id;
+    const prevStories = [...display.data.posts];
+    const indexer = prevStories.findIndex((obj) => obj._id == finderId);
+    prevStories[indexer].current = true;
 
-        statuses.push({
-          ...post,
-          storyLength: obj.posts.length,
-          storyNumber: idxer,
-          lastStory,
-          counter,
-        });
-      });
-    });
-    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
+    setDisplay({ vis: true, data: { ...display.data, posts: prevStories } });
   };
 
   const fetchThumb = async () => {
@@ -87,13 +80,13 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
       <>
         <TouchableOpacity
           onPress={() => handleCardPress(item, all)}
-          style={styles.statusItem}
+          style={[styles.statusItem, { backgroundColor: theme.extralight }]}
           activeOpacity={1}
         >
-          <View style={styles.media}>
+          <View style={[styles.media, { backgroundColor: theme.extralight }]}>
             <Image
               source={{ uri: imager.thumb }}
-              blurRadius={2}
+              blurRadius={2.5}
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
             />
           </View>
@@ -160,8 +153,36 @@ const StatusRender = ({ data, show, setter }) => {
   };
 
   const renderStatuses = ({ item }) => {
-    return <StatusCardItem item={item} all={data} setDisplay={setDisplay} />;
+    return (
+      <StatusCardItem
+        item={item}
+        all={data}
+        display={display}
+        setDisplay={setDisplay}
+      />
+    );
   };
+
+  useEffect(() => {
+    const statuses = [];
+    data?.forEach((obj, idx) => {
+      // let newStory = true;
+      obj.posts.reverse().forEach((post, idxer) => {
+        const lastStory = idxer == obj.posts.length - 1;
+        let counter = obj.posts.length - idxer;
+
+        statuses.push({
+          ...post,
+          storyLength: obj.posts.length,
+          current: false,
+          storyNumber: idxer,
+          lastStory,
+          counter,
+        });
+      });
+    });
+    setDisplay({ vis: false, data: { all: data, posts: statuses } });
+  }, [data, show]);
 
   return (
     <Modal visible={show} statusBarTranslucent transparent>
