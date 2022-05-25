@@ -42,6 +42,11 @@ export default function RenderStoryList({
           animated: true,
           offset: width,
         });
+      } else {
+        listScrollRef.current?.scrollToOffset({
+          animated: true,
+          offset: SCROLL_INTERVAL * (idx + 1),
+        });
       }
     }
   };

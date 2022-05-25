@@ -33,6 +33,7 @@ const RenderFloater = ({ handleCloseModal }) => {
     <View
       style={{
         position: "absolute",
+        // backgroundColor: colors.accent,
         width,
         height,
       }}

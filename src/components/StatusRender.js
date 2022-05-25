@@ -25,7 +25,7 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
   const [imager, setImager] = useState({});
   const [loading, setLoading] = useState(true);
 
-  let cardName = "";
+  let cardName;
   switch (item.instance) {
     case "character":
       cardName = "dpName";
@@ -42,7 +42,7 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
     const statuses = [];
     all?.forEach((obj, idx) => {
       // let newStory = true;
-      obj.posts.forEach((post, idxer) => {
+      obj.posts.reverse().forEach((post, idxer) => {
         const lastStory = idxer == obj.posts.length - 1;
         let counter = obj.posts.length - idxer;
 
@@ -55,13 +55,12 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
         });
       });
     });
-    console.log(statuses);
-    // setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
+    setDisplay({ vis: true, data: { _id: item._id, all, posts: statuses } });
   };
 
   const fetchThumb = async () => {
-    if (imager.uri) return;
-    const lastPost = item.posts[0];
+    if (imager.thumb) return;
+    const lastPost = item.posts[item.posts.length - 1];
     if (lastPost.type == "video") {
       try {
         const res = await getThumbnailAsync(lastPost.uri, {
@@ -93,8 +92,8 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
         >
           <View style={styles.media}>
             <Image
-              source={imager}
-              blurRadius={3}
+              source={{ uri: imager.thumb }}
+              blurRadius={2}
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
             />
           </View>
@@ -248,8 +247,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "center",
-    marginTop: 5,
-    marginBottom: 12,
+    padding: 12,
+    marginBottom: 5,
   },
   headerText: {
     marginLeft: 3,
