@@ -230,7 +230,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.bar} />
       <Screen
         style={{
           ...styles.container,

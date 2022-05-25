@@ -2,6 +2,7 @@ export default {
   light: {
     color: "#000",
     mode: "light",
+    bar: "dark",
     background: "#fff",
     backgroundLight: "#dddddd",
     medium: "#707070",
@@ -15,7 +16,7 @@ export default {
   },
   dark: {
     color: "#fff",
-    // background: "#1c2a3b",
+    bar: "light",
     medium: "#253850",
     chat: "#2f4765",
     white: "#263950",

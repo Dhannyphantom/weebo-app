@@ -13,7 +13,7 @@ import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const FeedRender = ({ item, user }) => {
   const { likePost, viewPostVideo } = useContext(FeedContext);
@@ -45,7 +45,7 @@ const FeedRender = ({ item, user }) => {
 
   const isMultiple = item?.posts?.length > 1;
 
-  const handleLike = useCallback(() => {
+  const handleLike = () => {
     if (post.liked) {
       setPost({ ...post, likes: post.likes - 1, liked: false });
       likePost(item._id, "unlike", (err) => setErrMsg(err));
@@ -53,7 +53,7 @@ const FeedRender = ({ item, user }) => {
       setPost({ ...post, likes: post.likes + 1, liked: true });
       likePost(item._id, "like", (err) => setErrMsg(err));
     }
-  });
+  };
 
   const handleViewPost = () => {
     setPost({ ...post, viewed: true, views: post.views + 1 });

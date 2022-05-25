@@ -157,18 +157,14 @@ const PostVideo = ({
               toValue: 1,
               duration: 400,
               useNativeDriver: true,
-            }).start(() => {
-              viewable && handleLike();
-            });
+            }).start();
             if (lotRef?.current?.play) lotRef?.current?.play(170, 220);
           } else {
             Animated.timing(opaciterPlay, {
               toValue: 1,
               duration: 400,
               useNativeDriver: true,
-            }).start(() => {
-              viewable && handleLike();
-            });
+            }).start();
             if (lotRef?.current?.play) lotRef?.current?.play(60, 110);
             setOverlay(true);
           }
