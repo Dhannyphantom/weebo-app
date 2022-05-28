@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Platform, Dimensions } from "react-native";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 import AppButton from "./AppButton";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -13,51 +11,13 @@ const RequestAuth = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const {
     tryLocalSignin,
-    setPushToken,
     clearMessage,
-    state: { errMsg, userInfo },
+    state: { errMsg },
   } = useContext(AuthContext);
 
   const signIN = () => {
     setLoading(true);
     navigation.navigate("Login");
-  };
-
-  const registerForPushNotificationsAsync = async () => {
-    let token;
-    try {
-      if (Constants.isDevice) {
-        const { status: existingStatus } =
-          await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-          // USE CUSTOM ALERT BOX
-          alert("Failed to get push token for push notification!");
-          return;
-        }
-
-        token = (await Notifications.getExpoPushTokenAsync()).data;
-      } else {
-        alert("Must use physical device for Push Notifications");
-      }
-
-      if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
-          name: "default",
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: "#FF231F7C",
-        });
-      }
-
-      return token;
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const run = () => {
