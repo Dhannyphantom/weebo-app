@@ -369,21 +369,21 @@ const setPushToken = (dispatch) => async (tokenData, sc, cb) => {
 };
 
 const notificationSender = (dispatch) => async (notifyObj, sc, cb) => {
-  //notifyObj = { to: EXPO_PUSH_TOKEN, sound, body,title, data }
-  const strObj = JSON.stringify(notifyObj);
-  try {
-    const res = await expoNotify.post("/", strObj, {
-      headers: {
-        host: "exp.host",
-        accept: "application/json",
-        "Accept-encoding": "gzip,deflate",
-        "Content-Type": "application/json",
-      },
-    });
-    sc && sc(res.data);
-  } catch (err) {
-    cb && cb(err);
-  }
+  // //notifyObj = { to: EXPO_PUSH_TOKEN, sound, body,title, data }
+  // const strObj = JSON.stringify(notifyObj);
+  // try {
+  //   const res = await expoNotify.post("/", strObj, {
+  //     headers: {
+  //       host: "exp.host",
+  //       accept: "application/json",
+  //       "Accept-encoding": "gzip,deflate",
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   sc && sc(res.data);
+  // } catch (err) {
+  //   cb && cb(err);
+  // }
 };
 
 // THIS WILL UPDATE THE USER STATE

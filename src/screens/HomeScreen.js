@@ -38,12 +38,21 @@ const boolsObj = {
   showStatus: false,
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 const HomeScreen = ({ navigation, route }) => {
   const { getHomeFeeds } = useContext(FeedContext);
 
   const {
     tryLocalSignin,
     notificationSender,
+    setPushToken,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -56,6 +65,8 @@ const HomeScreen = ({ navigation, route }) => {
   const { loadMore, lodadedOnce, showSlide, showStatus } = screenBool;
 
   const actionFlatRef = useRef(null);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -140,6 +151,30 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
+  const notificationHandler = async () => {
+    console.log(userInfo);
+    if (userInfo.pushToken === "unregistered") {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        console.log("EXPO TOKEN: ", token);
+        setPushToken({ token });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("recieved", notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("response recieved", response);
+      });
+  };
+
   const RenderLoadMore = () => {
     if (loadMore) {
       return (
@@ -206,6 +241,14 @@ const HomeScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     readyHomeScreen();
+    notificationHandler();
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
   }, []);
 
   return (
@@ -290,6 +333,17 @@ async function registerForPushNotificationsAsync() {
   }
 
   return token;
+}
+
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: "Here is the notification body",
+      data: { data: "goes here" },
+    },
+    trigger: { seconds: 2 },
+  });
 }
 
 const styles = StyleSheet.create({
