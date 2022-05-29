@@ -36,6 +36,7 @@ const boolsObj = {
   lodadedOnce: false,
   showSlide: false,
   showStatus: false,
+  pushToken: null,
 };
 
 Notifications.setNotificationHandler({
@@ -62,7 +63,8 @@ const HomeScreen = ({ navigation, route }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [screenBool, setScreenBool] = useState(boolsObj);
-  const { loadMore, lodadedOnce, showSlide, showStatus } = screenBool;
+  const { loadMore, lodadedOnce, pushToken, showSlide, showStatus } =
+    screenBool;
 
   const actionFlatRef = useRef(null);
   const notificationListener = useRef();
@@ -70,6 +72,12 @@ const HomeScreen = ({ navigation, route }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    testNotification(
+      (resData) => console.log("Notification sent", resData),
+      (err) => {
+        console.log("ERROR SENDING NOTIFICATION", err);
+      }
+    );
     readyHomeScreen(() => setRefreshing(false));
   }, []);
 
@@ -152,16 +160,16 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const notificationHandler = async () => {
-    console.log(userInfo);
-    if (userInfo.pushToken === "unregistered") {
-      try {
-        const token = await registerForPushNotificationsAsync();
-        console.log("EXPO TOKEN: ", token);
-        setPushToken({ token });
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    // MIGHT WANT TO CALL THIS FUNCTION A LOT
+    // if ()
+    // try {
+    //   const token = await registerForPushNotificationsAsync();
+    //   setPushToken({ token }, () =>
+    //     setScreenBool({ ...screenBool, pushToken: token })
+    //   );
+    // } catch (err) {
+    //   console.log(err);
+    // }
     // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current =
@@ -173,6 +181,15 @@ const HomeScreen = ({ navigation, route }) => {
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log("response recieved", response);
       });
+  };
+
+  const testNotification = () => {
+    notificationSender({
+      to: [userInfo.pushToken ?? screenBool.pushToken],
+      title: "Weebo alert!",
+      body: "This is just to alert you alright",
+      data: { hello: "world" },
+    });
   };
 
   const RenderLoadMore = () => {
@@ -318,7 +335,6 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     console.log("Must use physical device for Push Notifications");
   }
