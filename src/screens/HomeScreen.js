@@ -185,7 +185,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const testNotification = () => {
     notificationSender({
-      to: [userInfo.pushToken ?? screenBool.pushToken],
+      to: [pushToken ?? userInfo.pushToken],
       title: "Weebo alert!",
       body: "This is just to alert you alright",
       data: { hello: "world" },
