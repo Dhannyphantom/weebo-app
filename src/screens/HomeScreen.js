@@ -31,12 +31,12 @@ import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
+const ONLINE_MODE = false;
 const boolsObj = {
   loadMore: true,
   lodadedOnce: false,
   showSlide: false,
   showStatus: false,
-  pushToken: null,
 };
 
 Notifications.setNotificationHandler({
@@ -52,7 +52,6 @@ const HomeScreen = ({ navigation, route }) => {
 
   const {
     tryLocalSignin,
-    notificationSender,
     setPushToken,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -63,8 +62,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [screenBool, setScreenBool] = useState(boolsObj);
-  const { loadMore, lodadedOnce, pushToken, showSlide, showStatus } =
-    screenBool;
+  const { loadMore, lodadedOnce, showSlide, showStatus } = screenBool;
 
   const actionFlatRef = useRef(null);
   const notificationListener = useRef();
@@ -72,12 +70,6 @@ const HomeScreen = ({ navigation, route }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    testNotification(
-      (resData) => console.log("Notification sent", resData),
-      (err) => {
-        console.log("ERROR SENDING NOTIFICATION", err);
-      }
-    );
     readyHomeScreen(() => setRefreshing(false));
   }, []);
 
@@ -161,16 +153,13 @@ const HomeScreen = ({ navigation, route }) => {
 
   const notificationHandler = async () => {
     // MIGHT WANT TO CALL THIS FUNCTION A LOT
-    // if ()
-    // try {
-    //   const token = await registerForPushNotificationsAsync();
-    //   setPushToken({ token }, () =>
-    //     setScreenBool({ ...screenBool, pushToken: token })
-    //   );
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    if (ONLINE_MODE) return;
+    try {
+      const token = await registerForPushNotificationsAsync();
+      setPushToken({ token });
+    } catch (err) {
+      console.log(err);
+    }
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -181,15 +170,6 @@ const HomeScreen = ({ navigation, route }) => {
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log("response recieved", response);
       });
-  };
-
-  const testNotification = () => {
-    notificationSender({
-      to: [pushToken ?? userInfo.pushToken],
-      title: "Weebo alert!",
-      body: "This is just to alert you alright",
-      data: { hello: "world" },
-    });
   };
 
   const RenderLoadMore = () => {
@@ -261,10 +241,12 @@ const HomeScreen = ({ navigation, route }) => {
     notificationHandler();
 
     return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
+      if (ONLINE_MODE) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
     };
   }, []);
 
@@ -348,6 +330,7 @@ async function registerForPushNotificationsAsync() {
     });
   }
 
+  console.log(token);
   return token;
 }
 
