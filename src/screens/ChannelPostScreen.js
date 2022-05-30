@@ -431,7 +431,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         { backgroundColor: theme.backgroundExtralight },
       ]}
     >
-      <StatusBar style="dark" />
+      <StatusBar style={theme.bar} />
       {page._id ? (
         <>
           {/* MAKE A HEADER SHOW ANIMATION IN  THIS SCREEN */}

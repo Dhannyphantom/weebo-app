@@ -153,7 +153,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const notificationHandler = async () => {
     // MIGHT WANT TO CALL THIS FUNCTION A LOT
-    if (ONLINE_MODE) return;
+    if (!ONLINE_MODE) return;
     try {
       const token = await registerForPushNotificationsAsync();
       setPushToken({ token });
