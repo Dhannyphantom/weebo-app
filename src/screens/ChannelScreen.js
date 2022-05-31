@@ -120,7 +120,7 @@ const ChannelScreen = ({ navigation }) => {
             style={{ ...styles.box, backgroundColor: mBg }}
           >
             <FontAwesome5 name="dot-circle" size={14} color={mColor} />
-            <AppText style={styles.boxText}>My channels</AppText>
+            <AppText style={styles.boxText}>My Channels</AppText>
           </TouchableOpacity>
         </Cards>
 
@@ -479,6 +479,7 @@ const ChannelScreen = ({ navigation }) => {
         refreshing={refreshing}
         keyboardShouldPersistTaps="handled"
         keyExtractor={(item, index) => item + index}
+        contentContainerStyle={{ paddingBottom: height * 0.1 }}
         renderItem={renderPage}
         ListHeaderComponent={<ChannelHeaderComp />}
       />

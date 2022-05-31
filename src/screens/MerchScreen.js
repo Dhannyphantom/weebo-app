@@ -11,7 +11,11 @@ const TrophieScreen = () => {
         Otaku Merchandise!!!
       </AppText>
       <View style={styles.activityCont}>
-        <ActivityIndicator visible type="isEmpty" text="Coming Soon!!!" />
+        <ActivityIndicator
+          visible
+          type="isEmpty"
+          text="Feature Not Available Yet!!!"
+        />
       </View>
     </View>
   );
