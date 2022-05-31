@@ -6,6 +6,11 @@ import AppText from "./AppText";
 
 // FILES
 import loaderAnim from "../../assets/animations/two_dotted_spinner.json";
+import simpleLoader from "../../assets/animations/loader1.json";
+import emptyComment from "../../assets/animations/message_pop.json";
+import commentAnim from "../../assets/animations/comment-anim.json";
+import networkAnim from "../../assets/animations/network-1.json";
+import emptyLoader from "../../assets/animations/nice.json";
 import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
@@ -44,6 +49,12 @@ const ActivityIndicator = ({
         <View style={styles.bounce}>
           <LottieView
             source={loaderAnim}
+            colorFilters={[
+              { keypath: "Round-line 2", color: colors.primary },
+              { keypath: "Round-line", color: colors.primary },
+              { keypath: "Line-Right", color: colors.primary },
+              { keypath: "Line-Left", color: colors.primary },
+            ]}
             autoPlay
             style={{
               width: screen.width * size * 0.45,
@@ -55,7 +66,8 @@ const ActivityIndicator = ({
       )}
       {type === "comment" && (
         <LottieView
-          source={require("../../assets/animations/comment-anim.json")}
+          source={commentAnim}
+          colorFilters={[{ keypath: "Comp 1", color: theme.extralight }]}
           autoPlay
           style={{ width: screen.width * size, height: screen.width * size }}
           loop
@@ -66,7 +78,25 @@ const ActivityIndicator = ({
         (type === "isEmpty" && (
           <>
             <LottieView
-              source={require("../../assets/animations/nice.json")}
+              source={emptyLoader}
+              colorFilters={[
+                { keypath: "bcg-2 Outlines", color: theme.extralight },
+                { keypath: "bcg-1 Outlines", color: theme.backgroundLight },
+                { keypath: "square-45 Outlines", color: colors.primary },
+                {
+                  keypath: "rond-scaleout-bubble Outlines",
+                  color: colors.primary,
+                },
+                {
+                  keypath: "rond-scaleout-bubble Outlines",
+                  color: colors.primary,
+                },
+                { keypath: "square Outlines", color: colors.primary },
+                {
+                  keypath: "round-scaleout-slow Outlines",
+                  color: colors.primary,
+                },
+              ]}
               autoPlay
               style={{
                 width: screen.width * size,
@@ -94,7 +124,12 @@ const ActivityIndicator = ({
       {type === "network" && (
         <>
           <LottieView
-            source={require("../../assets/animations/network-1.json")}
+            source={networkAnim}
+            colorFilters={[
+              { keypath: "dish Outlines - Group 3", color: colors.primary },
+              { keypath: "Merged Shape Layer", color: theme.extralight },
+              { keypath: "Merged Shape Layer 2", color: theme.extralight },
+            ]}
             autoPlay
             style={{ width: screen.width * size, height: screen.width * size }}
             loop
@@ -111,7 +146,11 @@ const ActivityIndicator = ({
       {type === "loader" && (
         <>
           <LottieView
-            source={require("../../assets/animations/loader1.json")}
+            source={simpleLoader}
+            colorFilters={[
+              { keypath: "形状图层 2", color: colors.primary },
+              { keypath: "形状图层 1", color: theme.extralight },
+            ]}
             autoPlay
             style={{ width: screen.width * size, height: screen.width * size }}
             loop
@@ -122,7 +161,11 @@ const ActivityIndicator = ({
       {type === "emptyComment" && (
         <>
           <LottieView
-            source={require("../../assets/animations/message_pop.json")}
+            source={emptyComment}
+            colorFilters={[
+              { keypath: "chat Outlines - Group 6", color: theme.extralight },
+              { keypath: "Merged Shape Layer", color: theme.backgroundLight },
+            ]}
             autoPlay
             style={{ width: screen.width * size, height: screen.width * size }}
             loop

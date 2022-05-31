@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 import AppButton from "./AppButton";
 import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -14,6 +16,7 @@ const RequestAuth = ({ navigation }) => {
     clearMessage,
     state: { errMsg },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const signIN = () => {
     setLoading(true);
@@ -38,6 +41,7 @@ const RequestAuth = ({ navigation }) => {
   if (errMsg)
     return (
       <View style={styles.container}>
+        <StatusBar style={theme.bar} />
         <View style={styles.loader}>
           <ActivityIndicator
             visible={true}
