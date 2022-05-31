@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
+  RefreshControl,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
@@ -440,14 +441,21 @@ const ChannelPostScreen = ({ route, navigation }) => {
               <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
             }
             data={posts}
-            refreshing={refreshing}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true }
             )}
             contentContainerStyle={{ paddingBottom: height * 0.04 }}
             overScrollMode="never"
-            onRefresh={handleScreenRefresh}
+            refreshControl={
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={handleScreenRefresh}
+              />
+            }
             keyExtractor={(item, index) => item._id + index}
             renderItem={renderPageLikeSo}
           />

@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  RefreshControl,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 import { Context as ChallContext } from "../config/ChallContext";
@@ -14,6 +20,7 @@ import AppHeader from "../components/AppHeader";
 import Awarder from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +36,8 @@ const ChallengeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingEmpty, setRefreshingEmpty] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
+
+  const theme = useContext(ThemeContext);
 
   const renderChallenges = ({ item }) => {
     if (item.challengersNum) {
@@ -176,8 +185,15 @@ const ChallengeScreen = ({ navigation }) => {
         <FlatList
           data={["OTAKU"]}
           keyExtractor={(item) => item}
-          refreshing={refreshingEmpty}
-          onRefresh={() => handleRefresh(null, "empty")}
+          refreshControl={
+            <RefreshControl
+              progressBackgroundColor={theme.extralight}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
+              refreshing={refreshingEmpty}
+              onRefresh={() => handleRefresh(null, "empty")}
+            />
+          }
           renderItem={() => <View style={styles.emptyFlat} />}
         />
       )}
@@ -218,9 +234,18 @@ const ChallengeScreen = ({ navigation }) => {
               {awardData && awardData[0] && <Separator h={1} />}
             </>
           }
-          refreshing={refreshing}
           style={{ marginTop: 10 }}
-          onRefresh={() => handleRefresh(null, "list")}
+          refreshControl={
+            (challengeInfo[0] || awardData[0]) && (
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={() => handleRefresh(null, "list")}
+              />
+            )
+          }
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingBottom: height * 0.1 }}

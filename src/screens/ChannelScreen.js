@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import {
   FontAwesome5,
@@ -475,8 +476,15 @@ const ChannelScreen = ({ navigation }) => {
       <FlatList
         data={["channel"]}
         showsVerticalScrollIndicator={false}
-        onRefresh={handleRefresh}
-        refreshing={refreshing}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
         keyboardShouldPersistTaps="handled"
         keyExtractor={(item, index) => item + index}
         contentContainerStyle={{ paddingBottom: height * 0.1 }}

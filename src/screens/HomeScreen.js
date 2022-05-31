@@ -5,7 +5,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, StyleSheet, FlatList, Platform, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Platform,
+  Dimensions,
+  RefreshControl,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -272,12 +279,19 @@ const HomeScreen = ({ navigation, route }) => {
                 data={feeds?.results}
                 extraData={feeds}
                 ListHeaderComponent={RenderPageHeader}
-                refreshing={refreshing}
                 keyboardShouldPersistTaps="handled"
                 ListFooterComponent={RenderLoadMore}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: height * 0.1 }}
-                onRefresh={onRefresh}
+                refreshControl={
+                  <RefreshControl
+                    progressBackgroundColor={theme.extralight}
+                    colors={[colors.primary]}
+                    tintColor={colors.primary}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
                 onEndReached={handleEndReached}
                 onEndReachedThreshold={0}
                 keyExtractor={keyExtractor}
