@@ -5,6 +5,7 @@ import {
   DefaultTheme,
 } from "@react-navigation/native";
 import { EventRegister } from "react-native-event-listeners";
+import * as NavigationBar from "expo-navigation-bar";
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -44,9 +45,19 @@ const Otaku = () => {
     },
   };
 
+  const setNavBar = async () => {
+    await NavigationBar.setBackgroundColorAsync(
+      themeMode ? theme.light.background : theme.dark.background
+    );
+    await NavigationBar.setButtonStyleAsync(
+      themeMode ? theme.light.bar : theme.dark.bar
+    );
+  };
+
   useEffect(() => {
     const eventListener = EventRegister.on("changeTheme", (mode) => {
       setThemeMode(mode);
+      setNavBar();
     });
 
     return () => {

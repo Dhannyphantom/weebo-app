@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 
 import Otaku from "./src/Otaku";
-const fetchFonts = async () => {
+const loaderFunc = async () => {
   return await Font.loadAsync({
     "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
     "open-sans-b1": require("./assets/fonts/OpenSans-Bold.ttf"),
@@ -38,7 +38,7 @@ export default function App() {
   if (!dataLoaded) {
     return (
       <AppLoading
-        startAsync={fetchFonts}
+        startAsync={loaderFunc}
         onFinish={() => setDataLoaded(true)}
         onError={(err) => console.log(err)}
       />

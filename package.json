@@ -54,7 +54,8 @@
     "react-native-video": "^5.2.0",
     "react-native-web": "0.17.1",
     "socket.io-client": "^4.4.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-navigation-bar": "~1.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

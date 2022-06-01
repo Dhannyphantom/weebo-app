@@ -17,6 +17,7 @@ import { StatusBar } from "expo-status-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
+import * as NavigationBar from "expo-navigation-bar";
 import * as Notifications from "expo-notifications";
 
 import { Context as FeedContext } from "../config/FeedContext";
@@ -98,7 +99,9 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  const readyHomeScreen = (cb) => {
+  const readyHomeScreen = async (cb) => {
+    await NavigationBar.setButtonStyleAsync(theme.bar);
+    await NavigationBar.setBackgroundColorAsync(theme.background);
     tryLocalSignin();
     getHomeFeeds(
       null,
@@ -309,7 +312,7 @@ const HomeScreen = ({ navigation, route }) => {
         visible={((feeds && !feeds?.results[0]) || !feeds) && !showStatus}
         type={lodadedOnce ? "isEmpty" : "spin"}
         style={styles.pageActiviy}
-        text="No feeds yet, please follow an Otaku Instance"
+        text="No feeds yet, please follow a Weebo Instance"
         transparent
       />
     </>
