@@ -55,10 +55,10 @@ const RenderFloater = ({ handleCloseModal }) => {
   );
 };
 
-const RenderHeader = ({ headerScroll, modalData }) => {
+const RenderHeader = ({ headerScroll, modalData, date }) => {
   const safeInsets = useSafeAreaInsets();
   const renderHeaderList = ({ item }) => {
-    return <RenderHeaderList item={item} modalData={modalData} />;
+    return <RenderHeaderList item={item} date={date} />;
   };
 
   return (
@@ -80,10 +80,15 @@ const RenderHeader = ({ headerScroll, modalData }) => {
   );
 };
 
-const RenderHeaderList = ({ item, modalData }) => {
+const RenderHeaderList = ({ item, date }) => {
+  const [dater, setDater] = useState(date);
   const handleMenu = () => {
     console.log("menun pressed");
   };
+
+  useEffect(() => {
+    setDater(date);
+  }, [date]);
 
   return (
     <View style={styles.headerList}>
@@ -97,9 +102,10 @@ const RenderHeaderList = ({ item, modalData }) => {
               item[item.instance]?.name_e}
           </AppText>
           <AppText style={styles.headerInstance}>{item.instance}</AppText>
-          {modalData && (
+          {dater && (
             <AppText style={styles.headerDate}>
-              {getTimestamp(modalData[0]?._id, "status")}
+              {getTimestamp(dater, "status")}
+              {/* {getTimestamp(modalData[0]?._id, "status")} */}
             </AppText>
           )}
         </View>
@@ -129,7 +135,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     duration: 5000,
   });
   const [endList, setEndList] = useState(false);
-  const safeInsets = useSafeAreaInsets();
+
   const headerScroll = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const translator = useRef(new Animated.Value(0)).current;
@@ -148,6 +154,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       toValue: height,
       useNativeDriver: true,
     }).start(() => {
+      setEndList(false);
       setVisible({ ...modalObj, vis: false });
     });
   };
@@ -155,7 +162,11 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
     if (!viewableItems[0]) {
       // maybe the first screen
-      setActive({ key: null, type: null, duration: 5000 });
+      setActive({
+        key: null,
+        type: null,
+        duration: 5000,
+      });
     } else if (viewableItems[0]?.item?.type === "video") {
       // a video so play video
       setActive({
@@ -204,9 +215,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       Animated.timing(translator, {
         toValue: 0,
         useNativeDriver: true,
-      }).start(() => {
-        setEndList(false);
-      });
+      }).start();
     }
   }, [modalObj]);
 
@@ -246,13 +255,17 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             initialNumToRender={4}
             overScrollMode="never"
             pagingEnabled
-            decelerationRate={0.3}
+            decelerationRate={0.02}
             keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingBottom: height * 0.05 }}
             ListEmptyComponent={RenderEmptyComponent}
             renderItem={renderModalList}
           />
-          <RenderHeader modalData={modalData} headerScroll={headerScroll} />
+          <RenderHeader
+            modalData={modalData}
+            headerScroll={headerScroll}
+            date={active.key}
+          />
           {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}
         </Animated.View>
       </Modal>
