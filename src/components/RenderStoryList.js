@@ -10,12 +10,11 @@ import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
-const SCROLL_INTERVAL = height + height * 0.06;
+const SCROLL_INTERVAL = height;
 
 export default function RenderStoryList({
   item,
   listScrollRef,
-  storyLength,
   activeItem,
   onEnd,
   handleCloseModal,
@@ -51,7 +50,6 @@ export default function RenderStoryList({
       <View
         style={{
           ...styles.itemContainer,
-          marginBottom: idx == storyLength - 1 ? 0.1 : height * 0.05,
           top: safeInsets.top,
         }}
       >
@@ -139,6 +137,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     alignSelf: "center",
+    backgroundColor: colors.dark,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
