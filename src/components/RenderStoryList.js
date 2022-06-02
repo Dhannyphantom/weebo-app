@@ -103,8 +103,8 @@ export default function RenderStoryList({
         <View
           style={{
             position: "absolute",
-            top: safeInsets.top + 20,
-            marginLeft: 20,
+            top: safeInsets.top + 5,
+            marginLeft: 10,
           }}
         >
           <LottieView
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     alignSelf: "center",
     backgroundColor: colors.dark,
-    borderRadius: 25,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
   },

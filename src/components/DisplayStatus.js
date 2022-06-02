@@ -21,7 +21,7 @@ import getTimestamp from "../constants/getTimestamp";
 import RenderStoryList from "./RenderStoryList";
 
 const { width, height } = Dimensions.get("window");
-const SCROLL_INTERVAL = height + height * 0.06;
+const SCROLL_INTERVAL = height;
 const viewabilityConfig = {
   waitForInteraction: false,
   minimumViewTime: 30,
@@ -147,6 +147,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const modalData = modalObj?.data?.all;
   const statuses = modalObj?.data?.posts;
+  // const initialScrollIndex = modalObj?.data?.initialScrollIndex;
+  const initialScrollIndex = 2;
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -204,6 +206,14 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     }
   }).current;
 
+  const getItemLayout = (data, index) => {
+    return {
+      length: height,
+      offset: height * index,
+      index,
+    };
+  };
+
   const renderModalList = ({ item, index }) => {
     return (
       <RenderStoryList
@@ -259,10 +269,12 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             data={statuses}
             ref={listScrollRef}
             snapToAlignment="center"
+            initialScrollIndex={initialScrollIndex}
             showsVerticalScrollIndicator={false}
             snapToInterval={SCROLL_INTERVAL}
             viewabilityConfig={viewabilityConfig}
             onEndReached={handleEndReached}
+            getItemLayout={getItemLayout}
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
             removeClippedSubviews
