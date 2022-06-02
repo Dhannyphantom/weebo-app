@@ -55,6 +55,73 @@ const RenderFloater = ({ handleCloseModal }) => {
   );
 };
 
+const RenderHeader = ({ headerScroll, modalData }) => {
+  const safeInsets = useSafeAreaInsets();
+  const renderHeaderList = ({ item }) => {
+    return <RenderHeaderList item={item} modalData={modalData} />;
+  };
+
+  return (
+    <View style={{ ...styles.header, paddingTop: safeInsets.top + 5 }}>
+      <FlatList
+        data={modalData}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        snapToAlignment="center"
+        ref={headerScroll}
+        snapToInterval={width}
+        scrollEnabled={false}
+        decelerationRate={0.08}
+        keyExtractor={(item) => item._id}
+        renderItem={renderHeaderList}
+      />
+    </View>
+  );
+};
+
+const RenderHeaderList = ({ item, modalData }) => {
+  const handleMenu = () => {
+    console.log("menun pressed");
+  };
+
+  return (
+    <View style={styles.headerList}>
+      <View />
+      <View style={styles.headerCont}>
+        <View style={styles.headerTitles}>
+          <AppText bold size="xlarge" style={styles.headerText}>
+            {item[item.instance]?.dpName ??
+              item[item.instance]?.name ??
+              item[item.instance]?.name_j ??
+              item[item.instance]?.name_e}
+          </AppText>
+          <AppText style={styles.headerInstance}>{item.instance}</AppText>
+          {modalData && (
+            <AppText style={styles.headerDate}>
+              {getTimestamp(modalData[0]?._id, "status")}
+            </AppText>
+          )}
+        </View>
+        <ProfilePic
+          source={item[item.instance]?.cover_photo?.uri}
+          size={60}
+          border={1.5}
+          borderColor={colors.white}
+          disabled
+        />
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={handleMenu}
+          style={styles.menuIcon}
+        >
+          <Feather name="more-vertical" color={colors.white} size={20} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState({
     key: null,
@@ -124,76 +191,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     setEndList(true);
   };
 
-  const renderHeaderList = ({ item }) => {
-    return <RenderHeaderList item={item} />;
-  };
-
   const RenderEmptyComponent = () => {
     return (
       <View>
         <AppText>EMPTYYYYYYYYYYYYYY</AppText>
-      </View>
-    );
-  };
-
-  const RenderHeaderList = ({ item }) => {
-    const handleMenu = () => {
-      console.log("menun pressed");
-    };
-
-    return (
-      <View style={styles.headerList}>
-        <View />
-        <View style={styles.headerCont}>
-          <View style={styles.headerTitles}>
-            <AppText bold size="xlarge" style={styles.headerText}>
-              {item[item.instance]?.dpName ??
-                item[item.instance]?.name ??
-                item[item.instance]?.name_j ??
-                item[item.instance]?.name_e}
-            </AppText>
-            <AppText style={styles.headerInstance}>{item.instance}</AppText>
-            {modalData && (
-              <AppText style={styles.headerDate}>
-                {getTimestamp(modalData[0]?._id, "status")}
-              </AppText>
-            )}
-          </View>
-          <ProfilePic
-            source={item[item.instance]?.cover_photo?.uri}
-            size={60}
-            border={1.5}
-            borderColor={colors.white}
-            disabled
-          />
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={handleMenu}
-            style={styles.menuIcon}
-          >
-            <Feather name="more-vertical" color={colors.white} size={20} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  const RenderHeader = () => {
-    return (
-      <View style={{ ...styles.header, paddingTop: safeInsets.top + 5 }}>
-        <FlatList
-          data={modalData}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          snapToAlignment="center"
-          ref={headerScroll}
-          snapToInterval={width}
-          scrollEnabled={false}
-          decelerationRate={0.2}
-          keyExtractor={(item) => item._id}
-          renderItem={renderHeaderList}
-        />
       </View>
     );
   };
@@ -203,7 +204,9 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       Animated.timing(translator, {
         toValue: 0,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        setEndList(false);
+      });
     }
   }, [modalObj]);
 
@@ -249,7 +252,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             ListEmptyComponent={RenderEmptyComponent}
             renderItem={renderModalList}
           />
-          <RenderHeader />
+          <RenderHeader modalData={modalData} headerScroll={headerScroll} />
           {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}
         </Animated.View>
       </Modal>
