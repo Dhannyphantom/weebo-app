@@ -15,7 +15,6 @@ const SCROLL_INTERVAL = height + height * 0.06;
 export default function RenderStoryList({
   item,
   listScrollRef,
-  headerScroll,
   storyLength,
   activeItem,
   onEnd,

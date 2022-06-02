@@ -168,12 +168,14 @@ const StatusRender = ({ data, show, setter }) => {
     data?.forEach((obj, idx) => {
       obj.posts.reverse().forEach((post, idxer) => {
         let counter = obj.posts.length - idxer;
+        const lastItem =
+          idx == data.length - 1 && idxer == obj.posts.length - 1;
         statuses.push({
           ...post,
           storyLength: obj.posts.length,
           storyNumber: idxer,
+          lastItem,
           storyGroupNumber: idx + 1,
-          current: false,
           counter,
         });
       });

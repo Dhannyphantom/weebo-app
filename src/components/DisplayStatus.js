@@ -72,7 +72,7 @@ const RenderHeader = ({ headerScroll, modalData, date }) => {
         ref={headerScroll}
         snapToInterval={width}
         scrollEnabled={false}
-        decelerationRate={0.08}
+        decelerationRate={0.02}
         keyExtractor={(item) => item._id}
         renderItem={renderHeaderList}
       />
@@ -159,8 +159,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
-    // console.log(changed);
-    // const lastView = changed.length > 1 ? changed[1].item.lastStory : false;
+    // CODE BELOW FOR CHECKING AND ANIMATING THE HEADER SCROLL
     if (changed.length > 1) {
       const currViewValue = changed[0].item.storyGroupNumber;
       const prevViewValue = changed[1].item.storyGroupNumber;
@@ -175,7 +174,12 @@ export default function DisplayStatus({ modalObj, setVisible }) {
           offset: width * currViewValue - width,
         });
       }
+      // TO RESET ENDLIST WHEN THE CURRENT ITEM IS NOT THE LAST ITEM
+      if (changed[0].item.lastItem == false) {
+        setEndList(false);
+      }
     }
+
     if (!viewableItems[0]) {
       // maybe the first screen
       setActive({
@@ -208,7 +212,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         storyLength={statuses?.length}
         handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
-        headerScroll={headerScroll}
         onEnd={{ endList, setEndList }}
         activeItem={active?.key}
       />
@@ -271,7 +274,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             initialNumToRender={4}
             overScrollMode="never"
             pagingEnabled
-            decelerationRate={0.02}
+            decelerationRate={0.2}
             keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingBottom: height * 0.05 }}
             ListEmptyComponent={RenderEmptyComponent}
