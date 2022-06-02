@@ -16,6 +16,7 @@ export default function RenderStoryList({
   item,
   listScrollRef,
   headerScroll,
+  storyLength,
   activeItem,
   onEnd,
   handleCloseModal,
@@ -33,21 +34,10 @@ export default function RenderStoryList({
     if (onEnd.endList) {
       handleCloseModal();
     } else {
-      if (item.lastStory) {
-        listScrollRef.current?.scrollToOffset({
-          animated: true,
-          offset: SCROLL_INTERVAL * (idx + 1),
-        });
-        headerScroll.current?.scrollToOffset({
-          animated: true,
-          offset: width,
-        });
-      } else {
-        listScrollRef.current?.scrollToOffset({
-          animated: true,
-          offset: SCROLL_INTERVAL * (idx + 1),
-        });
-      }
+      listScrollRef.current?.scrollToOffset({
+        animated: true,
+        offset: SCROLL_INTERVAL * (idx + 1),
+      });
     }
   };
 
@@ -58,8 +48,14 @@ export default function RenderStoryList({
   }, [activeItem]);
 
   return (
-    <View>
-      <View style={{ ...styles.itemContainer, top: safeInsets.top }}>
+    <>
+      <View
+        style={{
+          ...styles.itemContainer,
+          marginBottom: idx == storyLength - 1 ? 0.1 : height * 0.05,
+          top: safeInsets.top,
+        }}
+      >
         <View style={styles.mediaContainer}>
           <View
             style={{
@@ -130,7 +126,7 @@ export default function RenderStoryList({
           </View>
         </View>
       )}
-    </View>
+    </>
   );
 }
 
@@ -146,7 +142,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 25,
     justifyContent: "center",
-    marginBottom: height * 0.05,
     alignItems: "center",
   },
   image: {

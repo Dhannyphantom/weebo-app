@@ -105,7 +105,6 @@ const RenderHeaderList = ({ item, date }) => {
           {dater && (
             <AppText style={styles.headerDate}>
               {getTimestamp(dater, "status")}
-              {/* {getTimestamp(modalData[0]?._id, "status")} */}
             </AppText>
           )}
         </View>
@@ -160,6 +159,23 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
+    // console.log(changed);
+    // const lastView = changed.length > 1 ? changed[1].item.lastStory : false;
+    if (changed.length > 1) {
+      const currViewValue = changed[0].item.storyGroupNumber;
+      const prevViewValue = changed[1].item.storyGroupNumber;
+      if (currViewValue > prevViewValue) {
+        headerScroll.current?.scrollToOffset({
+          animated: true,
+          offset: width * prevViewValue,
+        });
+      } else if (currViewValue < prevViewValue) {
+        headerScroll.current?.scrollToOffset({
+          animated: true,
+          offset: width * currViewValue - width,
+        });
+      }
+    }
     if (!viewableItems[0]) {
       // maybe the first screen
       setActive({
@@ -189,6 +205,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       <RenderStoryList
         item={item}
         idx={index}
+        storyLength={statuses?.length}
         handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
         headerScroll={headerScroll}
@@ -226,7 +243,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         visible={modalObj.vis}
         onRequestClose={handleCloseModal}
         statusBarTranslucent
-        style={{ flex: 1 }}
         transparent
       >
         <Animated.View

@@ -166,17 +166,14 @@ const StatusRender = ({ data, show, setter }) => {
   useEffect(() => {
     const statuses = [];
     data?.forEach((obj, idx) => {
-      // let newStory = true;
       obj.posts.reverse().forEach((post, idxer) => {
-        const lastStory = idxer == obj.posts.length - 1;
         let counter = obj.posts.length - idxer;
-
         statuses.push({
           ...post,
           storyLength: obj.posts.length,
-          current: false,
           storyNumber: idxer,
-          lastStory,
+          storyGroupNumber: idx + 1,
+          current: false,
           counter,
         });
       });
