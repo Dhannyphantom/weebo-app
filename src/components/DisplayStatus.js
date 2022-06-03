@@ -21,7 +21,8 @@ import getTimestamp from "../constants/getTimestamp";
 import RenderStoryList from "./RenderStoryList";
 
 const { width, height } = Dimensions.get("window");
-const SCROLL_INTERVAL = height;
+const SCROLL_SEPARATOR = height * 0.08;
+const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
 const viewabilityConfig = {
   waitForInteraction: false,
   minimumViewTime: 30,
@@ -78,6 +79,10 @@ const RenderHeader = ({ headerScroll, modalData, date }) => {
       />
     </View>
   );
+};
+
+const StoryListSeperator = () => {
+  return <View style={styles.separator} />;
 };
 
 const RenderHeaderList = ({ item, date }) => {
@@ -209,7 +214,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const getItemLayout = (data, index) => {
     return {
       length: height,
-      offset: height * index,
+      offset: (height + SCROLL_SEPARATOR) * index,
       index,
     };
   };
@@ -274,10 +279,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             snapToInterval={SCROLL_INTERVAL}
             viewabilityConfig={viewabilityConfig}
             onEndReached={handleEndReached}
+            ItemSeparatorComponent={StoryListSeperator}
             getItemLayout={getItemLayout}
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
-            removeClippedSubviews
             maxToRenderPerBatch={3}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollY } } }],
@@ -370,6 +375,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
+  },
+  separator: {
+    height: SCROLL_SEPARATOR,
   },
   vidContainer: {
     flex: 1,

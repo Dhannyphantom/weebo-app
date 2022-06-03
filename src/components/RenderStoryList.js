@@ -10,7 +10,8 @@ import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
-const SCROLL_INTERVAL = height;
+const SCROLL_SEPARATOR = height * 0.08;
+const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
 
 export default function RenderStoryList({
   item,
