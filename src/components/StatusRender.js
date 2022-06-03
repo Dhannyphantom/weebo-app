@@ -111,6 +111,15 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
             style={styles.image}
           />
         </CircularGradient>
+        <AppText style={styles.mainTitle} bold>
+          {item[item.instance]?.dpName ??
+            item[item.instance]?.name ??
+            item[item.instance]?.name_j ??
+            item[item.instance]?.name_e}
+        </AppText>
+        <AppText style={styles.titleText} bold>
+          {item.instance}
+        </AppText>
       </View>
     </View>
   );
@@ -248,16 +257,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 3,
   },
-  cards: {
-    width: width * 0.28,
-    height: width * 0.42,
-    borderRadius: width * 0.03,
-    marginHorizontal: 2.5,
-    marginBottom: 10,
-    marginTop: 8,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
+
   cardsContainer: {
     elevation: 2,
   },
@@ -301,10 +301,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  subTitle: {
+  mainTitle: {
     textAlign: "center",
-    top: 3,
-    color: colors.primary,
+    marginTop: 5,
     textTransform: "capitalize",
   },
 
@@ -316,30 +315,11 @@ const styles = StyleSheet.create({
     // elevation: 2,
     borderRadius: 10,
   },
-  statusHeader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  statusHeaderCard: {
-    width: 80,
-    height: 80,
-    borderRadius: 45,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 12,
-    marginRight: 7,
-  },
-  statusText: {
+  titleText: {
     color: colors.primary,
-  },
-  spacer: {
-    padding: 10,
-  },
-  title: {
-    textAlign: "center",
     textTransform: "capitalize",
+    textAlign: "center",
+    marginTop: 4,
   },
 });
 export default StatusRender;
