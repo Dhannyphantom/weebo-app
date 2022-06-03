@@ -327,7 +327,7 @@ const PostScreen = ({ route, navigation }) => {
 
   return (
     <Screen>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.bar} />
       <AppHeader
         title="Post Media"
         RightComponent={() => (

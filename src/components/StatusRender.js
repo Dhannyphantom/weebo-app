@@ -45,11 +45,17 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
     const initialScrollIndex = display.data.posts.findIndex(
       (obj) => obj._id == pressed
     );
+
+    const initialScrollIndexHeader = all.findIndex(
+      (obj) => obj._id == item._id
+    );
+
     setDisplay({
       vis: true,
       data: {
         ...display.data,
         initialScrollIndex,
+        initialScrollIndexHeader,
         posts: [...display.data.posts],
       },
     });
@@ -241,13 +247,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   circularInner: {
-    // backgroundColor: "transparent",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // borderRadius: 900,
-    // width: width * 0.14,
-    // height: width * 0.14,
   },
   circular: {
     borderRadius: 900,

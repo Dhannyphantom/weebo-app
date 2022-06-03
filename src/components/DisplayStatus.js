@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
   FlatList,
-  Image,
   Modal,
   StyleSheet,
   TouchableOpacity,
@@ -23,9 +22,15 @@ import RenderStoryList from "./RenderStoryList";
 const { width, height } = Dimensions.get("window");
 const SCROLL_SEPARATOR = height * 0.08;
 const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
+const ACTIVE_DEFAULT = {
+  key: null,
+  type: null,
+  prevViewValue: null,
+  duration: 5000,
+};
 const viewabilityConfig = {
   waitForInteraction: false,
-  minimumViewTime: 30,
+  minimumViewTime: 10,
   viewAreaCoveragePercentThreshold: 50,
 };
 
@@ -56,10 +61,25 @@ const RenderFloater = ({ handleCloseModal }) => {
   );
 };
 
-const RenderHeader = ({ headerScroll, modalData, date }) => {
+const RenderHeader = ({
+  headerScroll,
+  initialScrollIndexHeader,
+  modalData,
+  date,
+}) => {
   const safeInsets = useSafeAreaInsets();
   const renderHeaderList = ({ item }) => {
     return <RenderHeaderList item={item} date={date} />;
+  };
+
+  const initialScrollIndexHeaderRef = useRef(initialScrollIndexHeader).current;
+
+  const getItemLayout = (data, index) => {
+    return {
+      length: width,
+      offset: width * index,
+      index,
+    };
   };
 
   return (
@@ -68,6 +88,8 @@ const RenderHeader = ({ headerScroll, modalData, date }) => {
         data={modalData}
         horizontal
         showsHorizontalScrollIndicator={false}
+        initialScrollIndex={initialScrollIndexHeaderRef}
+        getItemLayout={getItemLayout}
         pagingEnabled
         snapToAlignment="center"
         ref={headerScroll}
@@ -107,11 +129,9 @@ const RenderHeaderList = ({ item, date }) => {
               item[item.instance]?.name_e}
           </AppText>
           <AppText style={styles.headerInstance}>{item.instance}</AppText>
-          {dater && (
-            <AppText style={styles.headerDate}>
-              {getTimestamp(dater, "status")}
-            </AppText>
-          )}
+          <AppText style={styles.headerDate}>
+            {dater ? getTimestamp(dater, "status") : " "}
+          </AppText>
         </View>
         <ProfilePic
           source={item[item.instance]?.cover_photo?.uri}
@@ -133,11 +153,7 @@ const RenderHeaderList = ({ item, date }) => {
 };
 
 export default function DisplayStatus({ modalObj, setVisible }) {
-  const [active, setActive] = useState({
-    key: null,
-    type: null,
-    duration: 5000,
-  });
+  const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
 
   const headerScroll = useRef(null);
@@ -153,7 +169,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const modalData = modalObj?.data?.all;
   const statuses = modalObj?.data?.posts;
   const initialScrollIndex = modalObj?.data?.initialScrollIndex;
-  // const initialScrollIndex = 2;
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -167,6 +182,13 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
     // CODE BELOW FOR CHECKING AND ANIMATING THE HEADER SCROLL
+    // if (changed[0].item.lastItem == false) {
+    //   setEndList(false);
+    // }
+
+    console.log("CHANGED", changed);
+    console.log("VIEWABLE", viewableItems);
+
     if (changed.length > 1) {
       const currViewValue = changed[0].item.storyGroupNumber;
       const prevViewValue = changed[1].item.storyGroupNumber;
@@ -182,18 +204,15 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         });
       }
       // TO RESET ENDLIST WHEN THE CURRENT ITEM IS NOT THE LAST ITEM
-      if (changed[0].item.lastItem == false) {
-        setEndList(false);
+    } else if (changed.length == 1) {
+      if (!viewableItems[0]) {
+        setActive({ ...active, prevViewValue: changed });
       }
     }
 
     if (!viewableItems[0]) {
       // maybe the first screen
-      setActive({
-        key: null,
-        type: null,
-        duration: 5000,
-      });
+      setActive(ACTIVE_DEFAULT);
     } else if (viewableItems[0]?.item?.type === "video") {
       // a video so play video
       setActive({
@@ -283,12 +302,12 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             getItemLayout={getItemLayout}
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
-            maxToRenderPerBatch={3}
+            maxToRenderPerBatch={8}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollY } } }],
               { useNativeDriver: true }
             )}
-            initialNumToRender={4}
+            initialNumToRender={5}
             overScrollMode="never"
             pagingEnabled
             decelerationRate={0.2}
@@ -300,6 +319,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
           <RenderHeader
             modalData={modalData}
             headerScroll={headerScroll}
+            initialScrollIndexHeader={modalObj?.data?.initialScrollIndexHeader}
             date={active.key}
           />
           {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}

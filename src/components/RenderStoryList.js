@@ -145,8 +145,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    maxHeight: height * 0.95,
-    // height: "100%",
+    maxHeight: height,
   },
   mediaContainer: {
     width,
@@ -155,6 +154,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mediaCont: {
-    maxHeight: height * 0.96,
+    maxHeight: height,
   },
 });
