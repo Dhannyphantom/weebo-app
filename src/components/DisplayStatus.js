@@ -147,8 +147,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const modalData = modalObj?.data?.all;
   const statuses = modalObj?.data?.posts;
-  // const initialScrollIndex = modalObj?.data?.initialScrollIndex;
-  const initialScrollIndex = 2;
+  const initialScrollIndex = modalObj?.data?.initialScrollIndex;
+  // const initialScrollIndex = 2;
 
   const handleCloseModal = () => {
     Animated.timing(translator, {

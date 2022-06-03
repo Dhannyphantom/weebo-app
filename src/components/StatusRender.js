@@ -40,15 +40,19 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
   }
 
   const handleCardPress = (item, all) => {
-    const allStory = display.data.all;
-    const finder = allStory.findIndex((obj) => obj._id == item._id);
-    const finderId =
-      allStory[finder].posts[allStory[finder].posts.length - 1]._id;
-    const prevStories = [...display.data.posts];
-    const indexer = prevStories.findIndex((obj) => obj._id == finderId);
-    prevStories[indexer].current = true;
-
-    setDisplay({ vis: true, data: { ...display.data, posts: prevStories } });
+    // TRYING TO GET THE INITITALSCROLLINDEX
+    const pressed = item.posts[0]._id;
+    const initialScrollIndex = display.data.posts.findIndex(
+      (obj) => obj._id == pressed
+    );
+    setDisplay({
+      vis: true,
+      data: {
+        ...display.data,
+        initialScrollIndex,
+        posts: [...display.data.posts],
+      },
+    });
   };
 
   const fetchThumb = async () => {
