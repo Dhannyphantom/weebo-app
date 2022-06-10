@@ -295,7 +295,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   const handleStatusVisibility = (bool) => {
     if (bool) {
-      setPopper({ vis: true, type: "success", msg: "Status uploaded" });
+      setPopper({ vis: true, type: "success", msg: "Story uploaded" });
     }
     setShowUpload({ vis: false, data: null });
   };
