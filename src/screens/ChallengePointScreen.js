@@ -27,8 +27,8 @@ const ADS_ID = Platform.select({
 
 const CLEAR_ALERT = {
   visible: true,
-  title: "Clear your CP log",
-  message: `Do you wish to clear all your CP logs?`,
+  title: "Clear your WP log",
+  message: `Do you wish to clear all your WP logs?`,
   btn: "YES",
   type: "clear",
 };
@@ -103,8 +103,8 @@ const screenPointsData = [
 const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
   const ADS_ALERT = {
     visible: false,
-    title: "Earn more Otaku Points",
-    message: `Watch a very short ad to earn 5-OPs now, \n ${num} ads left`,
+    title: "Earn more Weebo Points",
+    message: `Watch an ad to earn 5WPs now, \n ${num} tries left`,
     btn: "YES",
     type: "earn",
   };
@@ -246,7 +246,7 @@ const ChallengePointScreen = ({ navigation }) => {
           <Separator h={1} />
           <AppText size="large" style={{ color: pointsColor }} bold>
             {pointsSign}
-            {points}CP
+            {points}WP
           </AppText>
           <Separator h={1} />
           <AppText>
@@ -427,7 +427,7 @@ const ChallengePointScreen = ({ navigation }) => {
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title="Otaku Points Activity"
+        title="Weebo Points Activity"
         RightComponent={() => (
           <ScreenHeaderRight
             isLoaded={adLoaded}
@@ -450,7 +450,7 @@ const ChallengePointScreen = ({ navigation }) => {
         ListHeaderComponent={() => (
           <View style={[styles.stats, { backgroundColor: theme.background }]}>
             <AppText style={styles.statsText} bold>
-              Your current CP{" "}
+              Your current WP
             </AppText>
             <View
               style={{
@@ -488,7 +488,7 @@ const ChallengePointScreen = ({ navigation }) => {
             {loadedOnce ? (
               <ActivityIndicator
                 type="isEmpty"
-                text="No recent CP activity"
+                text="No recent WP activity"
                 visible
               />
             ) : (

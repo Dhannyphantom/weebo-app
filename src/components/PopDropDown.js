@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import {
   View,
   Modal,
@@ -11,6 +11,7 @@ import {
 import AppText from "./AppText";
 import Separator from "./Separator";
 import colors from "../constants/colors";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,6 +22,7 @@ const PopDropDown = ({
   headerTitle,
 }) => {
   const translator = useRef(new Animated.Value(height)).current;
+  const theme = useContext(ThemeContext);
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -61,7 +63,10 @@ const PopDropDown = ({
           style={styles.container}
         >
           <Animated.View style={{ transform: [{ translateY: translator }] }}>
-            <TouchableOpacity activeOpacity={1} style={styles.content}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[styles.content, { backgroundColor: theme.background }]}
+            >
               {headerTitle && (
                 <View>
                   <AppText size="xlarge" style={styles.headerTitle} bold>

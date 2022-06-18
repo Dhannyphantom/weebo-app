@@ -13,9 +13,9 @@ const Points = ({ prog = 0, type, style }) => {
 
   let title, suffix, max, barWidth;
   if (type === "account") {
-    title = "My Challenge points";
+    title = "My Weebo points";
     max = 1000;
-    suffix = " / 1000 cp";
+    suffix = ` / ${max} wp`;
   } else {
     title = "Upload progress";
     max = 100;
@@ -85,20 +85,3 @@ const styles = StyleSheet.create({
   },
 });
 export default Points;
-
-// <View style={{ ...styles.container, style }}>
-// <AppText bold style={styles.title}>
-//   My Challenge Points
-// </AppText>
-// <View style={styles.barCont}>
-//   <View style={{ flex: 1, flexDirection: "row", width: `${progress}%` }}>
-//     <View style={{ ...styles.bar }}></View>
-//     <View
-//       style={{ ...styles.caret, left: BAR_WIDTH * (progress / 100) - 10 }}
-//     >
-//       <FontAwesome5 name="caret-up" size={25} color={colors.medium} />
-//       <AppText style={styles.pText}>{progress}</AppText>
-//     </View>
-//   </View>
-// </View>
-// </View>
