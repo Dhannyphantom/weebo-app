@@ -186,8 +186,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     //   setEndList(false);
     // }
 
-    console.log("CHANGED", changed);
-    console.log("VIEWABLE", viewableItems);
+    // console.log("CHANGED", changed);
+    // console.log("VIEWABLE", viewableItems);
 
     if (changed.length > 1) {
       const currViewValue = changed[0].item.storyGroupNumber;

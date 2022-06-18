@@ -26,19 +26,6 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
   const [loading, setLoading] = useState(true);
   const theme = useContext(ThemeContext);
 
-  let cardName;
-  switch (item.instance) {
-    case "character":
-      cardName = "dpName";
-      break;
-    case "show":
-      cardName = "name_j";
-      break;
-    default:
-      cardName = "name";
-      break;
-  }
-
   const handleCardPress = (item, all) => {
     // TRYING TO GET THE INITITALSCROLLINDEX
     const pressed = item.posts[0]._id;
@@ -62,9 +49,8 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
   };
 
   const fetchThumb = async () => {
-    if (imager.thumb) return;
     const lastPost = item.posts[item.posts.length - 1];
-    if (lastPost.type == "video") {
+    if (lastPost.type == "video" && !lastPost.thumb) {
       try {
         const res = await getThumbnailAsync(lastPost.uri, {
           time: 5000,
