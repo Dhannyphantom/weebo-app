@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     lineHeight: 25,
+    fontFamily: "sen",
     paddingVertical: 8,
   },
   inputBox: {

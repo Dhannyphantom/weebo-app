@@ -11,6 +11,7 @@ const CreateFormik = ({
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
+      validateOnMount={false}
       validationSchema={validationSchema}
     >
       {() => <>{children}</>}

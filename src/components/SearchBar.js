@@ -73,9 +73,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   input: {
+    fontFamily: "sen",
     flex: 1,
     height: "100%",
-    fontFamily: "sen",
   },
   search: {
     width: "100%",

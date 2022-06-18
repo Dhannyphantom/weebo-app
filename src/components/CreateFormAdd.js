@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     marginLeft: 12,
-    fontSize: 10,
+    fontFamily: "sen",
   },
   tags: {
     flex: 1,

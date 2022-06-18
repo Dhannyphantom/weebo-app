@@ -338,7 +338,6 @@ const styles = StyleSheet.create({
   dropDownText: {
     padding: 13,
     color: colors.medium,
-    fontSize: 10,
     textTransform: "capitalize",
   },
 
@@ -356,17 +355,18 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     padding: 5,
+    fontFamily: "sen",
     lineHeight: 25,
-    fontSize: 11,
   },
   input: {
     flex: 1,
     height: "100%",
+    fontFamily: "sen",
     marginLeft: 12,
-    fontSize: 11,
   },
   inputTwo: {
     flex: 1,
+    fontFamily: "sen",
     height: "100%",
     marginLeft: 12,
   },
