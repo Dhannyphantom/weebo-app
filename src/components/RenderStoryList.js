@@ -41,9 +41,10 @@ export default function RenderStoryList({
 
   useEffect(() => {
     if (isKey) {
-      const speed = !item.durationMillis
-        ? 0.3
-        : PRGORESS_BAR_DURATION / item.durationMillis;
+      const speed =
+        !item.durationMillis || item.disableDoublePress == 0
+          ? 3
+          : PRGORESS_BAR_DURATION / item.durationMillis;
       setProgress(speed);
       lottieRef?.current?.play();
     }
