@@ -1,5 +1,5 @@
 import { StyleSheet, Image, View, Dimensions } from "react-native";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import ActivityIndicator from "./ActivityIndicator";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
@@ -12,6 +12,7 @@ const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
 const SCROLL_SEPARATOR = height * 0.08;
 const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
+const PRGORESS_BAR_DURATION = 15000;
 
 export default function RenderStoryList({
   item,
@@ -21,11 +22,9 @@ export default function RenderStoryList({
   handleCloseModal,
   idx,
 }) {
+  const [progress, setProgress] = useState(3);
   const safeInsets = useSafeAreaInsets();
-  const timer =
-    item?.durationMillis == 0 || !item.durationMillis
-      ? 5000
-      : item.durationMillis;
+
   const lottieRef = useRef(null);
   const isKey = activeItem == item._id;
 
@@ -42,6 +41,10 @@ export default function RenderStoryList({
 
   useEffect(() => {
     if (isKey) {
+      const speed = !item.durationMillis
+        ? 0.3
+        : PRGORESS_BAR_DURATION / item.durationMillis;
+      setProgress(speed);
       lottieRef?.current?.play();
     }
   }, [activeItem]);
@@ -111,7 +114,7 @@ export default function RenderStoryList({
           <LottieView
             source={require("../../assets/animations/circe_countdown.json")}
             autoPlay={false}
-            duration={timer}
+            speed={progress}
             style={{ width: CIRCLER, height: CIRCLER }}
             ref={lottieRef}
             loop={false}
@@ -155,5 +158,8 @@ const styles = StyleSheet.create({
   },
   mediaCont: {
     maxHeight: height,
+  },
+  vidContainer: {
+    backgroundColor: colors.dark,
   },
 });
