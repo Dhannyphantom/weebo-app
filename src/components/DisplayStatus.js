@@ -186,9 +186,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     // if (changed[0].item.lastItem == false) {
     //   setEndList(false);
     // }
-
     console.log("CHANGED", changed);
-    // console.log("VIEWABLE", viewableItems);
+    console.log("CHANGED", trackState);
 
     if (changed.length > 1) {
       setTracker(changed);
@@ -206,12 +205,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         });
       }
       // TO RESET ENDLIST WHEN THE CURRENT ITEM IS NOT THE LAST ITEM
-      // 1 0
-      // 2 0
-      // 3 1
-      // 4 2
-      // 5 3
-      // 6 4
     } else if (changed.length == 1) {
       const trackerArr = [...tracker];
       console.log("TRACKER BEFORE", trackerArr);
@@ -221,7 +214,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       // }
       console.log("TRACKER AFTER", trackerArr);
       setTracker(trackerArr);
-
       if (!viewableItems[0]) {
         setActive({ ...active, prevViewValue: changed });
       }
