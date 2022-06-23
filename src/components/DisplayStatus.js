@@ -187,7 +187,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     //   setEndList(false);
     // }
     console.log("CHANGED", changed);
-    console.log("CHANGED", trackState);
 
     if (changed.length > 1) {
       setTracker(changed);
