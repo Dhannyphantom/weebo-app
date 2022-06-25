@@ -18,6 +18,7 @@ const { width, height } = Dimensions.get("window");
 const PopDropDown = ({
   visible = false,
   setter,
+  close = false,
   RenderComponent,
   headerTitle,
 }) => {
@@ -39,6 +40,12 @@ const PopDropDown = ({
       }).start();
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (close) {
+      handleCloseModal();
+    }
+  }, [close]);
 
   return (
     <Modal

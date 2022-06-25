@@ -41,7 +41,7 @@ const CreateFormAdd = ({
 }) => {
   const { errors, setFieldValue, touched, values } = useFormikContext();
 
-  const [dropDown, setDropDown] = useState(false);
+  const [dropDown, setDropDown] = useState({ modal: false, close: false });
   const [selectedList, setSelectedList] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [userInput, setUserInput] = useState("");
@@ -311,7 +311,7 @@ const CreateFormAdd = ({
         {type2 && (
           <TouchableOpacity
             style={styles.dropDownCont}
-            onPress={() => setDropDown(true)}
+            onPress={() => setDropDown({ modal: true, close: false })}
           >
             <AppText style={styles.dropDownText}>Pick genres</AppText>
             <View style={styles.chevron}>
@@ -326,8 +326,9 @@ const CreateFormAdd = ({
         {type2 && (
           <>
             <PopDropDown
-              setter={() => setDropDown(false)}
-              visible={dropDown}
+              setter={() => setDropDown({ modal: false, close: false })}
+              visible={dropDown.modal}
+              close={dropDown.close}
               headerTitle={headerA || headerB || headerC || headerD || headerE}
               RenderComponent={() => (
                 <View style={styles.modalContainer}>
@@ -341,7 +342,7 @@ const CreateFormAdd = ({
                         desc={item.discription}
                         example={item.example}
                         onPress={() => {
-                          setDropDown(false);
+                          setDropDown({ modal: false, close: true });
                           handleDropdown(item.title);
                         }}
                       />
