@@ -15,6 +15,7 @@ import Screen from "./Screen";
 import PostVideo from "./PostVideo";
 import AppText from "./AppText";
 import colors from "../constants/colors";
+import Separator from "./Separator";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
@@ -38,6 +39,10 @@ export default function RenderStoryList({
 
   const lottieRef = useRef(null);
   const viewTranslator = useRef(new Animated.Value(VIEWERS_HEIGHT)).current;
+  const bgTranslator = viewTranslator.interpolate({
+    inputRange: [VIEWERS_HEIGHT_SHOW, VIEWERS_HEIGHT],
+    outputRange: [colors.medium, "transparent"],
+  });
   const isKey = activeItem == item._id;
 
   const handleAnimFinish = () => {
@@ -52,18 +57,17 @@ export default function RenderStoryList({
   };
 
   const handleViewPress = () => {
-    console.log(viewToggle);
     if (!viewToggle) {
       lottieRef?.current?.pause();
       Animated.spring(viewTranslator, {
         toValue: VIEWERS_HEIGHT_SHOW,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }).start(() => setViewToggle(true));
     } else {
-      lottieRef?.current?.resume();
-      Animated.spring(viewTranslator, {
+      lottieRef?.current?.play();
+      Animated.timing(viewTranslator, {
         toValue: VIEWERS_HEIGHT,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }).start(() => setViewToggle(false));
     }
   };
@@ -171,7 +175,7 @@ export default function RenderStoryList({
             style={{
               ...styles.viewersContainer,
               transform: [{ translateY: viewTranslator }],
-              backgroundColor: colors.dark,
+              backgroundColor: bgTranslator,
               width,
               height,
             }}
@@ -180,11 +184,18 @@ export default function RenderStoryList({
               onPress={handleViewPress}
               style={styles.viewersBtn}
             >
-              <AntDesign name="eye" size={22} color={colors.white} />
-              <AppText bold size="xlarge" style={styles.viewersCount}>
-                0
-              </AppText>
+              <View style={styles.viewersHeader}>
+                <AntDesign name="eye" size={22} color={colors.white} />
+                <AppText bold size="xlarge" style={styles.viewersCount}>
+                  0
+                </AppText>
+              </View>
             </TouchableOpacity>
+            {viewToggle && (
+              <>
+                <Separator h={2} />
+              </>
+            )}
           </Animated.View>
         </View>
       </View>
@@ -272,9 +283,13 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 30,
   },
   viewersBtn: {
+    width,
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  viewersHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
   },
   viewersCount: {
     marginLeft: 6,
