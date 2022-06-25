@@ -267,7 +267,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
             {textArrays.map((text, index) => {
               return (
                 <AppText
-                  size="xxlarge"
+                  size="xlarge"
                   bold
                   key={index}
                   style={{

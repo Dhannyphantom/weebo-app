@@ -1,6 +1,14 @@
-import { StyleSheet, Image, View, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ActivityIndicator from "./ActivityIndicator";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
 import Screen from "./Screen";
@@ -13,6 +21,8 @@ const CIRCLER = width * 0.1;
 const SCROLL_SEPARATOR = height * 0.08;
 const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
 const PRGORESS_BAR_DURATION = 15000;
+const VIEWERS_HEIGHT = height * 0.93;
+const VIEWERS_HEIGHT_SHOW = height * 0.08;
 
 export default function RenderStoryList({
   item,
@@ -23,9 +33,11 @@ export default function RenderStoryList({
   idx,
 }) {
   const [progress, setProgress] = useState(3);
+  const [viewToggle, setViewToggle] = useState(false);
   const safeInsets = useSafeAreaInsets();
 
   const lottieRef = useRef(null);
+  const viewTranslator = useRef(new Animated.Value(VIEWERS_HEIGHT)).current;
   const isKey = activeItem == item._id;
 
   const handleAnimFinish = () => {
@@ -36,6 +48,23 @@ export default function RenderStoryList({
         animated: true,
         offset: SCROLL_INTERVAL * (idx + 1),
       });
+    }
+  };
+
+  const handleViewPress = () => {
+    console.log(viewToggle);
+    if (!viewToggle) {
+      lottieRef?.current?.pause();
+      Animated.spring(viewTranslator, {
+        toValue: VIEWERS_HEIGHT_SHOW,
+        useNativeDriver: true,
+      }).start(() => setViewToggle(true));
+    } else {
+      lottieRef?.current?.resume();
+      Animated.spring(viewTranslator, {
+        toValue: VIEWERS_HEIGHT,
+        useNativeDriver: true,
+      }).start(() => setViewToggle(false));
     }
   };
 
@@ -102,7 +131,7 @@ export default function RenderStoryList({
               </View>
             )}
           </View>
-          {item.text[0] && (
+          {isKey && item.text[0] && (
             <View
               style={{
                 ...styles.captionContainer,
@@ -138,6 +167,25 @@ export default function RenderStoryList({
               })}
             </View>
           )}
+          <Animated.View
+            style={{
+              ...styles.viewersContainer,
+              transform: [{ translateY: viewTranslator }],
+              backgroundColor: colors.dark,
+              width,
+              height,
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleViewPress}
+              style={styles.viewersBtn}
+            >
+              <AntDesign name="eye" size={22} color={colors.white} />
+              <AppText bold size="xlarge" style={styles.viewersCount}>
+                0
+              </AppText>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
       {isKey && (
@@ -178,7 +226,7 @@ const styles = StyleSheet.create({
   },
   captionContainer: {
     position: "absolute",
-    zIndex: 4,
+    // zIndex: 4,
     alignSelf: "center",
     // borderWidth: 1.2,
     padding: 10,
@@ -215,5 +263,21 @@ const styles = StyleSheet.create({
   },
   vidContainer: {
     backgroundColor: colors.dark,
+  },
+  viewersContainer: {
+    position: "absolute",
+    transform: [{ translateY: VIEWERS_HEIGHT }],
+    alignItems: "center",
+    borderTopStartRadius: 30,
+    borderTopEndRadius: 30,
+  },
+  viewersBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  viewersCount: {
+    marginLeft: 6,
+    color: colors.white,
   },
 });
