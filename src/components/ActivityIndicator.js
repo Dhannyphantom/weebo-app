@@ -81,7 +81,7 @@ const ActivityIndicator = ({
               source={emptyLoader}
               colorFilters={[
                 { keypath: "bcg-2 Outlines", color: theme.extralight },
-                { keypath: "bcg-1 Outlines", color: theme.backgroundLight },
+                { keypath: "bcg-1 Outlines", color: theme.lighter },
                 { keypath: "square-45 Outlines", color: colors.primary },
                 {
                   keypath: "rond-scaleout-bubble Outlines",

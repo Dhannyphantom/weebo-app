@@ -380,7 +380,7 @@ const CreateFormAdd = ({
               <View
                 style={{
                   ...styles.tagTextCont,
-                  backgroundColor: theme.backgroundLight,
+                  backgroundColor: theme.light,
                 }}
               >
                 <TouchableWithoutFeedback
