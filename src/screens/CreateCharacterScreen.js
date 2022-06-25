@@ -425,7 +425,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     dropdown={showGenres}
                   />
                   <CreateFormArray
-                    headerC="sub genre"
+                    headerC="sub genres"
                     name="subGenres"
                     dropdown={subGenres}
                     type2

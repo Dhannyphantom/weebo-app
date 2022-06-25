@@ -19,6 +19,7 @@ import Separator from "./Separator";
 import colors from "../constants/colors";
 import grabApi from "../api/grabApi";
 import ThemeContext from "../config/ThemeContext";
+import PopDropDown from "./PopDropDown";
 const screen = Dimensions.get("window");
 
 const CreateFormAdd = ({
@@ -323,29 +324,17 @@ const CreateFormAdd = ({
           </TouchableOpacity>
         )}
         {type2 && (
-          <Modal
-            style={styles.modalComp}
-            transparent
-            visible={dropDown}
-            statusBarTranslucent
-            animationType="slide"
-          >
-            <View style={styles.modalWrapper}>
-              <TouchableOpacity
-                onPress={() => setDropDown(false)}
-                style={styles.modalOuter}
-              ></TouchableOpacity>
-              <View style={styles.modalBg}>
+          <>
+            <PopDropDown
+              setter={() => setDropDown(false)}
+              visible={dropDown}
+              headerTitle={headerA || headerB || headerC || headerD || headerE}
+              RenderComponent={() => (
                 <View style={styles.modalContainer}>
-                  <AppButton
-                    title="Close"
-                    bare
-                    style={styles.modalBtn}
-                    onPress={() => setDropDown(false)}
-                  />
                   <FlatList
                     data={dropDownA}
                     keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingBottom: 15 }}
                     renderItem={({ item }) => (
                       <AppPickerItem
                         text={item.title}
@@ -361,9 +350,9 @@ const CreateFormAdd = ({
                     listKey="dropDown"
                   />
                 </View>
-              </View>
-            </View>
-          </Modal>
+              )}
+            />
+          </>
         )}
         {list && (
           <TextInput
@@ -626,10 +615,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   modalContainer: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderTopStartRadius: 30,
-    borderTopEndRadius: 30,
+    height: screen.height * 0.75,
   },
 
   modalBtn: {

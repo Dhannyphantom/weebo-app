@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: screen.width * 0.33,
-    margin: 10,
+    padding: 10,
   },
   descText: {
     fontSize: 10,

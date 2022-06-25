@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     textAlign: "center",
+    textTransform: "capitalize",
     marginTop: 7,
   },
 });

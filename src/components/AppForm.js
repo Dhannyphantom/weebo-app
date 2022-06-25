@@ -29,7 +29,6 @@ import male2 from "../../assets/male2.jpg";
 import female from "../../assets/female.jpg";
 import female2 from "../../assets/female2.jpg";
 import AppButton from "./AppButton";
-import AppAnimModal from "./AppAnimModal";
 import AppLogo from "./AppLogo";
 
 const { validationSchemaLogin, validationSchemaRegister } = schemas;
