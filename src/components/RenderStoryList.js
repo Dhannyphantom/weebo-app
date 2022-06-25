@@ -5,6 +5,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Animated,
+  FlatList,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ActivityIndicator from "./ActivityIndicator";
@@ -12,6 +13,7 @@ import { Feather, AntDesign } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
 import Screen from "./Screen";
+import subGenres from "../constants/subGenres";
 import PostVideo from "./PostVideo";
 import AppText from "./AppText";
 import colors from "../constants/colors";
@@ -25,9 +27,19 @@ const PRGORESS_BAR_DURATION = 15000;
 const VIEWERS_HEIGHT = height * 0.93;
 const VIEWERS_HEIGHT_SHOW = height * 0.08;
 
+const RenderViewContent = ({ item }) => {
+  return (
+    <View>
+      <AppText style={{ marginVertical: 20 }}> {item.title} </AppText>
+      <Separator h={1} />
+    </View>
+  );
+};
+
 export default function RenderStoryList({
   item,
   listScrollRef,
+  scroller: { setScroller },
   activeItem,
   onEnd,
   handleCloseModal,
@@ -58,12 +70,14 @@ export default function RenderStoryList({
 
   const handleViewPress = () => {
     if (!viewToggle) {
+      setScroller(false);
       lottieRef?.current?.pause();
       Animated.spring(viewTranslator, {
         toValue: VIEWERS_HEIGHT_SHOW,
         useNativeDriver: false,
       }).start(() => setViewToggle(true));
     } else {
+      setScroller(true);
       lottieRef?.current?.play();
       Animated.timing(viewTranslator, {
         toValue: VIEWERS_HEIGHT,
@@ -194,6 +208,14 @@ export default function RenderStoryList({
             {viewToggle && (
               <>
                 <Separator h={2} />
+                <View style={styles.viewersList}>
+                  <FlatList
+                    data={subGenres}
+                    listKey="@viewersContent"
+                    keyExtractor={(item) => item.id}
+                    renderItem={RenderViewContent}
+                  />
+                </View>
               </>
             )}
           </Animated.View>
@@ -290,6 +312,11 @@ const styles = StyleSheet.create({
   viewersHeader: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  viewersList: {
+    width,
+    padding: 15,
+    zIndex: 100,
   },
   viewersCount: {
     marginLeft: 6,

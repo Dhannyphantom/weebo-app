@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import AppText from "./AppText";
@@ -32,33 +32,6 @@ const viewabilityConfig = {
   waitForInteraction: false,
   minimumViewTime: 10,
   viewAreaCoveragePercentThreshold: 50,
-};
-
-const RenderFloater = ({ handleCloseModal }) => {
-  return (
-    <View
-      style={{
-        position: "absolute",
-        // backgroundColor: colors.accent,
-        width,
-        height,
-      }}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          alignItems: "flex-end",
-          marginRight: 20,
-          opacity: 0.5,
-        }}
-      >
-        <TouchableOpacity activeOpacity={1} onPress={handleCloseModal}>
-          <Feather name="x-circle" size={width * 0.08} color={colors.medium} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
 };
 
 const RenderHeader = ({
@@ -155,9 +128,10 @@ const RenderHeaderList = ({ item, date }) => {
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
+  const [scroller, setScroller] = useState(true);
 
   const headerScroll = useRef(null);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  // const scrollY = useRef(new Animated.Value(0)).current;
   const translator = useRef(new Animated.Value(0)).current;
   const listScrollRef = useRef(null);
   const opaciter = translator.interpolate({
@@ -239,6 +213,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       <RenderStoryList
         item={item}
         idx={index}
+        scroller={{ scroller, setScroller }}
         storyLength={statuses?.length}
         handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
@@ -285,7 +260,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             transform: [{ translateY: translator }],
           }}
         >
-          <Animated.FlatList
+          <FlatList
             data={statuses}
             ref={listScrollRef}
             snapToAlignment="center"
@@ -299,12 +274,13 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
             maxToRenderPerBatch={8}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollY } } }],
-              { useNativeDriver: true }
-            )}
+            // onScroll={Animated.event(
+            //   [{ nativeEvent: { contentOffset: { x: scrollY } } }],
+            //   { useNativeDriver: true }
+            // )}
             initialNumToRender={5}
             overScrollMode="never"
+            scrollEnabled={scroller}
             pagingEnabled
             decelerationRate={0.2}
             keyExtractor={(item) => item._id}
