@@ -102,6 +102,42 @@ export default function RenderStoryList({
               </View>
             )}
           </View>
+          {item.text[0] && (
+            <View
+              style={{
+                ...styles.captionContainer,
+                // borderColor: editOptions.drag
+                //   ? colors.unChange
+                //   : editOptions.color == "inverted"
+                //   ? colors.black
+                //   : colors.white,
+                transform: [
+                  { translateY: item.pos.y },
+                  { translateX: item.pos.x },
+                ],
+              }}
+            >
+              {item.text.map((text, index) => {
+                return (
+                  <AppText
+                    size="xlarge"
+                    bold
+                    key={index}
+                    style={{
+                      ...styles.caption,
+                      backgroundColor:
+                        item.tColor === "normal" ? colors.white : colors.black,
+                      color:
+                        item.tColor === "normal" ? colors.black : colors.white,
+                      bottom: index !== 0 ? index * 5 : 0,
+                    }}
+                  >
+                    {text}
+                  </AppText>
+                );
+              })}
+            </View>
+          )}
         </View>
       </View>
       {isKey && (
@@ -139,6 +175,23 @@ const styles = StyleSheet.create({
     height: CIRCLER,
     justifyContent: "center",
     alignItems: "center",
+  },
+  captionContainer: {
+    position: "absolute",
+    zIndex: 4,
+    alignSelf: "center",
+    // borderWidth: 1.2,
+    padding: 10,
+    borderRadius: width * 0.02,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  caption: {
+    backgroundColor: colors.white,
+    textAlign: "center",
+    padding: 6,
+    borderRadius: 7,
+    color: colors.black,
   },
   itemContainer: {
     alignSelf: "center",

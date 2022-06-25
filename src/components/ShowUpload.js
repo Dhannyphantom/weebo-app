@@ -75,6 +75,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
       },
     })
   ).current;
+
   const showMark = showInput && statusInput.length > 1;
   const showStatusView = !showInput && statusInput.length > 0;
   let textArrays = statusInput.split("\n");
@@ -110,8 +111,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
         durationMillis: vidDuration,
       },
     };
-    // console.log(sendData);
-    // return;
     statusUploader(
       sendData,
       (resData) => {
@@ -119,13 +118,11 @@ const ShowUpload = ({ visObj, setVisible }) => {
         setVisible(true);
       },
       (err) => {
-        // setErrMsg({ err, msg: "Something went wrong with uploading story" });
         setPopData({
           vis: true,
           type: "failed",
           msg: err.msg,
         });
-        console.log(err.err);
         setIsLoading(false);
       }
     );
@@ -158,7 +155,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
     }
   };
 
-  // const handleVidPlay = () => {};
   const handleHeaderAction = (type) => {
     switch (type) {
       case "delete":
