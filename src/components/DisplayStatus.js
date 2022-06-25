@@ -155,7 +155,6 @@ const RenderHeaderList = ({ item, date }) => {
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
-  const [tracker, setTracker] = useState([]);
 
   const headerScroll = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -183,13 +182,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
     // CODE BELOW FOR CHECKING AND ANIMATING THE HEADER SCROLL
-    // if (changed[0].item.lastItem == false) {
-    //   setEndList(false);
-    // }
-    console.log("CHANGED", changed);
+
+    setEndList(changed[0].item.lastItem);
 
     if (changed.length > 1) {
-      setTracker(changed);
       const currViewValue = changed[0].item.storyGroupNumber;
       const prevViewValue = changed[1].item.storyGroupNumber;
       if (currViewValue > prevViewValue) {
@@ -205,14 +201,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       }
       // TO RESET ENDLIST WHEN THE CURRENT ITEM IS NOT THE LAST ITEM
     } else if (changed.length == 1) {
-      const trackerArr = [...tracker];
-      console.log("TRACKER BEFORE", trackerArr);
-      trackerArr.push(changed[0]);
-      // if (trackerArr.length >= 3) {
-      //   trackerArr.shift();
-      // }
-      console.log("TRACKER AFTER", trackerArr);
-      setTracker(trackerArr);
       if (!viewableItems[0]) {
         setActive({ ...active, prevViewValue: changed });
       }
@@ -271,12 +259,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
       </View>
     );
   };
-
-  useEffect(() => {
-    if (modalObj.vis) {
-      console.log(tracker);
-    }
-  }, [tracker]);
 
   useEffect(() => {
     if (modalObj.vis) {
