@@ -371,11 +371,17 @@ const CreateFormAdd = ({
       <View style={styles.tags}>
         <FlatList
           data={selectedList}
+          style={{ flexDirection: "row", flexWrap: "wrap" }}
           listKey={({ i }) => i.toString()}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item, index }) => {
             return (
-              <View style={styles.tagTextCont}>
+              <View
+                style={{
+                  ...styles.tagTextCont,
+                  backgroundColor: theme.backgroundLight,
+                }}
+              >
                 <TouchableWithoutFeedback
                   onPress={() => handleDelete(item.id, index)}
                 >
@@ -642,14 +648,17 @@ const styles = StyleSheet.create({
     fontFamily: "sen",
   },
   tags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     flex: 1,
-    width: "76%",
   },
   tagTextCont: {
     flexDirection: "row",
     height: 40,
+    paddingLeft: 8,
+    paddingRight: 20,
+    borderRadius: 10,
     alignItems: "center",
-    borderRadius: 18,
     margin: 5,
   },
   searchList: {
