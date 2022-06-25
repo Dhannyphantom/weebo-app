@@ -116,7 +116,7 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
     </View>
   );
 };
-const CircularGradient = ({ children, diameter }) => {
+const CircularGradient = ({ children }) => {
   return (
     <LinearGradient
       style={styles.circular}
