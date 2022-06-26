@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ActivityIndicator from "./ActivityIndicator";
+// import { v4 as nanoid } from "uuid";
+import uuid from "react-native-uuid";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
@@ -29,10 +31,10 @@ const VIEWERS_HEIGHT_SHOW = height * 0.08;
 
 const RenderViewContent = ({ item }) => {
   return (
-    <View>
+    <TouchableOpacity>
       <AppText style={{ marginVertical: 20 }}> {item.title} </AppText>
       <Separator h={1} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -149,7 +151,7 @@ export default function RenderStoryList({
               </View>
             )}
           </View>
-          {isKey && item.text[0] && (
+          {item.text[0] && (
             <View
               style={{
                 ...styles.captionContainer,
@@ -190,8 +192,6 @@ export default function RenderStoryList({
               ...styles.viewersContainer,
               transform: [{ translateY: viewTranslator }],
               backgroundColor: bgTranslator,
-              width,
-              height,
             }}
           >
             <TouchableOpacity
@@ -211,7 +211,7 @@ export default function RenderStoryList({
                 <View style={styles.viewersList}>
                   <FlatList
                     data={subGenres}
-                    listKey="@viewersContent"
+                    listKey={uuid.v4()}
                     keyExtractor={(item) => item.id}
                     renderItem={RenderViewContent}
                   />
@@ -299,6 +299,8 @@ const styles = StyleSheet.create({
   },
   viewersContainer: {
     position: "absolute",
+    width,
+    height,
     transform: [{ translateY: VIEWERS_HEIGHT }],
     alignItems: "center",
     borderTopStartRadius: 30,
@@ -315,8 +317,9 @@ const styles = StyleSheet.create({
   },
   viewersList: {
     width,
+    height: height * 0.9,
     padding: 15,
-    zIndex: 100,
+    // zIndex: 100,
   },
   viewersCount: {
     marginLeft: 6,
