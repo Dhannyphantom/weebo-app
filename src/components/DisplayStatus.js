@@ -67,6 +67,7 @@ const RenderHeader = ({
         snapToAlignment="center"
         ref={headerScroll}
         snapToInterval={width}
+        
         scrollEnabled={false}
         decelerationRate={0.02}
         keyExtractor={(item) => item._id}
@@ -274,6 +275,8 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={onViewableItemsChanged}
             maxToRenderPerBatch={8}
+            removeClippedSubviews
+            
             // onScroll={Animated.event(
             //   [{ nativeEvent: { contentOffset: { x: scrollY } } }],
             //   { useNativeDriver: true }
