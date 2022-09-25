@@ -41,7 +41,10 @@ const Link = ({
         {pack === "b" && (
           <MaterialIcons name={iconName} size={12} color={colors.primary} />
         )}
-        <AppText style={styles.link}> {name} </AppText>
+        <AppText bold style={styles.link}>
+          {" "}
+          {name}{" "}
+        </AppText>
       </View>
       <MaterialCommunityIcons
         name="chevron-right"

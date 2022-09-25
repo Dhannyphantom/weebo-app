@@ -226,6 +226,7 @@ const AppModal = ({
       });
       contentX.setValue(0.85);
     } else if (close) {
+      if (str === "delete") return onPress(str);
       Animated.parallel([
         Animated.timing(contentX, {
           toValue: 0.85,

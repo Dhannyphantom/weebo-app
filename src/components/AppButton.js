@@ -149,10 +149,12 @@ const AppButton = ({
 };
 const styles = StyleSheet.create({
   button: {
-    width: screen.width * 0.65,
+    // width: screen.width * 0.65,
     backgroundColor: colors.primary,
     borderRadius: screen.width * 0.03,
-    padding: 12,
+    // padding: 12,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
     elevation: 2,
     shadowRadius: 6,
     shadowColor: "black",
@@ -166,7 +168,8 @@ const styles = StyleSheet.create({
     width: screen.width * 0.65,
     backgroundColor: colors.accent,
     borderRadius: screen.width * 0.03,
-    padding: 12,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
   },
   btnText: {
     textTransform: "uppercase",
@@ -175,14 +178,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   bare: {
-    borderWidth: 1,
+    borderWidth: 5,
     borderColor: colors.primary,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    padding: 8,
-    paddingHorizontal: 15,
+    // padding: 8,
+    paddingHorizontal: 30,
+    paddingVertical: 18,
   },
   bareText: {
     color: colors.primary,
