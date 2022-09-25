@@ -2,6 +2,7 @@ import React, { useContext, useRef } from "react";
 import {
   Animated,
   Dimensions,
+  Easing,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -22,6 +23,7 @@ export default function TabList({ items = [], state, onPress }) {
   const handleTabAnimation = (tab, idx) => {
     Animated.timing(slider, {
       toValue: (TAB_WIDTH / items.length) * idx,
+      easing: Easing.elastic(1.3),
       useNativeDriver: true,
     }).start();
     onPress(tab);
@@ -38,6 +40,7 @@ export default function TabList({ items = [], state, onPress }) {
           sBg = theme.background;
           sColor = theme.medium;
         }
+
         return (
           <TouchableOpacity
             key={idx + obj.tab}
