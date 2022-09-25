@@ -47,7 +47,7 @@ export default function TabList({ items = [], state, onPress }) {
             style={styles.box}
           >
             <FontAwesome5 name="dot-circle" size={14} color={sColor} />
-            <AppText style={styles.boxText}>
+            <AppText bold style={styles.boxText}>
               {obj.name ? obj.name : obj.tab}
             </AppText>
           </TouchableOpacity>
@@ -57,6 +57,7 @@ export default function TabList({ items = [], state, onPress }) {
         style={[
           styles.slider,
           {
+            backgroundColor: theme.unchange,
             width: TAB_WIDTH / items.length,
             transform: [{ translateX: slider }],
           },
@@ -91,6 +92,5 @@ const styles = StyleSheet.create({
     height: "100%",
     width: 50,
     zIndex: -1,
-    backgroundColor: colors.unChange,
   },
 });
