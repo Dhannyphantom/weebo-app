@@ -1,5 +1,11 @@
-import React, { useContext } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useContext, useRef } from "react";
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Cards from "./Cards";
 import ThemeContext from "../config/ThemeContext";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -7,9 +13,19 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 
 const { width } = Dimensions.get("screen");
+const TAB_WIDTH = width * 0.85;
 
 export default function TabList({ items = [], state, onPress }) {
   const theme = useContext(ThemeContext);
+  const slider = useRef(new Animated.Value(0)).current;
+
+  const handleTabAnimation = (tab, idx) => {
+    Animated.timing(slider, {
+      toValue: (TAB_WIDTH / items.length) * idx,
+      useNativeDriver: true,
+    }).start();
+    onPress(tab);
+  };
 
   return (
     <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
@@ -23,21 +39,23 @@ export default function TabList({ items = [], state, onPress }) {
           sColor = theme.medium;
         }
         return (
-          <>
-            {/* obj = {tab: string, } */}
-            <TouchableOpacity
-              activeOpacity={0.7}
-              key={idx + obj.tab}
-              onPress={() => onPress(obj.tab)}
-              style={{ ...styles.box, backgroundColor: sBg }}
-            >
-              <FontAwesome5 name="dot-circle" size={14} color={sColor} />
-              <AppText style={styles.boxText}>{obj.name}</AppText>
-            </TouchableOpacity>
-            {/* <View style={styles.line}></View> */}
-          </>
+          <TouchableOpacity
+            key={idx + obj.tab}
+            activeOpacity={0.7}
+            onPress={() => handleTabAnimation(obj.tab, idx)}
+            style={styles.box}
+          >
+            <FontAwesome5 name="dot-circle" size={14} color={sColor} />
+            <AppText style={styles.boxText}>{obj.name}</AppText>
+          </TouchableOpacity>
         );
       })}
+      <Animated.View
+        style={[
+          styles.slider,
+          { width: "50%", transform: [{ translateX: slider }] },
+        ]}
+      />
     </Cards>
   );
 }
@@ -45,7 +63,7 @@ export default function TabList({ items = [], state, onPress }) {
 const styles = StyleSheet.create({
   boxCont: {
     flexDirection: "row",
-    width: width * 0.8,
+    width: TAB_WIDTH,
     alignSelf: "center",
     marginVertical: 10,
     overflow: "hidden",
@@ -60,5 +78,12 @@ const styles = StyleSheet.create({
   },
   boxText: {
     marginLeft: 9,
+  },
+  slider: {
+    position: "absolute",
+    height: "100%",
+    width: 50,
+    zIndex: -1,
+    backgroundColor: colors.unChange,
   },
 });

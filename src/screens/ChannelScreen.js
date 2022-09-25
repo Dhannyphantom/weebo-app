@@ -35,6 +35,43 @@ const { width, height } = Dimensions.get("window");
 
 const validationSchema = scheme.channelValidation;
 
+const ChannelHeaderComp = ({
+  boxState,
+  handleBoxChange,
+  checkSubChannels,
+  checkOwnerChannels,
+  channels,
+  renderChannelsTwo,
+}) => {
+  return (
+    <View>
+      <TabList
+        state={boxState}
+        items={[
+          { tab: "s", name: "Channels" },
+          { tab: "m", name: "My Channels" },
+        ]}
+        onPress={handleBoxChange}
+      />
+
+      <View>
+        {checkSubChannels && boxState.s && !checkOwnerChannels && (
+          <HeaderTitle text="Subscribed Channels" />
+        )}
+        <FlatList
+          data={channels}
+          extraData={boxState}
+          keyExtractor={(item) => item._id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={renderChannelsTwo}
+          listKey="21"
+        />
+      </View>
+    </View>
+  );
+};
+
 const ChannelScreen = ({ navigation }) => {
   const { createChannel, getChannels, subscribeChannel, searchChannels } =
     useContext(CharContext);
@@ -84,36 +121,6 @@ const ChannelScreen = ({ navigation }) => {
     checkOwnerChannels ? (shouldShowHeader = true) : (shouldShowHeader = false);
     channelHeaderTitle = "Channels";
   }
-
-  const ChannelHeaderComp = () => {
-    return (
-      <View>
-        <TabList
-          state={boxState}
-          items={[
-            { tab: "s", name: "Channels" },
-            { tab: "m", name: "My Channels" },
-          ]}
-          onPress={handleBoxChange}
-        />
-
-        <View>
-          {checkSubChannels && boxState.s && !checkOwnerChannels && (
-            <HeaderTitle text="Subscribed Channels" />
-          )}
-          <FlatList
-            data={channels}
-            extraData={boxState}
-            keyExtractor={(item) => item._id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderChannelsTwo}
-            listKey="21"
-          />
-        </View>
-      </View>
-    );
-  };
 
   const handleImagePress = (id) => {
     navigation.navigate("ChannelPost", { id });
@@ -461,7 +468,16 @@ const ChannelScreen = ({ navigation }) => {
         keyExtractor={(item, index) => item + index}
         contentContainerStyle={{ paddingBottom: height * 0.1 }}
         renderItem={renderPage}
-        ListHeaderComponent={<ChannelHeaderComp />}
+        ListHeaderComponent={
+          <ChannelHeaderComp
+            boxState={boxState}
+            channels={channels}
+            checkOwnerChannels={checkOwnerChannels}
+            handleBoxChange={handleBoxChange}
+            renderChannelsTwo={renderChannelsTwo}
+            checkSubChannels={checkSubChannels}
+          />
+        }
       />
       <Modal
         visible={modal}
