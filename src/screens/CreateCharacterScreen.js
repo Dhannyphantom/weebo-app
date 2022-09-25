@@ -30,6 +30,7 @@ import schemas from "../constants/yupSchema";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
+import TabList from "../components/TabList";
 
 const {
   characterValidationSchema,
@@ -177,88 +178,11 @@ const CreateCharacterScreen = ({ route, navigation }) => {
       <View style={styles.container}>
         <AppText bold> {name} instance requires 25CP to create</AppText>
         <Separator h={1} />
-        <Cards style={{ ...styles.card, backgroundColor: theme.background }}>
-          <TouchableOpacity
-            style={{
-              ...styles.select,
-              backgroundColor: cardState.character
-                ? theme.unchange
-                : theme.background,
-            }}
-            activeOpacity={0.8}
-            onPress={() => handleCardPress("character")}
-          >
-            <View style={styles.selector}>
-              <FontAwesome5
-                name="dot-circle"
-                color={cardState.character ? colors.primary : theme.medium}
-                size={12}
-              />
-            </View>
-            <AppText
-              style={{
-                ...styles.headerTitle,
-                color: cardState.character ? colors.primary : theme.medium,
-              }}
-            >
-              Character
-            </AppText>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            style={{
-              ...styles.select,
-              backgroundColor: cardState.group
-                ? theme.unchange
-                : theme.background,
-            }}
-            activeOpacity={0.7}
-            onPress={() => handleCardPress("group")}
-          >
-            <View style={styles.selector}>
-              <FontAwesome5
-                name="dot-circle"
-                color={cardState.group ? colors.primary : theme.medium}
-                size={12}
-              />
-            </View>
-            <AppText
-              style={{
-                ...styles.headerTitle,
-                color: cardState.group ? colors.primary : theme.medium,
-              }}
-            >
-              Group
-            </AppText>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity
-            style={{
-              ...styles.select,
-              backgroundColor: cardState.show
-                ? theme.unchange
-                : theme.background,
-            }}
-            activeOpacity={0.7}
-            onPress={() => handleCardPress("show")}
-          >
-            <View style={styles.selector}>
-              <FontAwesome5
-                name="dot-circle"
-                color={cardState.show ? colors.primary : theme.medium}
-                size={12}
-              />
-            </View>
-            <AppText
-              style={{
-                ...styles.headerTitle,
-                color: cardState.show ? colors.primary : theme.medium,
-              }}
-            >
-              Show
-            </AppText>
-          </TouchableOpacity>
-        </Cards>
+        <TabList
+          state={cardState}
+          onPress={handleCardPress}
+          items={[{ tab: "character" }, { tab: "group" }, { tab: "show" }]}
+        />
         {cardState.character && (
           <FlatList
             showsVerticalScrollIndicator={false}

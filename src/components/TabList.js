@@ -32,12 +32,10 @@ export default function TabList({ items = [], state, onPress }) {
   return (
     <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
       {items.map((obj, idx) => {
-        let sBg, sColor;
+        let sColor;
         if (state[obj.tab]) {
-          sBg = theme.unchange;
           sColor = colors.primary;
         } else {
-          sBg = theme.background;
           sColor = theme.medium;
         }
 
@@ -49,14 +47,19 @@ export default function TabList({ items = [], state, onPress }) {
             style={styles.box}
           >
             <FontAwesome5 name="dot-circle" size={14} color={sColor} />
-            <AppText style={styles.boxText}>{obj.name}</AppText>
+            <AppText style={styles.boxText}>
+              {obj.name ? obj.name : obj.tab}
+            </AppText>
           </TouchableOpacity>
         );
       })}
       <Animated.View
         style={[
           styles.slider,
-          { width: "50%", transform: [{ translateX: slider }] },
+          {
+            width: TAB_WIDTH / items.length,
+            transform: [{ translateX: slider }],
+          },
         ]}
       />
     </Cards>
@@ -81,6 +84,7 @@ const styles = StyleSheet.create({
   },
   boxText: {
     marginLeft: 9,
+    textTransform: "capitalize",
   },
   slider: {
     position: "absolute",
