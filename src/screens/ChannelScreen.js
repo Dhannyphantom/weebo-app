@@ -8,11 +8,7 @@ import {
   FlatList,
   RefreshControl,
 } from "react-native";
-import {
-  FontAwesome5,
-  Feather,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -22,7 +18,6 @@ import SearchBar from "../components/SearchBar";
 import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
 import Separator from "../components/Separator";
-import Cards from "../components/Cards";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ProfilePic from "../components/ProfilePic";
@@ -34,6 +29,7 @@ import SubmitButton from "../components/SubmitButton";
 import ActivityIndicator from "../components/ActivityIndicator";
 import LoaderImage from "../components/LoaderImage";
 import ThemeContext from "../config/ThemeContext";
+import TabList from "../components/TabList";
 
 const { width, height } = Dimensions.get("window");
 
@@ -59,11 +55,7 @@ const ChannelScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
 
-  let sBg,
-    mBg,
-    sColor,
-    mColor,
-    channelHeaderTitle,
+  let channelHeaderTitle,
     shouldShowHeader = false;
 
   const checkSubChannels = channels.find((obj) =>
@@ -86,44 +78,24 @@ const ChannelScreen = ({ navigation }) => {
   const searchRef = useRef(null);
 
   if (boxState.s) {
-    sBg = theme.unchange;
-    mBg = theme.background;
     channelHeaderTitle = "Unsubscribed Channels";
-    // console.log(checkUnSubbedChannels);
     checkSubChannels ? (shouldShowHeader = false) : (shouldShowHeader = true);
-    sColor = colors.primary;
-    mColor = theme.medium;
   } else if (boxState.m) {
-    sBg = theme.background;
-    mBg = theme.unchange;
     checkOwnerChannels ? (shouldShowHeader = true) : (shouldShowHeader = false);
     channelHeaderTitle = "Channels";
-    sColor = theme.medium;
-    mColor = colors.primary;
   }
 
   const ChannelHeaderComp = () => {
     return (
       <View>
-        <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => handleBoxChange("s")}
-            style={{ ...styles.box, backgroundColor: sBg }}
-          >
-            <FontAwesome5 name="dot-circle" size={14} color={sColor} />
-            <AppText style={styles.boxText}>Channels</AppText>
-          </TouchableOpacity>
-          <View style={styles.line}></View>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => handleBoxChange("m")}
-            style={{ ...styles.box, backgroundColor: mBg }}
-          >
-            <FontAwesome5 name="dot-circle" size={14} color={mColor} />
-            <AppText style={styles.boxText}>My Channels</AppText>
-          </TouchableOpacity>
-        </Cards>
+        <TabList
+          state={boxState}
+          items={[
+            { tab: "s", name: "Channels" },
+            { tab: "m", name: "My Channels" },
+          ]}
+          onPress={handleBoxChange}
+        />
 
         <View>
           {checkSubChannels && boxState.s && !checkOwnerChannels && (
@@ -572,21 +544,7 @@ const styles = StyleSheet.create({
     },
     borderRadius: 22,
   },
-  boxCont: {
-    flexDirection: "row",
-    width: width * 0.8,
-    alignSelf: "center",
-    marginVertical: 10,
-    overflow: "hidden",
-    borderRadius: width * 0.02,
-  },
-  box: {
-    paddingVertical: 30,
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   content: {
     maxHeight: height * 0.75,
     alignItems: "center",
@@ -605,9 +563,6 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 14,
     marginLeft: 3,
-  },
-  boxText: {
-    marginLeft: 9,
   },
   container: {
     flex: 1,
