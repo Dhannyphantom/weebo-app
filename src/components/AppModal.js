@@ -61,10 +61,15 @@ const AppModal = ({
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
   const translator = useRef(new Animated.Value(height / 2)).current;
-  const contentX = useRef(new Animated.Value(width)).current;
+  const contentX = useRef(new Animated.Value(0.85)).current;
+  const contentXb = useRef(new Animated.Value(0.85)).current;
   const contentXOpaciter = contentX.interpolate({
-    inputRange: [0, width],
-    outputRange: [1, 0],
+    inputRange: [0.85, 1],
+    outputRange: [0, 1],
+  });
+  const contentXbOpaciter = contentXb.interpolate({
+    inputRange: [0.85, 1],
+    outputRange: [0, 1],
   });
 
   let collBtnText = "New Collection";
@@ -202,12 +207,23 @@ const AppModal = ({
   };
 
   const showContent = (str) => {
-    Animated.timing(contentX, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start(() => {
-      str && onPress(str);
-    });
+    if (str.startsWith("edit")) {
+      contentXb.setValue(0.85);
+      Animated.timing(contentX, {
+        toValue: boxState.caption ? 0.85 : 1,
+        useNativeDriver: true,
+      }).start(() => {
+        str && onPress(str);
+      });
+    } else if (str.startsWith("save")) {
+      Animated.timing(contentXb, {
+        toValue: boxState.save || boxState.saveAll ? 0.85 : 1,
+        useNativeDriver: true,
+      }).start(() => {
+        str && onPress(str);
+      });
+      contentX.setValue(0.85);
+    }
   };
 
   if (collectionText.length > 1) {
@@ -243,17 +259,15 @@ const AppModal = ({
     growInputRefTwo?.current?.focus();
   }, [showText]);
 
-  // useEffect(() => {
-  //   setCollectionData(userInfo.my_collections);
-  //   setOldText(placeholder);
-  //   setText(placeholder);
-  //   if (boxState.caption) {
-  //     contentX.setValue(width);
-  //     showContent();
-  //     growInputRef?.current?.focus();
-  //   }
-  //   setErrMsg(null);
-  // }, [boxState]);
+  useEffect(() => {
+    setCollectionData(userInfo.my_collections);
+    setOldText(placeholder);
+    setText(placeholder);
+    if (boxState.caption) {
+      growInputRef?.current?.focus();
+    }
+    setErrMsg(null);
+  }, [boxState]);
 
   useEffect(() => {
     if (action) {
@@ -274,87 +288,83 @@ const AppModal = ({
       animationType="fade"
       onRequestClose={handleCloseModal}
       visible={action}
-      style={styles.container}
     >
       <TouchableOpacity
         onPress={handleCloseModal}
         activeOpacity={1}
         style={styles.bg}
       >
-        {boxState.caption && (
-          <Animated.View
-            style={{
-              flex: 1,
-              transform: [{ translateX: contentX }],
-              opacity: contentXOpaciter,
-            }}
+        <Animated.View
+          style={{
+            ...styles.contentContainer,
+            transform: [{ scale: contentX }],
+            opacity: contentXOpaciter,
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.caption, { backgroundColor: theme.background }]}
           >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={[styles.caption, { backgroundColor: theme.background }]}
-            >
-              <AppText style={styles.headerTitle} bold>
-                Edit Caption
-              </AppText>
-              <Separator h={1} />
-              <View style={styles.box}>
-                <GrowInput
-                  style={{ width: width * 0.85, marginBottom: 20 }}
-                  text={text}
-                  ref={growInputRef}
-                  setText={setText}
-                  placeholder={placeholder}
+            <AppText style={styles.headerTitle} bold>
+              Edit Caption
+            </AppText>
+            <Separator h={1} />
+            <View style={styles.box}>
+              <GrowInput
+                style={{ width: width * 0.85, marginBottom: 20 }}
+                text={text}
+                ref={growInputRef}
+                setText={setText}
+                placeholder={placeholder}
+              />
+              {oldText === text || text == "" ? (
+                <AppButton
+                  title="CANCEL"
+                  style={{ alignSelf: "center" }}
+                  onPress={() => setBoxState({ ...boxState, caption: false })}
+                  bare
                 />
-                {oldText === text || text == "" ? (
-                  <AppButton
-                    title="CANCEL"
-                    style={{ alignSelf: "center" }}
-                    onPress={() => setBoxState({ ...boxState, caption: false })}
-                    bare
-                  />
-                ) : (
-                  <AppButton
-                    style={{ alignSelf: "center" }}
-                    title="EDIT"
-                    onPress={hanldeEditCaption}
-                  />
-                )}
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        {(boxState.save || boxState.saveAll) && (
-          <Animated.View
-            style={{
-              transform: [{ translateX: contentX }],
-              opacity: contentXOpaciter,
-            }}
+              ) : (
+                <AppButton
+                  style={{ alignSelf: "center" }}
+                  title="EDIT"
+                  onPress={hanldeEditCaption}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View
+          style={{
+            ...styles.contentContainer,
+            transform: [{ scale: contentXb }],
+            opacity: contentXbOpaciter,
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            style={[styles.captionTwo, { backgroundColor: theme.background }]}
           >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={[styles.captionTwo, { backgroundColor: theme.background }]}
-            >
-              <AppText style={styles.headerTitle} bold>
-                Save {boxState.save ? "This" : boxState.saveAll ? "All" : null}{" "}
-                To My Collection
-              </AppText>
-              <Separator h={1} />
-              <View style={{ ...styles.box }}>
-                {showText && (
-                  <GrowInput
-                    style={{ width: "90%", marginBottom: 15 }}
-                    text={collectionText}
-                    mLine={false}
-                    ref={growInputRefTwo}
-                    setText={setCollectionText}
-                    placeholder="Collection's name"
-                  />
-                )}
-                <RenderCollection />
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
+            <AppText style={styles.headerTitle} bold>
+              Save {boxState.save ? "This" : boxState.saveAll ? "All" : null} To
+              My Collection
+            </AppText>
+            <Separator h={1} />
+            <View style={{ ...styles.box }}>
+              {showText && (
+                <GrowInput
+                  style={{ width: "90%", marginBottom: 15 }}
+                  text={collectionText}
+                  mLine={false}
+                  ref={growInputRefTwo}
+                  setText={setCollectionText}
+                  placeholder="Collection's name"
+                />
+              )}
+              <RenderCollection />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
         <Animated.View style={{ transform: [{ translateY: translator }] }}>
           <TouchableOpacity
             style={[styles.content, { backgroundColor: theme.background }]}
@@ -441,34 +451,38 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   caption: {
-    width: "100%",
+    width: "97%",
     height: "30%",
-    alignItems: "center",
-    padding: 10,
+    // width: "100%",
+    // // height: "30%",
+    // alignItems: "center",
+    padding: 20,
     borderRadius: 20,
-    backgroundColor: colors.white,
-    position: "absolute",
-    top: "20%",
+    // backgroundColor: colors.white,
+    // // position: "absolute",
+    // // top: "20%",
   },
   captionTwo: {
-    width: "100%",
+    width: "97%",
     minHeight: height * 0.5,
     maxHeight: height * 0.62,
     padding: 10,
     borderRadius: 20,
     backgroundColor: colors.white,
-    position: "absolute",
-    top: "10%",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
   },
   content: {
     backgroundColor: colors.white,
     padding: 12,
     marginBottom: 30,
     borderRadius: 20,
+  },
+  contentContainer: {
+    position: "absolute",
+    top: 0,
+    width,
+    height: height * 0.66,
+    justifyContent: "center",
+    alignItems: "center",
   },
   error: {
     textTransform: "capitalize",
