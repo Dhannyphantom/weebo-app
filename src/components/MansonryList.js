@@ -94,10 +94,14 @@ export default function MansonryList({ data, media }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.extraLight,
   },
   itemContainer: {
     marginHorizontal: width * 0.015,
     paddingTop: 15,
+    backgroundColor: colors.white,
+    padding: 10,
+    borderRadius: 20,
   },
   image: {
     width: "100%",
@@ -105,6 +109,7 @@ const styles = StyleSheet.create({
   },
   mansonry: {
     paddingBottom: height * 0.11,
+    paddingTop: 5,
   },
   mediaContainer: {},
   vidTime: {

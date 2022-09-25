@@ -9,12 +9,14 @@ import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
+import ThemeContext from "../config/ThemeContext";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [postsArr, setPostArr] = useState([]);
   const [media, setMedia] = useState([]);
@@ -101,7 +103,12 @@ const MyPostScreen = ({ navigation, route }) => {
   }, [postsArr]);
 
   return (
-    <Screen style={styles.container}>
+    <Screen
+      style={{
+        ...styles.container,
+        backgroundColor: theme.backgroundExtralight,
+      }}
+    >
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
       {fromScreen === "character" && (
         <View>

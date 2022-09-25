@@ -73,7 +73,7 @@ const Input = ({
 const styles = StyleSheet.create({
   inputBox: {
     width: width * 0.78,
-    marginVertical: 3.5,
+    marginBottom: 15,
     borderRadius: width * 0.021,
     borderColor: colors.primary,
     flexDirection: "row",
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    padding: 10,
+    padding: 15,
   },
   icon: {
     marginLeft: 15,

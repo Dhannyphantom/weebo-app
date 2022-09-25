@@ -1,7 +1,8 @@
 export default {
   // primary: "#003399",
   // primary: "#ef70c2",
-  primary: "#0070c2",
+  primary: "#304ffe",
+  // primary: "#0070c2",
   primaryOld: "#935DE3",
   accent: "#e05a00",
   accentOld: "#ff6600",
