@@ -55,11 +55,12 @@ const Link = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 42,
+    // minHeight: 42,
     overlayColor: "red",
     borderRadius: 12,
     justifyContent: "space-between",
     paddingHorizontal: 13,
+    paddingVertical: 18,
     flexDirection: "row",
     alignItems: "center",
     marginTop: 9,

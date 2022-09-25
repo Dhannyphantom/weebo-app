@@ -6,6 +6,8 @@ import {
   View,
   Dimensions,
   FlatList,
+  Animated,
+  Easing,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -58,6 +60,7 @@ const AppModal = ({
 
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
+  const translator = useRef(new Animated.Value(height / 2)).current;
   let collBtnText = "New Collection";
   const theme = useContext(ThemeContext);
 
@@ -172,8 +175,13 @@ const AppModal = ({
   };
 
   const handleCloseModal = () => {
-    setAction(false);
-    setBoxState({ caption: false, save: false, index: null });
+    Animated.timing(translator, {
+      toValue: height / 2,
+      useNativeDriver: true,
+    }).start(() => {
+      setAction(false);
+      setBoxState({ caption: false, save: false, index: null });
+    });
   };
   const hanldeEditCaption = () => {
     editPostCaption(
@@ -229,6 +237,17 @@ const AppModal = ({
     }
     setErrMsg(null);
   }, [boxState]);
+
+  useEffect(() => {
+    if (action) {
+      translator.setValue(height / 2);
+      Animated.timing(translator, {
+        toValue: 0,
+        easing: Easing.elastic(1.2),
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [action]);
 
   return (
     <Modal
@@ -303,61 +322,62 @@ const AppModal = ({
             </View>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          style={[styles.content, { backgroundColor: theme.background }]}
-          activeOpacity={1}
-        >
-          <AppText style={styles.headerTitle} bold>
-            {" "}
-            POst Actions{" "}
-          </AppText>
-          <Separator m={12} h={1} />
-          <View style={styles.links}>
-            {isMine && (
-              <Link
-                name="Edit Post Caption"
-                iconName="pencil"
-                onPress={() => onPress("edit")}
-              />
-            )}
-            {isText ? (
-              <Link
-                name="Copy Text"
-                iconName="clipboard-text"
-                onPress={() => onPress("copy_text")}
-              />
-            ) : (
-              <Link
-                name="Download Post Media"
-                iconName="download"
-                onPress={() => onPress("download")}
-              />
-            )}
-            {!isText && (
-              <>
+        <Animated.View style={{ transform: [{ translateY: translator }] }}>
+          <TouchableOpacity
+            style={[styles.content, { backgroundColor: theme.background }]}
+            activeOpacity={1}
+          >
+            <AppText style={styles.headerTitle} bold>
+              POst Actions
+            </AppText>
+            <Separator m={12} h={1} />
+            <View style={styles.links}>
+              {isMine && (
                 <Link
-                  name="Add To My Collection"
-                  iconName="star-outline"
-                  onPress={() => onPress("save_one")}
+                  name="Edit Post Caption"
+                  iconName="pencil"
+                  onPress={() => onPress("edit")}
                 />
-                {!isVideo && postUris.length > 1 && (
+              )}
+              {isText ? (
+                <Link
+                  name="Copy Text"
+                  iconName="clipboard-text"
+                  onPress={() => onPress("copy_text")}
+                />
+              ) : (
+                <Link
+                  name="Download Post Media"
+                  iconName="download"
+                  onPress={() => onPress("download")}
+                />
+              )}
+              {!isText && (
+                <>
                   <Link
-                    name="Add All To My Collection"
-                    iconName="star"
-                    onPress={() => onPress("save")}
+                    name="Add To My Collection"
+                    iconName="star-outline"
+                    onPress={() => onPress("save_one")}
                   />
-                )}
-              </>
-            )}
-            {isMine && (
-              <Link
-                name="Delete Post"
-                iconName="delete"
-                onPress={() => onPress("delete")}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
+                  {!isVideo && postUris.length > 1 && (
+                    <Link
+                      name="Add All To My Collection"
+                      iconName="star"
+                      onPress={() => onPress("save")}
+                    />
+                  )}
+                </>
+              )}
+              {isMine && (
+                <Link
+                  name="Delete Post"
+                  iconName="delete"
+                  onPress={() => onPress("delete")}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
       </TouchableOpacity>
       <PopMessage popData={popData} setter={() => setPopData({ vis: false })} />
     </Modal>
@@ -371,11 +391,8 @@ const styles = StyleSheet.create({
   },
   box: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   collBox: {
-    // backgroundColor: colors.primary,
     height: width * 0.27,
     width: width * 0.3,
     justifyContent: "flex-end",
