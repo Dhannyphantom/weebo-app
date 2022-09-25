@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import MasonryList from "@react-native-seoul/masonry-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ThemeContext from "../config/ThemeContext";
 
 import LoaderImage from "./LoaderImage";
 import MediaModal from "./MediaModal";
@@ -13,6 +14,7 @@ const { width, height } = Dimensions.get("window");
 
 const MansonryItem = ({ item, setDisplayMedia }) => {
   const isVideoImage = item.type != "image";
+  const theme = useContext(ThemeContext);
   const handlePress = () => {
     setDisplayMedia({
       vis: true,
@@ -28,7 +30,7 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
   return (
     <>
       <TouchableOpacity
-        style={styles.itemContainer}
+        style={[styles.itemContainer, { backgroundColor: theme.white }]}
         activeOpacity={1}
         onPress={handlePress}
       >
@@ -53,7 +55,8 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
 export default function MansonryList({ data, media }) {
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
-  // console.log(media);
+
+  const theme = useContext(ThemeContext);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -67,12 +70,20 @@ export default function MansonryList({ data, media }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundExtralight },
+      ]}
+    >
       <MasonryList
         data={media}
         keyExtractor={(item, index) => item._id}
         numColumns={2}
-        style={styles.mansonry}
+        style={{
+          ...styles.mansonry,
+          backgroundColor: theme.backgroundExtralight,
+        }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, i }) => (
           <MansonryItem
@@ -94,14 +105,12 @@ export default function MansonryList({ data, media }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.extraLight,
   },
   itemContainer: {
-    marginHorizontal: width * 0.015,
+    marginLeft: width * 0.015,
     paddingTop: 15,
-    backgroundColor: colors.white,
-    padding: 10,
-    borderRadius: 20,
+    padding: 8,
+    borderRadius: 16,
   },
   image: {
     width: "100%",
@@ -110,8 +119,8 @@ const styles = StyleSheet.create({
   mansonry: {
     paddingBottom: height * 0.11,
     paddingTop: 5,
+    paddingRight: width * 0.015,
   },
-  mediaContainer: {},
   vidTime: {
     color: colors.white,
     marginLeft: 4,

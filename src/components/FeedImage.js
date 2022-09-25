@@ -1,8 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import {
   StyleSheet,
   Dimensions,
-  View,
   TouchableOpacity,
   Animated,
 } from "react-native";
