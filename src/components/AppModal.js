@@ -8,6 +8,7 @@ import {
   FlatList,
   Animated,
   Easing,
+  Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -186,6 +187,7 @@ const AppModal = ({
   };
 
   const handleCloseModal = () => {
+    showContent(null, true);
     Animated.timing(translator, {
       toValue: height / 2,
       useNativeDriver: true,
@@ -206,8 +208,8 @@ const AppModal = ({
     handleCloseModal();
   };
 
-  const showContent = (str) => {
-    if (str.startsWith("edit")) {
+  const showContent = (str, close) => {
+    if (str?.startsWith("edit")) {
       contentXb.setValue(0.85);
       Animated.timing(contentX, {
         toValue: boxState.caption ? 0.85 : 1,
@@ -215,7 +217,7 @@ const AppModal = ({
       }).start(() => {
         str && onPress(str);
       });
-    } else if (str.startsWith("save")) {
+    } else if (str?.startsWith("save")) {
       Animated.timing(contentXb, {
         toValue: boxState.save || boxState.saveAll ? 0.85 : 1,
         useNativeDriver: true,
@@ -223,6 +225,21 @@ const AppModal = ({
         str && onPress(str);
       });
       contentX.setValue(0.85);
+    } else if (close) {
+      Animated.parallel([
+        Animated.timing(contentX, {
+          toValue: 0.85,
+          useNativeDriver: true,
+        }).start(() => {
+          str && onPress(str);
+        }),
+        Animated.timing(contentXb, {
+          toValue: 0.85,
+          useNativeDriver: true,
+        }).start(() => {
+          str && onPress(str);
+        }),
+      ]);
     }
   };
 
@@ -299,6 +316,7 @@ const AppModal = ({
             ...styles.contentContainer,
             transform: [{ scale: contentX }],
             opacity: contentXOpaciter,
+            zIndex: contentXOpaciter,
           }}
         >
           <TouchableOpacity
@@ -319,9 +337,12 @@ const AppModal = ({
               />
               {oldText === text || text == "" ? (
                 <AppButton
-                  title="CANCEL"
+                  title="CLOSE"
                   style={{ alignSelf: "center" }}
-                  onPress={() => setBoxState({ ...boxState, caption: false })}
+                  onPress={() => {
+                    showContent("edit", true);
+                    Keyboard.dismiss();
+                  }}
                   bare
                 />
               ) : (
@@ -339,6 +360,7 @@ const AppModal = ({
             ...styles.contentContainer,
             transform: [{ scale: contentXb }],
             opacity: contentXbOpaciter,
+            zIndex: contentXbOpaciter,
           }}
         >
           <TouchableOpacity
@@ -386,13 +408,13 @@ const AppModal = ({
                 <Link
                   name="Copy Text"
                   iconName="clipboard-text"
-                  onPress={() => showContent("copy_text")}
+                  onPress={() => showContent("copy_text", true)}
                 />
               ) : (
                 <Link
                   name="Download Post Media"
                   iconName="download"
-                  onPress={() => showContent("download")}
+                  onPress={() => showContent("download", true)}
                 />
               )}
               {!isText && (
@@ -415,7 +437,7 @@ const AppModal = ({
                 <Link
                   name="Delete Post"
                   iconName="delete"
-                  onPress={() => showContent("delete")}
+                  onPress={() => showContent("delete", true)}
                 />
               )}
             </View>
@@ -453,20 +475,14 @@ const styles = StyleSheet.create({
   caption: {
     width: "97%",
     height: "30%",
-    // width: "100%",
-    // // height: "30%",
-    // alignItems: "center",
     padding: 20,
     borderRadius: 20,
-    // backgroundColor: colors.white,
-    // // position: "absolute",
-    // // top: "20%",
   },
   captionTwo: {
     width: "97%",
     minHeight: height * 0.5,
-    maxHeight: height * 0.62,
-    padding: 10,
+    maxHeight: height * 0.64,
+    padding: 20,
     borderRadius: 20,
     backgroundColor: colors.white,
   },
