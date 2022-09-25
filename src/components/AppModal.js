@@ -61,6 +61,12 @@ const AppModal = ({
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
   const translator = useRef(new Animated.Value(height / 2)).current;
+  const contentX = useRef(new Animated.Value(width)).current;
+  const contentXOpaciter = contentX.interpolate({
+    inputRange: [0, width],
+    outputRange: [1, 0],
+  });
+
   let collBtnText = "New Collection";
   const theme = useContext(ThemeContext);
 
@@ -195,6 +201,15 @@ const AppModal = ({
     handleCloseModal();
   };
 
+  const showContent = (str) => {
+    Animated.timing(contentX, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start(() => {
+      str && onPress(str);
+    });
+  };
+
   if (collectionText.length > 1) {
     collBtnText = "Save Collection";
   }
@@ -228,21 +243,24 @@ const AppModal = ({
     growInputRefTwo?.current?.focus();
   }, [showText]);
 
-  useEffect(() => {
-    setCollectionData(userInfo.my_collections);
-    setOldText(placeholder);
-    setText(placeholder);
-    if (boxState.caption) {
-      growInputRef?.current?.focus();
-    }
-    setErrMsg(null);
-  }, [boxState]);
+  // useEffect(() => {
+  //   setCollectionData(userInfo.my_collections);
+  //   setOldText(placeholder);
+  //   setText(placeholder);
+  //   if (boxState.caption) {
+  //     contentX.setValue(width);
+  //     showContent();
+  //     growInputRef?.current?.focus();
+  //   }
+  //   setErrMsg(null);
+  // }, [boxState]);
 
   useEffect(() => {
     if (action) {
       translator.setValue(height / 2);
       Animated.timing(translator, {
         toValue: 0,
+        duration: 600,
         easing: Easing.elastic(1.2),
         useNativeDriver: true,
       }).start();
@@ -264,63 +282,78 @@ const AppModal = ({
         style={styles.bg}
       >
         {boxState.caption && (
-          <TouchableOpacity
-            activeOpacity={1}
-            style={[styles.caption, { backgroundColor: theme.background }]}
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateX: contentX }],
+              opacity: contentXOpaciter,
+            }}
           >
-            <AppText style={styles.headerTitle} bold>
-              Edit Caption
-            </AppText>
-            <Separator h={1} />
-            <View style={styles.box}>
-              <GrowInput
-                style={{ width: width * 0.85, marginBottom: 20 }}
-                text={text}
-                ref={growInputRef}
-                setText={setText}
-                placeholder={placeholder}
-              />
-              {oldText === text || text == "" ? (
-                <AppButton
-                  title="CANCEL"
-                  style={{ alignSelf: "center" }}
-                  onPress={() => setBoxState({ ...boxState, caption: false })}
-                  bare
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[styles.caption, { backgroundColor: theme.background }]}
+            >
+              <AppText style={styles.headerTitle} bold>
+                Edit Caption
+              </AppText>
+              <Separator h={1} />
+              <View style={styles.box}>
+                <GrowInput
+                  style={{ width: width * 0.85, marginBottom: 20 }}
+                  text={text}
+                  ref={growInputRef}
+                  setText={setText}
+                  placeholder={placeholder}
                 />
-              ) : (
-                <AppButton
-                  style={{ alignSelf: "center" }}
-                  title="EDIT"
-                  onPress={hanldeEditCaption}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
+                {oldText === text || text == "" ? (
+                  <AppButton
+                    title="CANCEL"
+                    style={{ alignSelf: "center" }}
+                    onPress={() => setBoxState({ ...boxState, caption: false })}
+                    bare
+                  />
+                ) : (
+                  <AppButton
+                    style={{ alignSelf: "center" }}
+                    title="EDIT"
+                    onPress={hanldeEditCaption}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
         )}
         {(boxState.save || boxState.saveAll) && (
-          <TouchableOpacity
-            activeOpacity={1}
-            style={[styles.captionTwo, { backgroundColor: theme.background }]}
+          <Animated.View
+            style={{
+              transform: [{ translateX: contentX }],
+              opacity: contentXOpaciter,
+            }}
           >
-            <AppText style={styles.headerTitle} bold>
-              Save {boxState.save ? "This" : boxState.saveAll ? "All" : null} To
-              My Collection
-            </AppText>
-            <Separator h={1} />
-            <View style={{ ...styles.box }}>
-              {showText && (
-                <GrowInput
-                  style={{ width: "90%", marginBottom: 15 }}
-                  text={collectionText}
-                  mLine={false}
-                  ref={growInputRefTwo}
-                  setText={setCollectionText}
-                  placeholder="Collection's name"
-                />
-              )}
-              <RenderCollection />
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[styles.captionTwo, { backgroundColor: theme.background }]}
+            >
+              <AppText style={styles.headerTitle} bold>
+                Save {boxState.save ? "This" : boxState.saveAll ? "All" : null}{" "}
+                To My Collection
+              </AppText>
+              <Separator h={1} />
+              <View style={{ ...styles.box }}>
+                {showText && (
+                  <GrowInput
+                    style={{ width: "90%", marginBottom: 15 }}
+                    text={collectionText}
+                    mLine={false}
+                    ref={growInputRefTwo}
+                    setText={setCollectionText}
+                    placeholder="Collection's name"
+                  />
+                )}
+                <RenderCollection />
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
         )}
         <Animated.View style={{ transform: [{ translateY: translator }] }}>
           <TouchableOpacity
@@ -336,20 +369,20 @@ const AppModal = ({
                 <Link
                   name="Edit Post Caption"
                   iconName="pencil"
-                  onPress={() => onPress("edit")}
+                  onPress={() => showContent("edit")}
                 />
               )}
               {isText ? (
                 <Link
                   name="Copy Text"
                   iconName="clipboard-text"
-                  onPress={() => onPress("copy_text")}
+                  onPress={() => showContent("copy_text")}
                 />
               ) : (
                 <Link
                   name="Download Post Media"
                   iconName="download"
-                  onPress={() => onPress("download")}
+                  onPress={() => showContent("download")}
                 />
               )}
               {!isText && (
@@ -357,13 +390,13 @@ const AppModal = ({
                   <Link
                     name="Add To My Collection"
                     iconName="star-outline"
-                    onPress={() => onPress("save_one")}
+                    onPress={() => showContent("save_one")}
                   />
                   {!isVideo && postUris.length > 1 && (
                     <Link
                       name="Add All To My Collection"
                       iconName="star"
-                      onPress={() => onPress("save")}
+                      onPress={() => showContent("save")}
                     />
                   )}
                 </>
@@ -372,7 +405,7 @@ const AppModal = ({
                 <Link
                   name="Delete Post"
                   iconName="delete"
-                  onPress={() => onPress("delete")}
+                  onPress={() => showContent("delete")}
                 />
               )}
             </View>
