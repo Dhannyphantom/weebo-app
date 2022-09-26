@@ -165,7 +165,7 @@ const Search = ({
               />
             </View>
           )}
-          {!shouldShow && !isUsers && (
+          {!shouldShow && !isUsers && !errMsg && (
             <View style={styles.notFoundContainer}>
               <AppText style={styles.notFoundText}>
                 <AppText bold>{searchBar}</AppText> instance not found
@@ -197,7 +197,8 @@ const Search = ({
 const styles = StyleSheet.create({
   error: {
     textAlign: "center",
-    marginVertical: 3,
+    marginTop: 10,
+    marginBottom: 20,
     color: colors.heart,
   },
   notFoundContainer: {

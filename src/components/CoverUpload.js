@@ -92,7 +92,8 @@ const CoverUpload = ({ show, type = "character", name }) => {
           <MaterialCommunityIcons
             name="reload"
             size={25}
-            color={theme.backgroundExtralight}
+            color={colors.medium}
+            // color={theme.bar}
           />
         </TouchableOpacity>
       </View>

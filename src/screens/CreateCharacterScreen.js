@@ -1,17 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
-  Keyboard,
-} from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { View, StyleSheet, Dimensions, FlatList, Keyboard } from "react-native";
 
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
-import Cards from "../components/Cards";
 import colors from "../constants/colors";
 import CreateForm from "../components/CreateForm";
 import CoverUpload from "../components/CoverUpload";
