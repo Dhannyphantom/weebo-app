@@ -741,8 +741,7 @@ const ShowScreen = ({ route, navigation }) => {
       <AppFadeIn
         RenderComponent={() => (
           <Events
-            start={newEvent}
-            setStart={setNewEvent}
+            closer={() => setNewEvent(false)}
             instance="show"
             instanceID={dataState._id}
           />

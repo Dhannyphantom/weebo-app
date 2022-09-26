@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
-  FlatList,
   Image,
   KeyboardAvoidingView,
   TouchableOpacity,
@@ -14,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import getFormatTime from "../constants/getFormatTime";
 import * as ImagePicker from "expo-image-picker";
+import { setStatusBarStyle } from "expo-status-bar";
 
 import { Context as AcctContext } from "../config/AcctContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -28,6 +28,7 @@ import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
+import Screen from "./Screen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -334,7 +335,10 @@ const Events = ({ closer, instance, instanceID }) => {
               width: width * 0.6,
               marginTop: 5,
             }}
-            onPress={closer && closer}
+            onPress={() => {
+              // setStatusBarStyle("light");
+              closer && closer();
+            }}
             bare
           />
         </View>
@@ -342,9 +346,13 @@ const Events = ({ closer, instance, instanceID }) => {
     );
   };
 
+  useEffect(() => {
+    setStatusBarStyle("dark");
+  }, []);
+
   return (
     <>
-      <View style={styles.content}>
+      <Screen style={styles.content}>
         {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
 
         <ScrollView
@@ -356,7 +364,7 @@ const Events = ({ closer, instance, instanceID }) => {
         >
           {renderEvents()}
         </ScrollView>
-      </View>
+      </Screen>
       <ActivityIndicator
         type="spin"
         visible={isLoading}
@@ -383,6 +391,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    width,
+    backgroundColor: colors.extraLight,
   },
   error: {
     textAlign: "center",

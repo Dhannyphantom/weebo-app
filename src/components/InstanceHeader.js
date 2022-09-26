@@ -294,17 +294,7 @@ const InstanceHeader = ({ instanceData }) => {
     if (verified || isChannel) return null;
     return (
       <TouchableOpacity style={{ marginLeft: 6 }} onPress={handleUnverifyPress}>
-        <AppText
-          style={{
-            color: colors.facebook,
-            padding: 5,
-            borderWidth: 1,
-            borderColor: colors.facebook,
-            borderRadius: 8,
-          }}
-          bold
-        >
-          {" "}
+        <AppText style={styles.unverifiedTag} bold>
           UNVERIFIED
         </AppText>
       </TouchableOpacity>
@@ -504,6 +494,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     opacity: 0.3,
+  },
+  unverifiedTag: {
+    color: colors.heart,
+    paddingVertical: 3,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: colors.heart,
+    borderRadius: 10,
   },
   verifiedText: {
     color: colors.facebook,

@@ -69,7 +69,7 @@ const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
       Animated.timing(translator, {
         toValue: 0,
         useNativeDriver: true,
-        easing: Easing.elastic(1.3),
+        easing: Easing.elastic(0.8),
       }).start(() => setVisible(vis));
     } else {
       Animated.timing(translator, {
