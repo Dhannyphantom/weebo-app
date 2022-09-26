@@ -67,7 +67,7 @@ const forwardedSearchRef = forwardRef(SearchBar);
 
 const styles = StyleSheet.create({
   closeIcon: {
-    height: "100%",
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 12,
@@ -76,11 +76,11 @@ const styles = StyleSheet.create({
     // fontFamily: "sen",
     flex: 1,
     height: "100%",
+    paddingVertical: 15,
   },
   search: {
     width: "100%",
     flexDirection: "row",
-    height: 40,
     borderRadius: 9,
     alignItems: "center",
   },

@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.015,
     paddingTop: 15,
     padding: 8,
+    marginBottom: 10,
     borderRadius: 16,
   },
   image: {

@@ -14,7 +14,8 @@ export default {
     extralight: "#F5F2F2",
     transparent: "rgba(255,255,255, 0.3)",
     transparentBold: "rgba(255,255,255, 0.93)",
-    unchange: "#e3d8f0",
+    unchange: "#fff3e0",
+    // unchange: "#e3d8f0",
   },
   dark: {
     color: "#fff",

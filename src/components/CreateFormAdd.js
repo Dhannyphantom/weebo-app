@@ -263,12 +263,7 @@ const CreateFormAdd = ({
         </AppText>
       </View>
       {typeTagUpdate && (
-        <View
-          style={{
-            ...styles.tagTextCont,
-            paddingLeft: 10,
-          }}
-        >
+        <View style={styles.tagTextCont}>
           <FlatList
             data={tagList}
             keyExtractor={(item, index) => item + index}
@@ -656,7 +651,7 @@ const styles = StyleSheet.create({
   tagTextCont: {
     flexDirection: "row",
     height: 40,
-    paddingLeft: 8,
+    paddingLeft: 10,
     paddingRight: 20,
     borderRadius: 10,
     alignItems: "center",
@@ -668,6 +663,7 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     borderRadius: 8,
+    paddingRight: 20,
     margin: 5,
   },
   selectIcon: {

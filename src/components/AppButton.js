@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: screen.width * 0.03,
     // padding: 12,
     paddingHorizontal: 30,
-    paddingVertical: 20,
+    paddingVertical: 18,
     elevation: 2,
     shadowRadius: 6,
     shadowColor: "black",
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: screen.width * 0.03,
     paddingHorizontal: 30,
-    paddingVertical: 20,
+    paddingVertical: 18,
   },
   btnText: {
     textTransform: "uppercase",

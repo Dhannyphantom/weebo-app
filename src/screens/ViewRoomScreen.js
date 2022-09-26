@@ -587,7 +587,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
           ListEmptyComponent={
             <ActivityIndicator
               type="isEmpty"
-              text="You have no characters"
+              text={
+                "You have no characters. \n Challenge a Character Instance now to obtain one. \n Or Create a non-existing Character Instance by searching the featured character's name"
+              }
               style={{ marginTop: 50 }}
               visible={true}
             />

@@ -36,7 +36,11 @@ const AppHeader = ({
             )}
             <AppText
               size="xlarge"
-              style={{ ...styles.title, color: theme.color, ...titleStyle }}
+              style={{
+                ...styles.title,
+                color: colors.primary /* theme.color */,
+                ...titleStyle,
+              }}
               bold
             >
               {title}

@@ -26,6 +26,7 @@ export default {
   facebook: "#3b5998",
   google: "#E24040",
   twitter: "#250654",
-  unChange: "#e3d8f0",
+  unChange: "#fff3e0",
+  // unChange: "#e3d8f0",
   black: "#000",
 };
