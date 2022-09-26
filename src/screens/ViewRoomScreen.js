@@ -764,8 +764,8 @@ const styles = StyleSheet.create({
   },
   footerView: {
     position: "absolute",
-    width: "100%",
-    height: "100%",
+    zIndex: 5,
+    bottom: 0,
     justifyContent: "flex-end",
     padding: 12,
   },

@@ -134,7 +134,7 @@ const CreateForm = ({
 
   return (
     <View style={styles.container}>
-      <AppText bold>
+      <AppText style={{ marginBottom: 5 }} bold>
         {headerA
           ? "Character's " + headerA + add + ":"
           : headerB
@@ -154,7 +154,7 @@ const CreateForm = ({
       <View
         style={{
           ...styles.inputContainer,
-          height: Math.max(40, height),
+          // height: Math.max(40, height),
           backgroundColor:
             placeholder && !grow ? theme.unchange : theme.extralight,
         }}
@@ -343,10 +343,10 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     width: "80%",
-    height: 40,
     marginLeft: 14,
-    minHeight: 40,
-    maxHeight: 70,
+    // height: 40,
+    // minHeight: 40,
+    // maxHeight: 70,
     justifyContent: "center",
     borderRadius: 9,
     overflow: "hidden",
@@ -361,11 +361,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: "100%",
+    paddingVertical: 15,
     fontFamily: "sen",
     marginLeft: 12,
   },
   inputTwo: {
     flex: 1,
+    paddingVertical: 15,
     fontFamily: "sen",
     height: "100%",
     marginLeft: 12,
