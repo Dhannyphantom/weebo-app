@@ -5,8 +5,8 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  Modal,
   Animated,
+  Easing,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -18,22 +18,17 @@ import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("window");
 
 const BOX_SIZE = width * 0.48;
-const BOX_MARGIN = width * 0.04;
-const BOX_HEIGHT = height * 0.45;
-const BOX_TOP = width * 0.17;
+const BOX_OFFSET = BOX_SIZE + 40;
 
-const DropDown = ({
-  visible,
-  listKey,
-  closeFunc,
-  setVisible,
-  lists,
-  style,
-}) => {
+const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
   // list = [{id, name, show, onPress, icon, iconPack}]
   if (!visible) return null;
 
-  const translator = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const translator = useRef(new Animated.Value(BOX_OFFSET)).current;
+  const scaler = translator.interpolate({
+    inputRange: [0, BOX_OFFSET],
+    outputRange: [1, 0],
+  });
   const theme = useContext(ThemeContext);
 
   const renderDropLists = ({ item }) => {
@@ -71,22 +66,14 @@ const DropDown = ({
 
   const handleBoxAction = (vis) => {
     if (vis) {
-      Animated.parallel([
-        Animated.timing(translator.x, {
-          toValue: -(BOX_SIZE + BOX_MARGIN),
-          useNativeDriver: true,
-        }),
-        Animated.timing(translator.y, {
-          toValue: BOX_TOP,
-          useNativeDriver: true,
-        }),
-      ]).start(() => setVisible(vis));
+      Animated.timing(translator, {
+        toValue: 0,
+        useNativeDriver: true,
+        easing: Easing.elastic(1.3),
+      }).start(() => setVisible(vis));
     } else {
       Animated.timing(translator, {
-        toValue: {
-          x: 0,
-          y: 0,
-        },
+        toValue: BOX_OFFSET,
         useNativeDriver: true,
       }).start(() => setVisible(vis));
     }
@@ -106,7 +93,7 @@ const DropDown = ({
         style={{
           ...styles.content,
           backgroundColor: theme.background,
-          transform: translator.getTranslateTransform(),
+          transform: [{ translateX: translator }, { scale: scaler }],
         }}
       >
         <View>
@@ -126,22 +113,21 @@ const DropDown = ({
 const styles = StyleSheet.create({
   bgWrapper: {
     flex: 1,
-    //
     width: "100%",
     height: "100%",
     position: "absolute",
+    top: 0,
   },
   content: {
     elevation: 2,
     alignSelf: "flex-end",
+    marginRight: 30,
+    marginTop: "15%",
     borderRadius: width * 0.024,
     width: BOX_SIZE,
-    left: BOX_SIZE,
-    // flexDirection: "row",
   },
   closer: {
     position: "absolute",
-    // marginTop: BOX_HEIGHT / 2 - width * 0.1,
     backgroundColor: colors.extraLight,
     width: width * 0.1,
     height: width * 0.1,
@@ -172,13 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
-    <Modal
-      visible={true}
-      // onRequestClose={handleCloseModal}
-      animationType="fade"
-      statusBarTranslucent
-      transparent
-    >
-*/
 export default DropDown;
