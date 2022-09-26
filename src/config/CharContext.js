@@ -33,28 +33,21 @@ const createCharacter = (dispatch) => async (data, sc, cb) => {
   formData.append("uploader", imageObject);
   formData.append("data", JSON.stringify({ ...data, bucket: "characters" }));
 
-  const token = await AsyncStorage.getItem("token");
-
-  fetch(`${baseURL.uri}/create/new_character`, {
-    method: "POST",
-    body: formData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-      "x-auth-token": token,
-      "Cache-Control": "no-cache,no-store,must-revalidate",
-      Pragma: "no-cache",
-      Expires: 0,
-      Accept: "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      sc && sc(data);
-    })
-    .catch((err) => {
-      // err.response.data.match(/Cast to Objectid/gi)
-      cb && cb({ err, msg: "Error creating character" });
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await instanceApi.post("/new_character", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "x-auth-token": token,
+        Accept: "application/json",
+      },
+      transformRequest: () => formData,
     });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error creating character", data: err?.response?.data });
+  }
 
   // ===================================================
 };
@@ -97,30 +90,20 @@ const createGroup = (dispatch) => async (data, sc, cb) => {
   formData.append("uploader", imageObject);
   formData.append("data", JSON.stringify({ ...data, bucket: "groups" }));
 
-  const token = await AsyncStorage.getItem("token");
-
-  fetch(`${baseURL.uri}/create/group`, {
-    method: "POST",
-    body: formData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-      "x-auth-token": token,
-      "Cache-Control": "no-cache,no-store,must-revalidate",
-      Pragma: "no-cache",
-      Expires: 0,
-      Accept: "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((resData) => {
-      dispatch({ type: "create_me", payload: resData.data.group });
-      sc && sc(resData);
-    })
-    .catch((err) => {
-      // err.response.data.match(/Cast to Objectid/gi)
-      // dispatch({ type: "add_error", payload: err?.response?.data });
-      cb && cb({ err, msg: "Error creating group" });
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await instanceApi.post("/group", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "x-auth-token": token,
+        Accept: "application/json",
+      },
+      transformRequest: () => formData,
     });
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error creating group", data: err?.response?.data });
+  }
 
   // ===================================================
 };

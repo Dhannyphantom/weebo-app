@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   input: {
-    fontFamily: "sen",
+    // fontFamily: "sen",
     flex: 1,
     height: "100%",
   },
