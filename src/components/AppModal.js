@@ -394,7 +394,7 @@ const AppModal = ({
             activeOpacity={1}
           >
             <AppText style={styles.headerTitle} bold>
-              POst Actions
+              Post Actions
             </AppText>
             <Separator m={12} h={1} />
             <View style={styles.links}>

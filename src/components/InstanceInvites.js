@@ -109,7 +109,7 @@ const InstanceInvites = ({ data, instance, setVisible }) => {
             instance.type === "character"
               ? instance?.name?.toUpperCase()
               : item.instance.name.toUpperCase()
-          } is not part of the ${
+          } is not a member of the ${
             instance.type === "character"
               ? item.instance.name.toUpperCase()
               : instance.name.toUpperCase()

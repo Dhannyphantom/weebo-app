@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   },
   unverifiedTag: {
     color: colors.heart,
-    paddingVertical: 3,
+    paddingVertical: 5,
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: colors.heart,

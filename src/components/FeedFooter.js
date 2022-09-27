@@ -208,6 +208,7 @@ const FeedFooter = ({
           myComments={myComments}
           setMyComments={setMyComments}
         />
+        {/* REFACTOR APPMODAL AND POPDOWNMODAL COMPONENT TO A SINGE REUSEABLE COMPONENT. */}
         <AppModal
           action={action}
           setAction={setAction}

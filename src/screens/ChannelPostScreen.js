@@ -114,21 +114,21 @@ const ChannelPostScreen = ({ route, navigation }) => {
       id: "1",
       title: "Edit Channel Cover",
       icon: "image",
-      onPress: handleCoverChange,
+      onPress: () => handleCoverChange(),
     },
     {
       id: "2",
       title: "Update description",
       icon: "pencil",
       toggle: true,
-      onPress: null,
+      onPress: () => {},
     },
     {
       id: "3",
       title: "Delete channel",
       icon: "trash-can",
       onPress: function () {
-        console.log("Edit Cover");
+        console.log("Delete Channel");
       },
     },
   ];
