@@ -13,13 +13,11 @@ import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ActivityIndicator from "../components/ActivityIndicator";
 import Separator from "../components/Separator";
-import AppFadeIn from "../components/AppFadeIn";
 import GroupCard from "../components/GroupCard";
 import AlertModal from "../components/AlertModal";
 import ChallengeCard from "../components/ChallengeCard";
 import PopMessage from "../components/PopMessage";
 import CharChallengerScreen from "./CharChallengerScreen";
-import Events from "../components/Events";
 import ChallengeForm from "../components/ChallengeForm";
 import showInfoProps from "../constants/showInfoProps";
 import PopModal from "../components/PopModal";
@@ -71,7 +69,6 @@ const ShowScreen = ({ route, navigation }) => {
   const [dataState, setDataState] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
-  const [newEvent, setNewEvent] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [transfer, setTransfer] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
@@ -156,7 +153,11 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "3",
       name: "New event",
-      onPress: () => setNewEvent(true),
+      onPress: () =>
+        navigation.navigate("Event", {
+          instance: "show",
+          instanceID: dataState._id,
+        }),
       selected: true,
       icon: "plus",
       show: isMine,
@@ -738,17 +739,7 @@ const ShowScreen = ({ route, navigation }) => {
           </>
         </Viewport.Tracker>
       )}
-      <AppFadeIn
-        RenderComponent={() => (
-          <Events
-            closer={() => setNewEvent(false)}
-            instance="show"
-            instanceID={dataState._id}
-          />
-        )}
-        visible={newEvent}
-        setVisible={setNewEvent}
-      />
+
       <ChallengeForm
         modalVis={challengeModal}
         setModalVis={setChallengeModal}

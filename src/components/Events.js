@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     width,
-    backgroundColor: colors.extraLight,
+    // backgroundColor: colors.extraLight,
   },
   error: {
     textAlign: "center",
