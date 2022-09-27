@@ -42,8 +42,7 @@ const Link = ({
           <MaterialIcons name={iconName} size={12} color={colors.primary} />
         )}
         <AppText bold style={styles.link}>
-          {" "}
-          {name}{" "}
+          {name}
         </AppText>
       </View>
       <MaterialCommunityIcons

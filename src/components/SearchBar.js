@@ -19,11 +19,11 @@ const SearchBar = (
     <View
       style={{
         ...styles.search,
-        backgroundColor: theme.backgroundLight,
+        backgroundColor: theme.extralight,
         ...style,
       }}
     >
-      <Spacer ml={12} mr={6}>
+      <Spacer pl={20} pr={10}>
         <Feather name="search" size={16} color={colors.primary} />
       </Spacer>
       <TextInput

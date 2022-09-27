@@ -363,11 +363,11 @@ const PostVideo = ({
               <Image
                 source={{ uri: thumbUri }}
                 style={{
-                  width: source.width,
-                  aspectRatio: source?.width / source?.height,
+                  width: "100%",
+                  height: "100%",
                   maxHeight: vidHeight,
                 }}
-                blurRadius={8}
+                blurRadius={6}
               />
               <View style={styles.playIcons}>
                 <MaterialCommunityIcons

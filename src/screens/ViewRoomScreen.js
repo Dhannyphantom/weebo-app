@@ -33,6 +33,7 @@ import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
 import PopDownModal from "../components/PopDownModal";
 import ThemeContext from "../config/ThemeContext";
+import Link from "../components/Link";
 
 const { width, height } = Dimensions.get("window");
 
@@ -220,7 +221,14 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const handleSearchInstance = () => {
-    getCharacters(searcher, (data) => setSearchList(data));
+    getCharacters(searcher, (data) => {
+      if (Array.isArray(data)) {
+        setSearchList(data);
+      } else {
+        // Character not found
+        setErrMsg(data);
+      }
+    });
   };
 
   const handleSendInvite = (item, data) => {
@@ -280,6 +288,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const handleCloseSearch = () => {
     setSearchList([]);
+    setShowSearch(false);
   };
 
   const renderCharacters = ({ item, index }) => {
@@ -647,33 +656,30 @@ const ViewRoomScreen = ({ navigation, route }) => {
           <ActivityIndicator
             visible={pageData?.characters.length <= 2}
             type="isEmpty"
-            text="There are no characters"
+            text="There are no Character Instances yet"
             style={styles.activity}
             ComponentRenderer={() => (
-              <>
-                <AppButton
-                  title={isManager ? "Invite Characters" : "Join"}
-                  LIcon="plus"
+              <View style={styles.links}>
+                <Link
+                  iconName="plus"
                   onPress={handleCharacterInvites}
-                  naked
+                  name={isManager ? "Invite Characters" : "Join"}
                 />
                 {isManager && (
-                  <AppButton
-                    title="See Invites"
-                    LIcon="format-list-text"
-                    onPress={() => setShowInvites(true)}
-                    naked
-                  />
+                  <>
+                    <Link
+                      iconName="format-list-text"
+                      onPress={() => setShowInvites(true)}
+                      name="See Invites"
+                    />
+                    <Link
+                      iconName="format-list-text"
+                      onPress={() => handleDeleteInstance("alert")}
+                      name="Delete Group"
+                    />
+                  </>
                 )}
-                {isManager && (
-                  <AppButton
-                    title="Delete Group"
-                    LIcon="delete"
-                    onPress={() => handleDeleteInstance("alert")}
-                    naked
-                  />
-                )}
-              </>
+              </View>
             )}
           />
         </>
@@ -696,7 +702,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
             closeCb={handleCloseSearch}
             placeholder="Invite Characters..."
           />
-          {searchList[0] && (
+          {searchList[0] ? (
             <View style={styles.searchInstance}>
               <SearchInstance
                 data={searchList}
@@ -705,6 +711,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
                 type="rect"
               />
             </View>
+          ) : (
+            <AppText style={styles.error}> {errMsg} </AppText>
           )}
         </Screen>
       )}
@@ -764,12 +772,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  error: {
+    textAlign: "center",
+    marginTop: 15,
+    color: colors.medium,
+  },
   footerView: {
     position: "absolute",
     zIndex: 5,
     bottom: 0,
     justifyContent: "flex-end",
     padding: 12,
+  },
+  links: {
+    width: "80%",
+    padding: 20,
+    marginTop: 35,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 15,
   },
   modal: {
     flex: 1,
