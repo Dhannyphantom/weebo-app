@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, Animated, Modal } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
@@ -33,45 +33,52 @@ const FloatIcons = ({ data }) => {
     const sub = showDataLength - index;
     return -CHANGE_MOVE / sub;
   };
-
   let moverY = -BALLER * showDataLength;
 
-  const handleTogglePress = () => {
-    if (toggle) {
+  const opaciter = translator.interpolate({
+    inputRange: [moverY, 0],
+    outputRange: [1, 0],
+  });
+
+  const handleTogglePress = (val) => {
+    val && setModal(val);
+    return setToggle(!toggle);
+  };
+
+  useEffect(() => {
+    if (toggle && modal) {
+      Animated.timing(translator, {
+        toValue: moverY,
+        useNativeDriver: true,
+      }).start();
+    } else {
       Animated.timing(translator, {
         toValue: 0,
         useNativeDriver: true,
-      }).start(() => setModal(false));
-    } else {
-      Animated.timing(translator, {
-        toValue: moverY,
-        duration: 3000,
-        useNativeDriver: true,
-      }).start(() => setModal(true));
+      }).start(() => {
+        setToggle(false);
+        setModal(false);
+      });
     }
-  };
+  }, [toggle, modal]);
 
   return (
     <View style={styles.container}>
       <Modal
         visible={modal}
-        onRequestClose={handleTogglePress}
+        onRequestClose={() => handleTogglePress(false)}
         statusBarTranslucent
         animationType="none"
         transparent
       >
-        <View style={styles.wrapper}>
+        <Animated.View style={[styles.wrapper, { opacity: opaciter }]}>
           {showData.map((obj, idx) => {
             const componentKey = (Math.random() / idx + 1).toString();
             return (
               <Animated.View
                 key={componentKey}
                 style={{
-                  position: "absolute",
-                  flexDirection: "row",
-                  paddingLeft: 10,
-                  // zIndex: idx,
-                  alignItems: "center",
+                  ...styles.modal,
                   transform: [{ translateY: getMoveY(idx) }],
                   opacity: translator.interpolate({
                     inputRange: [-CHANGE_MOVE, getOpactiyInterpolate(idx)],
@@ -92,12 +99,7 @@ const FloatIcons = ({ data }) => {
                     <AppText style={styles.text}>{obj.text}</AppText>
                   </>
                 ) : (
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
+                  <View style={styles.picContainer}>
                     <ProfilePic
                       source={obj?.isProfile?.data?.avatar?.uri}
                       borderRad={200}
@@ -107,7 +109,7 @@ const FloatIcons = ({ data }) => {
                     />
                     <AppText
                       style={{
-                        marginLeft: 5,
+                        marginLeft: 2,
                         backgroundColor: theme.background,
                         ...styles.text,
                       }}
@@ -128,10 +130,10 @@ const FloatIcons = ({ data }) => {
               margin: 16,
               backgroundColor: toggle ? colors.heart : colors.primary,
             }}
-            onPress={handleTogglePress}
+            onPress={() => handleTogglePress(false)}
             activeOpacity={0.9}
           />
-        </View>
+        </Animated.View>
       </Modal>
       <BallIcon
         icon={toggle ? "cancel" : "chevron-double-up"}
@@ -141,7 +143,7 @@ const FloatIcons = ({ data }) => {
           margin: 4,
           backgroundColor: toggle ? colors.heart : colors.primary,
         }}
-        onPress={handleTogglePress}
+        onPress={() => handleTogglePress(true)}
         activeOpacity={0.9}
       />
     </View>
@@ -153,10 +155,21 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: width * 0.018,
   },
+  modal: {
+    position: "absolute",
+    flexDirection: "row",
+    paddingLeft: 10,
+    alignItems: "center",
+  },
+  picContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 5,
+    marginBottom: 5,
+  },
   wrapper: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.08)",
-    // backgroundColor: "pink",
+    backgroundColor: "rgba(0,0,0,0.51)",
     justifyContent: "flex-end",
   },
 });

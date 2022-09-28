@@ -20,6 +20,7 @@ import ProfilePic from "./ProfilePic";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
+import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 3; // 3 WEEKS
@@ -51,6 +52,7 @@ const InstanceHeader = ({ instanceData }) => {
   const [verifyModal, setVerifyModal] = useState(false);
 
   const safeInset = useSafeAreaInsets();
+  const theme = useContext(ThemeContext);
 
   let posObj = {};
 
@@ -231,7 +233,7 @@ const InstanceHeader = ({ instanceData }) => {
 
   const RenderVerifyInfo = () => {
     return (
-      <View style={styles.verifyModal}>
+      <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>
         <AppText style={styles.verifyModalTitle} size="large" bold>
           {instanceName} verification stats
         </AppText>

@@ -17,7 +17,6 @@ import getNumberFormat from "../constants/getNumberFormat";
 import konstants from "../constants/konstants";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
-import { Context as FeedContext } from "../config/FeedContext";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
@@ -33,7 +32,6 @@ const Card = ({
   show,
   avaterSize = 45,
   series,
-  cardWidth = CARD_WIDTH,
   owner,
   onPress,
   id,
@@ -132,8 +130,8 @@ const Card = ({
               <Spacer p={10}>
                 <ProfilePic
                   source={avatar}
-                  border={1.2}
-                  borderRad={100}
+                  border={1.5}
+                  borderRad={avaterSize / 3}
                   borderColor={colors.white}
                   userID={owner?._id}
                   size={avaterSize}
@@ -212,8 +210,8 @@ const Card = ({
 };
 const styles = StyleSheet.create({
   card: {
-    width: screen.width * 0.6,
-    height: 390,
+    width: screen.width * 0.7,
+    // height: 390,
   },
   btmCard: {
     elevation: 2,
@@ -233,17 +231,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "flex-end",
-    borderRadius: 12,
-    // borderTopStartRadius: screen.width * 0.023,
-    // borderTopEndRadius: screen.width * 0.023,
-    // backgroundColor: colors.medium,
-  },
-
-  imageContainer: {
     borderRadius: 10,
-    // overflow: "hidden",
   },
-
+  imageContainer: {
+    borderRadius: 8,
+  },
   info: {
     alignItems: "center",
     width: "100%",
@@ -258,7 +250,8 @@ const styles = StyleSheet.create({
 
   proPic: {
     position: "absolute",
-    left: "70%",
+    right: 0,
+    // left: "70%",
   },
   title: {
     marginTop: 15,
