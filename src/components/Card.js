@@ -20,9 +20,9 @@ import { Context as CharContext } from "../config/CharContext";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
-const screen = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
-const CARD_WIDTH = screen.width * 0.6;
+const RADIUS = width * 0.025;
 
 const Card = ({
   image,
@@ -210,7 +210,7 @@ const Card = ({
 };
 const styles = StyleSheet.create({
   card: {
-    width: screen.width * 0.7,
+    width: width * 0.7,
     // height: 390,
   },
   btmCard: {
@@ -223,18 +223,18 @@ const styles = StyleSheet.create({
       height: 1.8,
     },
     marginTop: 1.5,
-    borderRadius: screen.width * 0.025,
-    width: screen.width * 0.6,
+    borderRadius: RADIUS,
+    width: width * 0.6,
     height: 89,
   },
   image: {
     width: "100%",
     height: "100%",
     alignItems: "flex-end",
-    borderRadius: 10,
+    borderRadius: RADIUS,
   },
   imageContainer: {
-    borderRadius: 8,
+    borderRadius: RADIUS,
   },
   info: {
     alignItems: "center",

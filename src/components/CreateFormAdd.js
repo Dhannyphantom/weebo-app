@@ -243,7 +243,6 @@ const CreateFormAdd = ({
       setFieldValue("dpName", tagListName);
     }
   }, [selectedTag]);
-
   return (
     <View style={styles.container}>
       <View style={styles.headerTitle}>
@@ -288,7 +287,7 @@ const CreateFormAdd = ({
         {type1 && (
           <TextInput
             placeholder={headerA || headerB || headerC || headerD || headerE}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
             onChangeText={(text) => setUserInput(text)}
             value={userInput}
           />
@@ -353,7 +352,7 @@ const CreateFormAdd = ({
         {list && (
           <TextInput
             placeholder={headerA || headerB || headerC || headerD || headerE}
-            style={styles.input}
+            style={[styles.input, { color: theme.color }]}
             onChangeText={onChangeSearch}
             value={userInput}
           />
@@ -402,7 +401,9 @@ const CreateFormAdd = ({
           listKey={({ i }) => i.toString()}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => (
-            <View style={styles.searchList}>
+            <View
+              style={[styles.searchList, { backgroundColor: theme.unchange }]}
+            >
               <TouchableWithoutFeedback
                 onPress={() => handleDelete(item.id, index)}
               >
@@ -419,7 +420,9 @@ const CreateFormAdd = ({
           )}
         />
         {list && named && (
-          <View style={styles.searchList}>
+          <View
+            style={[styles.searchList, { backgroundColor: theme.unchange }]}
+          >
             <TouchableWithoutFeedback onPress={resetSearch}>
               <View style={styles.closeIcon}>
                 <MaterialCommunityIcons
@@ -434,7 +437,7 @@ const CreateFormAdd = ({
         )}
       </View>
       {list && (
-        <View style={styles.searchRes}>
+        <View style={[styles.searchRes, { backgroundColor: theme.extralight }]}>
           {Array.isArray(searchRes) && (
             <FlatList
               data={searchRes}
@@ -450,7 +453,6 @@ const CreateFormAdd = ({
                           marginLeft: 20,
                         }}
                       >
-                        {" "}
                         Select {list.slice(-list.length, -1)}
                       </AppText>
                       <TouchableWithoutFeedback
@@ -566,7 +568,6 @@ const styles = StyleSheet.create({
   exitSearch: {
     alignItems: "flex-end",
     padding: 8,
-    backgroundColor: colors.extraLight,
     borderRadius: 50,
   },
 

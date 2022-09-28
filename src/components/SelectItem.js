@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import Separator from "./Separator";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
 const SelectItem = ({ item, pickItem, check }) => {
+  const theme = useContext(ThemeContext);
   const index = check.findIndex((obj) => obj.name === item.name);
   const handlePickItem = () => {
     pickItem(item);
@@ -20,7 +22,7 @@ const SelectItem = ({ item, pickItem, check }) => {
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={handlePickItem}
-        style={styles.container}
+        style={[styles.container, { backgroundColor: theme.extralight }]}
       >
         <View style={{ flexDirection: "row" }}>
           <AppText style={styles.itemName} bold>
@@ -50,7 +52,6 @@ const SelectItem = ({ item, pickItem, check }) => {
 const styles = StyleSheet.create({
   container: {
     padding: screen.width * 0.03,
-    backgroundColor: colors.extraLight,
     flexDirection: "row",
     justifyContent: "space-between",
     borderRadius: screen.width * 0.02,

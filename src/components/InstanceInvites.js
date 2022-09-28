@@ -19,7 +19,7 @@ import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
 import ActivityIndicator from "./ActivityIndicator";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const InstanceInvites = ({ data, instance, setVisible }) => {
   /// data = [...]

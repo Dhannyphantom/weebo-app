@@ -211,9 +211,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchResult: {
+    paddingTop: 12,
     borderRadius: 15,
     width: screen.width * 0.97,
     marginLeft: (screen.width * 0.03) / 2,
+    marginBottom: 10,
     // padding: 10,
   },
 });
