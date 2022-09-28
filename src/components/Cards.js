@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 
-import colors from "../constants/colors";
-
 const Cards = ({ children, elevation = true, style }) => {
   const theme = useContext(ThemeContext);
   return (

@@ -12,9 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AcctContext } from "../config/AcctContext";
 
-//// BASICALLY THE SAME SCREEN WITH GROUPSSCREEN;
-//// REFACTOR
-
 import Screen from "../components/Screen";
 import FeedBox from "../components/FeedBox";
 import AppHeader from "../components/AppHeader";
@@ -156,7 +153,12 @@ const ShowGroup = ({ screen, headerTitle }) => {
   }, []);
 
   return (
-    <Screen style={styles.container}>
+    <Screen
+      style={{
+        ...styles.container,
+        backgroundColor: theme.backgroundExtralight,
+      }}
+    >
       <AppHeader
         style={{ marginBottom: 8 }}
         title={headerTitle}
@@ -184,6 +186,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
               data={searchData}
               keyExtractor={(item) => item._id}
               style={{ paddingTop: 10 }}
+              contentContainerStyle={{ paddingBottom: height * 0.08 }}
               renderItem={renderScreenData}
             />
           </View>
@@ -194,6 +197,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
         data={screenData}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 15, paddingBottom: height * 0.08 }}
         refreshing={refreshing}
         onRefresh={() => fetchScreenData(true)}
         ListEmptyComponent={

@@ -49,7 +49,7 @@ const FeedBox = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.white }]}>
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           {pack === "m" && (
@@ -66,17 +66,19 @@ const FeedBox = ({
             {title} {title2 ? `- ${title2}` : null}
           </AppText>
         </View>
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={() => console.log("DOTS")}
-          style={styles.dots}
-        >
-          <MaterialCommunityIcons
-            name="dots-horizontal"
-            size={width * 0.04}
-            color={colors.medium}
-          />
-        </TouchableOpacity>
+        {false && (
+          <TouchableOpacity
+            activeOpacity={0.88}
+            onPress={() => console.log("DOTS")}
+            style={styles.dots}
+          >
+            <MaterialCommunityIcons
+              name="dots-horizontal"
+              size={width * 0.04}
+              color={colors.medium}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       {mediaType == "image" && (
         <TouchableOpacity
@@ -102,12 +104,11 @@ const FeedBox = ({
       {mediaType == "text" && (
         <View style={styles.infoCont}>
           <AppText size="large" style={styles.infoText} bold>
-            {" "}
-            {image}{" "}
+            {image}
           </AppText>
         </View>
       )}
-      <Separator h={1} />
+      {/* <Separator h={1} /> */}
 
       <View style={styles.stats}>
         {statLeft ? (
@@ -142,13 +143,26 @@ const FeedBox = ({
           <View />
         )}
       </View>
-      <Separator h={1} />
+      {/* <Separator h={1} /> */}
       <MediaModal modalObject={displayMedia} setVisible={setDisplayMedia} />
     </View>
   );
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    width: width * 0.96,
+    borderRadius: 20,
+    alignSelf: "center",
+    elevation: 2,
+    shadowRadius: 8,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    marginBottom: 20,
+  },
   author: {
     textTransform: "uppercase",
     width: width * 0.33,
@@ -156,7 +170,7 @@ const styles = StyleSheet.create({
   },
   bgImage: {
     flex: 1,
-    width: width * 0.96,
+    width: "93%",
     maxHeight: height * 0.6,
     alignSelf: "center",
   },
@@ -170,8 +184,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: width * 0.022,
-    paddingRight: width * 0.01,
+    paddingTop: 15,
+    paddingLeft: 15,
+    // paddingRight: 10,
+    paddingBottom: 10,
   },
   infoCont: {
     width: width * 0.9,
@@ -188,6 +204,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // justifyContent: "space-between",
     alignItems: "center",
+    paddingTop: 15,
+    paddingBottom: 25,
     marginTop: 10,
   },
   statText: {
