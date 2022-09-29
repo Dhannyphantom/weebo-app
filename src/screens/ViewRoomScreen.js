@@ -93,6 +93,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
     showInviteIcon = true;
   }
 
+  const gradientColor =
+    theme.mode === "light"
+      ? ["transparent", "rgba(255,255,255,0.2)", "white"]
+      : ["transparent", theme.transparent, theme.transparentBolder];
+
   const floatData = [
     {
       id: "189686",
@@ -420,14 +425,17 @@ const ViewRoomScreen = ({ navigation, route }) => {
         <FlatList
           data={myCharacters}
           removeClippedSubviews={false}
-          contentContainerStyle={{ width, height: BACKDROP_HEIGHT }}
+          contentContainerStyle={{
+            width,
+            height: BACKDROP_HEIGHT,
+          }}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) =>
             renderBackDrops({ item, index }, scrollX)
           }
         />
         <LinearGradient
-          colors={["transparent", "rgba(255,255,255,0.2)", "white"]}
+          colors={gradientColor}
           style={{
             width,
             height: BACKDROP_HEIGHT,
