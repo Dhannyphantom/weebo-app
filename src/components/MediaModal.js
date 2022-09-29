@@ -1,25 +1,19 @@
 import React, { useContext, useRef, useState } from "react";
 import {
-  View,
   StyleSheet,
   Modal,
-  Image,
   PanResponder,
   Animated,
   Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Carousel from "react-native-snap-carousel";
 import Constants from "expo-constants";
 
-import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
 
 import PostVideo from "./PostVideo";
 import AppText from "./AppText";
 import InfoChallenge from "./InfoChallenge";
-import Screen from "./Screen";
-import AppCarousel from "./AppCarousel";
 import FeedImage from "./FeedImage";
 
 const barheight = Constants.statusBarHeight;

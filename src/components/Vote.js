@@ -43,9 +43,11 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
       // single
       timed = setTimeout(() => {
         if (!dPress) {
-          navigation.navigate("Display", {
+          handleShowMedia({
             item: cardInfo.media,
-            data: { type: "image" },
+            feed: {
+              type: "image",
+            },
           });
         }
       }, 500);
@@ -111,7 +113,7 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
                     source={{ uri: cardInfo.media.uri }}
                     style={{
                       ...styles.image,
-                      borderRadius: cardInfo.media.width * 0.017,
+                      borderRadius: 12,
                     }}
                   />
                   {showStat && (
