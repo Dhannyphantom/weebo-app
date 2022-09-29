@@ -51,7 +51,7 @@ const MyPostScreen = ({ navigation, route }) => {
     return (
       <View style={styles.ballHead}>
         {params?.info?.isMine && (
-          <AppButton title="Add New Post" onPress={addNewPost} bare />
+          <AppButton naked title="Add New Post" onPress={addNewPost} />
         )}
       </View>
     );

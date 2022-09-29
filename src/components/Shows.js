@@ -9,7 +9,7 @@ import Separator from "./Separator";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 const Shows = ({ data, searchResult, title, series, show }) => {
   const navigation = useNavigation();
 
@@ -24,7 +24,6 @@ const Shows = ({ data, searchResult, title, series, show }) => {
   // console.log("SHOWS -", unVerifiedCharacters);
 
   const RenderFooter = () => {
-    return null;
     if (!unVerifiedCharacters[0]) return null;
     return (
       <View style={styles.footerContainer}>
@@ -44,10 +43,10 @@ const Shows = ({ data, searchResult, title, series, show }) => {
               size={width * 0.03}
               color={colors.light}
             />
-            <Separator h={1} />
+            <Separator style={styles.line} h={1} />
           </View>
         </View>
-        {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           {unVerifiedCharacters.map((item, idx) => (
             <ChallengeCard
               image={item.cover_photo}
@@ -66,7 +65,7 @@ const Shows = ({ data, searchResult, title, series, show }) => {
               }
             />
           ))}
-        </View> */}
+        </View>
       </View>
     );
   };
@@ -82,8 +81,8 @@ const Shows = ({ data, searchResult, title, series, show }) => {
             followers={data.followers.length}
           />
           <FlatList
-            data={data?.characters}
-            // data={verifiedCharacters}
+            // data={data?.characters}
+            data={verifiedCharacters}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item._id}
@@ -154,6 +153,9 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderRadius: width * 0.03,
     alignSelf: "center",
+  },
+  line: {
+    minWidth: "100%",
   },
 });
 

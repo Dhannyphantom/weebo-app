@@ -28,7 +28,6 @@ import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
-import Screen from "./Screen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -352,7 +351,7 @@ const Events = ({ closer, instance, instanceID }) => {
 
   return (
     <>
-      <Screen style={styles.content}>
+      <View style={styles.content}>
         {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
 
         <ScrollView
@@ -360,11 +359,12 @@ const Events = ({ closer, instance, instanceID }) => {
             paddingBottom: height * 0.1,
           }}
           overScrollMode="never"
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {renderEvents()}
         </ScrollView>
-      </Screen>
+      </View>
       <ActivityIndicator
         type="spin"
         visible={isLoading}
@@ -391,6 +391,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    marginTop: 10,
     width,
     // backgroundColor: colors.extraLight,
   },
