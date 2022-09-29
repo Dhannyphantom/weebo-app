@@ -170,8 +170,18 @@ const Events = ({ closer, instance, instanceID }) => {
         closer && closer();
       },
       (err) => {
-        setErrMsg(err.msg);
         setIsLoading(false);
+
+        if (err?.err?.response?.data?.includes("ongoing event")) {
+          setPopper({
+            vis: true,
+            msg: err?.err?.response?.data,
+            type: "failed",
+          });
+          return;
+        }
+
+        setErrMsg(err.msg);
       }
     );
   };
@@ -295,7 +305,7 @@ const Events = ({ closer, instance, instanceID }) => {
             )}
             {asset && isVid && asset.type == "video" && (
               <PostVideo
-                vidUri={asset.uri}
+                source={asset}
                 style={styles.postVideo}
                 disableThumb
                 viewable={false}

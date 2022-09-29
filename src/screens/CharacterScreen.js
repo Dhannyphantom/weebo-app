@@ -116,17 +116,13 @@ const CharacterScreen = ({ route, navigation }) => {
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [popper, setPopper] = useState({ vis: false });
 
-  const checkIsVerified = () => {
-    return character?.verified;
-  };
-
   const listItems = [
     {
       id: "5078",
       name: "upload media",
       onPress: () => setOpenMedia(!openMedia),
       icon: "upload",
-      show: checkIsVerified() && isMine,
+      show: character?.verified && isMine,
       selected: true,
     },
     {
@@ -158,7 +154,7 @@ const CharacterScreen = ({ route, navigation }) => {
       name: "invites",
       onPress: () => handleInvitePress(),
       icon: "account-plus",
-      selected: true,
+      selected: character?.verified,
       show: isMine,
     },
 
@@ -171,7 +167,7 @@ const CharacterScreen = ({ route, navigation }) => {
           instanceID: character?._id,
         }),
       icon: "plus",
-      show: checkIsVerified() && isMine,
+      show: character?.verified && isMine,
       selected: true,
     },
     {

@@ -10,6 +10,7 @@ import AppText from "../components/AppText";
 import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
 import ThemeContext from "../config/ThemeContext";
+import { StatusBar } from "expo-status-bar";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
@@ -50,7 +51,7 @@ const MyPostScreen = ({ navigation, route }) => {
     if (fromScreen !== "character") return null;
     return (
       <View style={styles.ballHead}>
-        {params?.info?.isMine && (
+        {params?.info?.isMine && params?.info?.verified && (
           <AppButton naked title="Add New Post" onPress={addNewPost} />
         )}
       </View>
@@ -109,6 +110,7 @@ const MyPostScreen = ({ navigation, route }) => {
         backgroundColor: theme.backgroundExtralight,
       }}
     >
+      <StatusBar style="dark" />
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
       {fromScreen === "character" && (
         <View>
