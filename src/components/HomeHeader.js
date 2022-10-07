@@ -226,7 +226,7 @@ const HomeHeader = ({ characters }) => {
                 <View style={styles.newChallenge}>
                   <View>
                     <AppText style={styles.charListHead} bold>
-                      Select your characters for New Challenge
+                      Select characters
                     </AppText>
                     <Separator h={2} />
                     <View>

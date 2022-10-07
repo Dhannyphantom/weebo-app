@@ -3,15 +3,13 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  PanResponder,
   Animated,
-  ImageBackground,
   TouchableOpacity,
   Image,
 } from "react-native";
 import { Video } from "expo-av";
 import Slider from "@react-native-community/slider";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Lottie from "lottie-react-native";
 import { Viewport } from "@skele/components";
 import LottieView from "lottie-react-native";
@@ -34,7 +32,6 @@ const P_HEIGHT = height * 0.75;
 const P_SMALL_HEIGHT = height * 0.4;
 const P_FULL_HEIGHT = height * 0.935;
 const BAR_WIDTH = width * 0.91;
-const BAR_MARGIN = (width - BAR_WIDTH) / 2 - 20;
 const ViewportAwareVideo = Viewport.Aware(Video);
 
 const PostVideo = ({

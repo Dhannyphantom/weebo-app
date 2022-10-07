@@ -98,7 +98,7 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
   if (item.tagShow) title2 = item.tagShow.name;
 
   return (
-    <View>
+    <>
       <FeedBox
         title={item.title}
         title2={title2}
@@ -134,7 +134,7 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
         timer={0.4}
         setter={() => setPopper({ vis: false })}
       />
-    </View>
+    </>
   );
 };
 
