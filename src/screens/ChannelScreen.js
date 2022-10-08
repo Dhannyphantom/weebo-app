@@ -187,8 +187,7 @@ const ChannelScreen = ({ navigation }) => {
         <View style={styles.header}>
           <Feather name="tv" size={18} color={colors.primary} />
           <AppText style={styles.titleText} bold>
-            {" "}
-            {item.name}{" "}
+            {item.name}
           </AppText>
         </View>
         <View style={small ? styles.imageContTwo : styles.imageCont}>
@@ -216,18 +215,17 @@ const ChannelScreen = ({ navigation }) => {
             </AppText>
           </View>
         </View>
-        {!small && <Separator h={1} />}
+        {/* {!small && <Separator h={1} />} */}
         {!small && (
           <View style={styles.stats}>
             <AppText style={styles.statsItem}>
               <AppText bold>{item.posts.length}</AppText> posts{" "}
             </AppText>
             {subscribe && (
-              <View style={styles.statsItem}>
+              <View style={{ flex: 0.5 }}>
                 <AppButton
                   title="SUBSCRIBE"
                   bare
-                  style={styles.statsItem}
                   onPress={() => handleSubscribe("sub", item._id)}
                 />
               </View>
@@ -662,12 +660,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   statsItem: {
-    width: width * 0.33,
+    // width: width / 2,
     alignItems: "center",
+    flex: 0.25,
     textAlign: "center",
   },
   stats: {
+    marginTop: 12,
     flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
   },
   title: {
@@ -676,6 +677,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textTransform: "uppercase",
     marginTop: 20,
+  },
+  titleText: {
+    marginLeft: 6,
   },
 });
 export default ChannelScreen;

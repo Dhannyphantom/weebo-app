@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Image, StyleSheet, View, TouchableOpacity, Modal } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import colors from "../constants/colors";
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -37,64 +37,64 @@ const ProfilePic = ({
 
   return (
     <>
-    <TouchableOpacity
-      onPress={handlePicPress}
-      activeOpacity={disabled ? 1 : 0.9}
-      disabled={disabled}
-      style={{
-        width: size,
-        height: size,
-        borderWidth: border,
-        borderColor: borderStyles,
-        borderRadius: borderRad,
-        overflow: "hidden"
-      }}
-    >
-      {!source ? (
-        <Image
-          source={userInfo.gender === "male" ? proMale : proFemale}
-          resizeMethod="resize"
-          style={[
-            {
-              ...styles.image,
-              // borderRadius: borderRad,
-            },
-            style,
-          ]}
+      <TouchableOpacity
+        onPress={handlePicPress}
+        activeOpacity={disabled ? 1 : 0.9}
+        disabled={disabled}
+        style={{
+          width: size,
+          height: size,
+          borderWidth: border,
+          borderColor: borderStyles,
+          borderRadius: borderRad,
+          overflow: "hidden",
+        }}
+      >
+        {!source ? (
+          <Image
+            source={userInfo.gender === "male" ? proMale : proFemale}
+            resizeMethod="resize"
+            style={[
+              {
+                ...styles.image,
+                // borderRadius: borderRad,
+              },
+              style,
+            ]}
+          />
+        ) : source && source.length > 50 ? (
+          <Image
+            source={{ uri: source }}
+            resizeMethod="resize"
+            style={[
+              {
+                ...styles.image,
+                // borderRadius: borderRad,
+              },
+              style,
+            ]}
+          />
+        ) : (
+          <Image
+            source={source}
+            resizeMethod="scale"
+            style={[
+              {
+                ...styles.image,
+                // borderRadius: borderRad + 1,
+              },
+              style,
+            ]}
+          />
+        )}
+        <ActivityIndicator
+          visible={loading}
+          size={0.22}
+          type="loader"
+          style={{ ...styles.activity, borderRadius: 30 }}
+          wTransparent
         />
-      ) : source && source.length > 50 ? (
-        <Image
-          source={{ uri: source }}
-          resizeMethod="resize"
-          style={[
-            {
-              ...styles.image,
-              // borderRadius: borderRad,
-            },
-            style,
-          ]}
-        />
-      ) : (
-        <Image
-          source={source}
-          resizeMethod="scale"
-          style={[
-            {
-              ...styles.image,
-              // borderRadius: borderRad + 1,
-            },
-            style,
-          ]}
-        />
-      )}
-      <ActivityIndicator
-        visible={loading}
-        size={0.22}
-        type="loader"
-        style={{ ...styles.activity, borderRadius: 30 }}
-        wTransparent
-      />
-    </TouchableOpacity>
+      </TouchableOpacity>
       <Modal
         visible={picModal}
         animationType="fade"

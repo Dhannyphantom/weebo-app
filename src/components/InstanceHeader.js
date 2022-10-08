@@ -365,7 +365,7 @@ const InstanceHeader = ({ instanceData }) => {
             size={130}
             border={4.5}
             userID={owner?._id}
-            borderColor={colors.white}
+            borderColor={theme.white}
           />
           {verified ? (
             <Icon
