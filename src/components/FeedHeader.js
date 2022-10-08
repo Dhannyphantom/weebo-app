@@ -121,11 +121,11 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 8,
     width: "100%",
   },
-
   headText: {
     marginLeft: 7,
     fontSize: 15,
     color: colors.primary,
+    maxWidth: "80%",
   },
   left: {
     flexDirection: "row",
@@ -145,6 +145,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginLeft: 4,
     color: colors.primary,
+    maxWidth: "90%",
+    marginBottom: 5,
   },
 });
 export default FeedHeader;

@@ -172,10 +172,10 @@ const Events = ({ closer, instance, instanceID }) => {
       (err) => {
         setIsLoading(false);
 
-        if (err?.err?.response?.data?.includes("ongoing event")) {
+        if (err?.err?.response?.data?.err?.includes("ongoing event")) {
           setPopper({
             vis: true,
-            msg: err?.err?.response?.data,
+            msg: err?.err?.response?.data?.err,
             type: "failed",
           });
           return;

@@ -17,7 +17,7 @@ import AppDetail from "./AppDetail";
 
 const { width, height } = Dimensions.get("window");
 
-const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
+const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
   const { voteOne, getComments, replyComments, commentPost } =
     useContext(ChallContext);
   const {
@@ -110,9 +110,14 @@ const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
   const handleComments = () => {
     // setMyComments([]);
     setModalVis(true);
-    getComments(voteId, commentType, handleDone, (err) => {
-      setErrMsg(err.msg);
-    });
+    getComments(
+      voteId,
+      commentType,
+      (data) => handleDone(data),
+      (err) => {
+        setErrMsg(err.msg);
+      }
+    );
   };
 
   const handleSentComment = (type, comment, replyID) => {
@@ -187,7 +192,10 @@ const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
         <Icon
           size={55}
           activeOpacity={1}
-          text="Info"
+          iconSize={16}
+          name="more-v-a"
+          pack="b"
+          // text="Info"
           textStyle={styles.textIcon}
           onPress={() => setInfoModal(true)}
         />
@@ -199,11 +207,12 @@ const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
         </View>
         <Icon
           activeOpacity={1}
-          name="chat"
+          name="comment"
           color={colors.medium}
-          iconSize={width * 0.025}
+          pack="b"
+          iconSize={15}
           size={55}
-          text={`${myComments.length.toString()}`}
+          // text={`${myComments.length.toString()}`}
           textStyle={styles.textIcon}
           onPress={handleComments}
         />
@@ -233,10 +242,6 @@ const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
     checkVote();
   }, []);
 
-  // useEffect(() => {
-  //   setMyComments(cComments);
-  // }, [cComments]);
-
   return (
     <View style={styles.container}>
       <FeedHeader challenge={title} />
@@ -253,12 +258,14 @@ const VoteLogic = ({ title, comments, type, timer, cards, user, voteId }) => {
       {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
       <Comments
         modalVis={modalVis}
-        error={errMsg && errMsg}
+        error={errMsg}
         setErrMsg={setErrMsg}
         setModal={setModalVis}
+        commentData={{ instanceType: commentType, instanceID: voteId }}
         loaded={loaded}
         onSend={handleSend}
         data={myComments}
+        setMyComments={setMyComments}
         reply={reply}
         setReply={setReply}
         avatar={userInfo.avatar}

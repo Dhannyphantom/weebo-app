@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { FlatList } from "react-native";
 
 import FeedRender from "./FeedRender";
 
@@ -27,11 +27,5 @@ const Feed = ({ HeaderComp, ListEmpty, style, sticker, data, user }) => {
     />
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+
 export default Feed;

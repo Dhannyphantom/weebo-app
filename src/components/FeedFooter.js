@@ -205,7 +205,6 @@ const FeedFooter = ({
           setLoaded={setLoaded}
           setPost={setPost}
           post={post}
-          myComments={myComments}
           setMyComments={setMyComments}
         />
         {/* REFACTOR APPMODAL AND POPDOWNMODAL COMPONENT TO A SINGE REUSEABLE COMPONENT. */}

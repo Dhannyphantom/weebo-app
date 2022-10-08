@@ -63,7 +63,7 @@ const AlertBox = ({
   const renderRightActions = (progress, dragX) => {
     const trans = dragX.interpolate({
       inputRange: [-100, -50, -1, 0],
-      outputRange: [-15, -50, 0, -5],
+      outputRange: [-15, -25, 0, -5],
     });
     return (
       <Animated.View
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     minHeight: 70,
     borderRadius: 6,
     elevation: 2.3,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   character: {
     color: colors.primary,

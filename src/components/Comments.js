@@ -26,14 +26,13 @@ const { width, height } = Dimensions.get("window");
 
 const Comments = ({
   modalVis,
-  data,
+  data: comments,
   avatar,
   error,
   setLoaded,
   commentData, // {instanceType, instanceID}
   setErrMsg,
   loaded,
-  myComments,
   setPost,
   post,
   setMyComments,
@@ -60,7 +59,7 @@ const Comments = ({
   const handleSentComment = (type, data, cb) => {
     if (type === "comment") {
       // check if there is a dummy
-      const copier = [...myComments];
+      const copier = [...comments];
       const finder = copier.findIndex(
         (obj) => obj.pending == true && obj.comment == data.comment
       );
@@ -69,10 +68,10 @@ const Comments = ({
         copier[finder] = data;
         setMyComments(copier);
       } else {
-        setMyComments([...myComments, data]);
+        setMyComments([...comments, data]);
       }
     } else if (type === "reply") {
-      const copier = [...myComments];
+      const copier = [...comments];
       const finder = copier.find((obj) => obj._id == data.replyId);
       const finderIndex = finder.replies.findIndex(
         (obj) => obj.pending == true && obj.reply == data.reply
@@ -84,14 +83,14 @@ const Comments = ({
       }
       setMyComments(copier);
     } else if (type === "dummyComment") {
-      setMyComments([...myComments, data]);
+      setMyComments([...comments, data]);
     } else if (type === "dummyReply") {
-      const copier = [...myComments];
+      const copier = [...comments];
       const finder = copier.findIndex((obj) => obj._id == data.replyId);
       copier[finder].replies.push(data);
       setMyComments(copier);
     }
-    setPost({ ...post, comments: post.comments + 1 });
+    setPost && setPost({ ...post, comments: post.comments + 1 });
     cb && cb();
   };
 
@@ -155,21 +154,10 @@ const Comments = ({
     }
   };
 
-  // const handleSendComment = (data) => {
-  //   onSend(data, scrollToEnder);
-  //   flatRef?.current?.scrollToEnd();
-  // };
-
   const handleCloseComments = () => {
-    setLoaded(false);
+    setLoaded && setLoaded(false);
     setErrMsg(null);
     setModal(false);
-  };
-
-  const scrollToEnder = () => {
-    setTimeout(() => {
-      flatRef?.current?.scrollToEnd();
-    }, 800);
   };
 
   const renderComments = ({ item }) => {
@@ -213,7 +201,7 @@ const Comments = ({
             </AppText>
             <Separator h={1} />
             <FlatList
-              data={data}
+              data={comments}
               ref={flatRef}
               keyExtractor={(item) => item._id}
               overScrollMode="never"
