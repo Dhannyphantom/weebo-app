@@ -192,11 +192,10 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
         <Icon
           size={55}
           activeOpacity={1}
+          color={colors.medium}
           iconSize={16}
           name="more-v-a"
           pack="b"
-          // text="Info"
-          textStyle={styles.textIcon}
           onPress={() => setInfoModal(true)}
         />
         <View style={styles.pic}>
@@ -300,9 +299,6 @@ const styles = StyleSheet.create({
   },
   spacer: {
     padding: 10,
-  },
-  textIcon: {
-    fontSize: 10,
   },
   username: {
     marginTop: 6,

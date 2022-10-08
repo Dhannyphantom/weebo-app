@@ -11,6 +11,7 @@ import {
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -47,6 +48,7 @@ const Comments = ({
   const theme = useContext(ThemeContext);
   const textInputRef = useRef(null);
   const flatRef = useRef(null);
+  const inset = useSafeAreaInsets();
 
   const handleSetReply = () => {
     textInputRef?.current?.focus();
@@ -187,8 +189,8 @@ const Comments = ({
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={82}
-        style={{ width, height: height * 0.936 }}
+        keyboardVerticalOffset={65}
+        style={{ height: height - inset.top + 2 }}
       >
         {loaded ? (
           <View style={{ flex: 1 }}>
@@ -283,7 +285,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginVertical: 10,
   },
-
+  container: {
+    width,
+  },
   commentReplyBox: {
     flexDirection: "row",
     height: 30,

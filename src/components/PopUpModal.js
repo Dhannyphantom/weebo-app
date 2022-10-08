@@ -7,15 +7,15 @@ import {
   PanResponder,
   Animated,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Drag from "./Drag";
-import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 
 const { height, width } = Dimensions.get("window");
 
 const INITIAL_HEIGHT = height * 0.4;
-const FULL_HEIGHT = height * 0.02;
+const FULL_HEIGHT = 0;
 const PopUpModal = ({
   visible,
   // modalHeight = height * 0.95,
@@ -28,6 +28,11 @@ const PopUpModal = ({
   setter,
 }) => {
   const translator = useRef(new Animated.Value(height)).current;
+  const topper = useSafeAreaInsets().top;
+  const opaciter = translator.interpolate({
+    inputRange: [INITIAL_HEIGHT, height],
+    outputRange: [1, 0],
+  });
 
   const panResponder = React.useRef(
     PanResponder.create({
@@ -72,7 +77,7 @@ const PopUpModal = ({
     if (visible) {
       if (full) {
         Animated.timing(translator, {
-          toValue: FULL_HEIGHT,
+          toValue: 0,
           useNativeDriver: true,
           // bounciness: 3,
         }).start();
@@ -99,20 +104,19 @@ const PopUpModal = ({
         onPress={handleCloseModal}
         style={{
           ...styles.modalCont,
+          marginTop: topper,
+          opacity: opaciter,
         }}
       >
         <Animated.View
           activeOpacity={1}
           style={{
             ...styles.modalContent,
-            backgroundColor: theme.background,
             ...style,
+            backgroundColor: theme.background,
             transform: [{ translateY: translator }],
             height: height,
-            opacity: translator.interpolate({
-              inputRange: [INITIAL_HEIGHT, height],
-              outputRange: [1, 0],
-            }),
+            opacity: opaciter,
           }}
         >
           <Drag panHandlers={{ ...panResponder.panHandlers }} />
@@ -146,13 +150,12 @@ const styles = StyleSheet.create({
 
   modalCont: {
     flex: 1,
-    justifyContent: "flex-end",
-    // backgroundColor: "rgba(0,0,0,0.3)",
+    // justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.15)",
   },
   modalContent: {
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
-    paddingBottom: 20,
   },
 });
 export default PopUpModal;
