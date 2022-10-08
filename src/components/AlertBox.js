@@ -1,6 +1,13 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import getFormatTime from "../constants/getFormatTime";
@@ -13,7 +20,7 @@ import Cards from "./Cards";
 //files
 import appLogo from "../../assets/icon_dark.png";
 
-const screen = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const AlertBox = ({
   active,
@@ -53,9 +60,15 @@ const AlertBox = ({
     handlePressIcon(type, alertID);
   };
 
-  const RenderRightActions = () => {
+  const renderRightActions = (progress, dragX) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, -50, -1, 0],
+      outputRange: [-15, -50, 0, -5],
+    });
     return (
-      <View style={styles.rightBgCont}>
+      <Animated.View
+        style={{ ...styles.rightBgCont, transform: [{ translateX: trans }] }}
+      >
         {!isLoading && (
           <View style={styles.rightBg}>
             <TouchableOpacity
@@ -103,30 +116,36 @@ const AlertBox = ({
           visible={isLoading}
           style={styles.activity}
         />
-      </View>
+      </Animated.View>
     );
   };
 
   return (
-    <Swipeable ref={swipeRef} renderRightActions={RenderRightActions}>
-      <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-        <Cards style={{ ...styles.container, ...border }}>
-          <Avatar
-            avatar={avatar}
-            bold={isSystem}
-            size={30}
-            feederID={_id}
-            name={username}
-            nameStyle={nameStyles}
-            noAt={atSymbol}
-          />
-          <AppText style={styles.challengeText}>{messageText}</AppText>
-          <AppText style={styles.date}>
-            {getFormatTime(date, null, "date")} {getFormatTime(date)}
-          </AppText>
-        </Cards>
-      </TouchableOpacity>
-    </Swipeable>
+    <GestureHandlerRootView>
+      <Swipeable
+        ref={swipeRef}
+        // onSwipeableOpen={onSwipeableOpen}
+        renderRightActions={renderRightActions}
+      >
+        <TouchableOpacity activeOpacity={0.9}>
+          <Cards style={{ ...styles.container, ...border }}>
+            <Avatar
+              avatar={avatar}
+              bold={isSystem}
+              size={30}
+              feederID={_id}
+              name={username}
+              nameStyle={nameStyles}
+              noAt={atSymbol}
+            />
+            <AppText style={styles.challengeText}>{messageText}</AppText>
+            <AppText style={styles.date}>
+              {getFormatTime(date, null, "date")} {getFormatTime(date)}
+            </AppText>
+          </Cards>
+        </TouchableOpacity>
+      </Swipeable>
+    </GestureHandlerRootView>
   );
 };
 const styles = StyleSheet.create({
@@ -136,7 +155,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    width: screen.width * 0.92,
+    width: width * 0.92,
     padding: 12,
     alignSelf: "center",
     minHeight: 70,
@@ -177,7 +196,7 @@ const styles = StyleSheet.create({
   rightBgCont: {
     justifyContent: "center",
     alignItems: "center",
-    height: "100%",
+    height: "95%",
     marginBottom: 4,
   },
   rightIcons: {
