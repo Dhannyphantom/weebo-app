@@ -39,8 +39,8 @@ const ChatUserScreen = ({ route, navigation }) => {
 
   const flatRef = useRef();
   const { _id, username, avatar } = route.params.item;
-  const theme = useContext(ThemeContext);
   // ABOVE IS RECIPIENT
+  const theme = useContext(ThemeContext);
 
   const handleSendChatMsg = (message, chatId) => {
     chats.length < 1 && setEmpty(false);
@@ -121,13 +121,12 @@ const ChatUserScreen = ({ route, navigation }) => {
   useEffect(() => {
     getSocket().on("message", ({ sender, message, sent, chatId, time }) => {
       if (sender.username == username) {
-        const chatId = (Math.random() * 1000).toString();
-
+        const id = (Math.random() * 1000).toString();
         //recipients' client
         setChats([
           ...chats,
           {
-            _id: chatId,
+            _id: id,
             sender: { ...sender, avatar },
             read: false,
             message,

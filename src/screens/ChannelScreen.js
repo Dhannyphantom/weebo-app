@@ -72,6 +72,19 @@ const ChannelHeaderComp = ({
   );
 };
 
+const HeaderTitle = ({ text, show }) => {
+  if (!show) return null;
+  return (
+    <View style={styles.headerCont}>
+      <Separator h={1} />
+      <AppText style={styles.headerTitle} bold>
+        {text ? text : channelHeaderTitle}
+      </AppText>
+      <Separator h={1} />
+    </View>
+  );
+};
+
 const ChannelScreen = ({ navigation }) => {
   const { createChannel, getChannels, subscribeChannel, searchChannels } =
     useContext(CharContext);
@@ -92,9 +105,6 @@ const ChannelScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
 
-  let channelHeaderTitle,
-    shouldShowHeader = false;
-
   const checkSubChannels = channels.find((obj) =>
     obj?.subscribers.includes(userInfo._id)
   );
@@ -113,14 +123,6 @@ const ChannelScreen = ({ navigation }) => {
     description: "",
   };
   const searchRef = useRef(null);
-
-  if (boxState.s) {
-    channelHeaderTitle = "Unsubscribed Channels";
-    checkSubChannels ? (shouldShowHeader = false) : (shouldShowHeader = true);
-  } else if (boxState.m) {
-    checkOwnerChannels ? (shouldShowHeader = true) : (shouldShowHeader = false);
-    channelHeaderTitle = "Channels";
-  }
 
   const handleImagePress = (id) => {
     navigation.navigate("ChannelPost", { id });
@@ -359,19 +361,6 @@ const ChannelScreen = ({ navigation }) => {
         isMine={isMine}
         subscribe={subscribe}
       />
-    );
-  };
-
-  const HeaderTitle = ({ text, show }) => {
-    if (!shouldShowHeader) return null;
-    return (
-      <View style={styles.headerCont}>
-        <Separator h={1} />
-        <AppText style={styles.headerTitle} bold>
-          {text ? text : channelHeaderTitle}
-        </AppText>
-        <Separator h={1} />
-      </View>
     );
   };
 

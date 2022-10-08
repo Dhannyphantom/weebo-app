@@ -48,7 +48,11 @@ const ChatScreen = ({ navigation }) => {
 
   const handleChatPress = (item) => {
     navigation.navigate("ChatUser", {
-      item: { _id: item.recipientId, username: item.username },
+      item: {
+        _id: item.recipientId,
+        username: item.username,
+        avatar: item.avatar,
+      },
     });
     joinRoom(userInfo._id, item.recipientId);
   };
