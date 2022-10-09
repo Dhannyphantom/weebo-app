@@ -17,6 +17,7 @@ const AppHeader = ({
   style,
   dotPress,
   type = "background",
+  separator = true,
   RightComponent,
   iconColor = colors.black,
 }) => {
@@ -77,7 +78,7 @@ const AppHeader = ({
           )}
         </View>
       )}
-      <Separator h={1} m={0.1} />
+      {separator && <Separator h={1} m={0.1} />}
     </>
   );
 };

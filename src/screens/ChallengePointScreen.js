@@ -22,7 +22,7 @@ const { width, height } = Dimensions.get("window");
 
 const ADS_ID = Platform.select({
   ios: "ca-app-pub-3603875446667492/8881804714",
-  android: "ca-app-pub-3603875446667492/9560461569",
+  android: "ca-app-pub-3603875446667492/3217430636",
 });
 
 const CLEAR_ALERT = {
@@ -41,62 +41,6 @@ const screenPointsData = [
     type: "gain",
     points: 10,
     from: "challenge win",
-  },
-  {
-    id: "254870",
-    date: new Date(),
-    type: "gain",
-    points: 100,
-    from: "daily login",
-  },
-  {
-    id: "2",
-    date: new Date(),
-    type: "gain",
-    points: 4,
-    from: "Ads watched",
-  },
-  {
-    id: "134",
-    date: new Date("January 19, 2022 11:13:00"),
-    type: "lost",
-    points: 10,
-    from: "challenge entry",
-  },
-  {
-    id: "4091",
-    date: new Date("January 19, 2022 10:13:00"),
-    type: "gain",
-    points: 50,
-    from: "profile completion",
-  },
-  {
-    id: "134098",
-    date: new Date("January 16, 2022 15:13:00"),
-    type: "gain",
-    points: 100,
-    from: "daily login",
-  },
-  {
-    id: "12498",
-    date: new Date("January 12, 2022 17:13:00"),
-    type: "lost",
-    points: 10,
-    from: "challenge lost",
-  },
-  {
-    id: "309",
-    date: new Date("January 12, 2022 17:13:00"),
-    type: "lost",
-    points: 50,
-    from: "being a d*ck",
-  },
-  {
-    id: "1349834",
-    date: new Date("January 10, 2022 18:13:00"),
-    type: "gain",
-    points: 4,
-    from: "Ads watched",
   },
 ];
 
@@ -478,7 +422,7 @@ const ChallengePointScreen = ({ navigation }) => {
                 size="xxxlarge"
                 bold
               >
-                {userInfo.points}{" "}
+                {userInfo.points}
               </AppText>
             </View>
           </View>

@@ -171,6 +171,7 @@ const ChatUserScreen = ({ route, navigation }) => {
       <AppHeader
         title={username}
         titleStyle={{ color: colors.white }}
+        separator={false}
         style={{ marginTop: 15 }}
       />
       <KeyboardAvoidingView

@@ -406,19 +406,19 @@ const EditProfileScreen = ({ navigation, route }) => {
               <CreateForm headerZ="gender" placeholder={pageData.gender} />
 
               <CreateForm
+                headerZ="first name"
+                name="name"
+                mutable={
+                  formInitials.name.length > 1 ? formInitials.name : "name"
+                }
+              />
+              <CreateForm
                 headerZ="last name"
                 name="second_name"
                 mutable={
                   formInitials.second_name.length > 1
                     ? formInitials.second_name
                     : "last name"
-                }
-              />
-              <CreateForm
-                headerZ="first name"
-                name="name"
-                mutable={
-                  formInitials.name.length > 1 ? formInitials.name : "name"
                 }
               />
               <CreateForm
