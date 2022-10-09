@@ -1,9 +1,10 @@
 import calender from "./calendar";
 export default (time, time2, type) => {
-  //type == ["date", "time", "diff", "format"]
+  //type == "date" | "time" | "diff" | "format"
   const { months } = calender;
 
   const timer = new Date(time);
+  const timer2 = new Date(time2);
   const currentTimer = new Date();
 
   const tHr = timer.getHours();
@@ -98,8 +99,12 @@ export default (time, time2, type) => {
     }
   }
 
+  if (type === "diff") {
+    const diff = Math.abs((timer - timer2) / 1000);
+    return diff > 60;
+  }
+
   if (time && time2) {
-    const timer2 = new Date(time2);
     const diff = (timer - timer2) / 1000;
     if (diff >= 86400) {
       if (diff / 86400 > 2) {

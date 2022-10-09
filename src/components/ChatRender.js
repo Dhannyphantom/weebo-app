@@ -51,6 +51,14 @@ const ChatRender = ({
 
   const timer = getTimeFormat(time);
   const showDay = getTimeFormat(time, upperChat?.time);
+  const showTimerLeft =
+    lowerChat && lowerSender
+      ? getTimeFormat(time, lowerChat.time, "diff")
+      : true;
+  const showTimerRight =
+    lowerChat && !lowerSender
+      ? getTimeFormat(time, lowerChat.time, "diff")
+      : true;
   return (
     <View style={styles.container}>
       {!bool ? (
@@ -87,11 +95,13 @@ const ChatRender = ({
               </AppText>
             </View>
           </View>
-          <View style={styles.timerContLeft}>
-            <AppText style={styles.timer} bold>
-              {timer}
-            </AppText>
-          </View>
+          {showTimerLeft && (
+            <View style={styles.timerContLeft}>
+              <AppText style={styles.timer} bold>
+                {timer}
+              </AppText>
+            </View>
+          )}
         </>
       ) : (
         <>
@@ -122,11 +132,13 @@ const ChatRender = ({
               </AppText>
             </View>
           </View>
-          <View style={styles.timerCont}>
-            <AppText style={styles.timer} bold>
-              {timer}
-            </AppText>
-          </View>
+          {showTimerRight && (
+            <View style={styles.timerCont}>
+              <AppText style={styles.timer} bold>
+                {timer}
+              </AppText>
+            </View>
+          )}
         </>
       )}
     </View>
@@ -171,6 +183,8 @@ const styles = StyleSheet.create({
   },
   timer: {
     color: colors.medium,
+    marginTop: 4,
+    marginBottom: 10,
   },
   reciStyle: {
     transform: [{ rotateY: "180deg" }],

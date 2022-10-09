@@ -168,7 +168,11 @@ const ChatUserScreen = ({ route, navigation }) => {
   return (
     <Screen style={{ ...styles.container, backgroundColor: theme.chat }}>
       <StatusBar style="light" />
-      <AppHeader title={username} style={{ marginTop: 15 }} />
+      <AppHeader
+        title={username}
+        titleStyle={{ color: colors.white }}
+        style={{ marginTop: 15 }}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.comment}
