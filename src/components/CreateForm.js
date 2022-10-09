@@ -154,7 +154,7 @@ const CreateForm = ({
       <View
         style={{
           ...styles.inputContainer,
-          // height: Math.max(40, height),
+          height: Math.max(40, height),
           backgroundColor:
             placeholder && !grow ? theme.unchange : theme.extralight,
         }}
@@ -343,12 +343,11 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     width: "80%",
-    marginLeft: 14,
-    // height: 40,
-    // minHeight: 40,
-    // maxHeight: 70,
+    marginLeft: 15,
+    minHeight: 55,
+    maxHeight: 100,
     justifyContent: "center",
-    borderRadius: 9,
+    borderRadius: 8,
     overflow: "hidden",
   },
   inputGrow: {

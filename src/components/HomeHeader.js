@@ -23,6 +23,7 @@ import ActionMenu from "./ActionMenu";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
+import AppFadeIn from "./AppFadeIn";
 
 const screen = Dimensions.get("window");
 
@@ -112,6 +113,90 @@ const HomeHeader = ({ characters }) => {
     );
   };
 
+  const CreatePostActions = () => {
+    return (
+      <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
+        <View style={styles.links}>
+          {!cMode && (
+            <View style={{ flexDirection: "row" }}>
+              <ActionMenu
+                item={itemChallenge}
+                onPress={() => handleNav("contest")}
+                style={{
+                  width: screen.width * 0.41,
+                  height: screen.width * 0.41,
+                  marginHorizontal: 2,
+                  marginRight: 4,
+                }}
+              />
+              <View style={{ justifyContent: "center" }}>
+                <ActionMenu
+                  item={itemWrite}
+                  onPress={() => handleNav("write")}
+                  style={{
+                    width: screen.width * 0.41,
+                    height: (screen.width * 0.41) / 2.1,
+                    marginHorizontal: 2,
+                    marginVertical: 1,
+                  }}
+                />
+                <ActionMenu
+                  item={itemPost}
+                  onPress={() => handleNav("post")}
+                  style={{
+                    width: screen.width * 0.41,
+                    height: (screen.width * 0.41) / 2.1,
+                    marginVertical: 3,
+                    marginHorizontal: 2,
+                  }}
+                />
+              </View>
+            </View>
+          )}
+
+          {cMode && (
+            <View style={styles.newChallenge}>
+              <View>
+                <AppText style={styles.charListHead} bold>
+                  Select characters
+                </AppText>
+                <Separator h={2} />
+                <View>
+                  <FlatList
+                    data={myCharacters}
+                    keyExtractor={(item) => item._id}
+                    ListEmptyComponent={
+                      <ActivityIndicator
+                        visible={true}
+                        type="isEmpty"
+                        text="You don't have any characters"
+                      />
+                    }
+                    renderItem={renderMyCharacters}
+                  />
+                </View>
+              </View>
+
+              {selectChar.length > 0 && (
+                <AppButton
+                  title="NEXT"
+                  style={styles.nextBtn}
+                  bare
+                  onPress={() => {
+                    setModalVis(false);
+                    navigation.navigate("Contest", {
+                      characters: selectChar,
+                    });
+                  }}
+                />
+              )}
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
   useEffect(() => {
     setMyCharacters(characters);
   }, [characters]);
@@ -155,7 +240,7 @@ const HomeHeader = ({ characters }) => {
       <View>
         {showSearch && (
           <Search
-            placeholder="Search your favorite characters, shows and much more"
+            placeholder="Search characters, shows, groups, users"
             showSearch={showSearch}
             setShowSearch={setShowSearch}
             style={styles.searchBar}
@@ -168,102 +253,20 @@ const HomeHeader = ({ characters }) => {
           {errMsg}
         </AppText>
       )}
-      <Modal
+      <AppFadeIn
+        visible={modalVis}
+        setVisible={setModalVis}
+        RenderComponent={CreatePostActions}
+      />
+      {/* <Modal
         visible={modalVis}
         animationType="fade"
         onRequestClose={() => setModalVis(false)}
         transparent
         statusBarTranslucent
       >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setModalVis(false)}
-          style={styles.modalBox}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            style={[styles.modalBg, { backgroundColor: theme.background }]}
-          >
-            <View style={styles.links}>
-              {!cMode && (
-                <View style={{ flexDirection: "row" }}>
-                  <ActionMenu
-                    item={itemChallenge}
-                    onPress={() => handleNav("contest")}
-                    style={{
-                      width: screen.width * 0.41,
-                      height: screen.width * 0.41,
-                      marginHorizontal: 2,
-                      marginRight: 4,
-                    }}
-                  />
-                  <View style={{ justifyContent: "center" }}>
-                    <ActionMenu
-                      item={itemWrite}
-                      onPress={() => handleNav("write")}
-                      style={{
-                        width: screen.width * 0.41,
-                        height: (screen.width * 0.41) / 2.1,
-                        marginHorizontal: 2,
-                        marginVertical: 1,
-                      }}
-                    />
-                    <ActionMenu
-                      item={itemPost}
-                      onPress={() => handleNav("post")}
-                      style={{
-                        width: screen.width * 0.41,
-                        height: (screen.width * 0.41) / 2.1,
-                        marginVertical: 3,
-                        marginHorizontal: 2,
-                      }}
-                    />
-                  </View>
-                </View>
-              )}
-
-              {cMode && (
-                <View style={styles.newChallenge}>
-                  <View>
-                    <AppText style={styles.charListHead} bold>
-                      Select characters
-                    </AppText>
-                    <Separator h={2} />
-                    <View>
-                      <FlatList
-                        data={myCharacters}
-                        keyExtractor={(item) => item._id}
-                        ListEmptyComponent={
-                          <ActivityIndicator
-                            visible={true}
-                            type="isEmpty"
-                            text="You don't have any characters"
-                          />
-                        }
-                        renderItem={renderMyCharacters}
-                      />
-                    </View>
-                  </View>
-
-                  {selectChar.length > 0 && (
-                    <AppButton
-                      title="NEXT"
-                      style={styles.nextBtn}
-                      bare
-                      onPress={() => {
-                        setModalVis(false);
-                        navigation.navigate("Contest", {
-                          characters: selectChar,
-                        });
-                      }}
-                    />
-                  )}
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+       
+      </Modal> */}
     </View>
   );
 };

@@ -1,8 +1,5 @@
 export default {
-  // primary: "#003399",
-  // primary: "#ef70c2",
-  primary: "#ff6d00",
-  // primary: "#0070c2",
+  primary: "#ffab00",
   primaryOld: "#935DE3",
   accent: "#ffab40",
   accentOld: "#ff6600",
@@ -27,6 +24,5 @@ export default {
   google: "#E24040",
   twitter: "#250654",
   unChange: "#fff3e0",
-  // unChange: "#e3d8f0",
   black: "#000",
 };

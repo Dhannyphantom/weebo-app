@@ -30,6 +30,7 @@ import ActivityIndicator from "../components/ActivityIndicator";
 import LoaderImage from "../components/LoaderImage";
 import ThemeContext from "../config/ThemeContext";
 import TabList from "../components/TabList";
+import AppFadeIn from "../components/AppFadeIn";
 
 const { width, height } = Dimensions.get("window");
 
@@ -362,6 +363,49 @@ const ChannelScreen = ({ navigation }) => {
     );
   };
 
+  const CreateChannelForm = () => {
+    return (
+      <View style={[styles.border, { backgroundColor: theme.backgroundLight }]}>
+        <View style={[styles.content, { backgroundColor: theme.background }]}>
+          <AppText style={styles.title} bold>
+            Create new channel
+          </AppText>
+          <Separator h={1} />
+          <CreateFormik
+            initialValues={init}
+            validationSchema={validationSchema}
+            onSubmit={handleFormSubmit}
+          >
+            <AppText style={{ color: theme.medium }} bold>
+              Will require 150CP
+            </AppText>
+            <View style={{ padding: 12 }}>
+              <CreateForm
+                name="name"
+                header="Channel Name:"
+                mutable="Give your channel a name"
+              />
+              <CreateForm
+                name="description"
+                header="Channel's Desciption:"
+                placeholder="Write something about your channel"
+                grow
+              />
+              <CoverUpload type="channel" show name="cover_photo" />
+              <SubmitButton title="CREATE" bared style={styles.submitBtn} />
+            </View>
+          </CreateFormik>
+          <View style={styles.activity}>
+            {isLoading && (
+              <ActivityIndicator type="spin" visible={true} wTransparent />
+            )}
+          </View>
+          {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
+        </View>
+      </View>
+    );
+  };
+
   useEffect(() => {
     let isSubscribed = true;
     getChannels((data) => {
@@ -466,65 +510,11 @@ const ChannelScreen = ({ navigation }) => {
           />
         }
       />
-      <Modal
+      <AppFadeIn
         visible={modal}
-        transparent
-        animationType="fade"
-        style={{ flex: 1 }}
-        statusBarTranslucent
-        onRequestClose={() => setModal(false)}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setModal(false)}
-          style={styles.modalCont}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            style={[styles.border, { backgroundColor: theme.backgroundLight }]}
-          >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={[styles.content, { backgroundColor: theme.background }]}
-            >
-              <AppText style={styles.title} bold>
-                Create new channel
-              </AppText>
-              <Separator h={1} />
-              <CreateFormik
-                initialValues={init}
-                validationSchema={validationSchema}
-                onSubmit={handleFormSubmit}
-              >
-                <AppText style={{ color: theme.medium }} bold>
-                  Will require 150CP
-                </AppText>
-                <View style={{ padding: 12 }}>
-                  <CreateForm
-                    name="name"
-                    header="Channel Name:"
-                    mutable="Give your channel a name"
-                  />
-                  <CreateForm
-                    name="description"
-                    header="Channel's Desciption:"
-                    placeholder="Write something about your channel"
-                    grow
-                  />
-                  <CoverUpload type="channel" show name="cover_photo" />
-                  <SubmitButton title="CREATE" bared style={styles.submitBtn} />
-                </View>
-              </CreateFormik>
-              <View style={styles.activity}>
-                {isLoading && (
-                  <ActivityIndicator type="spin" visible={true} wTransparent />
-                )}
-              </View>
-              {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        setVisible={setModal}
+        RenderComponent={CreateChannelForm}
+      />
     </Screen>
   );
 };
@@ -549,7 +539,8 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    maxHeight: height * 0.75,
+    minHeight: height * 0.6,
+    maxHeight: height * 0.85,
     alignItems: "center",
     overflow: "hidden",
     paddingBottom: 20,
@@ -660,7 +651,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   statsItem: {
-    // width: width / 2,
     alignItems: "center",
     flex: 0.25,
     textAlign: "center",

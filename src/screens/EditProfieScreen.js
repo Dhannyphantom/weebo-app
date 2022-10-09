@@ -27,6 +27,7 @@ import Separator from "../components/Separator";
 import PopMessage from "../components/PopMessage";
 
 import yupSchema from "../constants/yupSchema";
+import ThemeContext from "../config/ThemeContext";
 const { editValidationSchema } = yupSchema;
 
 const { width, height } = Dimensions.get("window");
@@ -79,6 +80,7 @@ const EditProfileScreen = ({ navigation, route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
   const params = route.params;
+  const theme = useContext(ThemeContext);
   // SOMETHING WRONG WITH THE ERROR MESSAGE
   const [toggle, setToggle] = useState(false);
   const [pageData, setPageData] = useState(userInfo);
@@ -217,7 +219,7 @@ const EditProfileScreen = ({ navigation, route }) => {
       textInputOne?.current?.focus();
     }, [vis]);
     return (
-      <View style={styles.emailPop}>
+      <View style={[styles.emailPop, { backgroundColor: theme.background }]}>
         <AppText size="large" style={styles.emailPopTitle} bold>
           Email Verification
         </AppText>
@@ -281,8 +283,9 @@ const EditProfileScreen = ({ navigation, route }) => {
                   key={idx}
                   style={{
                     ...styles.emailVeriBox,
-                    borderColor: colors.primary,
-                    borderWidth: emailItem.focused ? 0.7 : 0,
+                    backgroundColor: theme.extralight,
+                    borderColor: theme.mediumLight,
+                    borderWidth: emailItem.focused ? 3 : 0,
                   }}
                 >
                   <TextInput
@@ -312,8 +315,8 @@ const EditProfileScreen = ({ navigation, route }) => {
                         }
                       }
                     }}
-                    autoFocus={idx == 0}
-                    style={styles.emailPopInput}
+                    autoFocus={idx === 0}
+                    style={[styles.emailPopInput, { color: theme.color }]}
                     onChangeText={(val) => {
                       const copier = [...emailVeriValues];
                       copier[idx].text = val;
