@@ -74,7 +74,7 @@ const InstanceHeader = ({ instanceData }) => {
           .slice(0, instanceName?.search(" "))
           .toUpperCase()} the first name of a character in ${instanceShow?.toUpperCase()} show?`
       : instance == "show"
-      ? `Does ${instanceName?.toUpperCase()} exists as a show or manga in the Animedom?`
+      ? `Is ${instanceName?.toUpperCase()} the official title of an anime or manga in the Animedom?`
       : null;
 
   const pFeedback = verifiedList?.filter(
@@ -295,10 +295,11 @@ const InstanceHeader = ({ instanceData }) => {
   const RenderUnverifiedTag = () => {
     if (verified || isChannel) return null;
     return (
-      <TouchableOpacity style={{ marginLeft: 6 }} onPress={handleUnverifyPress}>
-        <AppText style={styles.unverifiedTag} bold>
-          UNVERIFIED
-        </AppText>
+      <TouchableOpacity
+        style={styles.unverifiedTagContainer}
+        onPress={handleUnverifyPress}
+      >
+        <View style={styles.unverifiedTag} />
       </TouchableOpacity>
     );
   };
@@ -497,13 +498,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     opacity: 0.3,
   },
-  unverifiedTag: {
-    color: colors.heart,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderWidth: 1,
+  unverifiedTagContainer: {
+    padding: 5,
+    marginLeft: 5,
+    borderWidth: 2,
     borderColor: colors.heart,
-    borderRadius: 10,
+    opacity: 0.4,
+    borderRadius: 60,
+  },
+  unverifiedTag: {
+    backgroundColor: colors.heart,
+    width: 10,
+    height: 10,
+    borderRadius: 8,
   },
   verifiedText: {
     color: colors.facebook,

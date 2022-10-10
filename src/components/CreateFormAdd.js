@@ -610,7 +610,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "80%",
-    height: 40,
+    minHeight: 55,
+    maxHeight: 100,
     flexDirection: "row",
     marginLeft: 14,
     justifyContent: "center",

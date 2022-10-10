@@ -178,12 +178,12 @@ const ChallengePointScreen = ({ navigation }) => {
           style={[styles.cardDetails, { backgroundColor: theme.extralight }]}
         >
           <AppText>You {pointsWord}</AppText>
-          <Separator h={1} />
+          <Separator h={1} m={12} />
           <AppText size="large" style={{ color: pointsColor }} bold>
             {pointsSign}
             {points}WP
           </AppText>
-          <Separator h={1} />
+          <Separator h={1} m={12} />
           <AppText>
             FROM:{" "}
             <AppText style={{ textTransform: "capitalize" }} bold>
@@ -357,7 +357,7 @@ const ChallengePointScreen = ({ navigation }) => {
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title="Weebo Points Activity"
+        title="Activity"
         RightComponent={() => (
           <ScreenHeaderRight
             isLoaded={adLoaded}
@@ -453,8 +453,9 @@ const styles = StyleSheet.create({
   },
   cardDetails: {
     // flex: 1,
+    paddingVertical: 15,
     width: width * 0.7,
-    height: width * 0.27,
+    minHeight: width * 0.27,
     alignSelf: "center",
     borderRadius: width * 0.03,
     alignItems: "center",

@@ -38,10 +38,10 @@ const CharactersList = ({ route, navigation }) => {
   const otherId = route.params.id;
   const HEADER_TITLE =
     type == "following"
-      ? "Following Characters"
+      ? "Following"
       : type === "otherCharacters"
       ? "Characters"
-      : "My Characters";
+      : "Characters";
   const searchRef = useRef(null);
 
   const RightComp = () => {

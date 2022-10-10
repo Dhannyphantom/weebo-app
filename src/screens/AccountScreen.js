@@ -61,6 +61,8 @@ const InviteWeebs = () => {
         const result = await Share.share({
           message: `Hi, I'm ${username}, \n Join our Weebo Community now by downloading our app in the app stores. \n\nhttps://weebo-servers/users/invite_weebs?user?=${username}&identifier=${_id}&repo=false`,
         });
+
+        console.log(result);
         if (result.action === Share.shareAction) {
           if (result.activityType) {
             console.log(result.activityType);

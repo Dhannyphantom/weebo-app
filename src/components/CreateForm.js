@@ -62,7 +62,9 @@ const CreateForm = ({
 }) => {
   const [dropDown, setDropDown] = useState(false);
   const [show, setShow] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    dateTime2 ? new Date("January 1, 2000") : new Date()
+  );
   const [height, setHeight] = useState("");
   const [myDate, setMydate] = useState("Currently airing");
 
@@ -159,15 +161,20 @@ const CreateForm = ({
             placeholder && !grow ? theme.unchange : theme.extralight,
         }}
       >
-        {!placeholder && !dropdownA && !grow && !mutable && !pass && (
-          <TextInput
-            placeholder={addition}
-            placeholderTextColor={colors.medium}
-            onBlur={() => setFieldTouched(name)}
-            style={[styles.input, { color: theme.color }]}
-            onChangeText={handleChange(name)}
-          />
-        )}
+        {!placeholder &&
+          !dropdownA &&
+          !grow &&
+          !mutable &&
+          !pass &&
+          !(dateTime || dateTime2) && (
+            <TextInput
+              placeholder={addition}
+              placeholderTextColor={colors.medium}
+              onBlur={() => setFieldTouched(name)}
+              style={[styles.input, { color: theme.color }]}
+              onChangeText={handleChange(name)}
+            />
+          )}
         {placeholder && !grow && (
           <View
             style={{
@@ -325,7 +332,7 @@ const CreateForm = ({
 };
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 7,
+    marginBottom: 30,
   },
   chevron: {
     paddingHorizontal: 10,
@@ -336,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dropDownText: {
-    padding: 13,
+    paddingLeft: 15,
     color: colors.medium,
     textTransform: "capitalize",
   },

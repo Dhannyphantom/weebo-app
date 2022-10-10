@@ -30,6 +30,10 @@ const {
 } = schemas;
 const { width, height } = Dimensions.get("window");
 
+const CHARACTER_WP = 150;
+const GROUP_WP = 100;
+const SHOW_WP = 200;
+
 const CreateCharacterScreen = ({ route, navigation }) => {
   const [name, setName] = useState(route.params.name.trim());
   const [isLoading, setIsLoading] = useState(false);
@@ -123,6 +127,12 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   const [createName, setCreateName] = useState([{ id: "1", name }]);
   const theme = useContext(ThemeContext);
 
+  const weebo_points = cardState.character
+    ? CHARACTER_WP
+    : cardState.group
+    ? GROUP_WP
+    : SHOW_WP;
+
   const handleCardState = (stateObj, value) => {
     setCardState(stateObj);
     setName(value);
@@ -167,7 +177,11 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   return (
     <Screen>
       <View style={styles.container}>
-        <AppText bold> {name} instance requires 25CP to create</AppText>
+        <AppText bold>
+          {" "}
+          {name} instance requires{" "}
+          <AppText style={{ color: colors.primary }}>{weebo_points}WP</AppText>
+        </AppText>
         <Separator h={1} />
         <TabList
           state={cardState}
@@ -179,7 +193,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             data={createName}
-            contentContainerStyle={{ paddingBottom: width * 0.135 }}
+            contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             listKey="characters"
             keyExtractor={(item) => item.id}
@@ -287,7 +301,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: width * 0.135 }}
+            contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             renderItem={({ item }) => (
               <View style={{ marginTop: 10 }}>
@@ -322,7 +336,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     type1
                   />
                   <CreateFormArray
-                    headerC="spinoffs and manga related"
+                    headerC="movies, spinoffs or manga related"
                     name="spinoffs"
                     type1
                   />
@@ -367,7 +381,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: width * 0.135 }}
+            contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             renderItem={({ item }) => (
               <View>
