@@ -408,7 +408,7 @@ const ChallengePointScreen = ({ navigation }) => {
                 size="xxxlarge"
                 bold
               >
-                {userInfo.points}
+                {Math.min(userInfo.points, 1000)}
               </AppText>
             </View>
           </View>

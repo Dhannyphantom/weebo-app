@@ -265,7 +265,7 @@ const ShowScreen = ({ route, navigation }) => {
   const handleNewCover = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [25, 16],
+      aspect: [30, 25],
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     if (!res.cancelled) {
