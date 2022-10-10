@@ -20,6 +20,8 @@ import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
+const ADS_POINT = 5;
+
 const ADS_ID = Platform.select({
   ios: "ca-app-pub-3603875446667492/8881804714",
   android: "ca-app-pub-3603875446667492/3217430636",
@@ -32,17 +34,6 @@ const CLEAR_ALERT = {
   btn: "YES",
   type: "clear",
 };
-
-// MAKE THIS WORK WITH SERVER
-const screenPointsData = [
-  {
-    id: "1",
-    date: new Date(),
-    type: "gain",
-    points: 10,
-    from: "challenge win",
-  },
-];
 
 const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
   const ADS_ALERT = {
@@ -74,7 +65,7 @@ const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
         setPopData({
           vis: true,
           // msg: "Try again some other time",
-          msg: err?.message,
+          msg: err?.message ?? "Something went wrong",
           type: "failed",
         });
       }
@@ -205,21 +196,17 @@ const ChallengePointScreen = ({ navigation }) => {
   };
 
   const adsServer = async () => {
-    // console.log("Hello", ADS_ID);
-
-    // return;
     try {
       await AdMobRewarded.setAdUnitID(ADS_ID);
       await AdMobRewarded.requestAdAsync({ servePersonalizedAds: true });
-      console.log("ENTERED");
       setAdLoaded({ vis: true, firstLoad: true });
     } catch (err) {
       // handle err
       console.log(err?.message);
-      if (err?.message?.toLowerCase() == "ad is already loaded.") {
+      if (err?.message?.includes("already loaded")) {
         setAdLoaded({ vis: true, firstLoad: true });
       } else {
-        setAdLoaded({ vis: false, firstLoad: true });
+        setAdLoaded({ vis: false, err: err?.message, firstLoad: true });
       }
     }
   };
@@ -235,7 +222,6 @@ const ChallengePointScreen = ({ navigation }) => {
       } else {
         // DO SOMETHING ELSE
         const timer = (Date.now() - new Date(getAdsData.lastWatched)) / 1000;
-        console.log(timer / 86400);
         if (timer / 86400 >= 0) {
           // USER IS VALID FOR A NEW ADS
           const adsData = {
@@ -342,8 +328,8 @@ const ChallengePointScreen = ({ navigation }) => {
       "rewardedVideoUserDidEarnReward",
       async () => {
         const userData = {
-          action: "points",
-          actionData: +4,
+          action: "ads_reward",
+          actionData: ADS_POINT,
           instance: "user",
           instanceID: userInfo._id,
         };

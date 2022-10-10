@@ -8,7 +8,6 @@ import {
   TextInput,
 } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
