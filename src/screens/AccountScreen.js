@@ -3,11 +3,11 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  Share,
   FlatList,
   Dimensions,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -23,6 +23,7 @@ import Separator from "../components/Separator";
 import AlertModal from "../components/AlertModal";
 import { StatusBar } from "expo-status-bar";
 import ThemeContext from "../config/ThemeContext";
+import AppFadeIn from "../components/AppFadeIn";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {
@@ -31,6 +32,78 @@ const modalShow = {
   message: "Are sure you want to miss out all the fun?",
   btn: "YES",
   type: "signout",
+};
+
+const InviteWeebs = () => {
+  const theme = useContext(ThemeContext);
+  const {
+    sendInvite,
+    state: {
+      userInfo: { username, _id },
+    },
+  } = useContext(AuthContext);
+
+  const handleInvites = async (type) => {
+    switch (type) {
+      case "link":
+        sendInvite(
+          _id,
+          (resData) => {
+            console.log("MY lINK");
+          },
+          (err) => {
+            console.log(err);
+            console.log(err?.err?.response?.data);
+          }
+        );
+        break;
+      case "share":
+        const result = await Share.share({
+          message: `Hi, I'm ${username}, \n Join our Weebo Community now by downloading our app in the app stores. \n\nhttps://weebo-servers/users/invite_weebs?user?=${username}&identifier=${_id}&repo=false`,
+        });
+        if (result.action === Share.shareAction) {
+          if (result.activityType) {
+            console.log(result.activityType);
+          } else {
+            console.log("just shared");
+          }
+        } else if (result.action === Share.dissmissedAction) {
+          console.log("dismissed");
+        }
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  return (
+    <View style={[styles.invites, { backgroundColor: theme.background }]}>
+      <AppText size="xlarge" bold>
+        Weeb Invites!
+      </AppText>
+      <Separator h={2} m={3} />
+      <AppText style={{ textAlign: "center", marginTop: 8 }}>
+        Invite a fellow Weeb to the community and earn more Weebo Points
+      </AppText>
+      <View style={styles.invitesContent}>
+        <TouchableOpacity
+          onPress={() => handleInvites("link")}
+          style={styles.invitesBtns}
+        >
+          <Ionicons name="copy-outline" size={70} color={colors.medium} />
+          <AppText bold>Get My Link</AppText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleInvites("share")}
+          style={styles.invitesBtns}
+        >
+          <Ionicons name="share-outline" size={70} color={colors.medium} />
+          <AppText bold>Share Link</AppText>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 const AccountScreen = ({ navigation, route }) => {
@@ -43,6 +116,7 @@ const AccountScreen = ({ navigation, route }) => {
   const [imageLoading, setImageLoading] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
   const [refreshing, setRefreshing] = useState(false);
+  const [invites, setInvites] = useState(false);
   const [account, setAccount] = useState([userInfo]);
 
   const theme = useContext(ThemeContext);
@@ -267,6 +341,11 @@ const AccountScreen = ({ navigation, route }) => {
               onPress={() => navigation.navigate("Saved")}
             />
             <Link
+              name="Invite Weebs"
+              iconName="account-plus"
+              onPress={() => setInvites(true)}
+            />
+            <Link
               name="Settings"
               iconName="settings"
               pack="b"
@@ -282,6 +361,11 @@ const AccountScreen = ({ navigation, route }) => {
             {/* </ScrollView> */}
           </Cards>
         )}
+      />
+      <AppFadeIn
+        visible={invites}
+        setVisible={setInvites}
+        RenderComponent={InviteWeebs}
       />
       <AlertModal
         obj={alertModal}
@@ -331,6 +415,23 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingTop: width * 0.03,
+  },
+  invites: {
+    width: width * 0.95,
+    borderRadius: 10,
+    alignItems: "center",
+    padding: 10,
+  },
+  invitesContent: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  invitesBtns: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   info: {
     flexDirection: "row",

@@ -393,6 +393,18 @@ const notificationSender = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const sendInvite = (dispatch) => async (userId, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.get(`/invite_weebs?identifier=${userId}`, {
+      headers: { "x-auth-token": token },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Unable to send invite" });
+  }
+};
+
 // THIS WILL UPDATE THE USER STATE
 const updateMe = (dispatch) => (data, prop) => {
   dispatch({ type: "update_me", payload: { data, prop } });
@@ -465,6 +477,7 @@ export const { Context, Provider } = createDataContext(
     updateMe,
     setPushToken,
     mailVerifier,
+    sendInvite,
     updateProfile,
     resetPassword,
     recoverPassword,
