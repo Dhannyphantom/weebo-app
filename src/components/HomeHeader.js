@@ -3,11 +3,10 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   Dimensions,
   FlatList,
 } from "react-native";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -258,22 +257,12 @@ const HomeHeader = ({ characters }) => {
         setVisible={setModalVis}
         RenderComponent={CreatePostActions}
       />
-      {/* <Modal
-        visible={modalVis}
-        animationType="fade"
-        onRequestClose={() => setModalVis(false)}
-        transparent
-        statusBarTranslucent
-      >
-       
-      </Modal> */}
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "rgba(0,0,0,0.1)",
-    zIndex: 59,
+    zIndex: 5,
   },
   charListHead: {
     textAlign: "center",

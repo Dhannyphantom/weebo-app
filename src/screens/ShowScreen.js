@@ -49,8 +49,6 @@ const hider = [
 ];
 const counter = ["characters", "groups", "followers", "posts", "challengers"];
 
-const ViewView = Viewport.Aware(View);
-
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
   const {
@@ -67,7 +65,7 @@ const ShowScreen = ({ route, navigation }) => {
   } = useContext(AuthContext);
 
   const [dataState, setDataState] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [transfer, setTransfer] = useState(false);

@@ -53,7 +53,7 @@ const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
       if (num <= 0) {
         setPopData({
           vis: true,
-          msg: "Try again tomorrow",
+          msg: "Ads exhausted. Try again tomorrow",
           type: "failed",
         });
         return;
@@ -202,9 +202,12 @@ const ChallengePointScreen = ({ navigation }) => {
       setAdLoaded({ vis: true, firstLoad: true });
     } catch (err) {
       // handle err
+      const errAds = err?.message;
       console.log(err?.message);
       if (err?.message?.includes("already loaded")) {
         setAdLoaded({ vis: true, firstLoad: true });
+      } else if (errAds?.includes("resolve host")) {
+        console.log("do something different");
       } else {
         setAdLoaded({ vis: false, err: err?.message, firstLoad: true });
       }
