@@ -15,7 +15,6 @@ import MyPostScreen from "../screens/MyPostScreen";
 import ViewRoomScreen from "../screens/ViewRoomScreen";
 import CharactersList from "../screens/CharactersList";
 import FollowersScreen from "../screens/FollowersScreen";
-import ConnectScreen from "../screens/ConnectScreen";
 import GroupsScreen from "../screens/GroupsScreen";
 import ShowsScreen from "../screens/ShowsScreen";
 import FriendListScreen from "../screens/FriendListScreen";
@@ -42,7 +41,6 @@ const HomeStack = () => {
       />
       <Stack.Screen name="Followers" component={FollowersScreen} />
       <Stack.Screen name="MyPost" component={MyPostScreen} />
-      <Stack.Screen name="Connect" component={ConnectScreen} />
       <Stack.Screen name="Group" component={GroupsScreen} />
       <Stack.Screen name="Event" component={EventScreen} />
       <Stack.Screen name="Room" component={ViewRoomScreen} />

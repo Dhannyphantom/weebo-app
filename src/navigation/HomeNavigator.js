@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import DisplayImageScreen from "../screens/DisplayImageScreen";
 import ChatUserScreen from "../screens/ChatUserScreen";
+import ConnectScreen from "../screens/ConnectScreen";
 
 import TabNavigator from "./TabNavigator";
 
@@ -18,6 +19,7 @@ const HomeNavigator = () => {
       <Stack.Screen name="HomeTab" component={TabNavigator} />
       <Stack.Screen name="ChatUser" component={ChatUserScreen} />
       <Stack.Screen name="Display" component={DisplayImageScreen} />
+      <Stack.Screen name="Connect" component={ConnectScreen} />
     </Stack.Navigator>
   );
 };

@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
+  Animated,
   FlatList,
+  Modal,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
@@ -33,14 +35,34 @@ const searchFilters = [
   { keypath: "Shape Layer 9", color: "#fff3e0" },
   { keypath: "Shape Layer 10", color: "#ff9100" },
 ];
+const PROFILE_WIDTH = 150;
+const NUM_COLUMNS = Math.floor(width / 150);
 
-const Weebs = ({ item }) => {
+const Weebs = ({ item, index }) => {
+  const opaciter = useRef(new Animated.Value(0)).current;
+  const scaler = opaciter.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.5, 1],
+  });
+
+  useEffect(() => {
+    Animated.timing(opaciter, {
+      toValue: 1,
+      duration: 1500,
+      delay: index * 2000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
-    <View
+    <Animated.View
       style={{
         // position: "absolute",
-        width: 150,
-        backgroundColor: "red",
+        width: PROFILE_WIDTH,
+        top: index * Math.floor(Math.random() + 100),
+        opacity: opaciter,
+        transform: [{ scale: scaler }],
+        // backgroundColor: colors.light,
         margin: 5,
         alignItems: "center",
       }}
@@ -53,18 +75,24 @@ const Weebs = ({ item }) => {
         borderRad={45}
         source={item.avatar}
       />
-      <AppText bold style={styles.headerText}>
+      <AppText
+        bold
+        style={{ color: colors.white, marginTop: 10, marginBottom: 5 }}
+      >
         {"@"}
-        {item.username}{" "}
+        {item.username}
       </AppText>
-      <AppText> {item.city} </AppText>
-    </View>
+      <AppText style={{ textTransform: "capitalize", color: colors.light }}>
+        {item.city}
+      </AppText>
+    </Animated.View>
   );
 };
 
 const ConnectScreen = ({ navigation }) => {
   const [location, loc_data] = useLocation();
   const [weebos, setWeebos] = useState([]);
+  const [modal, setModal] = useState(false);
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -74,6 +102,7 @@ const ConnectScreen = ({ navigation }) => {
 
   const topper = useSafeAreaInsets().top;
   const lottieRef = useRef();
+  const opaciter = useRef(new Animated.Value(0)).current;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -84,20 +113,31 @@ const ConnectScreen = ({ navigation }) => {
     fetchNearbyWeebs(
       (res_data) => {
         setWeebos(res_data);
+        setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
       },
       (err_data) => {
         console.log(err_data);
+        setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
       }
     );
   };
 
+  const handleCloseModal = () => {
+    Animated.timing(opaciter, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start(() => {
+      setModal(false);
+    });
+  };
+
   useEffect(() => {
     if (location) {
-      console.log(location);
+      // console.log(location);
       // save the user location;
       const api_data = {
         instanceID: userInfo._id,
@@ -112,17 +152,26 @@ const ConnectScreen = ({ navigation }) => {
         },
       };
 
-      updateUserData(
-        api_data,
-        (res_data) => {
-          console.log(res_data);
-        },
-        (err_data) => {
-          console.log(err_data);
-        }
-      );
+      // updateUserData(
+      //   api_data,
+      //   (res_data) => {
+      //     console.log(res_data);
+      //   },
+      //   (err_data) => {
+      //     console.log(err_data);
+      //   }
+      // );
     }
   }, [location]);
+
+  useEffect(() => {
+    if (modal) {
+      Animated.timing(opaciter, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [modal]);
 
   return (
     <View style={styles.container}>
@@ -167,16 +216,32 @@ const ConnectScreen = ({ navigation }) => {
             <Feather name="x" size={30} color={colors.white} />
           </TouchableOpacity>
         </View>
-        {weebos[0] && (
+      </View>
+      <Modal visible={modal} transparent statusBarTranslucent>
+        <Animated.View style={{ ...styles.modal, opacity: opaciter }}>
           <View style={styles.content}>
             <FlatList
               data={weebos}
+              numColumns={NUM_COLUMNS}
               keyExtractor={(item) => item._id}
-              renderItem={({ item }) => <Weebs item={item} />}
+              contentContainerStyle={{ flex: 1 }}
+              style={{ flex: 1 }}
+              renderItem={({ item, index }) => (
+                <Weebs item={item} index={index} />
+              )}
             />
+            <View style={{ alignItems: "center" }}>
+              <TouchableOpacity
+                style={styles.cancel}
+                activeOpacity={1}
+                onPress={handleCloseModal}
+              >
+                <Feather name="x" size={70} color={colors.primary} />
+              </TouchableOpacity>
+            </View>
           </View>
-        )}
-      </View>
+        </Animated.View>
+      </Modal>
     </View>
   );
 };
@@ -194,8 +259,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   content: {
-    height: "75%",
-    // backgroundColor: "tomato",
+    flex: 1,
+    padding: 20,
+    elevation: 5,
   },
   container: {
     flex: 1,
@@ -214,6 +280,10 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     color: colors.light,
+  },
+  modal: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.65)",
   },
   page: {
     position: "absolute",
