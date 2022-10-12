@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,7 +18,7 @@ import useLocation from "../hooks/useLocation";
 import ThemeContext from "../config/ThemeContext";
 import searchAnim from "../../assets/animations/searching_animation.json";
 import colors from "../constants/colors";
-import Screen from "../components/Screen";
+import ProfilePic from "../components/ProfilePic";
 
 const { width, height } = Dimensions.get("screen");
 const searchFilters = [
@@ -28,8 +34,37 @@ const searchFilters = [
   { keypath: "Shape Layer 10", color: "#ff9100" },
 ];
 
+const Weebs = ({ item }) => {
+  return (
+    <View
+      style={{
+        // position: "absolute",
+        width: 150,
+        backgroundColor: "red",
+        margin: 5,
+        alignItems: "center",
+      }}
+    >
+      <ProfilePic
+        border={3}
+        userID={item._id}
+        borderColor={colors.white}
+        size={90}
+        borderRad={45}
+        source={item.avatar}
+      />
+      <AppText bold style={styles.headerText}>
+        {"@"}
+        {item.username}{" "}
+      </AppText>
+      <AppText> {item.city} </AppText>
+    </View>
+  );
+};
+
 const ConnectScreen = ({ navigation }) => {
   const [location, loc_data] = useLocation();
+  const [weebos, setWeebos] = useState([]);
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -48,7 +83,7 @@ const ConnectScreen = ({ navigation }) => {
 
     fetchNearbyWeebs(
       (res_data) => {
-        console.log(res_data);
+        setWeebos(res_data);
         setIsLoading(false);
         lottieRef?.current?.pause();
       },
@@ -89,10 +124,8 @@ const ConnectScreen = ({ navigation }) => {
     }
   }, [location]);
 
-  // console.log(location, errLocation);
-
   return (
-    <Screen style={styles.container}>
+    <View style={styles.container}>
       <LinearGradient
         style={styles.background}
         colors={["#ff9100", "#ffb74d", "#fff3e0"]}
@@ -116,24 +149,35 @@ const ConnectScreen = ({ navigation }) => {
           <Feather name="search" size={40} color={colors.white} />
         </TouchableOpacity>
       </LinearGradient>
-      <View style={[styles.header, { top: topper }]}>
-        <View>
-          <AppText style={styles.headerText} bold size="xxlarge">
-            Search Weebs
-          </AppText>
-          <AppText bold style={styles.headerSubtitle}>
-            Connect with your fellow weeb whose nearby
-          </AppText>
+      <View style={[styles.page, { top: topper }]}>
+        <View style={styles.header}>
+          <View>
+            <AppText style={styles.headerText} bold size="xxlarge">
+              Search Weebs
+            </AppText>
+            <AppText bold style={styles.headerSubtitle}>
+              Connect with your fellow weeb whose nearby
+            </AppText>
+          </View>
+          <TouchableOpacity
+            style={styles.cancel}
+            activeOpacity={1}
+            onPress={() => navigation.goBack()}
+          >
+            <Feather name="x" size={30} color={colors.white} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.cancel}
-          activeOpacity={1}
-          onPress={() => navigation.goBack()}
-        >
-          <Feather name="x" size={35} color={colors.white} />
-        </TouchableOpacity>
+        {weebos[0] && (
+          <View style={styles.content}>
+            <FlatList
+              data={weebos}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => <Weebs item={item} />}
+            />
+          </View>
+        )}
       </View>
-    </Screen>
+    </View>
   );
 };
 
@@ -149,12 +193,15 @@ const styles = StyleSheet.create({
   cancel: {
     padding: 8,
   },
+  content: {
+    height: "75%",
+    // backgroundColor: "tomato",
+  },
   container: {
     flex: 1,
     backgroundColor: "#ff9100",
   },
   header: {
-    position: "absolute",
     width,
     paddingHorizontal: 15,
     flexDirection: "row",
@@ -167,6 +214,11 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     color: colors.light,
+  },
+  page: {
+    position: "absolute",
+    width,
+    height,
   },
   search: {
     width: width * 0.3,
