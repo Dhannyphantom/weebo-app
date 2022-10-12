@@ -45,6 +45,18 @@ const Weebs = ({ item, index }) => {
     outputRange: [0.5, 1],
   });
 
+  const posOrNeg = Math.round(Math.random()) ? 1 : -1;
+  const rand = posOrNeg * Math.ceil(Math.random() * 100 + 25);
+  let trans = 1;
+
+  if (index === 0) {
+    trans = Math.max(-1, rand);
+  } else if (index + 1 <= NUM_COLUMNS) {
+    trans = Math.min(-1, rand);
+  } else {
+    trans = rand;
+  }
+
   useEffect(() => {
     Animated.timing(opaciter, {
       toValue: 1,
@@ -57,12 +69,11 @@ const Weebs = ({ item, index }) => {
   return (
     <Animated.View
       style={{
-        // position: "absolute",
         width: PROFILE_WIDTH,
-        top: index * Math.floor(Math.random() + 100),
+        top: trans,
+        left: trans,
         opacity: opaciter,
         transform: [{ scale: scaler }],
-        // backgroundColor: colors.light,
         margin: 5,
         alignItems: "center",
       }}
