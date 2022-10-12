@@ -12,8 +12,9 @@ import commentAnim from "../../assets/animations/comment-anim.json";
 import networkAnim from "../../assets/animations/network-1.json";
 import emptyLoader from "../../assets/animations/nice.json";
 import ThemeContext from "../config/ThemeContext";
+import testAnim from "../../assets/animations/searching_animation.json";
 
-const screen = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const ActivityIndicator = ({
   visible = false,
@@ -57,8 +58,8 @@ const ActivityIndicator = ({
             ]}
             autoPlay
             style={{
-              width: screen.width * size * 0.45,
-              height: screen.width * size * 0.45,
+              width: width * size * 0.45,
+              height: width * size * 0.45,
             }}
             loop
           />
@@ -69,7 +70,7 @@ const ActivityIndicator = ({
           source={commentAnim}
           colorFilters={[{ keypath: "Comp 1", color: theme.extralight }]}
           autoPlay
-          style={{ width: screen.width * size, height: screen.width * size }}
+          style={{ width: width * size, height: width * size }}
           loop
         />
       )}
@@ -99,8 +100,8 @@ const ActivityIndicator = ({
               ]}
               autoPlay
               style={{
-                width: screen.width * size,
-                height: screen.width * size,
+                width: width * size,
+                height: width * size,
               }}
               loop
             />
@@ -131,7 +132,7 @@ const ActivityIndicator = ({
               { keypath: "Merged Shape Layer 2", color: theme.extralight },
             ]}
             autoPlay
-            style={{ width: screen.width * size, height: screen.width * size }}
+            style={{ width: width * size, height: width * size }}
             loop
           />
           {text && (
@@ -152,7 +153,7 @@ const ActivityIndicator = ({
               { keypath: "形状图层 1", color: theme.extralight },
             ]}
             autoPlay
-            style={{ width: screen.width * size, height: screen.width * size }}
+            style={{ width: width * size, height: width * size }}
             loop
           />
           {text && <AppText style={styles.text}> {text} </AppText>}
@@ -167,7 +168,19 @@ const ActivityIndicator = ({
               { keypath: "Merged Shape Layer", color: theme.backgroundLight },
             ]}
             autoPlay
-            style={{ width: screen.width * size, height: screen.width * size }}
+            style={{ width: width * size, height: width * size }}
+            loop
+          />
+          {text && <AppText style={styles.text}> {text} </AppText>}
+        </>
+      )}
+      {type === "search" && (
+        <>
+          <LottieView
+            source={testAnim}
+            colorFilters={[]}
+            autoPlay
+            style={{ width: width * size, height: width * size }}
             loop
           />
           {text && <AppText style={styles.text}> {text} </AppText>}
@@ -184,7 +197,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.medium,
-    width: screen.width * 0.55,
+    width: width * 0.55,
     textAlign: "center",
     lineHeight: 30,
   },

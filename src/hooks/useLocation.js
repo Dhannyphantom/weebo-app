@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function useLocation() {
   const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState(null);
 
   const requestPermission = async () => {
@@ -12,13 +13,21 @@ export default function useLocation() {
       return;
     }
 
-    let location = await Location.getCurrentPositionAsync();
-    setLocation(location);
+    try {
+      let location = await Location.getCurrentPositionAsync();
+      setLocation(location);
+      setLoading(false);
+    } catch (err) {
+      setErrMsg(err?.message);
+      setLoading(false);
+    }
   };
 
   useEffect(async () => {
     await requestPermission();
   }, []);
 
-  return [location, errMsg];
+  const data = { error: errMsg, loading };
+
+  return [location, data];
 }

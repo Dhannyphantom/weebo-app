@@ -204,6 +204,25 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const fetchNearbyWeebs = (dispatch) => async (sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get("/nearby_weebs", {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error connecting with weebs",
+        data: err?.response?.data,
+      });
+  }
+};
+
 const updateUserData = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -479,6 +498,7 @@ export const { Context, Provider } = createDataContext(
     mailVerifier,
     sendInvite,
     updateProfile,
+    fetchNearbyWeebs,
     resetPassword,
     recoverPassword,
     //chats
