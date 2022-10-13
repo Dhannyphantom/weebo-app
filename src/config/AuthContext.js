@@ -282,6 +282,20 @@ const addWeeb = (dispatch) => async (id, type, sc, cb) => {
     cb && cb("Error adding weeb!");
   }
 };
+const requestWeeb = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await followApi.post("/weeb_request", data, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error adding weeb!", data: err?.response?.data });
+  }
+};
 
 const instanceTransfer = (dispatch) => async (data, sc, cb) => {
   try {
@@ -488,6 +502,7 @@ export const { Context, Provider } = createDataContext(
     addToCollection,
     clearMessage,
     getUserData,
+    requestWeeb,
     getMyData,
     readNotification,
     notificationSender,

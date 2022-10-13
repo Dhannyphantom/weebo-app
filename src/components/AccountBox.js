@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Context as AuthContext } from "../config/AuthContext";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
@@ -26,7 +27,7 @@ const screen = Dimensions.get("window");
 
 const AccountBox = ({
   setPicModal,
-  addWeeb,
+  // addWeeb,
   getUserData,
   tryLocalSignin,
   userID,
@@ -34,8 +35,10 @@ const AccountBox = ({
 }) => {
   const navigation = useNavigation();
   const [profileData, setProfileData] = useState([]);
-  const [added, setAdded] = useState(false);
+  const [status, setStatus] = useState("no_request");
   const [errMsg, setErrMsg] = useState(null);
+
+  const { requestWeeb } = useContext(AuthContext);
 
   const theme = useContext(ThemeContext);
 
@@ -62,26 +65,27 @@ const AccountBox = ({
   }
 
   const handleAddWeeb = (type) => {
-    addWeeb(
-      userID,
-      type,
-      () => {
-        if (type === "add") {
-          setAdded(true);
-        } else {
-          setAdded(false);
-        }
-      },
-      (err) => setErrMsg(err)
-    );
-  };
-
-  const checkWeebs = () => {
-    const fIds = userInfo.friends.map((obj) => obj._id);
-    if (fIds.includes(userID)) {
-      setAdded(true);
-    } else {
-      setAdded(false);
+    switch (type) {
+      case "request":
+        requestWeeb(
+          { id: userID, type: "add" },
+          (data) => {
+            console.log(data);
+            setStatus("requested");
+          },
+          (err) => setErrMsg(err)
+        );
+        break;
+      case "unrequest":
+        requestWeeb(
+          { id: userID, type: "remove" },
+          (data) => {
+            console.log(data);
+            setStatus("no_request");
+          },
+          (err) => setErrMsg(err)
+        );
+        break;
     }
   };
 
@@ -98,15 +102,15 @@ const AccountBox = ({
   useEffect(() => {
     getUserData(
       userID,
-      "normal",
+      "get_account",
       (data) => {
-        setProfileData([data]);
+        setStatus(data.status);
+        setProfileData([data.user]);
       },
       (err) => {
         setErrMsg(err);
       }
     );
-    checkWeebs();
   }, []);
 
   return (
@@ -188,7 +192,7 @@ const AccountBox = ({
                 />
               </View>
               <Separator h={1} />
-              {added && !isMine ? (
+              {status === "weebs" && !isMine ? (
                 <AppButton
                   icon="close"
                   title="UNWEEB"
@@ -196,11 +200,19 @@ const AccountBox = ({
                   bare
                   style={styles.followBtn}
                 />
-              ) : !added && !isMine ? (
+              ) : status === "no_request" && !isMine ? (
                 <AppButton
                   icon="plus"
                   title="SEND REQUEST"
-                  onPress={() => handleAddWeeb("add")}
+                  onPress={() => handleAddWeeb("request")}
+                  bare
+                  style={styles.followBtn}
+                />
+              ) : status === "requested" ? (
+                <AppButton
+                  icon="plus"
+                  title="UN-REQUEST"
+                  onPress={() => handleAddWeeb("unrequest")}
                   bare
                   style={styles.followBtn}
                 />
