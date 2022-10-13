@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
@@ -18,11 +18,17 @@ import TabList from "../components/TabList";
 const { width, height } = Dimensions.get("window");
 
 const FriendListScreen = ({ route, navigation }) => {
+  const {
+    state: { userInfo },
+    getUserData,
+  } = useContext(AuthContext);
+
   const [showSearch, setShowSearch] = useState(false);
+  const [weebos, setWeebos] = useState({ weebs: [], requests: [] });
+  const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [tab, setTab] = useState({ weebs: true, requests: false });
 
-  const pple = route.params.friends;
   const searchRef = useRef(null);
 
   const onFriendPress = (item) => {
@@ -43,6 +49,24 @@ const FriendListScreen = ({ route, navigation }) => {
         break;
     }
   };
+
+  useEffect(() => {
+    getUserData(
+      userInfo._id,
+      "get_weebs",
+      (res_data) => {
+        setWeebos({
+          weebs: res_data.friends,
+          requests: res_data.weeb_requests,
+        });
+        setIsLoading(false);
+      },
+      (err_data) => {
+        console.log(err_data?.err?.response?.data);
+        setIsLoading(false);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     searchRef?.current?.focus();
@@ -66,7 +90,7 @@ const FriendListScreen = ({ route, navigation }) => {
         state={tab}
         items={[
           { tab: "weebs", name: "Weebs" },
-          { tab: "requests", name: "Requests" },
+          { tab: "requests", name: ` ${weebos.requests.length} Requests` },
         ]}
         onPress={handleTabChange}
       />
@@ -80,10 +104,29 @@ const FriendListScreen = ({ route, navigation }) => {
         />
       )}
 
-      <View>
-        <FriendBox data={pple} onPress={onFriendPress} />
-      </View>
-      <ActivityIndicator visible={!pple[0]} type="isEmpty" text="No weebo..." />
+      {tab.weebs ? (
+        <>
+          <View>
+            <FriendBox data={weebos.weebs} onPress={onFriendPress} />
+          </View>
+          <ActivityIndicator
+            visible={!weebos.weebs[0]}
+            type="isEmpty"
+            text="No weebo..."
+          />
+        </>
+      ) : (
+        <>
+          <View>
+            <FriendBox data={weebos.requests} onPress={onFriendPress} />
+          </View>
+          <ActivityIndicator
+            visible={!weebos.requests[0]}
+            type="isEmpty"
+            text="No weeb requests..."
+          />
+        </>
+      )}
     </Screen>
   );
 };

@@ -38,7 +38,7 @@ const AccountBox = ({
   const [status, setStatus] = useState("no_request");
   const [errMsg, setErrMsg] = useState(null);
 
-  const { requestWeeb } = useContext(AuthContext);
+  const { requestWeeb, addWeeb } = useContext(AuthContext);
 
   const theme = useContext(ThemeContext);
 
@@ -78,6 +78,16 @@ const AccountBox = ({
         break;
       case "unrequest":
         requestWeeb(
+          { id: userID, type: "remove" },
+          (data) => {
+            console.log(data);
+            setStatus("no_request");
+          },
+          (err) => setErrMsg(err)
+        );
+        break;
+      case "remove":
+        addWeeb(
           { id: userID, type: "remove" },
           (data) => {
             console.log(data);
