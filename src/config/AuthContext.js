@@ -260,26 +260,20 @@ const getUserData = (dispatch) => async (id, type, sc, cb) => {
   }
 };
 
-const addWeeb = (dispatch) => async (id, type, sc, cb) => {
+const addWeeb = (dispatch) => async (data, sc, cb) => {
+  // data = {id, type}
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await followApi.put(
-      "/addWeeb",
-      {
-        id,
-        type,
+    const res = await followApi.put("/addWeeb", data, {
+      headers: {
+        "x-auth-token": token,
       },
-      {
-        headers: {
-          "x-auth-token": token,
-        },
-        timeout: 30000,
-      }
-    );
+      timeout: 30000,
+    });
 
-    sc && sc("ok");
+    sc && sc(res.data);
   } catch (err) {
-    cb && cb("Error adding weeb!");
+    cb && cb({ err, msg: "Error adding weeb!", data: err?.response?.data });
   }
 };
 const requestWeeb = (dispatch) => async (data, sc, cb) => {
@@ -293,7 +287,8 @@ const requestWeeb = (dispatch) => async (data, sc, cb) => {
 
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error adding weeb!", data: err?.response?.data });
+    cb &&
+      cb({ err, msg: "Error sending weeb request", data: err?.response?.data });
   }
 };
 

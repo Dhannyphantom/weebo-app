@@ -22,6 +22,7 @@ import searchAnim from "../../assets/animations/searching_animation.json";
 import colors from "../constants/colors";
 import ProfilePic from "../components/ProfilePic";
 import Separator from "../components/Separator";
+import PopMessage from "../components/PopMessage";
 
 const { width, height } = Dimensions.get("screen");
 const searchFilters = [
@@ -145,6 +146,7 @@ const ConnectScreen = ({ navigation }) => {
   const [location, loc_data] = useLocation();
   const [weebos, setWeebos] = useState([]);
   const [modal, setModal] = useState(false);
+  const [popper, setPopper] = useState({ vis: false });
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -159,6 +161,16 @@ const ConnectScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = () => {
+    // check if user has updated his profile;
+    if (!userInfo?.country && !userInfo?.city) {
+      setPopper({
+        vis: true,
+        msg: "Please complete and verify your profile",
+        type: "failed",
+      });
+      return;
+    }
+
     setIsLoading(true);
     lottieRef?.current?.resume();
 
@@ -204,15 +216,15 @@ const ConnectScreen = ({ navigation }) => {
         },
       };
 
-      // updateUserData(
-      //   api_data,
-      //   (res_data) => {
-      //     console.log(res_data);
-      //   },
-      //   (err_data) => {
-      //     console.log(err_data);
-      //   }
-      // );
+      updateUserData(
+        api_data,
+        (res_data) => {
+          // console.log(res_data);
+        },
+        (err_data) => {
+          console.log(err_data);
+        }
+      );
     }
   }, [location]);
 
@@ -298,6 +310,7 @@ const ConnectScreen = ({ navigation }) => {
           </View>
         </Animated.View>
       </Modal>
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };

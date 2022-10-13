@@ -1,12 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -19,25 +13,35 @@ import AppButton from "../components/AppButton";
 import SearchBar from "../components/SearchBar";
 import Screen from "../components/Screen";
 import FriendBox from "../components/FriendBox";
+import TabList from "../components/TabList";
 
 const { width, height } = Dimensions.get("window");
 
 const FriendListScreen = ({ route, navigation }) => {
-  const {
-    joinRoom,
-    addWeeb,
-    tryLocalSignin,
-    state: { userInfo },
-  } = useContext(AuthContext);
-
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [tab, setTab] = useState({ weebs: true, requests: false });
 
   const pple = route.params.friends;
   const searchRef = useRef(null);
 
   const onFriendPress = (item) => {
     navigation.navigate("ChatUser", { item });
+  };
+
+  const handleTabChange = (type) => {
+    switch (type) {
+      case "requests":
+        setTab({ requests: true, weebs: false });
+        break;
+
+      case "weebs":
+        setTab({ requests: false, weebs: true });
+        break;
+
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -58,6 +62,14 @@ const FriendListScreen = ({ route, navigation }) => {
         )}
       />
 
+      <TabList
+        state={tab}
+        items={[
+          { tab: "weebs", name: "Weebs" },
+          { tab: "requests", name: "Requests" },
+        ]}
+        onPress={handleTabChange}
+      />
       {showSearch && (
         <SearchBar
           ref={searchRef}
