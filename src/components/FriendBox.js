@@ -24,6 +24,8 @@ const FriendBox = ({
   onPress,
   type = "weeb",
   typeObj,
+  callback,
+  friended,
   updateThisInstance,
   instanceLogic,
   length = 0.95,
@@ -46,34 +48,42 @@ const FriendBox = ({
       if (isFriends) {
         //unWeeb
         addWeeb(
-          userID,
-          "remove",
+          {
+            id: userID,
+            type: "remove",
+          },
           (resData) => {
             //resData = [] of friends
             // updateMe({ data: resData, prop: "friends" });
             setAdded(false);
             setErrMsg(null);
             setIsLoading(false);
+            callback && callback();
           },
           (err) => {
             setIsLoading(false);
             setErrMsg(err);
+            callback && callback();
           }
         );
       } else {
         // add weeb
         addWeeb(
-          userID,
-          "add",
+          {
+            id: userID,
+            type: "add",
+          },
           (resData) => {
             // updateMe({ data: resData, prop: "friends" });
             setAdded(true);
             setErrMsg(null);
             setIsLoading(false);
+            callback && callback();
           },
           (err) => {
             setIsLoading(false);
             setErrMsg(err);
+            callback && callback();
           }
         );
       }
@@ -159,11 +169,12 @@ const FriendBox = ({
   };
 
   const renderFriends = ({ item }) => {
-    let isFriends = false;
+    let isFriends = friended;
 
     const finder = userInfo?.friends?.find((obj) => obj._id == item._id);
     let isMine = item._id == userInfo._id;
-    if (finder) {
+
+    if (finder && friended) {
       isFriends = true;
     }
     return (

@@ -35,6 +35,25 @@ const FriendListScreen = ({ route, navigation }) => {
     navigation.navigate("ChatUser", { item });
   };
 
+  const fetchWeebs = (noLoader) => {
+    !noLoader && setIsLoading(true);
+    getUserData(
+      userInfo._id,
+      "get_weebs",
+      (res_data) => {
+        setWeebos({
+          weebs: res_data.friends,
+          requests: res_data.weeb_requests,
+        });
+        setIsLoading(false);
+      },
+      (err_data) => {
+        console.log(err_data?.err?.response?.data);
+        setIsLoading(false);
+      }
+    );
+  };
+
   const handleTabChange = (type) => {
     switch (type) {
       case "requests":
@@ -51,21 +70,7 @@ const FriendListScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    getUserData(
-      userInfo._id,
-      "get_weebs",
-      (res_data) => {
-        setWeebos({
-          weebs: res_data.friends,
-          requests: res_data.weeb_requests,
-        });
-        setIsLoading(false);
-      },
-      (err_data) => {
-        console.log(err_data?.err?.response?.data);
-        setIsLoading(false);
-      }
-    );
+    fetchWeebs(true);
   }, []);
 
   useEffect(() => {
@@ -86,51 +91,75 @@ const FriendListScreen = ({ route, navigation }) => {
         )}
       />
 
-      <TabList
-        state={tab}
-        items={[
-          { tab: "weebs", name: "Weebs" },
-          { tab: "requests", name: ` ${weebos.requests.length} Requests` },
-        ]}
-        onPress={handleTabChange}
-      />
-      {showSearch && (
-        <SearchBar
-          ref={searchRef}
-          searchBar={searchText}
-          setSearchBar={setSearchText}
-          style={styles.searchBar}
-          placeholder="Search your weebs..."
-        />
+      {!isLoading && (
+        <>
+          <TabList
+            state={tab}
+            items={[
+              { tab: "weebs", name: "Weebs" },
+              { tab: "requests", name: ` ${weebos.requests.length} Requests` },
+            ]}
+            onPress={handleTabChange}
+          />
+          {showSearch && (
+            <SearchBar
+              ref={searchRef}
+              searchBar={searchText}
+              setSearchBar={setSearchText}
+              style={styles.searchBar}
+              placeholder="Search your weebs..."
+            />
+          )}
+
+          {tab.weebs ? (
+            <>
+              <View>
+                <FriendBox
+                  data={weebos.weebs}
+                  callback={fetchWeebs}
+                  friended
+                  onPress={onFriendPress}
+                />
+              </View>
+              <ActivityIndicator
+                visible={!weebos.weebs[0]}
+                type="isEmpty"
+                text="No weebo..."
+              />
+            </>
+          ) : (
+            <>
+              <View>
+                <FriendBox
+                  data={weebos.requests}
+                  callback={fetchWeebs}
+                  onPress={onFriendPress}
+                />
+              </View>
+              <ActivityIndicator
+                visible={!weebos.requests[0]}
+                type="isEmpty"
+                text="No weeb requests..."
+              />
+            </>
+          )}
+        </>
       )}
 
-      {tab.weebs ? (
-        <>
-          <View>
-            <FriendBox data={weebos.weebs} onPress={onFriendPress} />
-          </View>
-          <ActivityIndicator
-            visible={!weebos.weebs[0]}
-            type="isEmpty"
-            text="No weebo..."
-          />
-        </>
-      ) : (
-        <>
-          <View>
-            <FriendBox data={weebos.requests} onPress={onFriendPress} />
-          </View>
-          <ActivityIndicator
-            visible={!weebos.requests[0]}
-            type="isEmpty"
-            text="No weeb requests..."
-          />
-        </>
-      )}
+      <ActivityIndicator
+        visible={isLoading}
+        style={styles.activity}
+        transparent
+      />
     </Screen>
   );
 };
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width,
+    height,
+  },
   btn: {
     marginLeft: 20,
   },
