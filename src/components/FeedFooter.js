@@ -147,7 +147,7 @@ const FeedFooter = ({
           >
             <MaterialCommunityIcons
               name={hIcon}
-              size={width * 0.03}
+              size={20}
               color={post.liked ? colors.heart : colors.primary}
             />
             <AppText style={styles.counters}>
@@ -161,7 +161,7 @@ const FeedFooter = ({
           >
             <MaterialCommunityIcons
               name="comment-multiple-outline"
-              size={width * 0.03}
+              size={20}
               color={colors.primary}
             />
             <AppText style={styles.counters}>{post.comments}</AppText>
@@ -170,7 +170,7 @@ const FeedFooter = ({
             <View style={styles.iconCont}>
               <MaterialCommunityIcons
                 name="eye-outline"
-                size={width * 0.03}
+                size={20}
                 color={colors.primary}
               />
               <AppText style={styles.counters}>{post.views}</AppText>
@@ -185,7 +185,7 @@ const FeedFooter = ({
           >
             <MaterialCommunityIcons
               name="dots-horizontal"
-              size={width * 0.05}
+              size={28}
               color={colors.medium}
             />
           </TouchableOpacity>

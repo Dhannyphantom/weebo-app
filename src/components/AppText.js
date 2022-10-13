@@ -9,35 +9,27 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
   let scaledSize;
   switch (size) {
     case "normal":
-      scaledSize = 14;
-      // scaledSize = width * 0.025;
+      scaledSize = 16;
       break;
     case "small":
-      scaledSize = 12;
-      // scaledSize = width * 0.02;
+      scaledSize = 14;
       break;
     case "xsmall":
-      scaledSize = 10;
-      // scaledSize = width * 0.018;
+      scaledSize = 12;
       break;
     case "xxsmall":
       scaledSize = 9;
-      // scaledSize = width * 0.015;
       break;
     case "large":
-      scaledSize = 16;
-      // scaledSize = width * 0.029;
+      scaledSize = 17;
       break;
     case "xlarge":
-      scaledSize = 19;
-      // scaledSize = width * 0.034;
+      scaledSize = 20;
       break;
     case "xxlarge":
-      scaledSize = 22;
-    // scaledSize = width * 0.044;
+      scaledSize = 24;
     case "xxxlarge":
-      scaledSize = 26;
-    // scaledSize = width * 0.054;
+      scaledSize = 28;
     default:
       break;
   }

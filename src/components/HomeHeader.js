@@ -39,7 +39,7 @@ const itemPost = {
   icon: "camera",
 };
 const itemChallenge = {
-  title: "New Challenge",
+  title: "Challenge",
   bg: "#06beb6",
   bg1: "#48b1bf",
   icon: "alpha-c-circle",
@@ -122,8 +122,8 @@ const HomeHeader = ({ characters }) => {
                 item={itemChallenge}
                 onPress={() => handleNav("contest")}
                 style={{
-                  width: screen.width * 0.41,
-                  height: screen.width * 0.41,
+                  width: screen.width * 0.48,
+                  height: screen.width * 0.4,
                   marginHorizontal: 2,
                   marginRight: 4,
                 }}
@@ -133,8 +133,8 @@ const HomeHeader = ({ characters }) => {
                   item={itemWrite}
                   onPress={() => handleNav("write")}
                   style={{
-                    width: screen.width * 0.41,
-                    height: (screen.width * 0.41) / 2.1,
+                    width: screen.width * 0.38,
+                    height: (screen.width * 0.38) / 2.1,
                     marginHorizontal: 2,
                     marginVertical: 1,
                   }}
@@ -143,8 +143,8 @@ const HomeHeader = ({ characters }) => {
                   item={itemPost}
                   onPress={() => handleNav("post")}
                   style={{
-                    width: screen.width * 0.41,
-                    height: (screen.width * 0.41) / 2.1,
+                    width: screen.width * 0.38,
+                    height: (screen.width * 0.38) / 2.1,
                     marginVertical: 3,
                     marginHorizontal: 2,
                   }}

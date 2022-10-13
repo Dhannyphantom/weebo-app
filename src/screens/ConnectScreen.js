@@ -21,6 +21,7 @@ import ThemeContext from "../config/ThemeContext";
 import searchAnim from "../../assets/animations/searching_animation.json";
 import colors from "../constants/colors";
 import ProfilePic from "../components/ProfilePic";
+import Separator from "../components/Separator";
 
 const { width, height } = Dimensions.get("screen");
 const searchFilters = [
@@ -45,14 +46,13 @@ const Weebs = ({ item, index }) => {
     outputRange: [0.5, 1],
   });
 
-  const posOrNeg = Math.round(Math.random()) ? 1 : -1;
-  const rand = posOrNeg * Math.ceil(Math.random() * 100 + 25);
+  const posOrNeg = useRef(Math.round(Math.random()) ? 1 : -1).current;
+  const rand = useRef(posOrNeg * Math.ceil(Math.random() * 25)).current;
+  const randLeft = useRef(posOrNeg * Math.ceil(Math.random() * 15)).current;
   let trans = 1;
 
-  if (index === 0) {
-    trans = Math.max(-1, rand);
-  } else if (index + 1 <= NUM_COLUMNS) {
-    trans = Math.min(-1, rand);
+  if (index <= NUM_COLUMNS) {
+    trans = Math.max(0, rand);
   } else {
     trans = rand;
   }
@@ -61,7 +61,7 @@ const Weebs = ({ item, index }) => {
     Animated.timing(opaciter, {
       toValue: 1,
       duration: 1500,
-      delay: index * 2000,
+      delay: index * 2100,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -71,7 +71,7 @@ const Weebs = ({ item, index }) => {
       style={{
         width: PROFILE_WIDTH,
         top: trans,
-        left: trans,
+        left: randLeft,
         opacity: opaciter,
         transform: [{ scale: scaler }],
         margin: 5,
@@ -97,6 +97,47 @@ const Weebs = ({ item, index }) => {
         {item.city}
       </AppText>
     </Animated.View>
+  );
+};
+
+const RenderEmptyWeebs = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <View
+        style={{
+          width: width * 0.7,
+          padding: 20,
+          backgroundColor: colors.white,
+          borderRadius: 10,
+        }}
+      >
+        <AppText
+          style={{
+            textAlign: "center",
+          }}
+          size="large"
+          bold
+        >
+          No Weebs found
+        </AppText>
+        <Separator h={2} />
+        <AppText
+          style={{
+            marginTop: 10,
+            textAlign: "center",
+          }}
+        >
+          Turns out there are no nearby weebs YET!!!. You can always check back
+          later
+        </AppText>
+      </View>
+    </View>
   );
 };
 
@@ -235,7 +276,11 @@ const ConnectScreen = ({ navigation }) => {
               data={weebos}
               numColumns={NUM_COLUMNS}
               keyExtractor={(item) => item._id}
-              contentContainerStyle={{ flex: 1 }}
+              ListEmptyComponent={RenderEmptyWeebs}
+              contentContainerStyle={{
+                flex: 1,
+                paddingTop: 20,
+              }}
               style={{ flex: 1 }}
               renderItem={({ item, index }) => (
                 <Weebs item={item} index={index} />
@@ -247,7 +292,7 @@ const ConnectScreen = ({ navigation }) => {
                 activeOpacity={1}
                 onPress={handleCloseModal}
               >
-                <Feather name="x" size={70} color={colors.primary} />
+                <Feather name="x" size={50} color={colors.primary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -267,7 +312,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancel: {
-    padding: 8,
+    // padding: 8,
+    paddingTop: 15,
   },
   content: {
     flex: 1,
