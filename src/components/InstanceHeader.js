@@ -347,7 +347,6 @@ const InstanceHeader = ({ instanceData }) => {
           <AppHeader
             style={{ position: "absolute", top: safeInset.top }}
             type="transparent"
-            title="Hello"
             dotPress={() => setDropDown(true)}
             iconColor={colors.white}
           />
@@ -357,7 +356,7 @@ const InstanceHeader = ({ instanceData }) => {
           <Icon
             name="account-star"
             activeOpacity={0.9}
-            size={46}
+            size={55}
             onPress={() => handleLeftPress && handleLeftPress()}
             color={leftColor}
           />
@@ -372,7 +371,7 @@ const InstanceHeader = ({ instanceData }) => {
             <Icon
               text={null}
               name={feedbackColor ? "check-all" : null}
-              size={46}
+              size={55}
               color={colors.accentOld}
               disablePress
               onPress={null}
@@ -382,7 +381,7 @@ const InstanceHeader = ({ instanceData }) => {
             <Icon
               text={subscribers ? subscribers : null}
               name={feedbackColor && !subscribers ? "account-check" : null}
-              size={46}
+              size={55}
               color={feedbackColor}
               onPress={handleRightIconPress}
               disablePress={isChannel}

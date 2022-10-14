@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopEndRadius: 8,
     borderBottomEndRadius: 8,
-    minHeight: 80,
+    height: "85%",
     paddingHorizontal: 10,
     marginRight: 15,
     marginLeft: -10,

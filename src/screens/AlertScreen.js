@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, FlatList, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import AlertBox from "../components/AlertBox";
@@ -10,8 +17,19 @@ import StatusRender from "../components/StatusRender";
 import AppButton from "../components/AppButton";
 import AppHeader from "../components/AppHeader";
 import Spacer from "../components/Spacer";
+import AppText from "../components/AppText";
+import colors from "../constants/colors";
+import AlertModal from "../components/AlertModal";
 
 const { height } = Dimensions.get("window");
+
+const PROMPT_DELETE_ALL = {
+  visible: true,
+  title: "Delete all",
+  message: "Are you sure you want to wipe all notifications?",
+  btn: "Delete",
+  type: "delete_all",
+};
 
 const AlertScreen = ({ navigation }) => {
   const {
@@ -22,6 +40,7 @@ const AlertScreen = ({ navigation }) => {
   const [alertApi, setAlertApi] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+  const [prompt, setPrompt] = useState({ visible: false });
   const [loadedOnce, setLoadedOnce] = useState(false);
 
   const handleReadAll = () => {
@@ -33,6 +52,16 @@ const AlertScreen = ({ navigation }) => {
     readNotification(notifyData, null, (err) => console.log(err));
 
     setAlertApi(copyNoti);
+  };
+
+  const hasReadAll = alertApi.every((obj) => obj.read);
+
+  const handleDeleteAll = () => {
+    setAlertApi([]);
+  };
+
+  const handlePrompt = () => {
+    handleDeleteAll();
   };
 
   const renderAlerts = ({ item }) => {
@@ -116,12 +145,26 @@ const AlertScreen = ({ navigation }) => {
         title="Notifications"
         icon={false}
         RightComponent={() => (
-          <AppButton
-            title="Read all"
-            naked
-            style={styles.btn}
-            onPress={handleReadAll}
-          />
+          <View style={styles.btnContainer}>
+            {!hasReadAll && (
+              <TouchableOpacity
+                onPress={handleReadAll}
+                activeOpacity={0.6}
+                style={styles.btn}
+              >
+                <Feather name="check" color={colors.primary} size={20} />
+              </TouchableOpacity>
+            )}
+            {alertApi[0] && (
+              <TouchableOpacity
+                onPress={() => setPrompt(PROMPT_DELETE_ALL)}
+                activeOpacity={0.6}
+                style={styles.btn}
+              >
+                <Feather name="trash-2" color={colors.primary} size={20} />
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       />
       <StatusRender />
@@ -145,6 +188,7 @@ const AlertScreen = ({ navigation }) => {
           text="No new notifications"
         />
       )}
+      <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
     </Screen>
   );
 };
@@ -155,7 +199,13 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   btn: {
-    marginRight: 12,
+    // marginRight: 12,
+    // backgroundColor: "red",
+    padding: 10,
+    marginLeft: 5,
+  },
+  btnContainer: {
+    flexDirection: "row",
   },
 });
 export default AlertScreen;

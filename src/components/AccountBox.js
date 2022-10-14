@@ -79,8 +79,7 @@ const AccountBox = ({
       case "unrequest":
         requestWeeb(
           { id: userID, type: "remove" },
-          (data) => {
-            console.log(data);
+          (_data) => {
             setStatus("no_request");
           },
           (err) => setErrMsg(err)
@@ -89,8 +88,7 @@ const AccountBox = ({
       case "remove":
         addWeeb(
           { id: userID, type: "remove" },
-          (data) => {
-            console.log(data);
+          (_data) => {
             setStatus("no_request");
           },
           (err) => setErrMsg(err)

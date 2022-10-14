@@ -140,8 +140,8 @@ const CreateCharacterScreen = ({ route, navigation }) => {
 
   const actionCallback = (obj) => {
     console.log(obj);
-    if (obj?.data?.hasOwnProperty("ERR_MSG")) {
-      setErrText(obj.data.ERR_MSG);
+    if (obj?.data) {
+      setErrText(obj.data);
     } else {
       setErrText(obj.msg);
     }
@@ -467,6 +467,7 @@ const styles = StyleSheet.create({
   },
   errText: {
     color: "red",
+    marginVertical: 30,
     alignSelf: "center",
   },
   select: {
