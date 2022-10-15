@@ -113,7 +113,7 @@ const ActivityIndicator = ({
                     ? colors.medium
                     : type === "isEmpty"
                     ? colors.primary
-                    : null,
+                    : colors.black,
               }}
             >
               {text}

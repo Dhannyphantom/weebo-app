@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { View, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import uuid from "react-native-uuid";
@@ -61,14 +61,12 @@ const ShareCollection = ({ name, id }) => {
   const [loading, setLoading] = useState(true);
   const [weebos, setWeebos] = useState([]);
 
-  useEffect(() => {
+  const fetchWeebs = useCallback(() => {
     getUserData(
       userInfo._id,
       "get_weebs",
       (res_data) => {
-        setWeebos({
-          weebs: res_data.friends,
-        });
+        setWeebos(res_data.friends);
         setLoading(false);
       },
       (err_data) => {
@@ -78,29 +76,44 @@ const ShareCollection = ({ name, id }) => {
     );
   }, []);
 
+  useEffect(() => {
+    fetchWeebs();
+  }, []);
+
+  console.log(weebos);
+
   return (
     <View
       style={[
         styles.modal,
-        { backgroundColor: theme.background, minHeight: height * 0.3 },
+        { backgroundColor: theme.background, minHeight: height * 0.5 },
       ]}
     >
-      {!loading && (
-        <>
-          <AppText style={styles.modalHeaderText} size="large" bold>
-            Share {name} Collection
-          </AppText>
-          <Separator h={2} />
-          <View>
-            <FriendBox
-              data={weebos}
-              type="share"
-              friended
-              callback={(data) => console.log(data)}
-            />
-          </View>
-        </>
-      )}
+      <>
+        <AppText style={styles.modalHeaderText} size="large" bold>
+          Share Collection
+        </AppText>
+        <Separator h={2} />
+        {!loading && (
+          <>
+            {weebos[0] ? (
+              <FriendBox
+                length={0.9}
+                data={weebos}
+                type="share"
+                friended
+                callback={(data) => console.log(data)}
+              />
+            ) : (
+              <ActivityIndicator
+                type="isEmpty"
+                visible={true}
+                text="You don't have a fellow weeb"
+              />
+            )}
+          </>
+        )}
+      </>
       <ActivityIndicator
         visible={loading}
         wTransparent
@@ -233,8 +246,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   modal: {
-    width: width * 0.95,
+    width: width * 0.97,
     borderRadius: 18,
+    overflow: "hidden",
   },
   modalHeaderText: {
     textAlign: "center",

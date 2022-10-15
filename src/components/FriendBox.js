@@ -19,19 +19,6 @@ import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
-const RenderEmptyList = () => {
-  return (
-    <View>
-      {/* <ActivityIndicator
-        type="spin"
-        visible={true}
-        style={styles.activity}
-        text="You don't have a fellow weeb"
-      /> */}
-    </View>
-  );
-};
-
 const FriendBox = ({
   data,
   onPress,
@@ -207,7 +194,6 @@ const FriendBox = ({
       data={data}
       keyExtractor={(item) => item._id}
       showsVerticalScrollIndicator={false}
-      ListEmptyComponent={RenderEmptyList}
       keyboardShouldPersistTaps="handled"
       renderItem={renderFriends}
     />
