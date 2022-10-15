@@ -8,7 +8,12 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  AntDesign,
+  Feather,
+  Ionicons,
+} from "@expo/vector-icons";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
@@ -17,7 +22,7 @@ import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
-const BOX_SIZE = width * 0.48;
+const BOX_SIZE = width * 0.5;
 const BOX_OFFSET = BOX_SIZE + 40;
 
 const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
@@ -31,29 +36,48 @@ const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
   });
   const theme = useContext(ThemeContext);
 
-  const renderDropLists = ({ item }) => {
+  const renderDropLists = ({ item, index }) => {
     if (!item.show) return null;
+    const lastItem = index + 1 === lists.length;
+
+    let Icon;
+    switch (item.iconPack) {
+      case "F":
+        Icon = Feather;
+        break;
+      case "I":
+        Icon = Ionicons;
+        break;
+      case "AD":
+        Icon = AntDesign;
+        break;
+
+      default:
+        Icon = MaterialCommunityIcons;
+        break;
+    }
+
     return (
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
-          setVisible(false);
-          // handleBoxAction(false);
+          // setVisible(false);
+          handleBoxAction(false);
           item.onPress && item.onPress();
         }}
         style={styles.itemWrapper}
       >
         <View style={styles.itemContainer}>
-          <MaterialCommunityIcons
+          <Icon
             name={item.icon}
             size={18}
             color={item.selected ? colors.primary : theme.medium}
           />
-          <AppText size="large" style={styles.itemTitle} bold>
+          <AppText style={styles.itemTitle} bold>
             {item.name}
           </AppText>
         </View>
-        <Separator h={1} />
+        {!lastItem && <Separator h={1} />}
       </TouchableOpacity>
     );
   };
@@ -123,8 +147,10 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginRight: 30,
     marginTop: "15%",
+    paddingBottom: 10,
     borderRadius: width * 0.024,
     width: BOX_SIZE,
+    // maxWidth: BOX_SIZE + 1000,
   },
   closer: {
     position: "absolute",

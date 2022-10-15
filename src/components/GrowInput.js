@@ -11,31 +11,23 @@ const GrowInput = (
   { text, setText, placeholder, style, pressCb, mLine = true, ...otherProps },
   ref
 ) => {
-  const [height, setHeight] = useState(1);
   const theme = useContext(ThemeContext);
 
-  useEffect(() => {
-    setHeight(4);
-  }, []);
-
   return (
-    <TextInput
-      style={[
-        styles.input,
-        { backgroundColor: theme.extralight, color: theme.color },
-        style,
-      ]}
-      placeholder={placeholder}
-      placeholderTextColor={theme.medium}
-      maxLength={80}
-      ref={ref}
-      {...otherProps}
-      numberOfLines={height}
-      enablesReturnKeyAutomatically
-      multiline={mLine}
-      onChangeText={(textVal) => setText(textVal)}
-      value={text}
-    />
+    <View style={[styles.inputCont, { backgroundColor: theme.extralight }]}>
+      <TextInput
+        style={[styles.input, { color: theme.color }, style]}
+        placeholder={placeholder}
+        placeholderTextColor={theme.medium}
+        maxLength={80}
+        ref={ref}
+        {...otherProps}
+        numberOfLines={mLine ? 5 : 1}
+        multiline={mLine}
+        onChangeText={(textVal) => setText(textVal)}
+        value={text}
+      />
+    </View>
   );
 };
 
@@ -43,19 +35,18 @@ const growForwardedRef = forwardRef(GrowInput);
 
 const styles = StyleSheet.create({
   inputCont: {
-    maxHeight: 250,
-    marginHorizontal: screen.width * 0.075,
-    marginVertical: 10,
-  },
-  input: {
-    // height: 40,
-    borderWidth: 1,
+    minHeight: 55,
+    borderWidth: 3,
     backgroundColor: colors.extraLight,
     borderColor: colors.unChange,
     borderRadius: screen.width * 0.02,
     width: screen.width * 0.8,
-    fontFamily: "sen",
+    overflow: "hidden",
     alignSelf: "center",
+  },
+  input: {
+    flex: 1,
+    fontFamily: "sen",
     padding: 5,
     paddingLeft: 10,
     // lineHeight: 25,

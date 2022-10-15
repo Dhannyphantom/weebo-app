@@ -116,8 +116,7 @@ const ActivityIndicator = ({
                     : null,
               }}
             >
-              {" "}
-              {text}{" "}
+              {text}
             </AppText>
           </>
         ))}
