@@ -12,14 +12,18 @@ const AppFadeIn = ({ visible, RenderComponent, setVisible }) => {
     Animated.spring(scaler, {
       toValue: 0.75,
       useNativeDriver: true,
-    }).start(() => setVisible(false));
+    }).start(() => {
+      setVisible(false);
+    });
   };
 
   useEffect(() => {
-    Animated.spring(scaler, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
+    if (visible) {
+      Animated.spring(scaler, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }
   }, [visible]);
 
   return (

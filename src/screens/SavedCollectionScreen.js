@@ -7,6 +7,7 @@ import {
   Modal,
   View,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -21,22 +22,89 @@ import AppButton from "../components/AppButton";
 import Separator from "../components/Separator";
 import GrowInput from "../components/GrowInput";
 import ActivityIndicator from "../components/ActivityIndicator";
+import AppFadeIn from "../components/AppFadeIn";
 
 const { width, height } = Dimensions.get("window");
 
+const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
+  const { addNewCollection } = useContext(FeedContext);
+
+  const [text, setText] = useState("");
+  const [errMsg, setErrMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const textInputRef = useRef(null);
+
+  const handleCollBtnPress = () => {
+    // POOR VALIDATION;
+    if (text.length > 1) {
+      const data = {
+        name: text,
+      };
+      setLoading(true);
+      addNewCollection(
+        data,
+        (resData) => {
+          setText("");
+          setLoading(false);
+          callBack(resData);
+        },
+        (err) => {
+          console.log(err);
+          setLoading(false);
+          setErrMsg(err);
+        }
+      );
+    } else {
+      setModalVis(false);
+    }
+  };
+
+  useEffect(() => {
+    if (modalVis) {
+      textInputRef?.current?.focus();
+    }
+  }, [modalVis]);
+
+  return (
+    <View style={styles.content}>
+      <AppText style={styles.headerText} size="large" bold>
+        New Collection
+      </AppText>
+      <Separator h={2} />
+      <GrowInput
+        text={text}
+        setText={setText}
+        mLine={false}
+        ref={textInputRef}
+        placeholder="New collection's name"
+      />
+      <AppButton
+        title={text.length > 1 ? "Save Collection" : "Cancel"}
+        onPress={handleCollBtnPress}
+        bare
+        style={{ alignSelf: "center", marginTop: 20 }}
+      />
+
+      <ActivityIndicator
+        visible={loading}
+        wTransparent
+        type="spin"
+        style={styles.activityNew}
+      />
+    </View>
+  );
+};
+
 const SavedCollectionScreen = ({ navigation }) => {
   const {
-    updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
-  const { addNewCollection } = useContext(FeedContext);
+  const { updateMe } = useContext(AuthContext);
 
   const [myCollections, setMyCollections] = useState(userInfo.my_collections);
   const [modalVis, setModalVis] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [text, setText] = useState("");
-
-  const textInputRef = useRef(null);
 
   const renderCollections = ({ item, index }) => {
     let colNum;
@@ -58,59 +126,38 @@ const SavedCollectionScreen = ({ navigation }) => {
     );
   };
 
-  const handleCollBtnPress = () => {
-    if (text.length > 1) {
-      const data = {
-        name: text,
-      };
-      setModalVis(false);
-      setIsLoading(true);
-      addNewCollection(
-        data,
-        (resData) => {
-          setMyCollections(resData);
-          updateMe(resData, "my_collections");
-          setText("");
-          setIsLoading(false);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-    } else {
-      setModalVis(false);
-    }
+  const createdNewCollection = (collections) => {
+    setMyCollections(collections);
+    setModalVis(false);
+    updateMe(collections, "my_collections");
   };
-
-  useEffect(() => {
-    if (modalVis) {
-      textInputRef?.current?.focus();
-    }
-  }, [modalVis]);
 
   return (
     <Screen style={styles.container}>
       <AppHeader
         title="Saved Collection"
         RightComponent={() => (
-          <AppButton
-            title="New"
-            onPress={() => setModalVis(true)}
-            naked
+          <TouchableOpacity
             style={styles.newCollBtn}
-          />
+            onPress={() => setModalVis(true)}
+          >
+            <Feather name="plus" color={colors.primary} size={20} />
+          </TouchableOpacity>
         )}
       />
 
       <AppText style={styles.textInfo}>
-        You have{" "}
+        You have &nbsp;
         <AppText bold size="large">
           {myCollections.length}
-        </AppText>{" "}
-        collections
+        </AppText>
+        &nbsp; collections
       </AppText>
       <FlatList
         data={myCollections}
+        contentContainerStyle={{
+          paddingBottom: height * 0.11,
+        }}
         ListEmptyComponent={
           <ActivityIndicator
             type="isEmpty"
@@ -123,34 +170,20 @@ const SavedCollectionScreen = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         renderItem={renderCollections}
       />
-      <Modal
+      <AppFadeIn
         visible={modalVis}
-        statusBarTranslucent
-        transparent
-        onRequestClose={() => setModalVis(false)}
-      >
-        <View style={styles.modalCont}>
-          <View style={styles.content}>
-            <AppText style={styles.headerText} bold>
-              Add New Collection
-            </AppText>
-            <Separator h={1} />
-            <GrowInput
-              text={text}
-              setText={setText}
-              mLine={false}
-              ref={textInputRef}
-              placeholder="New collection's name"
-            />
-            <AppButton
-              title={text.length > 1 ? "Save Collection" : "Cancel"}
-              onPress={handleCollBtnPress}
-              bare
-              style={styles.newCollBtn}
-            />
-          </View>
-        </View>
-      </Modal>
+        setVisible={setModalVis}
+        RenderComponent={() => (
+          <CreateNewCollection
+            setIsLoading={setIsLoading}
+            setModalVis={setModalVis}
+            callBack={createdNewCollection}
+            modalVis={modalVis}
+            setMyCollections={setMyCollections}
+          />
+        )}
+      />
+
       <ActivityIndicator
         visible={isLoading}
         wTransparent
@@ -169,6 +202,12 @@ const styles = StyleSheet.create({
   activityEmpty: {
     width,
     height: height * 0.8,
+  },
+  activityNew: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
   },
   container: {
     padding: 10,
@@ -195,6 +234,7 @@ const styles = StyleSheet.create({
   textInfo: {
     textAlign: "center",
     marginTop: 11,
+    marginBottom: 15,
   },
   headerText: {
     textAlign: "center",
@@ -207,10 +247,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
     alignItems: "center",
   },
-
   newCollBtn: {
-    alignSelf: "center",
-    marginTop: 8,
+    padding: 10,
+    paddingRight: 0,
   },
 });
 export default SavedCollectionScreen;

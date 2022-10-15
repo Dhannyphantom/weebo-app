@@ -34,8 +34,6 @@ const CollectionScreen = ({ route }) => {
     <Screen style={styles.container}>
       <AppHeader title={`${pageData.name} Collections`} />
       {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}
-
-      {/* <MansonryList images={gallery} /> */}
     </Screen>
   );
 };
