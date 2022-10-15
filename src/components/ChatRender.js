@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
@@ -7,6 +7,7 @@ import AppText from "./AppText";
 import ProfilePic from "./ProfilePic";
 import getTimeFormat from "../constants/getFormatTime";
 import Separator from "./Separator";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 const ChatRender = ({
@@ -15,6 +16,7 @@ const ChatRender = ({
   upperChat,
   lowerChat,
 }) => {
+  const theme = useContext(ThemeContext);
   let bool, upperRecipient, lowerSender, upperSender, lowerRecipient;
   if (sender.username === user) {
     bool = true;
@@ -22,14 +24,21 @@ const ChatRender = ({
     bool = false;
   }
 
-  let sendIconColor;
-  sent && read
-    ? (sendIconColor = colors.green)
-    : sent && !read
-    ? (sendIconColor = colors.primary)
-    : !sent && !read
-    ? (sendIconColor = colors.medium)
-    : (sendIconColor = colors.medium);
+  let sendIconColor,
+    notSent = true;
+
+  if (sent && read) {
+    sendIconColor = colors.green;
+    notSent = false;
+  } else if (sent & !read) {
+    // delivered
+    sendIconColor = colors.medium;
+    notSent = false;
+  } else if (!sent && !read) {
+    // haven't reached server
+    notSent = true;
+    sendIconColor = colors.medium;
+  }
 
   if (
     !upperChat ||
@@ -82,14 +91,17 @@ const ChatRender = ({
             <View
               style={{
                 ...styles.box,
-                backgroundColor: colors.extraLight,
+                backgroundColor: theme.extralight,
                 marginLeft: upperRecipient ? 6 : 51,
                 marginBottom: upperRecipient ? 0 : 2,
               }}
             >
               <AppText
                 size="large"
-                style={{ ...styles.message, color: colors.chat }}
+                style={{
+                  ...styles.message,
+                  color: theme.mode === "dark" ? theme.color : colors.chat,
+                }}
               >
                 {message}
               </AppText>
@@ -116,7 +128,11 @@ const ChatRender = ({
           <View style={styles.reciStyle}>
             {lowerSender && (
               <View style={styles.checkIcon}>
-                <Feather name="check-circle" size={16} color={sendIconColor} />
+                <Feather
+                  name={notSent ? "circle" : "check-circle"}
+                  size={16}
+                  color={sendIconColor}
+                />
               </View>
             )}
             <View

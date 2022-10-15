@@ -23,11 +23,13 @@ import Separator from "../components/Separator";
 import GrowInput from "../components/GrowInput";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppFadeIn from "../components/AppFadeIn";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
 const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   const { addNewCollection } = useContext(FeedContext);
+  const theme = useContext(ThemeContext);
 
   const [text, setText] = useState("");
   const [errMsg, setErrMsg] = useState(null);
@@ -67,7 +69,7 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   }, [modalVis]);
 
   return (
-    <View style={styles.content}>
+    <View style={[styles.content, { backgroundColor: theme.background }]}>
       <AppText style={styles.headerText} size="large" bold>
         New Collection
       </AppText>
@@ -131,6 +133,10 @@ const SavedCollectionScreen = ({ navigation }) => {
     setModalVis(false);
     updateMe(collections, "my_collections");
   };
+
+  useEffect(() => {
+    setMyCollections(userInfo.my_collections);
+  }, [userInfo]);
 
   return (
     <Screen style={styles.container}>

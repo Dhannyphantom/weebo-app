@@ -18,7 +18,7 @@ const GrowInput = (
       <TextInput
         style={[styles.input, { color: theme.color }, style]}
         placeholder={placeholder}
-        placeholderTextColor={theme.medium}
+        placeholderTextColor={theme.color}
         maxLength={80}
         ref={ref}
         {...otherProps}
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     minHeight: 55,
     borderWidth: 3,
     backgroundColor: colors.extraLight,
-    borderColor: colors.unChange,
+    borderColor: colors.medium,
     borderRadius: screen.width * 0.02,
     width: screen.width * 0.8,
     overflow: "hidden",

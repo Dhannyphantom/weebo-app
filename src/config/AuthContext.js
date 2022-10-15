@@ -31,6 +31,38 @@ const authReducer = (state, action) => {
           [action.payload.prop]: action.payload.data,
         },
       };
+    case "update_remove":
+      const filtedData = state.userInfo[action.payload.prop].filter(
+        (obj) => obj._id != action.payload.data
+      );
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          [action.payload.prop]: filtedData,
+        },
+      };
+    case "update_data":
+      // checkKey | checkValue | prop | checkProp | data
+      // self | array | object
+      const updatedData = state.userInfo[action.payload.prop].map((obj) => {
+        if (obj[action.payload.checkKey] == action.payload.checkValue) {
+          return {
+            ...obj,
+            [action.payload.checkProp]: action.payload.data,
+          };
+        } else {
+          return obj;
+        }
+      });
+
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          [action.payload.prop]: updatedData,
+        },
+      };
     case "add_error":
       return { ...state, errMsg: action.payload };
     case "clear_error":
@@ -433,6 +465,54 @@ const sendInvite = (dispatch) => async (userId, sc, cb) => {
   }
 };
 
+const updateCollection = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const headers = { "x-auth-token": token };
+
+    let res;
+    switch (data.type) {
+      case "update":
+        res = await authApi.put("/collection", data, {
+          headers,
+        });
+        dispatch({
+          type: "update_data",
+          payload: {
+            prop: "my_collections",
+            data: res.data.name,
+            checkValue: data.id,
+            checkProp: "name",
+            checkKey: "_id",
+          },
+        });
+        break;
+      case "share":
+        res = await authApi.post("/collection", data, {
+          headers,
+        });
+        break;
+      case "delete":
+        res = await authApi.delete(`/collection?collectionId=${data.id}`, {
+          headers,
+        });
+        dispatch({
+          type: "update_remove",
+          payload: { prop: "my_collections", data: res.data.collectionId },
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error updating collection", data: err?.response?.data });
+  }
+};
+
 // THIS WILL UPDATE THE USER STATE
 const updateMe = (dispatch) => (data, prop) => {
   dispatch({ type: "update_me", payload: { data, prop } });
@@ -496,6 +576,7 @@ export const { Context, Provider } = createDataContext(
     characterCreated,
     addToCollection,
     clearMessage,
+    updateCollection,
     getUserData,
     requestWeeb,
     getMyData,

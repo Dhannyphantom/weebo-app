@@ -20,12 +20,34 @@ import Separator from "../components/Separator";
 import AppButton from "../components/AppButton";
 import FriendBox from "../components/FriendBox";
 import ActivityIndicator from "../components/ActivityIndicator";
+import PopMessage from "../components/PopMessage";
 
 const { width, height } = Dimensions.get("screen");
 
-const RenameCollection = ({ name, id }) => {
+const RenameCollection = ({ name, setter, id }) => {
   const theme = useContext(ThemeContext);
+  const { updateCollection } = useContext(AuthContext);
   const [text, setText] = useState(name ?? "");
+
+  const renameCollection = () => {
+    updateCollection(
+      {
+        id,
+        type: "update",
+        name: text,
+      },
+      (resData) => {
+        setter.setCollection((prev) => ({
+          ...prev,
+          name: resData.name,
+        }));
+        setter.setRenameModal(false);
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
+  };
 
   return (
     <View style={[styles.modal, { backgroundColor: theme.background }]}>
@@ -43,7 +65,7 @@ const RenameCollection = ({ name, id }) => {
 
         <AppButton
           title="Rename"
-          onPress={() => console.log(text)}
+          onPress={renameCollection}
           bare
           style={styles.modalBtn}
         />
@@ -51,11 +73,13 @@ const RenameCollection = ({ name, id }) => {
     </View>
   );
 };
-const ShareCollection = ({ name, id }) => {
+
+const ShareCollection = ({ name, setter, id }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
     getUserData,
+    updateCollection,
   } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
@@ -76,11 +100,30 @@ const ShareCollection = ({ name, id }) => {
     );
   }, []);
 
+  const shareCollection = (userId) => {
+    updateCollection(
+      {
+        id,
+        type: "share",
+        user: userId,
+      },
+      (resData) => {
+        setter.setPopper({
+          vis: true,
+          type: "success",
+          msg: "Collection shared successfully",
+        });
+        setter.setShareModal(false);
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
+  };
+
   useEffect(() => {
     fetchWeebs();
   }, []);
-
-  console.log(weebos);
 
   return (
     <View
@@ -102,7 +145,7 @@ const ShareCollection = ({ name, id }) => {
                 data={weebos}
                 type="share"
                 friended
-                callback={(data) => console.log(data)}
+                callback={(data) => shareCollection(data._id)}
               />
             ) : (
               <ActivityIndicator
@@ -123,16 +166,20 @@ const ShareCollection = ({ name, id }) => {
   );
 };
 
-const CollectionScreen = ({ route }) => {
+const CollectionScreen = ({ route, navigation }) => {
   const [postsArr, setPostArr] = useState([]);
   const [media, setMedia] = useState([]);
   const [dropMenu, setDropMenu] = useState(false);
   const [prompt, setPrompt] = useState({ visible: false });
   const [renameModal, setRenameModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
+  const [collection, setCollection] = useState({});
   const [isPostEmpty, setIsPostEmpty] = useState(true);
+  const [popper, setPopper] = useState({ vis: false });
 
   const theme = useContext(ThemeContext);
+  const { updateCollection } = useContext(AuthContext);
+
   const pageData = route?.params?.item;
 
   let counter = 0;
@@ -175,7 +222,18 @@ const CollectionScreen = ({ route }) => {
   const handlePrompt = () => {
     switch (prompt?.type) {
       case "delete_collection":
-        console.log("DELETE COLLECTION");
+        updateCollection(
+          {
+            id: pageData._id,
+            type: "delete",
+          },
+          (resData) => {
+            navigation.goBack();
+          },
+          (errData) => {
+            console.log(errData);
+          }
+        );
         break;
 
       default:
@@ -199,10 +257,14 @@ const CollectionScreen = ({ route }) => {
     setPostArr(pageData.posts);
   }, [route]);
 
+  useEffect(() => {
+    setCollection(pageData);
+  }, []);
+
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title={`${pageData.name} Collections`}
+        title={`${collection.name ?? pageData.name} Collections`}
         RightComponent={() => (
           <TouchableOpacity
             activeOpacity={0.8}
@@ -220,16 +282,25 @@ const CollectionScreen = ({ route }) => {
         visible={renameModal}
         setVisible={setRenameModal}
         RenderComponent={() => (
-          <RenameCollection name={pageData?.name} id={pageData?._id} />
+          <RenameCollection
+            name={pageData?.name}
+            setter={{ setCollection, setRenameModal }}
+            id={pageData?._id}
+          />
         )}
       />
       <AppFadeIn
         visible={shareModal}
         setVisible={setShareModal}
         RenderComponent={() => (
-          <ShareCollection name={pageData?.name} id={pageData?._id} />
+          <ShareCollection
+            name={pageData?.name}
+            setter={{ setShareModal, setPopper }}
+            id={pageData?._id}
+          />
         )}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </Screen>
   );
 };
