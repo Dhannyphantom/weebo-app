@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -18,8 +18,9 @@ import Link from "./Link";
 import PostVideo from "./PostVideo";
 import Separator from "./Separator";
 import colors from "../constants/colors";
+import PopDropDown from "./PopDropDown";
+import ThemeContext from "../config/ThemeContext";
 
-const asp = { width: 1, height: 1 };
 const screen = Dimensions.get("window");
 
 const checkPropArr = [
@@ -49,6 +50,7 @@ const ChallengeForm = ({
   isMine,
   setModalVis,
 }) => {
+  const theme = useContext(ThemeContext);
   const [showInfo, setShowInfo] = useState(false);
   let answer;
   const renderBadInfos = ({ item }) => {
@@ -72,7 +74,7 @@ const ChallengeForm = ({
           onPress={() => handleInfoPress(item)}
           style={styles.infoCont}
         >
-          <View style={styles.infoBox}>
+          <View style={[styles.infoBox, { backgroundColor: theme.background }]}>
             <View style={styles.infoTextCont}>
               <AppText bold>{item.name} - </AppText>
               <AppText numberOfLines={3} style={styles.infoText}>
@@ -82,29 +84,35 @@ const ChallengeForm = ({
             {!item.selected && (
               <MaterialCommunityIcons
                 name="circle"
-                size={12}
+                size={20}
                 color={colors.light}
               />
             )}
             {item.selected && (
               <MaterialCommunityIcons
                 name="check-circle"
-                size={12}
+                size={20}
                 color={colors.primary}
               />
             )}
           </View>
         </TouchableOpacity>
         {item.selected && (
-          <View style={styles.infoTextInputCont}>
+          <View
+            style={[
+              styles.infoTextInputCont,
+              { backgroundColor: theme.background, marginBottom: 30 },
+            ]}
+          >
             <TextInput
               placeholder={`Add correct ${item.name.toLowerCase()}`}
+              placeholderTextColor={theme.medium}
               value={
                 infoContest[item.name.toLowerCase()] ?? infoContest[item.prop]
               }
               editable={!editable}
               onChangeText={(val) => handleContestTextChange(val, item.prop)}
-              style={styles.infoInput}
+              style={[styles.infoInput, { color: theme.color }]}
             />
             {editable && (
               <TouchableOpacity
@@ -115,7 +123,7 @@ const ChallengeForm = ({
                 <MaterialCommunityIcons
                   name="plus-box"
                   color={colors.primary}
-                  size={screen.width * 0.035}
+                  size={20}
                 />
               </TouchableOpacity>
             )}
@@ -126,191 +134,191 @@ const ChallengeForm = ({
   };
 
   return (
-    <Modal
+    <PopDropDown
       visible={modalVis}
-      animationType="slide"
-      onRequestClose={() => setModalVis(false)}
-      statusBarTranslucent
-      transparent
-    >
-      <TouchableOpacity
-        onPress={() => {
-          setModalVis(false);
-          setAsset(null);
-        }}
-        activeOpacity={1}
-        style={styles.modalCont}
-      >
-        {asset && asset.type === "image" && (
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{
-              ...styles.modalDisplay,
-              aspectRatio: asset.width / asset.height,
-            }}
-          >
-            <View style={styles.modalLoad}>
-              <ActivityIndicator visible={isStarting} wTransparent />
-            </View>
-            <Image source={{ uri: asset.uri }} style={styles.modalImage} />
-          </TouchableOpacity>
-        )}
-        {asset && asset.type === "video" && (
-          <TouchableOpacity
-            onPress={() => console.log("Yes")}
-            activeOpacity={1}
-            style={styles.vidCont}
-          >
-            <PostVideo
-              vidUri={asset.uri}
-              style={styles.video}
-              disableDoublePress
-              disableLongPress
-              viewable={false}
-            />
-            <ActivityIndicator
-              style={styles.modalLoad}
-              visible={isStarting}
-              wTransparent
-            />
-          </TouchableOpacity>
-        )}
-        {asset && asset.type === "info" && (
-          <>
-            {!isStarting ? (
-              <TouchableOpacity activeOpacity={1} style={styles.badInfo}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: 12,
-                  }}
-                >
-                  <View />
-                  <AppText style={styles.infoTitleText} bold>
-                    Select Info Property
-                  </AppText>
-                  <TouchableOpacity
-                    style={{ marginRight: 12, alignSelf: "center" }}
-                    activeOpacity={0.6}
-                    onPress={() => setShowInfo(!showInfo)}
-                  >
-                    <MaterialCommunityIcons
-                      name="information"
-                      size={screen.width * 0.05}
-                      color={colors.primary}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <Separator h={2} />
-                {showInfo && (
-                  <>
-                    <AppText style={{ textAlign: "center", marginBottom: 8 }}>
-                      Select a field you know is invalid or incomplete and add
-                      your choice and pre-existing ones (if valid)
-                    </AppText>
-                    <Separator h={1} />
-                  </>
-                )}
-
-                <FlatList
-                  data={badInfoData}
-                  keyExtractor={(item) => item.id}
-                  renderItem={renderBadInfos}
-                />
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.badInfo}>
-                <ActivityIndicator visible={true} type="spin" />
+      setter={() => setModalVis(false)}
+      RenderComponent={() => (
+        <>
+          {asset && asset.type === "image" && (
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                ...styles.modalDisplay,
+                aspectRatio: asset.width / asset.height,
+              }}
+            >
+              <View style={styles.modalLoad}>
+                <ActivityIndicator visible={isStarting} wTransparent />
               </View>
-            )}
-          </>
-        )}
-        {asset && asset.type == "info_start" && (
-          <View style={styles.modalDisplay}>
-            <ActivityIndicator visible={isStarting} type="spin" />
-          </View>
-        )}
-        <TouchableOpacity activeOpacity={1} style={styles.modalView}>
-          <AppText style={{ textAlign: "center", margin: 16 }} bold>
-            {/* WORK BELOW */}
-            {!isMine ? "CHALLENGE BY" : "ACCEPT CHALLENGE"}
-          </AppText>
-          <Separator h={1} m={0.1} />
-          {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
-          <>
-            {!isMine && (
-              <>
-                <Link
-                  name="Image Contest"
-                  onPress={() => handleContest("image")}
-                  style={styles.links}
-                />
-                <Link
-                  name="Video Contest"
-                  onPress={() => handleContest("video")}
-                  style={styles.links}
-                />
-                <Link
-                  name="Bad Info Contest"
-                  onPress={() => handleContest("info")}
-                  style={styles.links}
-                />
-                <AppButton
-                  title="GO"
-                  ///TODO::  validate this button
-                  onPress={() => handleStartChallenge("challenge")}
-                  style={styles.modalBtn}
-                />
-                <AppButton
-                  title="CANCEL"
-                  onPress={() => setModalVis(false)}
-                  style={styles.modalBtn}
-                  bare
-                />
-              </>
-            )}
-            {isMine && (
-              <View>
-                {challengeType === "image" && (
+              <Image source={{ uri: asset.uri }} style={styles.modalImage} />
+            </TouchableOpacity>
+          )}
+          {asset && asset.type === "video" && (
+            <TouchableOpacity
+              onPress={() => console.log("Yes")}
+              activeOpacity={1}
+              style={styles.vidCont}
+            >
+              <PostVideo
+                source={asset}
+                style={styles.video}
+                disableDoublePress
+                disableLongPress
+                viewable={false}
+              />
+              <ActivityIndicator
+                style={styles.modalLoad}
+                visible={isStarting}
+                wTransparent
+              />
+            </TouchableOpacity>
+          )}
+          {asset && asset.type === "info" && (
+            <>
+              {!isStarting ? (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={[
+                    styles.badInfo,
+                    { backgroundColor: theme.extralight },
+                  ]}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginTop: 12,
+                    }}
+                  >
+                    <View />
+                    <AppText style={styles.infoTitleText} bold>
+                      Select Info Property
+                    </AppText>
+                    <TouchableOpacity
+                      style={{ marginRight: 12, alignSelf: "center" }}
+                      activeOpacity={0.6}
+                      onPress={() => setShowInfo(!showInfo)}
+                    >
+                      <MaterialCommunityIcons
+                        name="information"
+                        size={screen.width * 0.05}
+                        color={colors.primary}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <Separator h={2} />
+                  {showInfo && (
+                    <>
+                      <AppText style={{ textAlign: "center", marginBottom: 8 }}>
+                        Select a field you know is invalid or incomplete and add
+                        your choice and pre-existing ones (if valid)
+                      </AppText>
+                      <Separator h={1} />
+                    </>
+                  )}
+
+                  <FlatList
+                    data={badInfoData}
+                    keyExtractor={(item) => item.id}
+                    overScrollMode="never"
+                    renderItem={renderBadInfos}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.badInfo}>
+                  <ActivityIndicator visible={true} type="spin" />
+                </View>
+              )}
+            </>
+          )}
+          {asset && asset.type == "info_start" && (
+            <View style={styles.modalDisplay}>
+              <ActivityIndicator visible={isStarting} type="spin" />
+            </View>
+          )}
+          <View
+            style={[styles.modalView, { backgroundColor: theme.background }]}
+          >
+            <AppText style={{ textAlign: "center", margin: 16 }} bold>
+              {/* WORK BELOW */}
+              {!isMine ? "CHALLENGE BY" : "ACCEPT CHALLENGE"}
+            </AppText>
+            <Separator h={1} m={0.1} />
+            {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
+            <>
+              {!isMine && (
+                <>
                   <Link
                     name="Image Contest"
                     onPress={() => handleContest("image")}
                     style={styles.links}
                   />
-                )}
-                {challengeType === "video" && (
                   <Link
                     name="Video Contest"
                     onPress={() => handleContest("video")}
                     style={styles.links}
                   />
-                )}
-                {challengeType === "info" && (
                   <Link
                     name="Bad Info Contest"
-                    clickable={false}
+                    onPress={() => handleContest("info")}
                     style={styles.links}
                   />
-                )}
-                <AppButton
-                  title="GO"
-                  onPress={() => handleStartChallenge("accept")}
-                  style={styles.modalBtn}
-                />
-                <AppButton
-                  title="CANCEL"
-                  onPress={() => setModalVis(false)}
-                  style={styles.modalBtn}
-                  bare
-                />
-              </View>
-            )}
-          </>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+                  <AppButton
+                    title="GO"
+                    ///TODO::  validate this button
+                    onPress={() => handleStartChallenge("challenge")}
+                    style={styles.modalBtn}
+                  />
+                  <AppButton
+                    title="CANCEL"
+                    onPress={() => setModalVis(false)}
+                    style={styles.modalBtn}
+                    bare
+                  />
+                </>
+              )}
+              {isMine && (
+                <View>
+                  {challengeType === "image" && (
+                    <Link
+                      name="Image Contest"
+                      onPress={() => handleContest("image")}
+                      style={styles.links}
+                    />
+                  )}
+                  {challengeType === "video" && (
+                    <Link
+                      name="Video Contest"
+                      onPress={() => handleContest("video")}
+                      style={styles.links}
+                    />
+                  )}
+                  {challengeType === "info" && (
+                    <Link
+                      name="Bad Info Contest"
+                      clickable={false}
+                      style={styles.links}
+                    />
+                  )}
+                  <AppButton
+                    title="GO"
+                    onPress={() => handleStartChallenge("accept")}
+                    style={styles.modalBtn}
+                  />
+                  <AppButton
+                    title="CANCEL"
+                    onPress={() => setModalVis(false)}
+                    style={styles.modalBtn}
+                    bare
+                  />
+                </View>
+              )}
+            </>
+          </View>
+        </>
+      )}
+    />
   );
 };
 const styles = StyleSheet.create({
@@ -339,7 +347,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginHorizontal: 10,
     borderRadius: 12,
-    paddingVertical: 13,
+    paddingVertical: 24,
     backgroundColor: colors.extraLight,
   },
 
@@ -359,7 +367,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginHorizontal: 20,
     paddingLeft: 10,
-    height: screen.width * 0.08,
+    height: 55,
   },
   infoInput: {
     width: "90%",

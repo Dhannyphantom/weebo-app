@@ -9,8 +9,6 @@ import AppText from "../components/AppText";
 import MansonryList from "../components/MansonryList";
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
-import getTimeStamp from "../constants/getTimestamp";
-import colors from "../constants/colors";
 import DropDown from "../components/DropDown";
 import GrowInput from "../components/GrowInput";
 import AlertModal from "../components/AlertModal";
@@ -74,7 +72,7 @@ const RenameCollection = ({ name, setter, id }) => {
   );
 };
 
-const ShareCollection = ({ name, setter, id }) => {
+const ShareCollection = ({ setter, id }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -82,10 +80,11 @@ const ShareCollection = ({ name, setter, id }) => {
     updateCollection,
   } = useContext(AuthContext);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [weebos, setWeebos] = useState([]);
 
   const fetchWeebs = useCallback(() => {
+    // setLoading(true);
     getUserData(
       userInfo._id,
       "get_weebs",
@@ -122,7 +121,9 @@ const ShareCollection = ({ name, setter, id }) => {
   };
 
   useEffect(() => {
-    fetchWeebs();
+    if (setter.vis) {
+      fetchWeebs();
+    }
   }, []);
 
   return (
@@ -294,8 +295,7 @@ const CollectionScreen = ({ route, navigation }) => {
         setVisible={setShareModal}
         RenderComponent={() => (
           <ShareCollection
-            name={pageData?.name}
-            setter={{ setShareModal, setPopper }}
+            setter={{ setShareModal, vis: shareModal, setPopper }}
             id={pageData?._id}
           />
         )}

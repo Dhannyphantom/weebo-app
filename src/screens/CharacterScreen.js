@@ -49,7 +49,6 @@ const CharacterScreen = ({ route, navigation }) => {
   //// FOR BETTER PERFORMANCE MAKE THIS SCREEN FETCH A SINGLE CHARACTER FROM DB USING ROUTE DATA
   //// LETS GET THAT TO WORK /// 2ND JAN 2021 - DONE
   const {
-    tryLocalSignin,
     state: { userInfo },
   } = useContext(AuthContext);
 

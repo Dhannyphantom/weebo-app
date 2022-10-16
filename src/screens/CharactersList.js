@@ -18,15 +18,26 @@ import AppHeader from "../components/AppHeader";
 import colors from "../constants/colors";
 import AppText from "../components/AppText";
 
-const screen = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-const CARD_WIDTH = screen.width * 0.47;
+const CARD_WIDTH = width * 0.47;
+
+const EmptyList = () => {
+  return (
+    <View style={{ width, height: height * 0.9 }}>
+      <ActivityIndicator
+        visible
+        type="isEmpty"
+        text="No characters found"
+        style={styles.activity}
+        transparent
+      />
+    </View>
+  );
+};
 
 const CharactersList = ({ route, navigation }) => {
-  const {
-    getUserData,
-    state: { userInfo },
-  } = useContext(AuthContext);
+  const { getUserData } = useContext(AuthContext);
   const [myCharacters, setMyCharacters] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -123,12 +134,11 @@ const CharactersList = ({ route, navigation }) => {
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <MaterialCommunityIcons
                       name="ninja"
-                      size={screen.width * 0.03}
+                      size={width * 0.03}
                       color={colors.primary}
                     />
                     <AppText style={styles.charHeaderTitle} bold>
-                      {" "}
-                      Regulars{" "}
+                      Regulars
                     </AppText>
                   </View>
                 )}
@@ -136,6 +146,7 @@ const CharactersList = ({ route, navigation }) => {
                   showsVerticalScrollIndicator={false}
                   numColumns={2}
                   listKey="renderCharacters"
+                  ListEmptyComponent={EmptyList}
                   data={myCharacters}
                   keyExtractor={(item, index) => (item + index).toString()}
                   renderItem={({ item }) => {
@@ -167,13 +178,14 @@ const CharactersList = ({ route, navigation }) => {
   );
 };
 const styles = StyleSheet.create({
+  activity: { width, height: "100%", position: "absolute" },
   container: {
     flex: 1,
   },
   charCont: {
     marginBottom: 18,
     marginTop: 10,
-    marginHorizontal: screen.width * 0.01,
+    marginHorizontal: width * 0.01,
   },
   charList: {
     flex: 1,
@@ -183,7 +195,7 @@ const styles = StyleSheet.create({
   },
   cardCont: {
     width: CARD_WIDTH,
-    height: screen.height * 0.28,
+    height: height * 0.28,
   },
   btmStyle: {
     width: CARD_WIDTH,
@@ -198,16 +210,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   searchComp: {
-    width: screen.width * 0.8,
+    width: width * 0.94,
     marginTop: 8,
+    alignSelf: "center",
   },
   searchIconCont: {
-    backgroundColor: colors.extraLight,
-    width: screen.width * 0.09,
-    height: screen.width * 0.08,
-    marginHorizontal: screen.width * 0.003,
+    width: 25,
+    height: 25,
+    marginHorizontal: 10,
     marginBottom: 8,
-    borderRadius: screen.width * 0.02,
     justifyContent: "center",
     alignItems: "center",
   },
