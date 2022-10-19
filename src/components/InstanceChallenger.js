@@ -1,16 +1,10 @@
-import React, { useContext, useRef, useState } from "react";
-import {
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-  View,
-} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, Dimensions, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
-import { Video } from "expo-av";
 
 import { Context as AuthContext } from "../config/AuthContext";
+import { Context as CharContext } from "../config/CharContext";
 
 import ThemeContext from "../config/ThemeContext";
 import ActivityIndicator from "./ActivityIndicator";
@@ -19,6 +13,7 @@ import AppText from "./AppText";
 import Link from "./Link";
 import PopDropDown from "./PopDropDown";
 import PostVideo from "./PostVideo";
+import Separator from "./Separator";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -54,7 +49,9 @@ const Challenger = ({ data, setAsset, setter }) => {
           setAsset(res_video);
         }
         break;
-
+      case "info":
+        setAsset({ type: "info" });
+        break;
       default:
         break;
     }
@@ -105,9 +102,28 @@ const Challenger = ({ data, setAsset, setter }) => {
   );
 };
 
-const ChallengeMedia = ({ asset }) => {
+const ChallengeMedia = ({ asset, data }) => {
+  const [instanceData, setInstanceData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const theme = useContext(ThemeContext);
+  const { fetchInfoProperties } = useContext(CharContext);
   const topper = useSafeAreaInsets().top;
+
+  useEffect(() => {
+    if (asset && asset.type === "info" && loading) {
+      fetchInfoProperties(
+        { id: data.id, instance: data.instance },
+        (resData) => {
+          setInstanceData(resData);
+          setLoading(false);
+        },
+        (errData) => {
+          console.log(errData);
+        }
+      );
+    }
+  }, []);
 
   return (
     <View
@@ -129,6 +145,30 @@ const ChallengeMedia = ({ asset }) => {
           disableLongPress
         />
       )}
+      {asset && asset.type === "info" && (
+        <>
+          <AppText style={{ ...styles.title, marginTop: 15 }} size="large" bold>
+            Select Invalid Info
+          </AppText>
+          <Separator h={2} />
+          <AppText style={styles.title}>
+            Choose and select info properties that you're sure are wrong or
+            incomplete information
+          </AppText>
+          <View>
+            {/* <FlatList
+                    data={[]}
+                    keyExtractor={(item) => item.id}
+                    overScrollMode="never"
+                    renderItem={}
+                  /> */}
+          </View>
+        </>
+      )}
+      <ActivityIndicator
+        visible={loading && asset.type === "info"}
+        style={styles.activity}
+      />
     </View>
   );
 };
@@ -155,7 +195,7 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
           data={data}
         />
       )}
-      TopperComponent={() => <ChallengeMedia asset={asset} />}
+      TopperComponent={() => <ChallengeMedia data={data} asset={asset} />}
       headerTitle="Challenge By"
     />
   );

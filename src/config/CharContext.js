@@ -370,6 +370,29 @@ const getAChannel = (dispatch) => async (id, sc, cb) => {
     cb && cb("Error getting channels info");
   }
 };
+const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
+  const { id, instance } = data;
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get(
+      `/info?instanceId=${id}&instance=${instance}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
+    sc && sc(res.data);
+  } catch (err) {
+    console.log(err);
+    cb &&
+      cb({
+        err,
+        msg: "Error getting channels info",
+        data: err?.response?.data,
+      });
+  }
+};
 const searchChannels = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -429,6 +452,7 @@ export const { Context, Provider } = createDataContext(
     instanceUpdater,
     roomCharacters,
     followChar,
+    fetchInfoProperties,
     deleteInstance,
     inviteActions,
     sendInvite,
