@@ -794,24 +794,6 @@ const CharacterScreen = ({ route, navigation }) => {
           data={infoModal.type === "role" ? characterRole : characterTypes}
           handleDropdown={(val) => handleContestTextChange(val, infoModal.type)}
         />
-
-        <ChallengeForm
-          modalVis={modalVis}
-          setModalVis={setModalVis}
-          handleContest={handleContest}
-          handleContestTextChange={handleContestTextChange}
-          handleStartChallenge={handleStartChallenge}
-          infoContest={infoContest}
-          isMine={isMine}
-          badInfoData={badInfoData}
-          challengeType={challengeType}
-          handleInfoPress={handleInfoPress}
-          errMsg={errMsg}
-          isStarting={isStarting}
-          character={character}
-          setAsset={setAsset}
-          asset={asset}
-        />
         <TransferInstance
           visible={transfer}
           updateThisInstance={updateThisInstance}

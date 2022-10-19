@@ -47,7 +47,12 @@ const getShows =
         dispatch({ type: "get_shows", payload: response.data });
       sc && sc(response.data);
     } catch (err) {
-      cb && cb("Error getting shows", err.response.data);
+      cb &&
+        cb({
+          err,
+          msg: "Error fetching anime data",
+          data: err?.response?.data,
+        });
     }
   };
 

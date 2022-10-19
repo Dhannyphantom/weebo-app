@@ -249,7 +249,7 @@ const ShowScreen = ({ route, navigation }) => {
         isRefresh && setRefreshing(false);
       },
       (err) => {
-        setErrMsg(err);
+        setErrMsg(err.data ?? err.msg);
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);
       }
@@ -711,6 +711,13 @@ const ShowScreen = ({ route, navigation }) => {
         <ActivityIndicator
           visible={isLoading}
           type="spin"
+          style={styles.activity}
+        />
+      ) : errMsg && errMsg.includes("deleted_instance") ? (
+        <ActivityIndicator
+          visible
+          type="isEmpty"
+          text="Anime was  not verifiable and has been deleted"
           style={styles.activity}
         />
       ) : (

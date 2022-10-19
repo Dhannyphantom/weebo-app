@@ -204,7 +204,12 @@ const ShowGroup = ({ screen, headerTitle }) => {
           <ActivityIndicator
             visible={true}
             type="isEmpty"
-            text={firstLoad ? `No ${screen} data` : `Getting ${screen} data...`}
+            wTransparent
+            text={
+              firstLoad
+                ? `No ${screen} data`
+                : `Fetching anime ${screen} data...`
+            }
             style={styles.activity}
           />
         }
@@ -219,7 +224,7 @@ const styles = StyleSheet.create({
   },
   activity: {
     width,
-    height,
+    height: height * 0.8,
   },
   search: {
     width: width * 0.075,
