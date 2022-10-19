@@ -87,7 +87,6 @@ const ShowScreen = ({ route, navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [challenged, setChallenged] = useState(false);
   const [challenger, setChallenger] = useState(null);
-  const [badInfoData, setBadInfoData] = useState(showInfoProps);
   const [infoContest, setInfoContest] = useState(daytaObj);
   const [infoModal, setInfoModal] = useState({ vis: false, type: null });
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Dimensions, Image, View } from "react-native";
+import { StyleSheet, Dimensions, FlatList, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
 
@@ -102,6 +102,17 @@ const Challenger = ({ data, setAsset, setter }) => {
   );
 };
 
+const InfoProps = ({ item }) => {
+  console.log(item.title);
+  return (
+    <View>
+      <AppText size="large" bold>
+        {item.title}
+      </AppText>
+    </View>
+  );
+};
+
 const ChallengeMedia = ({ asset, data }) => {
   const [instanceData, setInstanceData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -155,18 +166,24 @@ const ChallengeMedia = ({ asset, data }) => {
             Choose and select info properties that you're sure are wrong or
             incomplete information
           </AppText>
-          <View>
-            {/* <FlatList
-                    data={[]}
-                    keyExtractor={(item) => item.id}
-                    overScrollMode="never"
-                    renderItem={}
-                  /> */}
+          <View style={{ flex: 1 }}>
+            <FlatList
+              data={instanceData}
+              extraData={asset}
+              keyExtractor={(item) => item.title}
+              renderItem={({ item }) => {
+                return (
+                  <View>
+                    <AppText> {item.title} </AppText>
+                  </View>
+                );
+              }}
+            />
           </View>
         </>
       )}
       <ActivityIndicator
-        visible={loading && asset.type === "info"}
+        visible={loading && asset && asset.type === "info"}
         style={styles.activity}
       />
     </View>

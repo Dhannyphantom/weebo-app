@@ -374,14 +374,11 @@ const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
   const { id, instance } = data;
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(
-      `/info?instanceId=${id}&instance=${instance}`,
-      {
-        headers: {
-          "x-auth-token": token,
-        },
-      }
-    );
+    const res = await fetchApi.get(`/info?id=${id}&instance=${instance}`, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
     sc && sc(res.data);
   } catch (err) {
     console.log(err);
