@@ -30,6 +30,7 @@ import ShowUpload from "../components/ShowUpload";
 import InfoBox from "../components/InfoBox";
 import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
+import InstanceChallenger from "../components/InstanceChallenger";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -42,6 +43,7 @@ const hider = [
   "__v",
   "cover_photo",
   "_id",
+  "isManga",
   "app_creator",
   "verifiedList",
   "name_j",
@@ -119,7 +121,7 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "2",
       name: "posts",
-      onPress: null,
+      onPress: () => console.log("handle-posts"),
       icon: "image-multiple",
       selected: true,
       show: true,
@@ -127,7 +129,8 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "1",
       name: "challenge",
-      onPress: () => handleContest("fresh"),
+      onPress: () => setChallengeModal(true),
+      // onPress: () => handleContest("fresh"),
       icon: "trophy-outline",
       selected: true,
       show: !isMine && !challenged,
@@ -745,22 +748,10 @@ const ShowScreen = ({ route, navigation }) => {
         </Viewport.Tracker>
       )}
 
-      <ChallengeForm
-        modalVis={challengeModal}
-        setModalVis={setChallengeModal}
-        handleContest={handleContest}
-        handleContestTextChange={handleContestTextChange}
-        handleStartChallenge={handleStartChallenge}
-        infoContest={infoContest}
-        challengeType={challengeType}
-        isMine={isMine}
-        badInfoData={badInfoData}
-        handleInfoPress={handleInfoPress}
-        errMsg={errMsg}
-        isStarting={isStarting}
-        character={dataState}
-        setAsset={setAsset}
-        asset={asset}
+      <InstanceChallenger
+        visible={challengeModal}
+        data={{ instance: "show", instanceID: show._id }}
+        setVisible={setChallengeModal}
       />
       <TransferInstance
         visible={transfer}

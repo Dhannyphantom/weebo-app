@@ -19,11 +19,17 @@ const PopDropDown = ({
   visible = false,
   setter,
   close = false,
+  closer = null,
   RenderComponent,
+  TopperComponent,
   headerTitle,
 }) => {
-  const translator = useRef(new Animated.Value(height)).current;
   const theme = useContext(ThemeContext);
+  const translator = useRef(new Animated.Value(height)).current;
+  const opaciter = translator.interpolate({
+    inputRange: [0, height * 0.7],
+    outputRange: [1, 0],
+  });
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -42,10 +48,13 @@ const PopDropDown = ({
   }, [visible]);
 
   useEffect(() => {
-    if (close) {
-      handleCloseModal();
+    if (closer) {
+      const status = closer();
+      if (status === "close") {
+        handleCloseModal();
+      }
     }
-  }, [close]);
+  }, [close, closer]);
 
   return (
     <Modal
@@ -58,10 +67,7 @@ const PopDropDown = ({
         style={{
           flex: 1,
           backgroundColor: "rgba(0,0,0,0.3)",
-          opacity: translator.interpolate({
-            inputRange: [0, height * 0.7],
-            outputRange: [1, 0],
-          }),
+          opacity: opaciter,
         }}
       >
         <TouchableOpacity
@@ -69,6 +75,15 @@ const PopDropDown = ({
           onPress={handleCloseModal}
           style={styles.container}
         >
+          <Animated.View
+            style={{
+              opacity: opaciter,
+              flex: 1,
+              transform: [{ scale: opaciter }],
+            }}
+          >
+            {TopperComponent && <TopperComponent />}
+          </Animated.View>
           <Animated.View style={{ transform: [{ translateY: translator }] }}>
             <TouchableOpacity
               activeOpacity={1}
