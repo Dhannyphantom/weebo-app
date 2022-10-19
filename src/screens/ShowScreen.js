@@ -44,6 +44,8 @@ const hider = [
   "cover_photo",
   "_id",
   "isManga",
+  "manager",
+  "verified",
   "app_creator",
   "verifiedList",
   "name_j",
@@ -85,8 +87,6 @@ const ShowScreen = ({ route, navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [challenged, setChallenged] = useState(false);
   const [challenger, setChallenger] = useState(null);
-  const [asset, setAsset] = useState({});
-  const [isStarting, setIsStarting] = useState(false);
   const [badInfoData, setBadInfoData] = useState(showInfoProps);
   const [infoContest, setInfoContest] = useState(daytaObj);
   const [infoModal, setInfoModal] = useState({ vis: false, type: null });
@@ -97,8 +97,7 @@ const ShowScreen = ({ route, navigation }) => {
   const isFollowing =
     dataState.followers && dataState.followers.includes(userInfo._id);
 
-  const isMine =
-    dataState.app_creator && dataState.app_creator._id === userInfo._id;
+  const isMine = dataState.manager && dataState.manager._id === userInfo._id;
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const listItems = [
@@ -178,7 +177,7 @@ const ShowScreen = ({ route, navigation }) => {
     name: dataState?.name_j || dataState?.name_e,
     description: `By ${dataState.creator}`,
     cover_photo: dataState?.cover_photo,
-    owner: dataState?.app_creator,
+    owner: dataState?.manager,
     screenIcon: "ios-tv",
     feedback: {
       instanceID: dataState?._id,
@@ -305,32 +304,6 @@ const ShowScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleContest = async (type) => {
-    if (type === "image") {
-      const result = await ImagePicker.launchImageLibraryAsync();
-      if (result.cancelled) return;
-      setAsset(result);
-    } else if (type === "video") {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      });
-      if (result.cancelled) return;
-      setAsset(result);
-    } else if (type === "info") {
-      setAsset({ type: "info" });
-    } else if (type === "fresh") {
-      isFollowing
-        ? setChallengeModal(true)
-        : setAlertModal({
-            visible: true,
-            title: "Follow Character?",
-            message: `You need to follow \n ${character.name.toUpperCase()} \n to challenge character`,
-            btn: "YES",
-            type: "followC",
-          });
-    }
-  };
-
   const handleUploadStaus = async () => {
     // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
     // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
@@ -375,22 +348,6 @@ const ShowScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleInfoPress = (item, show) => {
-    const editable = ["genres", "subGenres"].includes(item.prop);
-    if (editable && show) {
-      setInfoModal({ vis: true, type: item.prop });
-    }
-    const copyArr = [...badInfoData];
-    const ind = copyArr.findIndex((obj) => obj.prop === item.prop);
-    if (copyArr[ind].selected && !show) {
-      copyArr[ind] = { ...item, selected: false };
-      setInfoContest(daytaObj);
-    } else {
-      copyArr[ind] = { ...item, selected: true };
-    }
-    setBadInfoData(copyArr);
-  };
-
   const handleWithdrawChallenge = () => {
     const data = {
       instanceID: dataState._id,
@@ -412,127 +369,6 @@ const ShowScreen = ({ route, navigation }) => {
     const oldCharObj = { ...dataState };
     oldCharObj[prop] = val;
     setDataState(oldCharObj);
-  };
-
-  const handleStartChallenge = (type) => {
-    setIsStarting(true);
-    if (type === "challenge" && asset.type !== "info") {
-      if (!asset.uri) return setErrMsg("Please provide your contest info");
-      const dataChallenge = {
-        instanceID: dataState._id,
-        instance: "show",
-        owner: dataState.app_creator._id,
-        media: asset,
-        type: asset.type,
-      };
-
-      charChallengeTwo(
-        dataChallenge,
-        () => {
-          setChallenged(true);
-          setModalVis(false);
-          setChallengeModal(false);
-          setErrMsg(null);
-          setIsStarting(false);
-          setPopper({
-            vis: true,
-            type: "success",
-            msg: "Challenge sent successfully",
-          });
-        },
-        (err) => {
-          setErrMsg(err);
-          setIsStarting(false);
-        }
-      );
-    } else if (type === "challenge" && asset.type === "info") {
-      if (!infoContest) return setErrMsg("Please provide your contest info");
-      const cData = {
-        data: infoContest,
-        instanceID: dataState._id,
-        instance: "show",
-      };
-      startChallengeTwoB(
-        cData,
-        (data) => {
-          setChallenged(true);
-          setModalVis(false);
-          setChallengeModal(false);
-          setPopper({
-            vis: true,
-            type: "success",
-            msg: "Challenge sent successfully",
-          });
-
-          setIsStarting(false);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-    } else if (type === "accept") {
-      if (challengeType !== "info") {
-        if (!asset.uri) return setErrMsg("Please provide your contest info");
-        const dataAccept = {
-          instanceID: dataState._id,
-          instance: "show",
-          owner: dataState.app_creator._id,
-          challengerMedia: challenger.challengerMedia,
-          ownerMedia: asset,
-          challengeID: challenger._id,
-          challenger: challenger.user._id,
-          type: asset.type,
-        };
-
-        startChallengeTwo(
-          dataAccept,
-          () => {
-            getMyShows();
-            setChallenged(true);
-            setAsset(null);
-            setChallengeModal(false);
-            setPopper({
-              vis: true,
-              type: "success",
-              msg: "Challenge accepted",
-            });
-
-            setIsLoading(false);
-          },
-          (err) => {
-            setErrMsg(err?.response?.data);
-          }
-        );
-      } else {
-        setAsset({ type: "info_start" });
-        const dataAccept = {
-          instanceID: dataState._id,
-          instance: "show",
-          owner: dataState.app_creator._id,
-          challengeID: challenger._id,
-        };
-        startInfoChallenge(
-          dataAccept,
-          () => {
-            getMyShows();
-            setChallenged(true);
-            setAsset(null);
-            setModalVis(false);
-            setIsStarting(false);
-            setChallengeModal(false);
-            setPopper({
-              vis: true,
-              type: "success",
-              msg: "Challenge accepted",
-            });
-            setIsLoading(false);
-          },
-          (err) => {
-            setErrMsg(err);
-          }
-        );
-      }
-    }
   };
 
   const handleFollowShow = () => {
@@ -750,7 +586,11 @@ const ShowScreen = ({ route, navigation }) => {
 
       <InstanceChallenger
         visible={challengeModal}
-        data={{ instance: "show", instanceID: show._id }}
+        data={{
+          instance: "show",
+          instanceID: show._id,
+          owner: dataState?.manager,
+        }}
         setVisible={setChallengeModal}
       />
       <TransferInstance

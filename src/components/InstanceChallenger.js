@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as MediaPicker from "expo-image-picker";
+
+import { Context as AuthContext } from "../config/AuthContext";
+
 import ThemeContext from "../config/ThemeContext";
 import ActivityIndicator from "./ActivityIndicator";
 import AppButton from "./AppButton";
@@ -10,44 +14,61 @@ import PopDropDown from "./PopDropDown";
 
 const { width, height } = Dimensions.get("screen");
 
-const Challenger = ({ data, setter }) => {
-  const [isLoading, setIsLoading] = useState(true);
+const Challenger = ({ data, setAsset, setter }) => {
   const theme = useContext(ThemeContext);
-  //   console.log(data);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
-  }, []);
+  const isManager = data.owner._id === userInfo._id;
+
+  const initializeChallenge = async (type) => {
+    switch (type) {
+      case "image":
+        const res = await MediaPicker.launchImageLibraryAsync({
+          mediaTypes: MediaPicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+        });
+        if (!res.cancelled) {
+          delete res.cancelled;
+          setAsset(res);
+        }
+        break;
+
+      default:
+        break;
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <AppText style={styles.title}>
         A chance to be a Weebo Instance Manager by challenging this instance
       </AppText>
-      <View style={styles.links}>
-        <View style={styles.row}>
+      {!isManager && (
+        <View style={styles.links}>
+          <View style={styles.row}>
+            <Link
+              style={styles.linkShort}
+              name="Image"
+              iconName="image-multiple"
+              onPress={() => initializeChallenge("image")}
+            />
+            <Link
+              style={styles.linkShort}
+              name="Video"
+              iconName="image-multiple"
+              onPress={() => initializeChallenge("video")}
+            />
+          </View>
           <Link
-            style={styles.linkShort}
-            name="Image"
+            style={styles.link}
+            name="Invalid information"
             iconName="image-multiple"
-            onPress={null}
-          />
-          <Link
-            style={styles.linkShort}
-            name="Video"
-            iconName="image-multiple"
-            onPress={null}
+            onPress={() => initializeChallenge("info")}
           />
         </View>
-        <Link
-          style={styles.link}
-          name="Invalid information"
-          iconName="image-multiple"
-          onPress={null}
-        />
-      </View>
+      )}
       <View style={styles.row}>
         <AppButton title="Challenge" bare style={styles.btn} />
         <AppButton
@@ -59,12 +80,12 @@ const Challenger = ({ data, setter }) => {
           LIcon="cancel"
         />
       </View>
-      <ActivityIndicator visible={isLoading} style={styles.activity} />
+      <ActivityIndicator visible={false} style={styles.activity} />
     </View>
   );
 };
 
-const ChallengeMedia = () => {
+const ChallengeMedia = ({ asset }) => {
   const theme = useContext(ThemeContext);
   const topper = useSafeAreaInsets().top;
 
@@ -75,13 +96,17 @@ const ChallengeMedia = () => {
         { backgroundColor: theme.background, marginTop: topper },
       ]}
     >
-      <AppText>media</AppText>
+      {asset && asset.type === "image" && (
+        <Image style={styles.image} source={asset} />
+      )}
     </View>
   );
 };
 
 export default function InstanceChallenger({ data, visible, setVisible }) {
   const [actions, setActions] = useState({ modal: "open" });
+  const [asset, setAsset] = useState(null);
+
   const closeModal = () => {
     return actions.modal;
   };
@@ -96,10 +121,11 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
       RenderComponent={() => (
         <Challenger
           setter={() => setActions({ ...actions, modal: "close" })}
+          setAsset={setAsset}
           data={data}
         />
       )}
-      TopperComponent={() => <ChallengeMedia />}
+      TopperComponent={() => <ChallengeMedia asset={asset} />}
       headerTitle="Challenge By"
     />
   );
@@ -118,6 +144,10 @@ const styles = StyleSheet.create({
   container: {
     minHeight: height * 0.1,
   },
+  image: {
+    height: "100%",
+    width: "100%",
+  },
   links: {},
   link: {
     width: width * 0.8,
@@ -131,6 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 10,
     borderRadius: 20,
+    overflow: "hidden",
   },
   row: {
     flexDirection: "row",
