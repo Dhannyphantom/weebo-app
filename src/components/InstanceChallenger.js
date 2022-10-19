@@ -1,7 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Dimensions, Image, View } from "react-native";
+import React, { useContext, useRef, useState } from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Image,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
+import { Video } from "expo-av";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -11,6 +18,7 @@ import AppButton from "./AppButton";
 import AppText from "./AppText";
 import Link from "./Link";
 import PopDropDown from "./PopDropDown";
+import PostVideo from "./PostVideo";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -25,13 +33,25 @@ const Challenger = ({ data, setAsset, setter }) => {
   const initializeChallenge = async (type) => {
     switch (type) {
       case "image":
-        const res = await MediaPicker.launchImageLibraryAsync({
+        const res_image = await MediaPicker.launchImageLibraryAsync({
           mediaTypes: MediaPicker.MediaTypeOptions.Images,
           allowsEditing: true,
+          allowsMultipleSelection: false,
         });
-        if (!res.cancelled) {
-          delete res.cancelled;
-          setAsset(res);
+        if (!res_image.cancelled) {
+          delete res_image.cancelled;
+          setAsset(res_image);
+        }
+        break;
+      case "video":
+        const res_video = await MediaPicker.launchImageLibraryAsync({
+          mediaTypes: MediaPicker.MediaTypeOptions.Videos,
+          allowsEditing: true,
+          allowsMultipleSelection: false,
+        });
+        if (!res_video.cancelled) {
+          delete res_video.cancelled;
+          setAsset(res_video);
         }
         break;
 
@@ -98,6 +118,16 @@ const ChallengeMedia = ({ asset }) => {
     >
       {asset && asset.type === "image" && (
         <Image style={styles.image} source={asset} />
+      )}
+      {asset && asset.type === "video" && (
+        <PostVideo
+          source={asset}
+          style={styles.video}
+          viewable={false}
+          autoPlayer
+          disableDoublePress
+          disableLongPress
+        />
       )}
     </View>
   );
@@ -169,5 +199,11 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
+  },
+  video: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    marginVertical: 0,
   },
 });

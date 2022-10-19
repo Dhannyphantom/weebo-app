@@ -75,15 +75,17 @@ const PopDropDown = ({
           onPress={handleCloseModal}
           style={styles.container}
         >
-          <Animated.View
-            style={{
-              opacity: opaciter,
-              flex: 1,
-              transform: [{ scale: opaciter }],
-            }}
-          >
-            {TopperComponent && <TopperComponent />}
-          </Animated.View>
+          <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+            <Animated.View
+              style={{
+                opacity: opaciter,
+                flex: 1,
+                transform: [{ scale: opaciter }],
+              }}
+            >
+              {TopperComponent && <TopperComponent />}
+            </Animated.View>
+          </TouchableOpacity>
           <Animated.View style={{ transform: [{ translateY: translator }] }}>
             <TouchableOpacity
               activeOpacity={1}
