@@ -1,7 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Dimensions, FlatList, Image, View } from "react-native";
+import {
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  ScrollView,
+  Image,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
@@ -14,6 +22,7 @@ import Link from "./Link";
 import PopDropDown from "./PopDropDown";
 import PostVideo from "./PostVideo";
 import Separator from "./Separator";
+import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -103,30 +112,38 @@ const Challenger = ({ data, setAsset, setter }) => {
 };
 
 const InfoProps = ({ item }) => {
-  console.log(item.title);
+  const theme = useContext(ThemeContext);
+  const [selected, setSelected] = useState(item.selected);
+
   return (
-    <View>
-      <AppText size="large" bold>
-        {item.title}
-      </AppText>
+    <View style={[styles.info, { backgroundColor: theme.extralight }]}>
+      <View style={styles.infoTitle}>
+        <AppText size="large" bold>
+          {item.title[0].toUpperCase() + item.title.slice(1)}
+        </AppText>
+        <MaterialCommunityIcons
+          name={selected ? "circle" : "check-circle"}
+          color={selected ? colors.primary : colors.medium}
+          size={20}
+        />
+      </View>
     </View>
   );
 };
 
-const ChallengeMedia = ({ asset, data }) => {
-  const [instanceData, setInstanceData] = useState([]);
+const ChallengeMedia = ({ asset, data, setAsset }) => {
   const [loading, setLoading] = useState(true);
-
+  const [assetData, setAssetData] = useState([]);
   const theme = useContext(ThemeContext);
   const { fetchInfoProperties } = useContext(CharContext);
   const topper = useSafeAreaInsets().top;
 
-  useEffect(() => {
+  const fetchInstanceInfo = async () => {
     if (asset && asset.type === "info" && loading) {
-      fetchInfoProperties(
+      await fetchInfoProperties(
         { id: data.id, instance: data.instance },
         (resData) => {
-          setInstanceData(resData);
+          setAssetData(resData.data);
           setLoading(false);
         },
         (errData) => {
@@ -134,7 +151,13 @@ const ChallengeMedia = ({ asset, data }) => {
         }
       );
     }
+  };
+
+  useEffect(() => {
+    fetchInstanceInfo();
   }, []);
+
+  console.log(assetData);
 
   return (
     <View
@@ -168,16 +191,13 @@ const ChallengeMedia = ({ asset, data }) => {
           </AppText>
           <View style={{ flex: 1 }}>
             <FlatList
-              data={instanceData}
+              data={assetData}
               extraData={asset}
-              keyExtractor={(item) => item.title}
-              renderItem={({ item }) => {
-                return (
-                  <View>
-                    <AppText> {item.title} </AppText>
-                  </View>
-                );
+              contentContainerStyle={{
+                paddingVertical: 15,
               }}
+              keyExtractor={(item, index) => item.title + index}
+              renderItem={({ item }) => <InfoProps item={item} />}
             />
           </View>
         </>
@@ -200,6 +220,7 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
   return (
     <PopDropDown
       visible={visible}
+      disableCloseTouch
       setter={() => {
         setActions({ modal: "open" });
         setVisible(false);
@@ -212,7 +233,9 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
           data={data}
         />
       )}
-      TopperComponent={() => <ChallengeMedia data={data} asset={asset} />}
+      TopperComponent={() => (
+        <ChallengeMedia data={data} setAsset={setAsset} asset={asset} />
+      )}
       headerTitle="Challenge By"
     />
   );
@@ -235,6 +258,16 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
+  info: {
+    padding: 18,
+    marginBottom: 15,
+    marginHorizontal: 18,
+    borderRadius: 10,
+  },
+  infoTitle: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   links: {},
   link: {
     width: width * 0.8,
@@ -256,6 +289,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
+    marginBottom: 20,
   },
   video: {
     position: "absolute",

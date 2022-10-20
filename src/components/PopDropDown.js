@@ -20,6 +20,7 @@ const PopDropDown = ({
   setter,
   close = false,
   closer = null,
+  disableCloseTouch = false,
   RenderComponent,
   TopperComponent,
   headerTitle,
@@ -73,19 +74,20 @@ const PopDropDown = ({
         <TouchableOpacity
           activeOpacity={1}
           onPress={handleCloseModal}
+          disabled={disableCloseTouch}
           style={styles.container}
         >
-          <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-            <Animated.View
-              style={{
-                opacity: opaciter,
-                flex: 1,
-                transform: [{ scale: opaciter }],
-              }}
-            >
-              {TopperComponent && <TopperComponent />}
-            </Animated.View>
-          </TouchableOpacity>
+          {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
+          <Animated.View
+            style={{
+              opacity: opaciter,
+              flex: 1,
+              transform: [{ scale: opaciter }],
+            }}
+          >
+            {TopperComponent && <TopperComponent />}
+          </Animated.View>
+          {/* </TouchableOpacity> */}
           <Animated.View style={{ transform: [{ translateY: translator }] }}>
             <TouchableOpacity
               activeOpacity={1}
