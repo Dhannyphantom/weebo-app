@@ -3,7 +3,8 @@ import {
   StyleSheet,
   Dimensions,
   FlatList,
-  ScrollView,
+  TextInput,
+  TouchableOpacity,
   Image,
   View,
 } from "react-native";
@@ -111,35 +112,101 @@ const Challenger = ({ data, setAsset, setter }) => {
   );
 };
 
-const InfoProps = ({ item }) => {
+const InfoProps = ({ item, state }) => {
   const theme = useContext(ThemeContext);
   const [selected, setSelected] = useState(item.selected);
+  const [info, setInfo] = useState(String(item.value));
+
+  const shouldShowBtn = info !== String(item.value);
+
+  const updateAssetArr = (arr) => {
+    return arr.map((obj) => {
+      if (obj.key === item.key) {
+        return {
+          ...obj,
+          value: info,
+          selected: true,
+        };
+      } else {
+        return obj;
+      }
+    });
+  };
+
+  const saveChanges = () => {
+    state.setAsset((prev) => {
+      return {
+        ...prev,
+        data: prev?.data
+          ? updateAssetArr(prev.data)
+          : updateAssetArr(state.assetData),
+      };
+    });
+  };
 
   return (
-    <View style={[styles.info, { backgroundColor: theme.extralight }]}>
-      <View style={styles.infoTitle}>
-        <AppText size="large" bold>
-          {item.title[0].toUpperCase() + item.title.slice(1)}
-        </AppText>
-        <MaterialCommunityIcons
-          name={selected ? "circle" : "check-circle"}
-          color={selected ? colors.primary : colors.medium}
-          size={20}
-        />
-      </View>
+    <View>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => setSelected(!selected)}
+        style={[styles.info, { backgroundColor: theme.extralight }]}
+      >
+        <View style={styles.infoTitle}>
+          <AppText size="large" bold>
+            {item.title[0].toUpperCase() + item.title.slice(1)}
+          </AppText>
+          <MaterialCommunityIcons
+            name={selected ? "circle" : "circle-outline"}
+            color={selected ? colors.primary : colors.medium}
+            size={22}
+          />
+        </View>
+      </TouchableOpacity>
+      {selected && (
+        <View>
+          <View
+            style={[
+              styles.inputContainer,
+              { backgroundColor: theme.extralight },
+            ]}
+          >
+            <TextInput
+              placeholder={`Enter ${item.title}`}
+              placeholderTextColor={theme.background}
+              onChangeText={(val) => setInfo(val)}
+              value={info}
+              style={[styles.input, { color: theme.color }]}
+            />
+          </View>
+          {shouldShowBtn && (
+            <AppButton
+              title="Save Changes"
+              onPress={saveChanges}
+              bare
+              style={styles.infoSaveBtn}
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 };
 
 const ChallengeMedia = ({ asset, data, setAsset }) => {
-  const [loading, setLoading] = useState(true);
-  const [assetData, setAssetData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [assetData, setAssetData] = useState(asset?.data ?? []);
   const theme = useContext(ThemeContext);
   const { fetchInfoProperties } = useContext(CharContext);
   const topper = useSafeAreaInsets().top;
 
   const fetchInstanceInfo = async () => {
-    if (asset && asset.type === "info" && loading) {
+    if (asset && asset.type === "info") {
+      if (Boolean(asset?.data)) {
+        setAssetData(asset?.data);
+        return;
+      }
+
+      setLoading(true);
       await fetchInfoProperties(
         { id: data.id, instance: data.instance },
         (resData) => {
@@ -156,8 +223,6 @@ const ChallengeMedia = ({ asset, data, setAsset }) => {
   useEffect(() => {
     fetchInstanceInfo();
   }, []);
-
-  console.log(assetData);
 
   return (
     <View
@@ -193,11 +258,14 @@ const ChallengeMedia = ({ asset, data, setAsset }) => {
             <FlatList
               data={assetData}
               extraData={asset}
+              keyboardShouldPersistTaps="handled"
               contentContainerStyle={{
                 paddingVertical: 15,
               }}
               keyExtractor={(item, index) => item.title + index}
-              renderItem={({ item }) => <InfoProps item={item} />}
+              renderItem={({ item }) => (
+                <InfoProps item={item} state={{ asset, setAsset, assetData }} />
+              )}
             />
           </View>
         </>
@@ -267,6 +335,24 @@ const styles = StyleSheet.create({
   infoTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  inputContainer: {
+    // width,
+    minHeight: 55,
+    marginHorizontal: 40,
+    marginBottom: 10,
+    borderRadius: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    textTransform: "capitalize",
+    paddingLeft: 15,
+  },
+  infoSaveBtn: {
+    marginBottom: 40,
+    alignSelf: "center",
   },
   links: {},
   link: {
