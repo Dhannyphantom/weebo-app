@@ -8,18 +8,21 @@ import Separator from "../components/Separator";
 const CharChallengerScreen = ({
   isMine,
   challengerArr,
-  setChallengeType,
+  // setChallengeType,
   // setModalVis,
   handleChangeTab,
+  setChallengeModal,
   // setChallenger,
   name,
 }) => {
   const challLength = challengerArr.length;
 
   const handleCalls = (item) => {
-    // console.log(item);
-    handleChangeTab && handleChangeTab("challenger");
-    setChallengeType(item.type);
+    console.log(item);
+    setChallengeModal({ vis: true, contest: item });
+    // handleChangeTab && handleChangeTab("challenger");
+
+    // setChallengeType(item.type);
     // setModalVis(true);
     // setChallenger(item);
   };
@@ -49,7 +52,7 @@ const CharChallengerScreen = ({
       <View style={styles.ballIcons}>
         {challLength <= 0 ? (
           <AppText style={styles.noChallengerText}>
-            {name} has not been challenged yet!
+            {name[0].toUpperCase() + name.slice(1)} has not been challenged yet!
           </AppText>
         ) : (
           <AppText size="xlarge" bold>
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   noChallengerText: {
-    textTransform: "capitalize",
+    width: "80%",
   },
 });
 export default CharChallengerScreen;

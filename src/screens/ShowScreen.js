@@ -130,7 +130,8 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "1",
       name: "challenge",
-      onPress: () => setChallengeModal(true),
+      onPress: () =>
+        setChallengeModal({ vis: true, contest: { mode: "start" } }),
       icon: "trophy-outline",
       selected: true,
       show: !isMine && !challenged,
@@ -573,7 +574,7 @@ const ShowScreen = ({ route, navigation }) => {
           owner: dataState?.manager,
           contest: challengeModal.contest,
         }}
-        setVisible={() => setChallengeModal({ vis: null, contest: null })}
+        setter={() => setChallengeModal({ vis: null, contest: null })}
       />
       <TransferInstance
         visible={transfer}

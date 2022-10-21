@@ -121,7 +121,9 @@ const CharInfoScreen = ({
           <AppButton
             title="Challenge"
             style={styles.btnAction}
-            onPress={() => setChallengeModal(true)}
+            onPress={() =>
+              setChallengeModal({ vis: true, contest: { mode: "start" } })
+            }
           />
         ) : !isMine && challenged ? (
           <AppButton

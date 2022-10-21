@@ -100,7 +100,6 @@ const CharacterScreen = ({ route, navigation }) => {
     vis: false,
     contest: null,
   });
-  const [challengeType, setChallengeType] = useState(null);
   const [dropDown, setDropDown] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [openMedia, setOpenMedia] = useState(false);
@@ -626,7 +625,7 @@ const CharacterScreen = ({ route, navigation }) => {
             <CharChallengerScreen
               challengerArr={challengerArr}
               name={character?.name}
-              setChallengeType={setChallengeType}
+              setChallengeModal={setChallengeModal}
               handleChangeTab={handleChangeTab}
               isMine={isMine}
             />
@@ -658,7 +657,7 @@ const CharacterScreen = ({ route, navigation }) => {
             owner: character?.owner,
             contest: challengeModal.contest,
           }}
-          setVisible={() => setChallengeModal({ vis: null, contest: null })}
+          setter={() => setChallengeModal({ vis: null, contest: null })}
         />
         <DropDown
           lists={listItems}

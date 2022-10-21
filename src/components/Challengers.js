@@ -6,7 +6,7 @@ import AppText from "./AppText";
 import Avatar from "./Avatar";
 import Cards from "./Cards";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 const Challengers = ({ item, isMine, clickable, onPress }) => {
   const checker = isMine && item.pending && clickable;
@@ -14,7 +14,8 @@ const Challengers = ({ item, isMine, clickable, onPress }) => {
     <Cards style={styles.container}>
       <TouchableOpacity
         activeOpacity={checker ? 0.5 : 1}
-        onPress={checker ? onPress : null}
+        disabled={!checker}
+        onPress={onPress}
       >
         <View style={styles.listCont}>
           <Avatar
@@ -33,16 +34,14 @@ const Challengers = ({ item, isMine, clickable, onPress }) => {
           )}
         </View>
       </TouchableOpacity>
-
-      {/* <Separator h={1} /> */}
     </Cards>
   );
 };
 const styles = StyleSheet.create({
   container: {
     width: width * 0.94,
-    borderRadius: width * 0.01,
-    elevation: 3,
+    borderRadius: 10,
+    elevation: 2,
     padding: 12,
     marginBottom: 4,
     alignSelf: "center",

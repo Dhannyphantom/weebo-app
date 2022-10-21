@@ -36,7 +36,9 @@ const PopDropDown = ({
     Animated.timing(translator, {
       toValue: height,
       useNativeDriver: true,
-    }).start(() => setter && setter());
+    }).start(() => {
+      setter && setter();
+    });
   };
 
   useEffect(() => {

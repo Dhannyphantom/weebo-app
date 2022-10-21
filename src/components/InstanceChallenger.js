@@ -28,12 +28,33 @@ import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("screen");
 
+const launchGallery = async (type) => {
+  const MediaType =
+    type === "image"
+      ? MediaPicker.MediaTypeOptions.Images
+      : MediaPicker.MediaTypeOptions.Videos;
+
+  const res = await MediaPicker.launchImageLibraryAsync({
+    mediaTypes: MediaType,
+    allowsEditing: true,
+    allowsMultipleSelection: false,
+  });
+
+  if (!res.cancelled) {
+    return { data: res };
+  } else {
+    return { error: "Cancelled" };
+  }
+};
+
 const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
   const { startInstanceChallenge } = useContext(ChallContext);
+
+  const type = data?.contest?.type;
 
   const isManager = data.owner._id === userInfo._id;
 
@@ -74,33 +95,53 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
     );
   };
 
+  const handleAccept = () => {
+    console.log("accepted");
+  };
+
   const initializeChallenge = async (type) => {
     switch (type) {
       case "image":
-        const res_image = await MediaPicker.launchImageLibraryAsync({
-          mediaTypes: MediaPicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          allowsMultipleSelection: false,
-        });
-        if (!res_image.cancelled) {
-          delete res_image.cancelled;
-          setAsset(res_image);
-        }
+        const { error, data } = await launchGallery("image");
+        !error && setAsset(data);
+
         break;
       case "video":
-        const res_video = await MediaPicker.launchImageLibraryAsync({
-          mediaTypes: MediaPicker.MediaTypeOptions.Videos,
-          allowsEditing: true,
-          allowsMultipleSelection: false,
-        });
-        if (!res_video.cancelled) {
-          delete res_video.cancelled;
-          setAsset(res_video);
-        }
+        const { error: error2, data: data2 } = await launchGallery("video");
+        !error2 && setAsset(data2);
         break;
       case "info":
         setAsset({ type: "info" });
         break;
+      default:
+        break;
+    }
+  };
+
+  const acceptChallenge = async (type) => {
+    // to accept a challenge
+    // challengerId, userId and challengeData is needed
+    const send_data = {
+      challengerId: data?.contest?._id,
+      userId: data?.contest?.user?._id,
+    };
+    switch (type) {
+      case "info":
+        setAsset({ type: "info_accept", data: "info" });
+        break;
+      case "image":
+        const { error, data } = await launchGallery("image");
+        send_data.type = "image";
+        send_data.data = data;
+        !error && setAsset(send_data);
+        break;
+      case "video":
+        const { error: err, data: data2 } = await launchGallery("video");
+        send_data.type = "video";
+        send_data.data = data2;
+        !err && setAsset(send_data);
+        break;
+
       default:
         break;
     }
@@ -111,7 +152,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
       <AppText style={styles.title}>
         A chance to be a Weebo Instance Manager by challenging this instance
       </AppText>
-      {!isManager && (
+      {!isManager ? (
         <View style={styles.links}>
           <View style={styles.row}>
             <Link
@@ -134,14 +175,50 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
             onPress={() => initializeChallenge("info")}
           />
         </View>
+      ) : (
+        <>
+          {type === "info" && (
+            <Link
+              style={styles.link}
+              name="Invalid information"
+              iconName="image-multiple"
+              onPress={() => acceptChallenge("info")}
+            />
+          )}
+          {type === "image" && (
+            <Link
+              style={styles.linkShort}
+              name="Image"
+              iconName="image-multiple"
+              onPress={() => acceptChallenge("image")}
+            />
+          )}
+          {type === "video" && (
+            <Link
+              style={styles.linkShort}
+              name="Video"
+              iconName="image-multiple"
+              onPress={() => acceptChallenge("video")}
+            />
+          )}
+        </>
       )}
       <View style={styles.row}>
-        <AppButton
-          title="Challenge"
-          onPress={handleChallenge}
-          bare
-          style={styles.btn}
-        />
+        {!isManager ? (
+          <AppButton
+            title="Challenge"
+            onPress={handleChallenge}
+            bare
+            style={styles.btn}
+          />
+        ) : (
+          <AppButton
+            title="Accept"
+            onPress={handleAccept}
+            bare
+            style={styles.btn}
+          />
+        )}
         <AppButton
           title="Cancel"
           bare
@@ -322,6 +399,27 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
             />
           </View>
         </>
+      )}
+      {asset && asset.type === "info_accept" && (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <AppText
+            style={{
+              textAlign: "center",
+              width: "80%",
+            }}
+            size="xlarge"
+            bold
+          >
+            A weeb believes some of the information provided for this instance
+            are not valid. {"\n\n"} Accept now to prove them wrong
+          </AppText>
+        </View>
       )}
       <ActivityIndicator
         visible={loading && asset && asset.type === "info"}
