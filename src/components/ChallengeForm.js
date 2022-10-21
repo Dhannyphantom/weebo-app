@@ -106,7 +106,7 @@ const ChallengeForm = ({
           >
             <TextInput
               placeholder={`Add correct ${item.name.toLowerCase()}`}
-              placeholderTextColor={theme.medium}
+              placeholderTextColor={theme.color}
               value={
                 infoContest[item.name.toLowerCase()] ?? infoContest[item.prop]
               }

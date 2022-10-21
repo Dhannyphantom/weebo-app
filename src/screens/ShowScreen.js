@@ -588,6 +588,7 @@ const ShowScreen = ({ route, navigation }) => {
         data={{
           instance: "show",
           id: show._id,
+          name: dataState?.name_j ?? dataState?.name_e,
           owner: dataState?.manager,
         }}
         setVisible={setChallengeModal}

@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
+import { Context as ChallContext } from "../config/ChallContext";
 
 import ThemeContext from "../config/ThemeContext";
 import ActivityIndicator from "./ActivityIndicator";
@@ -27,13 +28,51 @@ import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("screen");
 
-const Challenger = ({ data, setAsset, setter }) => {
+const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+  const { startInstanceChallenge } = useContext(ChallContext);
 
   const isManager = data.owner._id === userInfo._id;
+
+  const handleChallenge = () => {
+    setLoading(true);
+    let info_data = null;
+    const isMedia = asset.type !== "info";
+    if (!isMedia) {
+      info_data = asset.data.filter((obj) => obj.selected);
+    }
+
+    const sendData = {
+      isMedia: asset.type === "info" ? false : true,
+      media: isMedia
+        ? {
+            uri: asset.uri,
+            width: asset.width,
+            height: asset.height,
+            typeof: asset.typeof,
+          }
+        : null,
+      data: info_data,
+      instance: data.instance,
+      instanceID: data.id,
+      type: asset.type,
+    };
+
+    startInstanceChallenge(
+      sendData,
+      (resData) => {
+        console.log(resData);
+        setLoading(false);
+      },
+      (errData) => {
+        console.log(errData);
+        setLoading(false);
+      }
+    );
+  };
 
   const initializeChallenge = async (type) => {
     switch (type) {
@@ -97,7 +136,12 @@ const Challenger = ({ data, setAsset, setter }) => {
         </View>
       )}
       <View style={styles.row}>
-        <AppButton title="Challenge" bare style={styles.btn} />
+        <AppButton
+          title="Challenge"
+          onPress={handleChallenge}
+          bare
+          style={styles.btn}
+        />
         <AppButton
           title="Cancel"
           bare
@@ -192,7 +236,7 @@ const InfoProps = ({ item, state }) => {
   );
 };
 
-const ChallengeMedia = ({ asset, data, setAsset }) => {
+const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
   const [loading, setLoading] = useState(false);
   const [assetData, setAssetData] = useState(asset?.data ?? []);
   const theme = useContext(ThemeContext);
@@ -254,6 +298,15 @@ const ChallengeMedia = ({ asset, data, setAsset }) => {
             Choose and select info properties that you're sure are wrong or
             incomplete information
           </AppText>
+          <View style={[styles.row, styles.instance]}>
+            <AppText style={{ textTransform: "capitalize" }} size="large" bold>
+              {data?.name} -{" "}
+            </AppText>
+            <AppText size="large" style={{ color: colors.primary }} bold>
+              {" "}
+              {data.instance}{" "}
+            </AppText>
+          </View>
           <View style={{ flex: 1 }}>
             <FlatList
               data={assetData}
@@ -274,12 +327,18 @@ const ChallengeMedia = ({ asset, data, setAsset }) => {
         visible={loading && asset && asset.type === "info"}
         style={styles.activity}
       />
+      <ActivityIndicator
+        visible={loader}
+        style={styles.activity}
+        wTransparent
+      />
     </View>
   );
 };
 
 export default function InstanceChallenger({ data, visible, setVisible }) {
   const [actions, setActions] = useState({ modal: "open" });
+  const [loading, setLoading] = useState(false);
   const [asset, setAsset] = useState(null);
 
   const closeModal = () => {
@@ -298,11 +357,18 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
         <Challenger
           setter={() => setActions({ ...actions, modal: "close" })}
           setAsset={setAsset}
+          setLoading={setLoading}
+          asset={asset}
           data={data}
         />
       )}
       TopperComponent={() => (
-        <ChallengeMedia data={data} setAsset={setAsset} asset={asset} />
+        <ChallengeMedia
+          data={data}
+          loading={loading}
+          setAsset={setAsset}
+          asset={asset}
+        />
       )}
       headerTitle="Challenge By"
     />
@@ -335,6 +401,13 @@ const styles = StyleSheet.create({
   infoTitle: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  instance: {
+    marginBottom: 10,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: colors.medium,
+    padding: 10,
   },
   inputContainer: {
     // width,
@@ -375,7 +448,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 8,
   },
   video: {
     position: "absolute",
