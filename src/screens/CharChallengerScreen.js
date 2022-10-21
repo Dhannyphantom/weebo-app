@@ -9,9 +9,9 @@ const CharChallengerScreen = ({
   isMine,
   challengerArr,
   setChallengeType,
-  setModalVis,
+  // setModalVis,
   handleChangeTab,
-  setChallenger,
+  // setChallenger,
   name,
 }) => {
   const challLength = challengerArr.length;
@@ -20,8 +20,8 @@ const CharChallengerScreen = ({
     // console.log(item);
     handleChangeTab && handleChangeTab("challenger");
     setChallengeType(item.type);
-    setModalVis(true);
-    setChallenger(item);
+    // setModalVis(true);
+    // setChallenger(item);
   };
 
   const renderChallengers = ({ item }) => {

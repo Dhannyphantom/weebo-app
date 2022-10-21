@@ -58,12 +58,7 @@ const PopDropDown = ({
   }, [close, closer]);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      statusBarTranslucent
-      animationType="none"
-    >
+    <Modal visible={visible} transparent statusBarTranslucent>
       <Animated.View
         style={{
           flex: 1,

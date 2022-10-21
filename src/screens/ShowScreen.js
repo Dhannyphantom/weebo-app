@@ -83,7 +83,10 @@ const ShowScreen = ({ route, navigation }) => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [pageInfo, setPageInfo] = useState([]);
   const [challengeType, setChallengeType] = useState(null);
-  const [challengeModal, setChallengeModal] = useState(false);
+  const [challengeModal, setChallengeModal] = useState({
+    vis: false,
+    contest: null,
+  });
   const [refreshing, setRefreshing] = useState(false);
   const [challenged, setChallenged] = useState(false);
   const [challenger, setChallenger] = useState(null);
@@ -128,7 +131,6 @@ const ShowScreen = ({ route, navigation }) => {
       id: "1",
       name: "challenge",
       onPress: () => setChallengeModal(true),
-      // onPress: () => handleContest("fresh"),
       icon: "trophy-outline",
       selected: true,
       show: !isMine && !challenged,
@@ -323,27 +325,6 @@ const ShowScreen = ({ route, navigation }) => {
       delete statusObj.post.cancelled;
 
       setShowUpload({ vis: true, data: statusObj });
-    }
-  };
-
-  const handleContestTextChange = (val, prop) => {
-    const addMore = ["genres", "subGenres"].includes(prop);
-    if (addMore) {
-      if (infoContest[prop].includes(val)) {
-        setInfoContest({
-          ...infoContest,
-          [prop]: infoContest[prop].replace(", " + val, ""),
-        });
-      } else {
-        let suffix = ", " + val;
-        if (infoContest[prop].length < 2) suffix = val;
-        setInfoContest({
-          ...infoContest,
-          [prop]: infoContest[prop] + suffix,
-        });
-      }
-    } else {
-      setInfoContest({ ...infoContest, [prop]: val });
     }
   };
 
@@ -584,14 +565,15 @@ const ShowScreen = ({ route, navigation }) => {
       )}
 
       <InstanceChallenger
-        visible={challengeModal}
+        visible={challengeModal.vis}
         data={{
           instance: "show",
           id: show._id,
           name: dataState?.name_j ?? dataState?.name_e,
           owner: dataState?.manager,
+          contest: challengeModal.contest,
         }}
-        setVisible={setChallengeModal}
+        setVisible={() => setChallengeModal({ vis: null, contest: null })}
       />
       <TransferInstance
         visible={transfer}
@@ -600,12 +582,12 @@ const ShowScreen = ({ route, navigation }) => {
         instanceID={dataState._id}
         setVisible={setTransfer}
       />
-      <PopModal
+      {/* <PopModal
         modalVis={infoModal.vis}
         setModalVis={setInfoModal}
         data={infoModal.type === "genres" ? showGenres : subGenres}
         handleDropdown={(val) => handleContestTextChange(val, infoModal.type)}
-      />
+      /> */}
       <PopUpModal
         visible={modalVis}
         setVisible={setModalVis}

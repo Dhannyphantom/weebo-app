@@ -13,7 +13,7 @@ const CharInfoScreen = ({
   handleWithdrawChallenge,
   handleCharacterTransfer,
   cardState,
-  handleContest,
+  setChallengeModal,
 }) => {
   const CharList = ({ name, icon, names, show }) => {
     if (name && !names) {
@@ -121,7 +121,7 @@ const CharInfoScreen = ({
           <AppButton
             title="Challenge"
             style={styles.btnAction}
-            onPress={() => handleContest("fresh")}
+            onPress={() => setChallengeModal(true)}
           />
         ) : !isMine && challenged ? (
           <AppButton

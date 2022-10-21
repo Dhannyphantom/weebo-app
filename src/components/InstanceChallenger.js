@@ -336,7 +336,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
   );
 };
 
-export default function InstanceChallenger({ data, visible, setVisible }) {
+export default function InstanceChallenger({ data, visible, setter }) {
   const [actions, setActions] = useState({ modal: "open" });
   const [loading, setLoading] = useState(false);
   const [asset, setAsset] = useState(null);
@@ -350,7 +350,7 @@ export default function InstanceChallenger({ data, visible, setVisible }) {
       disableCloseTouch
       setter={() => {
         setActions({ modal: "open" });
-        setVisible(false);
+        setter && setter();
       }}
       closer={closeModal}
       RenderComponent={() => (

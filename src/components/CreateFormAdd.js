@@ -514,6 +514,7 @@ const CreateFormAdd = ({
                   <>
                     <TouchableOpacity
                       activeOpacity={0.6}
+                      disabled={!item.verified}
                       onPress={() => pickShow(item)}
                     >
                       <Separator m={5} />
@@ -525,20 +526,35 @@ const CreateFormAdd = ({
                             size={12}
                           />
                         </View>
-
-                        <AppText
-                          numberOfLines={3}
-                          style={styles.searchText}
-                          bold
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
                         >
-                          {item.name_j && item.name_e !== "none"
-                            ? `${item.name_j} ( ${item.name_e} )`
-                            : item.name_j
-                            ? item.name_j
-                            : item.name_e
-                            ? item.name_e
-                            : item.name}
-                        </AppText>
+                          <AppText
+                            numberOfLines={3}
+                            style={styles.searchText}
+                            bold
+                          >
+                            {item.name_j && item.name_e !== "none"
+                              ? `${item.name_j} ( ${item.name_e} )`
+                              : item.name_j
+                              ? item.name_j
+                              : item.name_e
+                              ? item.name_e
+                              : item.name}
+                          </AppText>
+                          {!item.verified && (
+                            <AppText
+                              bold
+                              style={{
+                                color: colors.heartLight,
+                                marginLeft: 10,
+                              }}
+                            >
+                              {" "}
+                              unverified{" "}
+                            </AppText>
+                          )}
+                        </View>
                       </View>
                     </TouchableOpacity>
                   </>

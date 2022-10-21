@@ -35,6 +35,7 @@ import InstanceHeader from "../components/InstanceHeader";
 import InstanceInvites from "../components/InstanceInvites";
 import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
+import InstanceChallenger from "../components/InstanceChallenger";
 
 const { width, height } = Dimensions.get("window");
 
@@ -44,10 +45,10 @@ for (let i = 0; i < dayta.length; i++) {
   const e = dayta[i];
   daytaObj[e] = "";
 }
+//// FOR BETTER PERFORMANCE MAKE THIS SCREEN FETCH A SINGLE CHARACTER FROM DB USING ROUTE DATA
+//// LETS GET THAT TO WORK /// 2ND JAN 2021 - DONE
 
 const CharacterScreen = ({ route, navigation }) => {
-  //// FOR BETTER PERFORMANCE MAKE THIS SCREEN FETCH A SINGLE CHARACTER FROM DB USING ROUTE DATA
-  //// LETS GET THAT TO WORK /// 2ND JAN 2021 - DONE
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -55,13 +56,7 @@ const CharacterScreen = ({ route, navigation }) => {
   const { followChar, getTheCharacter, instanceUpdater } =
     useContext(CharContext);
   const { getShows } = useContext(FeedContext);
-  const {
-    charChallengeTwo,
-    startChallengeTwo,
-    startChallengeTwoB,
-    startInfoChallenge,
-    withdrawChallenge,
-  } = useContext(ChallContext);
+  const { withdrawChallenge } = useContext(ChallContext);
 
   const characterID = route.params.item;
 
@@ -95,23 +90,21 @@ const CharacterScreen = ({ route, navigation }) => {
     fav: isFav,
     favNum: charFavs,
   });
-  const [asset, setAsset] = useState(asp);
-  const [modalVis, setModalVis] = useState(false);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
   const [isLoading, setIsLoading] = useState({ loader: true, err: false });
   const [transfer, setTransfer] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
-  const [isStarting, setIsStarting] = useState(false);
   const [challengerArr, setChallengerArr] = useState(character.challengers);
   const [challenged, setChallenged] = useState(challConst);
-  const [challenger, setChallenger] = useState(null);
+  const [challengeModal, setChallengeModal] = useState({
+    vis: false,
+    contest: null,
+  });
   const [challengeType, setChallengeType] = useState(null);
   const [dropDown, setDropDown] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [openMedia, setOpenMedia] = useState(false);
-  const [badInfoData, setBadInfoData] = useState(charPropInfos);
-  const [infoContest, setInfoContest] = useState(daytaObj);
-  const [infoModal, setInfoModal] = useState({ vis: false, type: null });
+
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [popper, setPopper] = useState({ vis: false });
 
@@ -226,57 +219,6 @@ const CharacterScreen = ({ route, navigation }) => {
     );
   };
 
-  const handleContest = async (type) => {
-    if (type === "image") {
-      const result = await ImagePicker.launchImageLibraryAsync();
-      if (result.cancelled) return;
-      setAsset(result);
-    } else if (type === "video") {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      });
-      if (result.cancelled) return;
-      if (result.duration > 60 * 1000) {
-        return setPopper({
-          vis: true,
-          type: "failed",
-          msg: "Video max length of 60s exceeded",
-        });
-      }
-      setAsset(result);
-    } else if (type === "info") {
-      setAsset({ type: "info" });
-    } else if (type === "fresh") {
-      if (!userInfo.verified) {
-        // koop
-        setPopper({
-          vis: true,
-          type: "failed",
-          msg: "Please verify your account!",
-        });
-        return;
-      }
-      if (!character.verified) {
-        // koop
-        setPopper({
-          vis: true,
-          type: "failed",
-          msg: "Character is yet to be verified!",
-        });
-        return;
-      }
-      follow
-        ? setModalVis(true)
-        : setAlertModal({
-            visible: true,
-            title: "Follow Character",
-            message: `You need to follow ${character?.name?.toUpperCase()} to challenge character`,
-            btn: "YES",
-            type: "followC",
-          });
-    }
-  };
-
   const handleInvitePress = () => {
     setCharacterTab({ ...characterTab, invites: true });
   };
@@ -300,105 +242,6 @@ const CharacterScreen = ({ route, navigation }) => {
           type: "failed",
         })
       );
-    }
-  };
-
-  const handleStartChallenge = (type) => {
-    setIsStarting(true);
-    if (type === "challenge" && asset.type !== "info") {
-      if (!asset.uri) return setErrMsg("Please provide your contest info");
-      const dataChallenge = {
-        instanceID: charID,
-        owner: ownerID,
-        instance: "character",
-        media: asset,
-        type: asset.type,
-      };
-
-      charChallengeTwo(
-        dataChallenge,
-        () => {
-          setChallenged(true);
-          setModalVis(false);
-          setErrMsg(null);
-          setIsStarting(false);
-        },
-        (err) => {
-          setErrMsg(err);
-          setIsStarting(false);
-        }
-      );
-    } else if (type === "challenge" && asset.type === "info") {
-      // ISSUE DEY
-      if (!infoContest) return setErrMsg("Please provide your contest info");
-      setErrMsg(null);
-      const cData = {
-        data: infoContest,
-        instanceID: character._id,
-        instance: "character",
-      };
-      startChallengeTwoB(
-        cData,
-        () => {
-          setChallenged(true);
-          setModalVis(false);
-          setIsStarting(false);
-        },
-        (err) => {
-          setIsStarting(false);
-          setErrMsg(err.msg);
-        }
-      );
-    } else if (type === "accept") {
-      if (challengeType !== "info") {
-        if (!asset.uri) return setErrMsg("Please provide your contest info");
-        const dataAccept = {
-          instanceID: charID,
-          instance: "character",
-          owner: ownerID,
-          challengerMedia: challenger.challengerMedia,
-          ownerMedia: asset,
-          challengeID: challenger._id,
-          challenger: challenger.user._id,
-          type: asset.type,
-        };
-
-        startChallengeTwo(dataAccept, () => {
-          getTheCharacter(
-            characterID,
-            (data) => {
-              setCharacter(data);
-            },
-            (err) => setErrMsg(err)
-          );
-          setChallenged(true);
-          setAsset(asp);
-          setModalVis(false);
-          setIsLoading({ loader: false, err: false });
-        });
-      } else {
-        setAsset({ type: "info_start" });
-        const dataAccept = {
-          instanceID: charID,
-          instance: "character",
-          owner: ownerID,
-          challengeID: challenger._id,
-        };
-        startInfoChallenge(dataAccept, (resData) => {
-          getTheCharacter(
-            characterID,
-            (data) => {
-              setCharacter(data);
-            },
-            (err) => setErrMsg(err)
-          );
-          setChallenged(true);
-          setAsset(asp);
-          setModalVis(false);
-          setIsStarting(false);
-          setIsLoading({ loader: false, err: false });
-        });
-      }
     }
   };
 
@@ -635,7 +478,7 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const renderPage = ({ item }) => {
     return (
-      <View>
+      <>
         <InstanceHeader instanceData={headerData} />
         <CharInfoScreen
           challenged={challenged}
@@ -645,30 +488,10 @@ const CharacterScreen = ({ route, navigation }) => {
           cardState={cardState}
           isMine={isMine}
           character={character}
-          handleContest={handleContest}
+          setChallengeModal={setChallengeModal}
         />
-      </View>
+      </>
     );
-  };
-
-  const handleInfoPress = (item, show) => {
-    const editable = ["role", "type"].includes(item.prop);
-    if (editable && show) {
-      setInfoModal({ vis: true, type: item.prop });
-    }
-    const copyArr = [...badInfoData];
-    const ind = copyArr.findIndex((obj) => obj.prop === item.prop);
-    if (copyArr[ind].selected && !show) {
-      copyArr[ind] = { ...item, selected: false };
-      setInfoContest(daytaObj);
-    } else {
-      copyArr[ind] = { ...item, selected: true };
-    }
-    setBadInfoData(copyArr);
-  };
-
-  const handleContestTextChange = (val, prop) => {
-    setInfoContest({ ...infoContest, [prop]: val });
   };
 
   const RenderInstanceMedia = ({ style }) => {
@@ -788,12 +611,6 @@ const CharacterScreen = ({ route, navigation }) => {
         )}
       </View>
       <>
-        <PopModal
-          modalVis={infoModal.vis}
-          setModalVis={setInfoModal}
-          data={infoModal.type === "role" ? characterRole : characterTypes}
-          handleDropdown={(val) => handleContestTextChange(val, infoModal.type)}
-        />
         <TransferInstance
           visible={transfer}
           updateThisInstance={updateThisInstance}
@@ -811,8 +628,6 @@ const CharacterScreen = ({ route, navigation }) => {
               name={character?.name}
               setChallengeType={setChallengeType}
               handleChangeTab={handleChangeTab}
-              setModalVis={setModalVis}
-              setChallenger={setChallenger}
               isMine={isMine}
             />
           )}
@@ -833,6 +648,17 @@ const CharacterScreen = ({ route, navigation }) => {
               }}
             />
           )}
+        />
+        <InstanceChallenger
+          visible={challengeModal.vis}
+          data={{
+            instance: "character",
+            id: character._id,
+            name: character?.name,
+            owner: character?.owner,
+            contest: challengeModal.contest,
+          }}
+          setVisible={() => setChallengeModal({ vis: null, contest: null })}
         />
         <DropDown
           lists={listItems}
