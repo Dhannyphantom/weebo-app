@@ -1,7 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import {
+  View,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import colors from "../constants/colors";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Avatar from "./Avatar";
 import { Context as ChallContext } from "../config/ChallContext";
@@ -12,7 +20,7 @@ import ChallengeIcon from "./ChallengeIcon";
 import FeedImage from "./FeedImage";
 import Icon from "./Icon";
 import Comments from "./Comments";
-import PostVideo from "./PostVideo";
+// import PostVideo from "./PostVideo";
 import InfoChallenge from "./InfoChallenge";
 import MediaModal from "./MediaModal";
 
@@ -193,16 +201,26 @@ const Challenge = ({
               />
             )}
             {type === "video" && (
-              <View>
-                <PostVideo
-                  viewable={false}
-                  showMediaFunc={handleShowMedia}
-                  vidUri={image1.uri}
-                  feed={vidFeed}
-                  style={styles.video}
-                  small
+              <TouchableOpacity
+                style={styles.vidContainer}
+                activeOpacity={0.8}
+                onPress={() =>
+                  handleShowMedia({ feed: { type: "video" }, item: image1 })
+                }
+              >
+                <Image
+                  source={{ uri: image1.thumb ?? image1?.uri }}
+                  blurRadius={5}
+                  style={styles.vidImage}
                 />
-              </View>
+                <View style={styles.vidIcon}>
+                  <MaterialCommunityIcons
+                    name="play-circle"
+                    size={30}
+                    color="white"
+                  />
+                </View>
+              </TouchableOpacity>
             )}
             {type === "info" && (
               <View>
@@ -230,16 +248,27 @@ const Challenge = ({
               />
             )}
             {type === "video" && (
-              <View>
-                <PostVideo
-                  viewable={false}
-                  vidUri={image2.uri}
-                  showMediaFunc={handleShowMedia}
-                  small
-                  style={styles.video}
-                  feed={vidFeed}
+              <TouchableOpacity
+                style={styles.vidContainer}
+                activeOpacity={0.8}
+                onPress={() =>
+                  handleShowMedia({ feed: { type: "video" }, item: image2 })
+                }
+              >
+                <Image
+                  source={{ uri: image2.thumb ?? image2?.uri }}
+                  blurRadius={5}
+                  resizeMode="cover"
+                  style={styles.vidImage}
                 />
-              </View>
+                <View style={styles.vidIcon}>
+                  <MaterialCommunityIcons
+                    name="play-circle"
+                    size={30}
+                    color="white"
+                  />
+                </View>
+              </TouchableOpacity>
             )}
             {type === "info" && (
               <InfoChallenge
@@ -324,6 +353,21 @@ const styles = StyleSheet.create({
   uppCont: {
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  vidImage: {
+    width: "100%",
+    height: (width / 2.5) * 2,
+    borderRadius: 12,
+  },
+  vidIcon: {
+    position: "absolute",
+    top: 5,
+    left: 5,
+  },
+  vidContainer: {
+    borderRadius: 12,
+    backgroundColor: "black",
+    width: width / 2.15,
   },
   versusContainer: {
     position: "absolute",

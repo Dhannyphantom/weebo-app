@@ -9,7 +9,7 @@ const ChallengeIcon = ({
   onPress,
   color = colors.medium,
   score,
-  size = 50,
+  size = 60,
 }) => {
   return (
     <>

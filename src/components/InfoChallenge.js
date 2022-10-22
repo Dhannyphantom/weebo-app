@@ -24,7 +24,7 @@ const InfoChallenge = ({ data, size = "small", flatKey, color }) => {
   };
 
   const contStyle = {
-    backgroundColor: color === "a" ? colors.accent : colors.primary,
+    backgroundColor: color === "a" ? colors.chat : colors.facebook,
     width: size === "small" ? width * 0.48 : width * 0.98,
     maxHeight: size === "small" ? height * 0.5 : height * 0.9,
     minHeight: size === "small" ? height * 0.35 : height * 0.8,
@@ -33,13 +33,7 @@ const InfoChallenge = ({ data, size = "small", flatKey, color }) => {
   const renderInfoData = ({ item, index }) => {
     return (
       <View style={styles.textCont}>
-        <AppText
-          bold
-          style={{
-            ...styles.title,
-            fontSize: size === "small" ? 10 : 22,
-          }}
-        >
+        <AppText bold style={styles.title}>
           {item.prop}
         </AppText>
         {item.value && item.value != "null" && (
@@ -49,17 +43,8 @@ const InfoChallenge = ({ data, size = "small", flatKey, color }) => {
               fontSize: size === "small" ? 10 : 20,
             }}
           >
-            {" "}
-            {item.value}{" "}
+            {item.value}
           </AppText>
-        )}
-        {item.values[0] && (
-          <AppText style={styles.value}>{item.values.join(", ")}</AppText>
-        )}
-        {!item.values[0] && item.value == "null" && (
-          <>
-            <AppText style={styles.value}> - </AppText>
-          </>
         )}
       </View>
     );
@@ -145,8 +130,8 @@ export default InfoChallenge;
                     fontSize: size === "small" ? 10 : 20,
                   }}
                 >
-                  {" "}
-                  {obj.value}{" "}
+                  
+                  {obj.value}
                 </AppText>
               )}
               {obj.values && (
