@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
@@ -25,6 +25,7 @@ import PopDropDown from "./PopDropDown";
 import PostVideo from "./PostVideo";
 import Separator from "./Separator";
 import colors from "../constants/colors";
+import PopMessage from "./PopMessage";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -52,7 +53,10 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { startInstanceChallenge } = useContext(ChallContext);
+  const { startInstanceChallenge, acceptInstanceChallenge } =
+    useContext(ChallContext);
+
+  const [popper, setPopper] = useState({ vis: false });
 
   const type = data?.contest?.type;
 
@@ -73,7 +77,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
             uri: asset.uri,
             width: asset.width,
             height: asset.height,
-            typeof: asset.typeof,
+            type: asset.type,
           }
         : null,
       data: info_data,
@@ -96,7 +100,50 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
   };
 
   const handleAccept = () => {
-    console.log("accepted");
+    setLoading(true);
+    const isMedia = asset.type !== "info_accept" && asset.type !== "info";
+
+    // VALIDATION
+    if (type !== asset.type) {
+      setPopper({
+        vis: true,
+        msg: "Choose a challenge mode",
+        type: "failed",
+      });
+      setLoading(false);
+      return;
+    }
+
+    const sendData = {
+      isMedia,
+      media: isMedia
+        ? {
+            uri: asset?.uri,
+            width: asset?.width,
+            height: asset?.height,
+            type: asset?.type,
+          }
+        : null,
+      contest: {
+        user: data?.contest?.user?._id,
+        challengerId: data?.contest?._id,
+      },
+      instance: data.instance,
+      instanceID: data.id,
+      type: asset.type,
+    };
+
+    acceptInstanceChallenge(
+      sendData,
+      (resData) => {
+        console.log(resData);
+        setLoading(false);
+      },
+      (errData) => {
+        console.log(errData);
+        setLoading(false);
+      }
+    );
   };
 
   const initializeChallenge = async (type) => {
@@ -121,25 +168,18 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
   const acceptChallenge = async (type) => {
     // to accept a challenge
     // challengerId, userId and challengeData is needed
-    const send_data = {
-      challengerId: data?.contest?._id,
-      userId: data?.contest?.user?._id,
-    };
+
     switch (type) {
       case "info":
         setAsset({ type: "info_accept", data: "info" });
         break;
       case "image":
         const { error, data } = await launchGallery("image");
-        send_data.type = "image";
-        send_data.data = data;
-        !error && setAsset(send_data);
+        !error && setAsset(data);
         break;
       case "video":
         const { error: err, data: data2 } = await launchGallery("video");
-        send_data.type = "video";
-        send_data.data = data2;
-        !err && setAsset(send_data);
+        !err && setAsset(data2);
         break;
 
       default:
@@ -187,7 +227,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
           )}
           {type === "image" && (
             <Link
-              style={styles.linkShort}
+              style={styles.link}
               name="Image"
               iconName="image-multiple"
               onPress={() => acceptChallenge("image")}
@@ -195,7 +235,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
           )}
           {type === "video" && (
             <Link
-              style={styles.linkShort}
+              style={styles.link}
               name="Video"
               iconName="image-multiple"
               onPress={() => acceptChallenge("video")}
@@ -223,12 +263,16 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
           title="Cancel"
           bare
           bareRed
-          onPress={() => setter()}
+          onPress={() => {
+            setAsset(null);
+            setter();
+          }}
           style={styles.btn}
           LIcon="cancel"
         />
       </View>
       <ActivityIndicator visible={false} style={styles.activity} />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };
@@ -408,16 +452,19 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
             alignItems: "center",
           }}
         >
-          <AppText
-            style={{
-              textAlign: "center",
-              width: "80%",
-            }}
-            size="xlarge"
-            bold
-          >
+          <AppText style={styles.emptyText} size="xlarge" bold>
             A weeb believes some of the information provided for this instance
             are not valid. {"\n\n"} Accept now to prove them wrong
+          </AppText>
+        </View>
+      )}
+      {!asset && (
+        <View style={styles.empty}>
+          <Feather name="info" size={width * 0.3} color={colors.light} />
+          <AppText bold size="large" style={styles.emptyText}>
+            Please select your challenge mode. {"\n\n"} Choose a media that
+            better suits this instance and let the weeb community decides who
+            keeps this instance
           </AppText>
         </View>
       )}
@@ -485,6 +532,16 @@ const styles = StyleSheet.create({
   },
   container: {
     minHeight: height * 0.1,
+  },
+  empty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    width: "75%",
+    textAlign: "center",
+    lineHeight: 32,
   },
   image: {
     height: "100%",

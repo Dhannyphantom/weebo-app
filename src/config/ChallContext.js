@@ -73,19 +73,22 @@ const startInstanceChallenge = (dispatch) => async (data, sc, cb) => {
   // ========================================================================
 };
 const acceptInstanceChallenge = (dispatch) => async (data, sc, cb) => {
-  const imageObject = {
-    name: data?.ownerMedia?.uri.slice(-40),
-    fileName: data?.ownerMedia?.uri.slice(-40),
-    type: "image/jpeg",
-    uri: data?.ownerMedia?.uri,
-  };
   const formData = new FormData();
-  formData.append("challenger", imageObject);
+  if (data.isMedia) {
+    const imageObject = {
+      name: data?.media?.uri.slice(-40),
+      fileName: data?.media?.uri.slice(-40),
+      type: data?.type === "image" ? "image/jpeg" : "video/mp4",
+      uri: data?.media?.uri,
+    };
+    formData.append("media", imageObject);
+  }
+
   formData.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
 
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await challengeApi.post("/instance_start", formData, {
+    const res = await challengeApi.post("/accept_instance", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         "x-auth-token": token,
@@ -95,38 +98,15 @@ const acceptInstanceChallenge = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error sending challenge data" });
+    cb &&
+      cb({
+        err,
+        msg: "Error sending challenge data",
+        data: err?.response?.data,
+      });
   }
   // ===================================================
 };
-
-// const startChallengeTwoB = (dispatch) => async (data, sc, cb) => {
-//   try {
-//     const token = await AsyncStorage.getItem("token");
-//     const res = await challengeApi.post("/instance_info", data, {
-//       headers: {
-//         "x-auth-token": token,
-//       },
-//     });
-//     sc && sc(res.data);
-//   } catch (err) {
-//     cb && cb({ err, msg: "Error sending challenge data" });
-//   }
-// };
-
-// const startInfoChallenge = (dispatch) => async (data, sc, cb) => {
-//   try {
-//     const token = await AsyncStorage.getItem("token");
-//     const res = await challengeApi.post("/instance_info_start", data, {
-//       headers: {
-//         "x-auth-token": token,
-//       },
-//     });
-//     sc && sc(res.data);
-//   } catch (err) {
-//     cb && cb({ err, msg: "Error starting challenge" });
-//   }
-// };
 
 const voteOne = (dispatch) => async (data, sc, cb) => {
   try {
