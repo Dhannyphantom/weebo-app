@@ -82,16 +82,12 @@ const ShowScreen = ({ route, navigation }) => {
   const [modalVis, setModalVis] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
   const [pageInfo, setPageInfo] = useState([]);
-  const [challengeType, setChallengeType] = useState(null);
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
     contest: null,
   });
   const [refreshing, setRefreshing] = useState(false);
   const [challenged, setChallenged] = useState(false);
-  const [challenger, setChallenger] = useState(null);
-  const [infoContest, setInfoContest] = useState(daytaObj);
-  const [infoModal, setInfoModal] = useState({ vis: false, type: null });
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
 
   const show = route.params.show;
@@ -203,9 +199,11 @@ const ShowScreen = ({ route, navigation }) => {
   const getMyShows = (type) => {
     const isRefresh = type === "refresh";
     const isFetch = type === "fetch";
+    const isCover = type === "cover";
 
     isFetch && setIsLoading(true);
     isRefresh && setRefreshing(true);
+    isCover && setIsCoverLoading(true);
 
     getShows(
       show._id,
@@ -251,17 +249,15 @@ const ShowScreen = ({ route, navigation }) => {
         setPageInfo(dataArr);
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);
+        isCover && setIsCoverLoading(false);
       },
       (err) => {
         setErrMsg(err.data ?? err.msg);
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);
+        isCover && setIsCoverLoading(false);
       }
     );
-  };
-
-  const handleChangeTab = (type) => {
-    setChallengeModal(true);
   };
 
   const handleNewCover = async () => {
@@ -337,8 +333,8 @@ const ShowScreen = ({ route, navigation }) => {
     withdrawChallenge(
       data,
       (res) => {
-        setChallenged(false);
         setPopper({ vis: true, type: "success", msg: "Challenge withdrawn" });
+        getMyShows("cover");
       },
       (err) => {
         setPopper({ vis: true, type: "failed", msg: err });
@@ -574,6 +570,7 @@ const ShowScreen = ({ route, navigation }) => {
           owner: dataState?.manager,
           contest: challengeModal.contest,
         }}
+        fetchInstance={getMyShows}
         setter={() => setChallengeModal({ vis: null, contest: null })}
       />
       <TransferInstance
@@ -583,12 +580,6 @@ const ShowScreen = ({ route, navigation }) => {
         instanceID={dataState._id}
         setVisible={setTransfer}
       />
-      {/* <PopModal
-        modalVis={infoModal.vis}
-        setModalVis={setInfoModal}
-        data={infoModal.type === "genres" ? showGenres : subGenres}
-        handleDropdown={(val) => handleContestTextChange(val, infoModal.type)}
-      /> */}
       <PopUpModal
         visible={modalVis}
         setVisible={setModalVis}
@@ -596,10 +587,7 @@ const ShowScreen = ({ route, navigation }) => {
           <CharChallengerScreen
             challengerArr={challengerArr}
             name={dataState.name_j + " show" ?? dataState.name_e + " show"}
-            handleChangeTab={handleChangeTab}
-            setChallengeType={setChallengeType}
-            setModalVis={setModalVis}
-            setChallenger={setChallenger}
+            setChallengeModal={setChallengeModal}
             isMine={isMine}
           />
         )}

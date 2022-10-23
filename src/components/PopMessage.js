@@ -7,8 +7,8 @@ const { width, height } = Dimensions.get("window");
 
 const MOVE_Y = height * 0.1;
 
-const PopMessage = ({ popData, timer = 2.2, setter }) => {
-  // popData = { type : "success/failed", msg: "text", vis: bool}
+const PopMessage = ({ popData, timer = 2, setter }) => {
+  // popData = { type : "success/failed", msg: "text", vis: bool, cb: func}
   if (!popData.vis) return null;
   const translator = useRef(new Animated.Value(0)).current;
 
@@ -33,7 +33,10 @@ const PopMessage = ({ popData, timer = 2.2, setter }) => {
           delay: timer * 1000,
           useNativeDriver: true,
         }),
-      ]).start(() => setter && setter());
+      ]).start(() => {
+        popData?.cb && popData.cb();
+        setter && setter();
+      });
     }
   }, [popData]);
 

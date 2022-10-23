@@ -21,13 +21,8 @@ import charPropInfos from "../constants/characterInfoProps";
 import ActivityIndicator from "../components/ActivityIndicator";
 import DropDown from "../components/DropDown";
 import AlertModal from "../components/AlertModal";
-import characterRole from "../constants/characterRoles";
-import characterTypes from "../constants/characterTypes";
-import PopModal from "../components/PopModal";
 import CharInfoScreen from "./CharInfoScreen";
 import CharChallengerScreen from "./CharChallengerScreen";
-import Events from "../components/Events";
-import ChallengeForm from "../components/ChallengeForm";
 import TransferInstance from "../components/TransferInstance";
 import ShowUpload from "../components/ShowUpload";
 import PopUpModal from "../components/PopUpModal";
@@ -64,7 +59,6 @@ const CharacterScreen = ({ route, navigation }) => {
   const [errMsg, setErrMsg] = useState(null);
 
   const charID = character?._id;
-  const asp = { width: 1, height: 1 };
   const userID = userInfo._id;
   const ownerID = character?.owner?._id;
   const followingArr = userInfo.following;
@@ -95,7 +89,6 @@ const CharacterScreen = ({ route, navigation }) => {
   const [transfer, setTransfer] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
   const [challengerArr, setChallengerArr] = useState(character.challengers);
-  const [challenged, setChallenged] = useState(challConst);
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
     contest: null,
@@ -201,6 +194,31 @@ const CharacterScreen = ({ route, navigation }) => {
       setPopper({ vis: true, type: "success", msg: "Story uploaded" });
     }
     setShowUpload({ vis: false, data: null });
+  };
+
+  const handleFetchCharacter = (type) => {
+    const isCover = type === "cover";
+    const isLoader = type === "load";
+
+    isCover && setIsCoverLoading(true);
+
+    getTheCharacter(
+      characterID,
+      (data) => {
+        setCharacter(data);
+        isLoader && setIsLoading({ loader: false, err: false });
+        isCover && setIsCoverLoading(false);
+      },
+      (err) => {
+        isLoader && setIsLoading({ loader: true, err: true });
+        isCover && setIsCoverLoading(false);
+        setErrMsg(
+          err.err?.response?.data === "deleted_instance"
+            ? "Character has been deleted"
+            : err.msg
+        );
+      }
+    );
   };
 
   const handleScreenRefresh = () => {
@@ -353,7 +371,7 @@ const CharacterScreen = ({ route, navigation }) => {
     withdrawChallenge(
       data,
       (res) => {
-        setChallenged(false);
+        handleFetchCharacter("cover");
       },
       (err) => {
         console.log(err);
@@ -480,7 +498,7 @@ const CharacterScreen = ({ route, navigation }) => {
       <>
         <InstanceHeader instanceData={headerData} />
         <CharInfoScreen
-          challenged={challenged}
+          challenged={challConst}
           handleChangeTab={handleChangeTab}
           handleWithdrawChallenge={handleWithdrawChallenge}
           handleCharacterTransfer={handleCharacterTransfer}
@@ -554,26 +572,11 @@ const CharacterScreen = ({ route, navigation }) => {
       fav: isFav,
       favNum: charFavs,
     });
-    setChallenged(challConst);
     setChallengerArr(character.challengers);
   }, [character]);
 
   useEffect(() => {
-    getTheCharacter(
-      characterID,
-      (data) => {
-        setCharacter(data);
-        setIsLoading({ loader: false, err: false });
-      },
-      (err) => {
-        setIsLoading({ loader: true, err: true });
-        setErrMsg(
-          err.err?.response?.data === "deleted_instance"
-            ? "Character has been deleted"
-            : err.msg
-        );
-      }
-    );
+    handleFetchCharacter("load");
   }, []);
 
   return (
@@ -657,6 +660,7 @@ const CharacterScreen = ({ route, navigation }) => {
             owner: character?.owner,
             contest: challengeModal.contest,
           }}
+          fetchInstance={handleFetchCharacter}
           setter={() => setChallengeModal({ vis: null, contest: null })}
         />
         <DropDown

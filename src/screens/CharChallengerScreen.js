@@ -8,11 +8,7 @@ import Separator from "../components/Separator";
 const CharChallengerScreen = ({
   isMine,
   challengerArr,
-  // setChallengeType,
-  // setModalVis,
-  handleChangeTab,
   setChallengeModal,
-  // setChallenger,
   name,
 }) => {
   const challLength = challengerArr.length;
@@ -20,11 +16,6 @@ const CharChallengerScreen = ({
   const handleCalls = (item) => {
     console.log(item);
     setChallengeModal({ vis: true, contest: item });
-    // handleChangeTab && handleChangeTab("challenger");
-
-    // setChallengeType(item.type);
-    // setModalVis(true);
-    // setChallenger(item);
   };
 
   const renderChallengers = ({ item }) => {

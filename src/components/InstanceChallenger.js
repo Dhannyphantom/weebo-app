@@ -48,7 +48,14 @@ const launchGallery = async (type) => {
   }
 };
 
-const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
+const Challenger = ({
+  data,
+  setLoading,
+  fetchInstance,
+  asset,
+  setAsset,
+  setter,
+}) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -57,6 +64,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
     useContext(ChallContext);
 
   const [popper, setPopper] = useState({ vis: false });
+  const [errMsg, setErrMsg] = useState(null);
 
   const type = data?.contest?.type;
 
@@ -88,12 +96,14 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
 
     startInstanceChallenge(
       sendData,
-      (resData) => {
-        console.log(resData);
+      (_resData) => {
+        setAsset(null);
         setLoading(false);
+        fetchInstance("cover");
+        setter();
       },
       (errData) => {
-        console.log(errData);
+        setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }
     );
@@ -136,11 +146,13 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
     acceptInstanceChallenge(
       sendData,
       (resData) => {
-        console.log(resData);
+        setAsset(null);
         setLoading(false);
+        fetchInstance("cover");
+        setter();
       },
       (errData) => {
-        console.log(errData);
+        setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }
     );
@@ -192,6 +204,7 @@ const Challenger = ({ data, setLoading, asset, setAsset, setter }) => {
       <AppText style={styles.title}>
         A chance to be a Weebo Instance Manager by challenging this instance
       </AppText>
+      {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       {!isManager ? (
         <View style={styles.links}>
           <View style={styles.row}>
@@ -481,7 +494,12 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
   );
 };
 
-export default function InstanceChallenger({ data, visible, setter }) {
+export default function InstanceChallenger({
+  data,
+  fetchInstance,
+  visible,
+  setter,
+}) {
   const [actions, setActions] = useState({ modal: "open" });
   const [loading, setLoading] = useState(false);
   const [asset, setAsset] = useState(null);
@@ -504,6 +522,7 @@ export default function InstanceChallenger({ data, visible, setter }) {
           setAsset={setAsset}
           setLoading={setLoading}
           asset={asset}
+          fetchInstance={fetchInstance}
           data={data}
         />
       )}
@@ -542,6 +561,10 @@ const styles = StyleSheet.create({
     width: "75%",
     textAlign: "center",
     lineHeight: 32,
+  },
+  error: {
+    textAlign: "center",
+    color: colors.heart,
   },
   image: {
     height: "100%",
