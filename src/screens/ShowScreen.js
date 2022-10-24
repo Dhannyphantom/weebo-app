@@ -115,7 +115,19 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "2",
       name: "posts",
-      onPress: () => console.log("handle-posts"),
+      onPress: () => {
+        const navObj = {
+          id: dataState._id,
+          name: dataState?.name_j || dataState?.name_e,
+          verified: dataState?.verified,
+          isMine,
+        };
+        navigation.navigate("MyPost", {
+          screen: "show",
+          data: [],
+          info: navObj,
+        });
+      },
       icon: "image-multiple",
       selected: true,
       show: true,

@@ -56,6 +56,25 @@ const getShows =
     }
   };
 
+const getShowPosts = (dispatch) => async (showId, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get(`/show_posts?showId=${showId}`, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error fetching posts for this anime",
+        data: err?.response?.data,
+      });
+  }
+};
+
 const getComments = (dispatch) => async (instanceID, type, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -428,6 +447,7 @@ export const { Provider, Context } = createDataContext(
     getPosts,
     getStatuses,
     deletePosts,
+    getShowPosts,
     getMoreReplies,
     statusUploader,
     getHomeFeeds,

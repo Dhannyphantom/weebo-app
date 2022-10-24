@@ -89,7 +89,7 @@ export default function MansonryList({ data, media }) {
           <MansonryItem
             item={item}
             setDisplayMedia={setDisplayMedia}
-            mediaType={data.type}
+            mediaType={data?.type ?? media[0].type}
           />
         )}
         refreshing={refreshing}

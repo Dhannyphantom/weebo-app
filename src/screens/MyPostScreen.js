@@ -3,6 +3,8 @@ import { View, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
+import { Context as FeedContext } from "../config/FeedContext";
+
 import ActivityIndicator from "../components/ActivityIndicator";
 import MansonryList from "../components/MansonryList";
 import AppButton from "../components/AppButton";
@@ -17,6 +19,7 @@ const MyPostScreen = ({ navigation, route }) => {
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
+  const { getShowPosts } = useContext(FeedContext);
   const theme = useContext(ThemeContext);
 
   const [postsArr, setPostArr] = useState([]);
@@ -25,6 +28,7 @@ const MyPostScreen = ({ navigation, route }) => {
   const [screenTitle, setScreenTitle] = useState(null);
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState(null);
 
   const params = route.params;
   const fromScreen = params?.screen;
@@ -40,7 +44,7 @@ const MyPostScreen = ({ navigation, route }) => {
     if (!data.cancelled) {
       navigation.navigate("Post", {
         uri: data,
-        type: "character",
+        type: fromScreen,
         id: params?.info?.id,
         name: params?.info.name,
       });
@@ -48,7 +52,7 @@ const MyPostScreen = ({ navigation, route }) => {
   };
 
   const CharHeaderComp = () => {
-    if (fromScreen !== "character") return null;
+    if (!["character", "show"].includes(fromScreen)) return null;
     return (
       <View style={styles.ballHead}>
         {params?.info?.isMine && params?.info?.verified && (
@@ -84,6 +88,22 @@ const MyPostScreen = ({ navigation, route }) => {
           setIsLoading(false);
         });
         break;
+      case "show":
+        setScreenTitle(`${params?.info?.name}'s Collection`);
+        getShowPosts(
+          params?.info?.id,
+          (resData) => {
+            setMedia(resData);
+            setCount(resData.length);
+            resData[0] && setIsPostEmpty(false);
+            setIsLoading(false);
+          },
+          (errData) => {
+            setErrMsg(errData.data ?? errData.msg);
+            setIsLoading(false);
+          }
+        );
+        break;
       default:
         setPostArr([]);
         break;
@@ -112,7 +132,7 @@ const MyPostScreen = ({ navigation, route }) => {
     >
       <StatusBar style="dark" />
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
-      {fromScreen === "character" && (
+      {["character", "show"].includes(fromScreen) && (
         <View>
           <AppText style={styles.postStat} bold>
             {params?.info?.name} has {count} posts
