@@ -18,12 +18,7 @@ import AlertModal from "../components/AlertModal";
 import ChallengeCard from "../components/ChallengeCard";
 import PopMessage from "../components/PopMessage";
 import CharChallengerScreen from "./CharChallengerScreen";
-import ChallengeForm from "../components/ChallengeForm";
-import showInfoProps from "../constants/showInfoProps";
-import PopModal from "../components/PopModal";
 import PopUpModal from "../components/PopUpModal";
-import showGenres from "../constants/showGenres";
-import subGenres from "../constants/subGenres";
 import TransferInstance from "../components/TransferInstance";
 import AppButton from "../components/AppButton";
 import ShowUpload from "../components/ShowUpload";
@@ -31,6 +26,8 @@ import InfoBox from "../components/InfoBox";
 import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
+
+import { showInfoProps } from "../constants/data_store";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);

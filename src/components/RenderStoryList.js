@@ -11,15 +11,15 @@ import React, { useRef, useEffect, useState } from "react";
 import ActivityIndicator from "./ActivityIndicator";
 // import { v4 as nanoid } from "uuid";
 import uuid from "react-native-uuid";
-import { Feather, AntDesign } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LottieView from "lottie-react-native";
-import Screen from "./Screen";
-import subGenres from "../constants/subGenres";
 import PostVideo from "./PostVideo";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import Separator from "./Separator";
+
+import { subGenres } from "../constants/data_store";
 
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;

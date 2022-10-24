@@ -1,4 +1,4 @@
-export default {
+const colors = {
   primary: "#ffab00",
   primaryOld: "#935DE3",
   accent: "#ffab40",
@@ -26,3 +26,73 @@ export default {
   unChange: "#fff3e0",
   black: "#000",
 };
+
+export const gradients = [
+  {
+    id: "1",
+    bg: "#ffafbd",
+    bg1: "#ffc3a0",
+  },
+  {
+    id: "2",
+    bg: "#36d1dc",
+    bg1: "#5b86e5",
+  },
+  {
+    id: "3",
+    bg: "#2b5876",
+    bg1: "#4e4376",
+  },
+  {
+    id: "4",
+    bg: "#06beb6",
+    bg1: "#48b1bf",
+  },
+];
+
+export const postColors = [
+  {
+    id: "1",
+    bg: "#000",
+    text: "#fff",
+    active: true,
+  },
+  {
+    id: "2",
+    bg: "#eee",
+    text: "#000",
+    active: false,
+  },
+  {
+    id: "3",
+    bg: "#00203FFF",
+    text: "#ADEFD1FF",
+    active: false,
+  },
+  {
+    id: "4",
+    bg: "#FEE715FF",
+    text: "#101820FE",
+    active: false,
+  },
+  {
+    id: "5",
+    bg: "#EA738DFF",
+    text: "#CBCE91FF",
+    active: false,
+  },
+  {
+    id: "6",
+    bg: "#990011FF",
+    text: "#FCF6F5FF",
+    active: false,
+  },
+  {
+    id: "7",
+    bg: "#343148FF",
+    text: "#D7C49EFF",
+    active: false,
+  },
+];
+
+export default colors;

@@ -6,12 +6,11 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 
 import colors from "../constants/colors";
-import gradients from "../constants/gradients";
 import Search from "./Search";
 import Separator from "./Separator";
 import AppText from "./AppText";
@@ -23,6 +22,8 @@ import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "./AppFadeIn";
+
+import { gradients } from "../constants/colors";
 
 const screen = Dimensions.get("window");
 

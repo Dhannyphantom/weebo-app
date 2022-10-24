@@ -16,7 +16,7 @@ import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
 import colors from "../constants/colors";
-import gradients from "../constants/gradients";
+import { gradients } from "../constants/colors";
 import AppText from "./AppText";
 import Link from "./Link";
 import Separator from "./Separator";

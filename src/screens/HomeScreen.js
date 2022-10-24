@@ -26,7 +26,7 @@ import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "../components/ActivityIndicator";
 import HomeHeader from "../components/HomeHeader";
 import Shows from "../components/Shows";
-import actionDatas from "../constants/actionDatas";
+import { actionDatas } from "../constants/data_store";
 import ActionMenu from "../components/ActionMenu";
 import Screen from "../components/Screen";
 import EventRender from "../components/EventRender";

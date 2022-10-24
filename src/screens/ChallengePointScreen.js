@@ -15,7 +15,7 @@ import AppButton from "../components/AppButton";
 import colors from "../constants/colors";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
-import calendar from "../constants/calendar";
+import { calender } from "../constants/data_store";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
@@ -278,7 +278,7 @@ const ChallengePointScreen = ({ navigation }) => {
       timer = "yesterday";
     } else {
       // days before
-      const { months } = calendar;
+      const { months } = calender;
       const dater = new Date(item.date);
       timer = `${dater.getDate()}, ${
         months[dater.getMonth()].short

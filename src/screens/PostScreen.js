@@ -29,9 +29,8 @@ import GrowInput from "../components/GrowInput";
 import ActivityIndicator from "../components/ActivityIndicator";
 import PopMessage from "../components/PopMessage";
 import SearchInstance from "../components/SearchInstance";
-import colorSet from "../constants/postColors";
 import ThemeContext from "../config/ThemeContext";
-
+import { postColors as colorSet } from "../constants/colors";
 const screen = Dimensions.get("window");
 
 const PostScreen = ({ route, navigation }) => {

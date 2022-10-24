@@ -13,7 +13,7 @@ import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import Avatar from "../components/Avatar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import colorSet from "../constants/postColors";
+import { postColors as colorSet } from "../constants/colors";
 import SearchBar from "../components/SearchBar";
 
 import { Context as AuthContext } from "../config/AuthContext";

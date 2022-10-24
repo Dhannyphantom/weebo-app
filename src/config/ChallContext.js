@@ -289,8 +289,6 @@ export const { Context, Provider } = createDataContext(
     charChallenge,
     startInstanceChallenge,
     acceptInstanceChallenge,
-    // startInfoChallenge,
-    // startChallengeTwoB,
     withdrawChallenge,
     getMyChallenges,
     getChallenges,

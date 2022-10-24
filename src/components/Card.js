@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import colors from "../constants/colors";
 import Spacer from "./Spacer";
 import getNumberFormat from "../constants/getNumberFormat";
 
-import konstants from "../constants/konstants";
+import { app_constants } from "../constants/data_store";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
 import AlertModal from "./AlertModal";
@@ -126,7 +126,7 @@ const Card = ({
             style={styles.image}
           />
           <View style={styles.proPic}>
-            {owner && owner?._id === konstants.appID ? null : (
+            {owner && owner?._id === app_constants.appID ? null : (
               <Spacer p={10}>
                 <ProfilePic
                   source={avatar}

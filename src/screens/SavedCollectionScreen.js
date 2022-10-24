@@ -16,7 +16,7 @@ import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
 import AppText from "../components/AppText";
 import { LinearGradient } from "expo-linear-gradient";
-import gradients from "../constants/gradients";
+import { gradients } from "../constants/colors";
 import colors from "../constants/colors";
 import AppButton from "../components/AppButton";
 import Separator from "../components/Separator";

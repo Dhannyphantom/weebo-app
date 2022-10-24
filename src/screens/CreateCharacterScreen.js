@@ -13,10 +13,12 @@ import CreateFormArray from "../components/CreateFormArray";
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
-import characterRoles from "../constants/characterRoles";
-import characterTypes from "../constants/characterTypes";
-import showGenres from "../constants/showGenres";
-import subGenres from "../constants/subGenres";
+import {
+  characterRoles,
+  characterTypes,
+  showGenres,
+  subGenres,
+} from "../constants/data_store";
 import schemas from "../constants/yupSchema";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";

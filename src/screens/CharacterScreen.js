@@ -17,7 +17,7 @@ import { Context as AuthContext } from "../config/AuthContext";
 import { Context as ChallContext } from "../config/ChallContext";
 import { Context as CharContext } from "../config/CharContext";
 import { Context as FeedContext } from "../config/FeedContext";
-import charPropInfos from "../constants/characterInfoProps";
+import { charPropInfos } from "../constants/data_store";
 import ActivityIndicator from "../components/ActivityIndicator";
 import DropDown from "../components/DropDown";
 import AlertModal from "../components/AlertModal";

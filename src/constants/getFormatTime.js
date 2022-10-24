@@ -1,4 +1,4 @@
-import calender from "./calendar";
+import { calender } from "./data_store";
 export default (time, time2, type) => {
   //type == "date" | "time" | "diff" | "format"
   const { months } = calender;
