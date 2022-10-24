@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as MediaPicker from "expo-image-picker";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as CharContext } from "../config/CharContext";
@@ -34,6 +35,7 @@ import {
   showGenres,
   subGenres,
 } from "../constants/data_store";
+import getFormatTime from "../constants/getFormatTime";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -320,15 +322,14 @@ const InfoDropDown = ({ modal, setModal, item: data, onPress }) => {
     case "role":
       dropMenu = characterRoles;
       break;
-
     default:
       break;
   }
 
   return (
     <PopDropDown
-      setter={() => setModal(false)}
-      visible={modal}
+      setter={() => setModal({ ...modal, dropdown: false })}
+      visible={modal.dropdown}
       headerTitle={`Instance ${data.title}`}
       closer={closeModal}
       RenderComponent={() => (
@@ -354,6 +355,37 @@ const InfoDropDown = ({ modal, setModal, item: data, onPress }) => {
         </View>
       )}
     />
+  );
+};
+
+const InfoDatetime = ({ modal, setModal, onPress }) => {
+  if (!modal.datetime) return null;
+
+  const [date, setDate] = useState(new Date("January 1, 2000"));
+
+  const handleDate = (e, selectedDate) => {
+    if (e.type !== "dismissed") {
+      const timer = getFormatTime(selectedDate, null, "month_day");
+      const new_date = timer.ongoing ? "Currently airing" : timer.date;
+
+      setDate(selectedDate);
+      setModal({ ...modal, datetime: false });
+      onPress(new_date);
+    }
+  };
+
+  return (
+    <>
+      {modal.datetime && (
+        <DateTimePicker
+          value={date}
+          textColor={colors.primary}
+          display="default"
+          mode="date"
+          onChange={handleDate}
+        />
+      )}
+    </>
   );
 };
 
@@ -416,15 +448,17 @@ const InfoProps = ({ item, state }) => {
           <TouchableOpacity
             disabled={!isDropDown && !isDatetime}
             activeOpacity={0.95}
-            onPress={() => setModal(true)}
+            onPress={() =>
+              setModal({ dropdown: isDropDown, datetime: isDatetime })
+            }
             style={[
               styles.inputContainer,
               { backgroundColor: theme.extralight },
             ]}
           >
             <TextInput
-              placeholder={`Enter ${item.title}`}
-              placeholderTextColor={theme.background}
+              placeholder={`Enter ${item.title}, seperate values using commas`}
+              placeholderTextColor={colors.medium}
               editable={!isDatetime && !isDropDown}
               onChangeText={(val) => setInfo(val)}
               value={info}
@@ -445,6 +479,11 @@ const InfoProps = ({ item, state }) => {
         modal={modal}
         setModal={setModal}
         item={item}
+        onPress={(val) => setInfo(val)}
+      />
+      <InfoDatetime
+        modal={modal}
+        setModal={setModal}
         onPress={(val) => setInfo(val)}
       />
     </View>

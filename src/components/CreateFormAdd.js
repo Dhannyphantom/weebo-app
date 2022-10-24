@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Modal,
   TextInput,
   FlatList,
   TouchableWithoutFeedback,
@@ -13,7 +12,6 @@ import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useFormikContext } from "formik";
 
 import AppText from "./AppText";
-import AppButton from "./AppButton";
 import AppPickerItem from "./AppPickerItem";
 import Separator from "./Separator";
 import colors from "../constants/colors";

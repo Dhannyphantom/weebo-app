@@ -13,8 +13,8 @@ export default (time, time2, type) => {
   const tDay = timer.getDate();
   const tYear = timer.getFullYear();
   //
-  const currHr = currentTimer.getHours();
-  const currMin = currentTimer.getMinutes();
+  // const currHr = currentTimer.getHours();
+  // const currMin = currentTimer.getMinutes();
   const currMonth = currentTimer.getMonth();
   const currDay = currentTimer.getDate();
   const currYear = currentTimer.getFullYear();
@@ -117,6 +117,12 @@ export default (time, time2, type) => {
     } else {
       return null;
     }
+  } else if (type && type === "month_day") {
+    const ongoing = timer > currentTimer;
+    return {
+      date: `${months[timer.getMonth()].full} ${timer.getDate()}`,
+      ongoing,
+    };
   } else {
     if (tHr > 12) {
       hr = tHr % 12;

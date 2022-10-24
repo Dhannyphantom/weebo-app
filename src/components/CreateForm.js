@@ -17,24 +17,11 @@ import AppText from "./AppText";
 import AppButton from "./AppButton";
 import AppPickerItem from "./AppPickerItem";
 import ThemeContext from "../config/ThemeContext";
+import { calender } from "../constants/data_store";
 
 const screen = Dimensions.get("window");
 
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
+const months = calender.months.map((obj) => obj.full);
 const CreateForm = ({
   headerA,
   headerB,
@@ -268,7 +255,7 @@ const CreateForm = ({
               <DateTimePicker
                 value={date}
                 textColor={colors.primary}
-                display="spinner"
+                display="default"
                 mode="date"
                 onChange={handleDate}
               />
