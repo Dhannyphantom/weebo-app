@@ -399,6 +399,7 @@ const InfoProps = ({ item, state }) => {
   const shouldShowBtn = info !== String(item.value);
   const isDropDown = challenger_info_lookup.dropdown.includes(item.key);
   const isDatetime = challenger_info_lookup.datetime.includes(item.key);
+  const isListItem = ["genres", "subGenres"].includes(item.key);
 
   const updateAssetArr = (arr) => {
     return arr.map((obj) => {
@@ -425,6 +426,27 @@ const InfoProps = ({ item, state }) => {
     });
   };
 
+  const updateInfo = (val) => {
+    if (isListItem) {
+      if (val.startsWith("remove_")) {
+        // remove str
+        setInfo((prev) => {
+          const strToRemove = val.slice(7).trim();
+          const isFirstOccurance = prev.indexOf(strToRemove);
+          const edited = prev.replace(
+            isFirstOccurance === 0 ? `${strToRemove}, ` : `, ${strToRemove}`,
+            ""
+          );
+          return edited;
+        });
+      } else {
+        setInfo((prev) => prev.trim() + `, ${val}`);
+      }
+    } else {
+      setInfo(val);
+    }
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -445,26 +467,45 @@ const InfoProps = ({ item, state }) => {
       </TouchableOpacity>
       {selected && (
         <View>
-          <TouchableOpacity
-            disabled={!isDropDown && !isDatetime}
-            activeOpacity={0.95}
-            onPress={() =>
-              setModal({ dropdown: isDropDown, datetime: isDatetime })
-            }
-            style={[
-              styles.inputContainer,
-              { backgroundColor: theme.extralight },
-            ]}
-          >
-            <TextInput
-              placeholder={`Enter ${item.title}, seperate values using commas`}
-              placeholderTextColor={colors.medium}
-              editable={!isDatetime && !isDropDown}
-              onChangeText={(val) => setInfo(val)}
-              value={info}
-              style={[styles.input, { color: theme.color }]}
-            />
-          </TouchableOpacity>
+          {isListItem ? (
+            <View style={styles.infoListContainer}>
+              <InfoList onPress={(val) => updateInfo(val)} value={info} />
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  setModal({ dropdown: isDropDown, datetime: isDatetime })
+                }
+                style={{ padding: width * 0.05 }}
+              >
+                <MaterialCommunityIcons
+                  name="plus-circle"
+                  color={colors.primary}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              disabled={!isDropDown && !isDatetime}
+              activeOpacity={0.95}
+              onPress={() =>
+                setModal({ dropdown: isDropDown, datetime: isDatetime })
+              }
+              style={[
+                styles.inputContainer,
+                { backgroundColor: theme.extralight },
+              ]}
+            >
+              <TextInput
+                placeholder={`Enter ${item.title}, seperate values using commas`}
+                placeholderTextColor={colors.m}
+                editable={!isDatetime && !isDropDown}
+                onChangeText={(val) => setInfo(val)}
+                value={info}
+                style={[styles.input, { color: theme.color }]}
+              />
+            </TouchableOpacity>
+          )}
           {shouldShowBtn && (
             <AppButton
               title="Save Changes"
@@ -479,13 +520,43 @@ const InfoProps = ({ item, state }) => {
         modal={modal}
         setModal={setModal}
         item={item}
-        onPress={(val) => setInfo(val)}
+        onPress={(val) => updateInfo(val)}
       />
       <InfoDatetime
         modal={modal}
         setModal={setModal}
         onPress={(val) => setInfo(val)}
       />
+    </View>
+  );
+};
+
+const InfoList = ({ value, onPress }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={styles.infoList}>
+      {value.split(",").map((str, idx) => {
+        return (
+          <View
+            key={str + idx}
+            style={[styles.infoListItem, { backgroundColor: theme.extralight }]}
+          >
+            <TouchableOpacity
+              onPress={() => onPress(`remove_${str}`)}
+              style={styles.infoListCloseBtn}
+            >
+              <MaterialCommunityIcons
+                name="close"
+                size={18}
+                color={colors.medium}
+              />
+            </TouchableOpacity>
+            <AppText size="large" bold>
+              {str.trim()}
+            </AppText>
+          </View>
+        );
+      })}
     </View>
   );
 };
@@ -724,6 +795,33 @@ const styles = StyleSheet.create({
   infoSaveBtn: {
     marginBottom: 40,
     alignSelf: "center",
+  },
+  infoListContainer: {
+    marginLeft: width * 0.05,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  infoList: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "80%",
+    flexWrap: "wrap",
+    marginBottom: 5,
+  },
+  infoListItem: {
+    height: 50,
+    paddingRight: 18,
+    marginRight: 15,
+    flexDirection: "row",
+    marginBottom: 12,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  infoListCloseBtn: {
+    // height: "100%",
+    paddingLeft: 15,
+    paddingRight: 10,
   },
   links: {},
   link: {

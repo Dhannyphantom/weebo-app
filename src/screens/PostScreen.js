@@ -272,7 +272,7 @@ const PostScreen = ({ route, navigation }) => {
       <View
         style={{
           ...styles.listTag,
-          backgroundColor: item.important ? colors.unChange : colors.extraLight,
+          backgroundColor: item.important ? colors.unChange : theme.extralight,
         }}
       >
         <TouchableOpacity
@@ -363,6 +363,7 @@ const PostScreen = ({ route, navigation }) => {
                     text={text}
                     setText={setText}
                     mLine={true}
+                    numberOfLines={6}
                     placeholder="Add a caption.."
                   />
                 </View>
@@ -420,7 +421,12 @@ const PostScreen = ({ route, navigation }) => {
                   </View>
                   {search[1] &&
                     (tagCharacters[0] || tagShows[0] || tagGroups[0]) && (
-                      <View style={styles.searchInstance}>
+                      <View
+                        style={[
+                          styles.searchInstance,
+                          { backgroundColor: theme.extralight },
+                        ]}
+                      >
                         <SearchInstance
                           data={tagCharacters}
                           onPress={handleSearchItem}
@@ -660,7 +666,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   searchInstance: {
-    backgroundColor: colors.extraLight,
     marginTop: 15,
     borderRadius: 15,
     width: screen.width * 0.95,
