@@ -26,6 +26,14 @@ import PostVideo from "./PostVideo";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import PopMessage from "./PopMessage";
+import AppPickerItem from "./AppPickerItem";
+import {
+  challenger_info_lookup,
+  characterRoles,
+  characterTypes,
+  showGenres,
+  subGenres,
+} from "../constants/data_store";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -290,12 +298,75 @@ const Challenger = ({
   );
 };
 
+const InfoDropDown = ({ modal, setModal, item: data, onPress }) => {
+  // item = {title, menu: []}
+  const [actions, setActions] = useState({ modal: "open" });
+
+  const closeModal = () => {
+    return actions.modal;
+  };
+
+  let dropMenu = [];
+  switch (data.key) {
+    case "genres":
+      dropMenu = showGenres;
+      break;
+    case "subGenres":
+      dropMenu = subGenres;
+      break;
+    case "type":
+      dropMenu = characterTypes;
+      break;
+    case "role":
+      dropMenu = characterRoles;
+      break;
+
+    default:
+      break;
+  }
+
+  return (
+    <PopDropDown
+      setter={() => setModal(false)}
+      visible={modal}
+      headerTitle={`Instance ${data.title}`}
+      closer={closeModal}
+      RenderComponent={() => (
+        <View style={styles.modalContainer}>
+          <FlatList
+            data={dropMenu}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 15 }}
+            renderItem={({ item }) => (
+              <AppPickerItem
+                text={item.title}
+                desc={item.discription}
+                example={item.example}
+                onPress={() => {
+                  onPress(item.title);
+                  setActions({ modal: "close" });
+                }}
+              />
+            )}
+            numColumns={3}
+            listKey="dropDown"
+          />
+        </View>
+      )}
+    />
+  );
+};
+
 const InfoProps = ({ item, state }) => {
   const theme = useContext(ThemeContext);
+
   const [selected, setSelected] = useState(item.selected);
   const [info, setInfo] = useState(String(item.value));
+  const [modal, setModal] = useState(false); // will be modified for datetime picker also
 
   const shouldShowBtn = info !== String(item.value);
+  const isDropDown = challenger_info_lookup.dropdown.includes(item.key);
+  const isDatetime = challenger_info_lookup.datetime.includes(item.key);
 
   const updateAssetArr = (arr) => {
     return arr.map((obj) => {
@@ -342,7 +413,10 @@ const InfoProps = ({ item, state }) => {
       </TouchableOpacity>
       {selected && (
         <View>
-          <View
+          <TouchableOpacity
+            disabled={!isDropDown && !isDatetime}
+            activeOpacity={0.95}
+            onPress={() => setModal(true)}
             style={[
               styles.inputContainer,
               { backgroundColor: theme.extralight },
@@ -351,11 +425,12 @@ const InfoProps = ({ item, state }) => {
             <TextInput
               placeholder={`Enter ${item.title}`}
               placeholderTextColor={theme.background}
+              editable={!isDatetime && !isDropDown}
               onChangeText={(val) => setInfo(val)}
               value={info}
               style={[styles.input, { color: theme.color }]}
             />
-          </View>
+          </TouchableOpacity>
           {shouldShowBtn && (
             <AppButton
               title="Save Changes"
@@ -366,6 +441,12 @@ const InfoProps = ({ item, state }) => {
           )}
         </View>
       )}
+      <InfoDropDown
+        modal={modal}
+        setModal={setModal}
+        item={item}
+        onPress={(val) => setInfo(val)}
+      />
     </View>
   );
 };
@@ -619,6 +700,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 20,
     overflow: "hidden",
+  },
+  modalContainer: {
+    height: height * 0.75,
   },
   row: {
     flexDirection: "row",

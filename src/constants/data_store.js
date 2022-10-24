@@ -662,3 +662,8 @@ export const test_location_obj = {
   mocked: false,
   timestamp: 1665566676905,
 };
+
+export const challenger_info_lookup = {
+  dropdown: ["type", "role", "genres", "subGenres"],
+  datetime: ["birthday", "releaseDate", "endDate"],
+};
