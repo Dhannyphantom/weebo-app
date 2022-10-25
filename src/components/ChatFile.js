@@ -1,15 +1,10 @@
 import React, { useContext } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
+import getTimestamp from "../constants/getTimestamp";
 
 const { width } = Dimensions.get("window");
 
@@ -22,21 +17,26 @@ const ChatFile = ({ item, onPress }) => {
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       <View style={styles.box1}>
-        <ProfilePic source={item.avatar} size={45} userID={item.recipientId} />
+        <ProfilePic
+          source={item?.user?.avatar}
+          size={45}
+          userID={item?.user?._id}
+        />
         <View style={styles.box2}>
           <View style={styles.box3}>
             <AppText style={styles.username} bold>
-              {" "}
-              @{item.username}
+              @{item?.user?.username}
             </AppText>
-            <AppText style={styles.msg}> {item.time} </AppText>
+            <AppText style={styles.msg}>
+              {getTimestamp(item?.last_message?._id)}
+            </AppText>
           </View>
           <AppText
             numberOfLines={1}
             ellipsizeMode="tail"
             style={{ ...styles.msg, flex: 1, maxWidth: "80%", marginLeft: 7 }}
           >
-            {item.msg}
+            {item?.last_message?.message}
           </AppText>
         </View>
       </View>

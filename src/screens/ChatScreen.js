@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
 import { Context as AuthContext } from "../config/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -16,14 +15,13 @@ import SearchBar from "../components/SearchBar";
 
 import colors from "../constants/colors";
 import ChatFile from "../components/ChatFile";
-import getTimeStamp from "../constants/getTimestamp";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import AppButton from "../components/AppButton";
 import ThemeContext from "../config/ThemeContext";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const ChatScreen = ({ navigation }) => {
   const {
@@ -49,12 +47,12 @@ const ChatScreen = ({ navigation }) => {
   const handleChatPress = (item) => {
     navigation.navigate("ChatUser", {
       item: {
-        _id: item.recipientId,
-        username: item.username,
-        avatar: item.avatar,
+        _id: item.user._id,
+        username: item.user.username,
+        avatar: item.user.avatar,
       },
     });
-    joinRoom(userInfo._id, item.recipientId);
+    joinRoom(userInfo._id, item.user._id);
   };
 
   const handlePlusPress = () => {
@@ -75,48 +73,25 @@ const ChatScreen = ({ navigation }) => {
     setSearchUsers(filterArr);
   };
 
-  const handleFreshData = (chatDataArr) => {
-    const chatData = chatDataArr.map((obj) => {
-      const lIndex = obj.chats.length - 1;
-      const lastMsg = lIndex > -1 ? obj.chats[lIndex].message : null;
-      const recipient = obj.users.find((e) => e._id != userInfo._id);
-      const time = lIndex > -1 ? getTimeStamp(obj.chats[lIndex]._id) : null;
-      let chatObj = {};
-      if (obj.chats[0]) {
-        chatObj.avatar = recipient?.avatar;
-        chatObj.username = recipient?.username;
-        chatObj.recipientId = recipient?._id;
-        chatObj.id = obj._id;
-        chatObj.msg = lastMsg;
-        chatObj.time = time;
-        chatObj.timer = getTimeStamp(obj.chats[lIndex]._id, "raw");
-      } else {
-        return null;
-      }
-      return chatObj;
-    });
-    setChatUsers(
-      chatData
-        .filter((obj) => obj != null)
-        .sort((a, b) => b.timer.getTime() - a.timer.getTime())
-    );
-  };
-
   const handleRefresh = async (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
     if (type === "load") {
-      const getChats = JSON.parse(await AsyncStorage.getItem("chatUsers"));
-      if (getChats) {
-        handleFreshData(getChats);
+      const chatUsersStr = await AsyncStorage.getItem("chatUsers");
+      const user_chats = JSON.parse(chatUsersStr);
+      if (user_chats) {
+        setChatUsers(user_chats);
       }
     }
     getUserData(
       userInfo._id,
       "get_chats",
       async (resData) => {
-        handleFreshData(resData.chats);
+        const my_chats = resData.chats.filter((obj) =>
+          obj.hasOwnProperty("user")
+        );
+        setChatUsers(my_chats);
         setLoadedOnce(true);
-        await AsyncStorage.setItem("chatUsers", JSON.stringify(resData.chats));
+        await AsyncStorage.setItem("chatUsers", JSON.stringify(my_chats));
         type === "refresh" && setRefreshing(false);
       },
       (err) => {
@@ -204,7 +179,7 @@ const ChatScreen = ({ navigation }) => {
             {chatUsers.length > 0 ? (
               <FlatList
                 data={searchInput.length < 1 ? chatUsers : searchUsers}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item?.last_message?._id}
                 overScrollMode="never"
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}

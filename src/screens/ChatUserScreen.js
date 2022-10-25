@@ -3,11 +3,10 @@ import {
   StyleSheet,
   FlatList,
   View,
-  TouchableOpacity,
   Dimensions,
   KeyboardAvoidingView,
 } from "react-native";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -15,7 +14,6 @@ import ChatRender from "../components/ChatRender";
 import CommentBar from "../components/CommentBar";
 import Screen from "../components/Screen";
 import ActivityIndicator from "../components/ActivityIndicator";
-import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 import AppHeader from "../components/AppHeader";
@@ -32,8 +30,8 @@ const ChatUserScreen = ({ route, navigation }) => {
   } = useContext(AuthContext);
 
   const [chats, setChats] = useState([]);
-  const [empty, setEmpty] = useState(false);
   // chats = [{message, time, read,sender: {_id, username, avatar}}]
+  const [empty, setEmpty] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [chatLoaded, setChatLoaded] = useState(false);
 
@@ -103,14 +101,24 @@ const ChatUserScreen = ({ route, navigation }) => {
     );
   };
 
-  const handleGetDone = (info) => {
+  const handleGetDone = async (info) => {
     if (info) {
       setChats(info && info.chats);
       info && info.chats.length == 0 ? setEmpty(true) : setEmpty(false);
+      await AsyncStorage.setItem(`chat_${_id}`, JSON.stringify(info?.chats));
     } else {
       setEmpty(true);
     }
     setChatLoaded(true);
+  };
+
+  const fetchStoredChats = async () => {
+    let user_chat = await AsyncStorage.getItem(`chat_${_id}`);
+    if (user_chat) {
+      user_chat = JSON.parse(user_chat);
+      setChats(user_chat);
+      setChatLoaded(true);
+    }
   };
 
   const RenderChatFooter = () => {
@@ -152,6 +160,7 @@ const ChatUserScreen = ({ route, navigation }) => {
 
   //TODO:: - try caching chats and getting them locally
   useEffect(() => {
+    fetchStoredChats();
     joinRoom(userInfo._id, _id);
 
     getChatMessages(
