@@ -149,12 +149,11 @@ const AppButton = ({
 };
 const styles = StyleSheet.create({
   button: {
-    // width: screen.width * 0.65,
     backgroundColor: colors.primary,
     borderRadius: screen.width * 0.03,
     // padding: 12,
     paddingHorizontal: 30,
-    paddingVertical: 14,
+    paddingVertical: 16,
     elevation: 2,
     shadowRadius: 6,
     shadowColor: "black",
@@ -165,11 +164,10 @@ const styles = StyleSheet.create({
     },
   },
   accent: {
-    width: screen.width * 0.65,
     backgroundColor: colors.accent,
     borderRadius: screen.width * 0.03,
     paddingHorizontal: 30,
-    paddingVertical: 14,
+    paddingVertical: 16,
   },
   btnText: {
     textTransform: "uppercase",

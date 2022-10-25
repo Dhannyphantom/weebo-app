@@ -21,13 +21,15 @@ const WelcomeScreen = ({ navigation }) => {
           <View style={styles.btnCont}>
             <Spacer mv={width * 0.01}>
               <AppButton
-                title="Sign In"
+                title="Login"
+                style={styles.btn}
                 onPress={() => navigation.navigate("Login")}
               />
             </Spacer>
             <Spacer mv={width * 0.01}>
               <AppButton
-                title="Sign Up"
+                title="Register"
+                style={styles.btn}
                 sec
                 onPress={() => navigation.navigate("Register")}
               />
@@ -40,6 +42,9 @@ const WelcomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  btn: {
+    alignSelf: "center",
+  },
   image: {
     width,
     height,

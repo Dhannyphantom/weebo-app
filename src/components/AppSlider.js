@@ -11,55 +11,10 @@ import {
 import AppText from "./AppText";
 import Screen from "./Screen";
 import colors from "../constants/colors";
-
-// ========== FILES ===========
-import narutoChibi from "../../assets/arts/naruto_2.png";
-import leviChibi from "../../assets/arts/levi_1.png";
-import luffyChibi from "../../assets/arts/luffy_1.png";
-import togaChibi from "../../assets/arts/toga_1.png";
+import { HomeArr } from "../constants/data_store";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
-
-const HomeArr = [
-  {
-    id: "ifhdfoih",
-    text: "spacer",
-  },
-  {
-    id: "9686981",
-    title: "Weebo welcomes You!",
-    text: "Hello Weeb, Weebo welcomes you to the Manga and Anime community of degenerate weebs just like you \n Have fun and connect with your fellow weebs in this Beta version, a more stable version of the app will be released soon",
-    bg: "#C45D33",
-    image: narutoChibi,
-  },
-  {
-    id: "2986",
-    title: "Weebo Instances",
-    text: "Weebo Instances represents existing Anime or Manga Series, Characters, Groups and even your own Channels \n These Weebo Instances will be managed by you when created, or won in Challenges. \n Please do not create existing instance as they will not be verified and consequently removed",
-    bg: "#A40D4E",
-    // bg: "#9E6B59",
-    image: togaChibi,
-  },
-  {
-    id: "986082",
-    title: "Weebo on Android",
-    text: "Yo weeb, Weebo is currently only available on the android platform. \n The team is working really hard for the iOS platform, please be patient and stay updated",
-    bg: "#77472E",
-    image: leviChibi,
-  },
-  {
-    id: "276",
-    title: "Support Weebo",
-    text: "You can support the Weebo team to help improve this app. \n The Weebo developer team requires support for a better app management and user experience",
-    bg: colors.facebook,
-    image: luffyChibi,
-  },
-  {
-    id: "sshsi",
-    text: "spacer",
-  },
-];
 
 const CONTENT_WIDTH = width;
 
