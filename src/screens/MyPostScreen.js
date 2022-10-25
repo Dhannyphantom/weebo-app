@@ -143,7 +143,7 @@ const MyPostScreen = ({ navigation, route }) => {
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"
-        text="No media..."
+        text={isLoading ? "Fetching feeds..." : "No media found!"}
       />
       <ActivityIndicator
         visible={isLoading}

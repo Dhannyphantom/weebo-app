@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   line: {
-    minWidth: "100%",
+    minWidth: width,
   },
 });
 

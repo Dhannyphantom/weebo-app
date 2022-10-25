@@ -558,6 +558,7 @@ const ShowScreen = ({ route, navigation }) => {
               )}
               renderItem={renderHome}
               refreshing={refreshing}
+              contentContainerStyle={{ paddingBottom: height * 0.08 }}
               onRefresh={handleScreenRefresh}
               overScrollMode="never"
               keyExtractor={(item, index) => item + index}

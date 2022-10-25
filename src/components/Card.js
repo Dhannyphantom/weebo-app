@@ -37,10 +37,6 @@ const Card = ({
   id,
   mSize,
   style,
-  iconContainerStyle,
-  subTitleStyle,
-  infoStyle,
-  btmStyle,
   isVerified,
   mIcon = 75,
   bIcon = 50,
@@ -144,15 +140,17 @@ const Card = ({
       <View
         style={[
           styles.btmCard,
-          { backgroundColor: theme.background },
-          btmStyle,
+          {
+            backgroundColor: theme.background,
+            elevation: theme.mode === "dark" ? 8 : 2,
+          },
         ]}
       >
         <View
           style={{
             ...styles.iconContainer,
             bottom: mIcon / 2,
-            ...iconContainerStyle,
+            // ...iconContainerStyle,
           }}
         >
           <Icon
@@ -178,7 +176,7 @@ const Card = ({
             disablePress
           />
         </View>
-        <View style={[styles.info, infoStyle]}>
+        <View style={[styles.info]}>
           <AppText
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -187,16 +185,14 @@ const Card = ({
           >
             {name}
           </AppText>
-          <View style={styles.showText}>
-            <AppText
-              numberOfLines={1}
-              size="xsmall"
-              ellipsizeMode="tail"
-              style={{ ...styles.subTitle, ...subTitleStyle }}
-            >
-              {show}
-            </AppText>
-          </View>
+          <AppText
+            numberOfLines={1}
+            size="xsmall"
+            ellipsizeMode="tail"
+            style={styles.subTitle}
+          >
+            {show}
+          </AppText>
         </View>
       </View>
       <AlertModal
@@ -211,10 +207,8 @@ const Card = ({
 const styles = StyleSheet.create({
   card: {
     width: width * 0.7,
-    // height: 390,
   },
   btmCard: {
-    elevation: 2,
     shadowRadius: 3,
     shadowColor: "black",
     shadowOpacity: 0.15,
@@ -222,27 +216,29 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1.8,
     },
-    marginTop: 1.5,
+    marginTop: 1.8,
     borderRadius: RADIUS,
-    width: width * 0.6,
-    height: 89,
   },
   image: {
     width: "100%",
     height: "100%",
-    alignItems: "flex-end",
     borderRadius: RADIUS,
   },
   imageContainer: {
     borderRadius: RADIUS,
   },
   info: {
-    alignItems: "center",
     width: "100%",
-    bottom: 40,
-    height: "90%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 35,
+    paddingBottom: 10,
   },
   iconContainer: {
+    position: "absolute",
+    width: "100%",
+    zIndex: 5,
+    top: -55,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -251,20 +247,15 @@ const styles = StyleSheet.create({
   proPic: {
     position: "absolute",
     right: 0,
-    // left: "70%",
   },
   title: {
-    marginTop: 15,
-    marginHorizontal: 3,
+    // marginTop: 15,
+    marginBottom: 5,
     textTransform: "capitalize",
   },
   subTitle: {
     textTransform: "capitalize",
     color: colors.medium,
-  },
-  showText: {
-    marginBottom: 4,
-    justifyContent: "flex-end",
   },
 });
 export default Card;
