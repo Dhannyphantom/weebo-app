@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Animated,
   Dimensions,
   TextInput,
 } from "react-native";
@@ -55,6 +56,13 @@ const RenderEmailPop = ({ vis }) => {
     text: null,
   });
 
+  const scalerOne = useRef(new Animated.Value(1)).current;
+  const scalerTwo = useRef(new Animated.Value(0.5)).current;
+  const scalerThree = useRef(new Animated.Value(0.5)).current;
+  const scalerFour = useRef(new Animated.Value(0.5)).current;
+  const scalerFive = useRef(new Animated.Value(0.5)).current;
+  const scalerSix = useRef(new Animated.Value(0.5)).current;
+
   const textInputOne = useRef(null);
   const textInputTwo = useRef(null);
   const textInputThree = useRef(null);
@@ -66,6 +74,7 @@ const RenderEmailPop = ({ vis }) => {
     .map((obj) => obj.text)
     .join("")
     .trim();
+  const isFocused = emailVeriValues.find((obj) => obj.focused);
 
   const handleVerification = (type) => {
     setIsLoading(true);
@@ -121,6 +130,32 @@ const RenderEmailPop = ({ vis }) => {
   };
 
   const onChangeInput = (val, idx) => {
+    if (val === "Backspace") {
+      switch (idx) {
+        case 1:
+          handleAnimation(scalerOne, true);
+          break;
+        case 2:
+          handleAnimation(scalerTwo, true);
+          break;
+        case 3:
+          handleAnimation(scalerThree, true);
+          break;
+        case 4:
+          handleAnimation(scalerFour, true);
+          break;
+        case 5:
+          handleAnimation(scalerFive, true);
+          break;
+        case 6:
+          handleAnimation(scalerSix, true);
+          break;
+
+        default:
+          handleAnimation(scalerSix, true);
+          break;
+      }
+    }
     return setEmailVeriValues((prevState) =>
       val !== "Backspace"
         ? prevState.map((obj) => {
@@ -165,27 +200,38 @@ const RenderEmailPop = ({ vis }) => {
     );
   };
 
-  useEffect(() => {
-    const isFocused = emailVeriValues.find((obj) => obj.focused);
+  const handleAnimation = (refAnim, reverse) => {
+    Animated.spring(refAnim, {
+      toValue: reverse ? 0.5 : 1,
+      useNativeDriver: true,
+    }).start();
+  };
 
+  useEffect(() => {
     switch (isFocused?.id) {
       case "1":
         textInputOne?.current?.focus();
+        handleAnimation(scalerOne);
         break;
       case "2":
         textInputTwo?.current?.focus();
+        handleAnimation(scalerTwo);
         break;
       case "3":
         textInputThree?.current?.focus();
+        handleAnimation(scalerThree);
         break;
       case "4":
         textInputFour?.current?.focus();
+        handleAnimation(scalerFour);
         break;
       case "5":
         textInputFive?.current?.focus();
+        handleAnimation(scalerFive);
         break;
       case "6":
         textInputSix?.current?.focus();
+        handleAnimation(scalerSix);
         break;
     }
   }, [emailVeriValues]);
@@ -213,28 +259,36 @@ const RenderEmailPop = ({ vis }) => {
         <View style={styles.emailVeriBoxCont}>
           {emailVeriValues.map((str, idx) => {
             const emailItem = emailVeriValues[idx];
+
             let txtRef = textInputOne;
+            let scaler = scalerOne;
 
             switch (idx) {
               case 0:
                 txtRef = textInputOne;
+                scaler = scalerOne;
 
                 break;
               case 1:
                 txtRef = textInputTwo;
+                scaler = scalerTwo;
                 break;
               case 2:
                 txtRef = textInputThree;
+                scaler = scalerThree;
                 break;
               case 3:
                 txtRef = textInputFour;
+                scaler = scalerFour;
 
                 break;
               case 4:
                 txtRef = textInputFive;
+                scaler = scalerFive;
                 break;
               case 5:
                 txtRef = textInputSix;
+                scaler = scalerSix;
                 break;
 
               default:
@@ -242,13 +296,14 @@ const RenderEmailPop = ({ vis }) => {
                 break;
             }
             return (
-              <View
+              <Animated.View
                 key={idx}
                 style={{
                   ...styles.emailVeriBox,
                   backgroundColor: theme.extralight,
                   borderColor: theme.mediumLight,
                   borderWidth: emailItem.focused ? 3 : 0,
+                  transform: [{ scale: scaler }],
                 }}
               >
                 <TextInput
@@ -269,7 +324,7 @@ const RenderEmailPop = ({ vis }) => {
                   style={[styles.emailPopInput, { color: theme.color }]}
                   onChangeText={(val) => onChangeInput(val, idx + 1)}
                 />
-              </View>
+              </Animated.View>
             );
           })}
         </View>
@@ -309,7 +364,6 @@ const EditProfileScreen = ({ navigation, route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
   const params = route.params;
-  const theme = useContext(ThemeContext);
   // SOMETHING WRONG WITH THE ERROR MESSAGE
   const [toggle, setToggle] = useState(false);
   const [pageData, setPageData] = useState(userInfo);
