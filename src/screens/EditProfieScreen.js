@@ -28,7 +28,7 @@ import PopMessage from "../components/PopMessage";
 
 import yupSchema from "../constants/yupSchema";
 import ThemeContext from "../config/ThemeContext";
-const { editValidationSchema } = yupSchema;
+const { editValidationSchema, passwordInitials } = yupSchema;
 import { emailers } from "../constants/data_store";
 import Link from "../components/Link";
 
@@ -40,7 +40,7 @@ const emailVerifiedPop = {
   vis: false,
 };
 
-const RenderEmailPop = ({ vis }) => {
+const RenderEmailPop = ({ vis, setPopper }) => {
   const theme = useContext(ThemeContext);
   const {
     recoverPassword,
@@ -357,6 +357,71 @@ const RenderEmailPop = ({ vis }) => {
   );
 };
 
+const ChangePassword = ({ closeModal }) => {
+  const { updateProfile } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
+  const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState(null);
+
+  const handleFormSubmit = (formValues) => {
+    setLoading(true);
+    updateProfile(
+      { ...formValues, type: "password" },
+      () => closeModal(),
+      (err) => {
+        setErrMsg(err?.data ?? err?.msg);
+        setLoading(false);
+      }
+    );
+  };
+
+  return (
+    <View
+      style={[styles.changePassCont, { backgroundColor: theme.background }]}
+    >
+      <AppText style={styles.changeTitle} size="large" bold>
+        CHANGE PASSWORD
+      </AppText>
+      <Separator h={2} m={1} />
+      {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
+      <Formik
+        initialValues={passwordInitials}
+        onSubmit={(formValues) => handleFormSubmit(formValues)}
+        validationSchema={editValidationSchema}
+      >
+        {() => (
+          <View style={{ padding: 10 }}>
+            <CreateForm
+              header="Old password"
+              place="Enter current password"
+              name="oldPass"
+              pass
+            />
+            <CreateForm
+              header="New password"
+              place="Enter new password"
+              name="newPass"
+              pass
+            />
+            <CreateForm
+              header="Confirm new password"
+              place="Confirn new password"
+              name="confirmPass"
+              pass
+            />
+            <SubmitButton
+              bared
+              title="Change Password"
+              style={styles.submitBtn}
+            />
+          </View>
+        )}
+      </Formik>
+      <ActivityIndicator visible={loading} style={styles.activity} />
+    </View>
+  );
+};
+
 const EditProfileScreen = ({ navigation, route }) => {
   const {
     updateProfile,
@@ -409,6 +474,15 @@ const EditProfileScreen = ({ navigation, route }) => {
         null
       );
     }
+  };
+
+  const onPassChanged = () => {
+    setToggle(false);
+    setPopper({
+      vis: true,
+      msg: "Password changed successfully",
+      type: "success",
+    });
   };
 
   const handleFormSubmit = (formValues) => {
@@ -489,21 +563,6 @@ const EditProfileScreen = ({ navigation, route }) => {
                   formInitials.city.length > 1 ? formInitials.city : "city"
                 }
               />
-
-              {toggle && (
-                <View style={styles.changePassCont}>
-                  <AppText style={styles.changeTitle} bold>
-                    Change Your Password
-                  </AppText>
-                  <CreateForm headerZ="Old password" name="oldPass" pass />
-                  <CreateForm headerZ="New password" name="newPass" pass />
-                  <CreateForm
-                    headerZ="Confirm new password"
-                    name="confirmPass"
-                    pass
-                  />
-                </View>
-              )}
               {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
               {!isLoading && (
                 <SubmitButton
@@ -546,7 +605,14 @@ const EditProfileScreen = ({ navigation, route }) => {
       <AppFadeIn
         visible={emailPop}
         setVisible={setEmailPop}
-        RenderComponent={() => <RenderEmailPop vis={emailPop} />}
+        RenderComponent={() => (
+          <RenderEmailPop setPopper={setPopper} vis={emailPop} />
+        )}
+      />
+      <AppFadeIn
+        visible={toggle}
+        setVisible={setToggle}
+        RenderComponent={() => <ChangePassword closeModal={onPassChanged} />}
       />
       <PopMessage
         popData={popper}
@@ -559,8 +625,8 @@ const EditProfileScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",
-    width: width,
-    height: height,
+    width: "100%",
+    height: "100%",
   },
   action: {
     marginTop: 10,
@@ -576,6 +642,17 @@ const styles = StyleSheet.create({
   btn: {},
   container: {
     flex: 1,
+  },
+  changePassCont: {
+    width: width * 0.95,
+    borderRadius: 15,
+    overflow: "hidden",
+    padding: 10,
+  },
+  changeTitle: {
+    alignSelf: "center",
+    marginTop: 8,
+    marginBottom: 15,
   },
   errText: {
     color: colors.heart,
@@ -619,12 +696,7 @@ const styles = StyleSheet.create({
   form: {
     marginLeft: 20,
   },
-  changePassCont: {
-    marginTop: 20,
-  },
-  changeTitle: {
-    alignSelf: "center",
-  },
+
   profilePic: {
     alignSelf: "center",
     margin: 15,

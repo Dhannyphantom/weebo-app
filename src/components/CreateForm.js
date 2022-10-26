@@ -72,7 +72,7 @@ const CreateForm = ({
     ? headerF + place
     : headerZ
     ? headerZ + place
-    : "";
+    : place;
 
   const theme = useContext(ThemeContext);
 
@@ -200,7 +200,7 @@ const CreateForm = ({
         )}
         {pass && (
           <TextInput
-            placeholder={headerZ + place}
+            placeholder={headerZ ? headerZ + place : place}
             onBlur={() => setFieldTouched(name)}
             style={[styles.input, { color: theme.color }]}
             placeholderTextColor={colors.medium}

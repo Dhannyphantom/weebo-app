@@ -230,9 +230,8 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
     dispatch({ type: "update_profile", payload: response.data });
     sc && sc();
   } catch (err) {
-    dispatch({ type: "add_error", payload: err.response.data });
-    console.log(err.response.data);
-    cb && cb("Error updating your profile.");
+    // dispatch({ type: "add_error", payload: err.response.data });
+    cb && cb({ err, msg: "Error updating profile", data: err?.response?.data });
   }
 };
 

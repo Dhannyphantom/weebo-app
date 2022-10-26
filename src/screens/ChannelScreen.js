@@ -527,15 +527,7 @@ const styles = StyleSheet.create({
   border: {
     padding: 8,
     alignSelf: "center",
-    elevation: 3,
-    shadowRadius: 7,
-    shadowColor: "black",
-    shadowOpacity: 0.18,
-    shadowOffset: {
-      width: 0,
-      height: 2.1,
-    },
-    borderRadius: 22,
+    borderRadius: 20,
   },
 
   content: {
@@ -544,7 +536,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     paddingBottom: 20,
-    borderRadius: 19,
+    borderRadius: 15,
   },
   descText: {
     marginLeft: 8,

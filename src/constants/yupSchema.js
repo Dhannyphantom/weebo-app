@@ -198,10 +198,17 @@ const channelValidation = Yup.object().shape({
     .label("Cover image"),
 });
 
+const passwordInitials = {
+  oldPass: "",
+  newPass: "",
+  confirmPass: "",
+};
+
 export default {
   showValidationschema,
   characterValidationSchema,
   validationSchemaLogin,
+  passwordInitials,
   validationSchemaRegister,
   editValidationSchema,
   channelValidation,
