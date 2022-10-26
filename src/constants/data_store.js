@@ -714,3 +714,101 @@ export const challenger_info_lookup = {
   dropdown: ["type", "role", "genres", "subGenres"],
   datetime: ["birthday", "releaseDate", "endDate"],
 };
+
+export const settingsData = [
+  {
+    id: "1",
+    title: "General",
+    data: [
+      {
+        id: "1",
+        name: "Auto video play",
+        key: "vid",
+        type: "toggle",
+        default: false,
+      },
+
+      {
+        id: "2",
+        name: "Language",
+        type: "dropdown",
+        default: "english",
+        options: ["english", "japanese", "french"],
+      },
+      {
+        id: "3",
+        name: "Turn on Notifications",
+        type: "toggle",
+        key: "noti",
+        default: true,
+      },
+    ],
+  },
+  {
+    id: "2",
+    title: "Appearance",
+    data: [
+      {
+        id: "1",
+        name: "Dark theme mode",
+        type: "toggle",
+        default: false,
+        options: [],
+      },
+    ],
+  },
+  {
+    id: "3",
+    title: "User",
+    data: [
+      {
+        id: "1",
+        name: "Delete account",
+        type: "action",
+        default: null,
+        options: "delete",
+      },
+
+      {
+        id: "2",
+        name: "User agreement & App policy",
+        type: "action",
+        default: "null",
+        options: "account",
+      },
+    ],
+  },
+];
+
+export const emailers = [
+  {
+    id: "1",
+    text: "",
+    focused: true,
+  },
+  {
+    id: "2",
+    text: "",
+    focused: false,
+  },
+  {
+    id: "3",
+    text: "",
+    focused: false,
+  },
+  {
+    id: "4",
+    text: "",
+    focused: false,
+  },
+  {
+    id: "5",
+    text: "",
+    focused: false,
+  },
+  {
+    id: "6",
+    text: "",
+    focused: false,
+  },
+];

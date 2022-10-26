@@ -19,73 +19,9 @@ import colors from "../constants/colors";
 import PopDropDown from "../components/PopDropDown";
 import AlertModal from "../components/AlertModal";
 import ThemeContext from "../config/ThemeContext";
+import { settingsData } from "../constants/data_store";
 
-const { width, height } = Dimensions.get("window");
-
-const settingsData = [
-  {
-    id: "1",
-    title: "General",
-    data: [
-      {
-        id: "1",
-        name: "Auto video play",
-        key: "vid",
-        type: "toggle",
-        default: false,
-      },
-
-      {
-        id: "2",
-        name: "Language",
-        type: "dropdown",
-        default: "english",
-        options: ["english", "japanese", "french"],
-      },
-      {
-        id: "3",
-        name: "Turn on Notifications",
-        type: "toggle",
-        key: "noti",
-        default: true,
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Appearance",
-    data: [
-      {
-        id: "1",
-        name: "Dark theme mode",
-        type: "toggle",
-        default: false,
-        options: [],
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "User",
-    data: [
-      {
-        id: "1",
-        name: "Delete account",
-        type: "action",
-        default: null,
-        options: "delete",
-      },
-
-      {
-        id: "2",
-        name: "User agreement & App policy",
-        type: "action",
-        default: "null",
-        options: "account",
-      },
-    ],
-  },
-];
+const { width } = Dimensions.get("window");
 
 const alertData = {
   visible: false,

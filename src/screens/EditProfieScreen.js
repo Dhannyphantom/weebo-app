@@ -28,53 +28,283 @@ import PopMessage from "../components/PopMessage";
 import yupSchema from "../constants/yupSchema";
 import ThemeContext from "../config/ThemeContext";
 const { editValidationSchema } = yupSchema;
+import { emailers } from "../constants/data_store";
+import Link from "../components/Link";
 
 const { width, height } = Dimensions.get("window");
 
-const emailers = [
-  {
-    id: "1",
-    text: "",
-    focused: true,
-  },
-  {
-    id: "2",
-    text: "",
-    focused: false,
-  },
-  {
-    id: "3",
-    text: "",
-    focused: false,
-  },
-  {
-    id: "4",
-    text: "",
-    focused: false,
-  },
-  {
-    id: "5",
-    text: "",
-    focused: false,
-  },
-  {
-    id: "6",
-    text: "",
-    focused: false,
-  },
-];
 const emailVerifiedPop = {
   type: "success",
   msg: "Email verification successful",
   vis: false,
 };
 
+const RenderEmailPop = ({ vis }) => {
+  const theme = useContext(ThemeContext);
+  const {
+    recoverPassword,
+    mailVerifier,
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const [emailVeriValues, setEmailVeriValues] = useState(emailers);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mailText, setMailText] = useState({
+    show: false,
+    type: "ok",
+    text: null,
+  });
+
+  const textInputOne = useRef(null);
+  const textInputTwo = useRef(null);
+  const textInputThree = useRef(null);
+  const textInputFour = useRef(null);
+  const textInputFive = useRef(null);
+  const textInputSix = useRef(null);
+
+  const emailToken = emailVeriValues
+    .map((obj) => obj.text)
+    .join("")
+    .trim();
+
+  const handleVerification = (type) => {
+    setIsLoading(true);
+    setMailText({ ...mailText, show: false });
+    if (type === "verify") {
+      if (emailToken < 6)
+        return setMailText({
+          type: "bad",
+          show: true,
+          text: "Incomplete verification code",
+        });
+
+      const sendData = {
+        token: emailToken,
+      };
+
+      mailVerifier(
+        sendData,
+        () => {
+          setIsLoading(false);
+          setPopper({ ...emailVerifiedPop, vis: true });
+          setPageData({ ...pageData, verified: true });
+          setEmailPop(false);
+        },
+        (err) => {
+          setPopper({ vis: true, msg: err, type: "failed" });
+          setIsLoading(false);
+        }
+      );
+      //
+    } else if (type === "request") {
+      const sendData = {
+        email: userInfo.email,
+        type: "verification",
+      };
+      recoverPassword(
+        sendData,
+        (resData) => {
+          setMailText({ text: resData.msg, show: true, type: "ok" });
+          setIsLoading(false);
+        },
+        (err) => {
+          const myMsg = err.includes("EREFUSED")
+            ? "Bad internet connection"
+            : err.includes("TIMEOUT")
+            ? "Poor connection, please try again"
+            : "Something went wrong!";
+          setMailText({ text: myMsg, show: true, type: "bad" });
+          setIsLoading(false);
+        }
+      );
+    }
+  };
+
+  const onChangeInput = (val, idx) => {
+    return setEmailVeriValues((prevState) =>
+      val !== "Backspace"
+        ? prevState.map((obj) => {
+            if (obj.focused && obj.id != emailers.length) {
+              return {
+                ...obj,
+                focused: false,
+                text: val,
+              };
+            } else if (obj.focused && obj.id == emailers.length) {
+              return {
+                ...obj,
+                focused: true,
+                text: val,
+              };
+            } else if (obj.id == idx + 1) {
+              return {
+                ...obj,
+                focused: true,
+              };
+            } else {
+              return obj;
+            }
+          })
+        : prevState.map((obj) => {
+            if (obj.focused) {
+              return {
+                ...obj,
+                focused: false,
+                text: "",
+              };
+            } else if (obj.id == idx - 1) {
+              return {
+                ...obj,
+                text: "",
+                focused: true,
+              };
+            } else {
+              return obj;
+            }
+          })
+    );
+  };
+
+  useEffect(() => {
+    const isFocused = emailVeriValues.find((obj) => obj.focused);
+
+    switch (isFocused?.id) {
+      case "1":
+        textInputOne?.current?.focus();
+        break;
+      case "2":
+        textInputTwo?.current?.focus();
+        break;
+      case "3":
+        textInputThree?.current?.focus();
+        break;
+      case "4":
+        textInputFour?.current?.focus();
+        break;
+      case "5":
+        textInputFive?.current?.focus();
+        break;
+      case "6":
+        textInputSix?.current?.focus();
+        break;
+    }
+  }, [emailVeriValues]);
+
+  useEffect(() => {
+    textInputOne?.current?.focus();
+  }, [vis]);
+  return (
+    <View style={[styles.emailPop, { backgroundColor: theme.background }]}>
+      <AppText size="large" style={styles.emailPopTitle} bold>
+        Email Verification
+      </AppText>
+      <Separator h={1} />
+      {mailText.show && (
+        <AppText
+          style={{
+            textAlign: "center",
+            color: mailText.type == "ok" ? colors.primary : colors.heart,
+          }}
+        >
+          {mailText.text}
+        </AppText>
+      )}
+      <View style={{ flex: 1, justifyContent: "space-around" }}>
+        <View style={styles.emailVeriBoxCont}>
+          {emailVeriValues.map((str, idx) => {
+            const emailItem = emailVeriValues[idx];
+            let txtRef = textInputOne;
+
+            switch (idx) {
+              case 0:
+                txtRef = textInputOne;
+
+                break;
+              case 1:
+                txtRef = textInputTwo;
+                break;
+              case 2:
+                txtRef = textInputThree;
+                break;
+              case 3:
+                txtRef = textInputFour;
+
+                break;
+              case 4:
+                txtRef = textInputFive;
+                break;
+              case 5:
+                txtRef = textInputSix;
+                break;
+
+              default:
+                txtRef = textInputOne;
+                break;
+            }
+            return (
+              <View
+                key={idx}
+                style={{
+                  ...styles.emailVeriBox,
+                  backgroundColor: theme.extralight,
+                  borderColor: theme.mediumLight,
+                  borderWidth: emailItem.focused ? 3 : 0,
+                }}
+              >
+                <TextInput
+                  value={emailItem.text}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  ref={txtRef}
+                  allowFontScaling={false}
+                  autoComplete="off"
+                  autoCorrect={false}
+                  caretHidden
+                  clearTextOnFocus
+                  // editable={emailItem.focused}
+                  onKeyPress={({ nativeEvent: { key: keyValue } }) =>
+                    onChangeInput(keyValue, idx + 1)
+                  }
+                  autoFocus={idx === 0}
+                  style={[styles.emailPopInput, { color: theme.color }]}
+                  onChangeText={(val) => onChangeInput(val, idx + 1)}
+                />
+              </View>
+            );
+          })}
+        </View>
+        <View>
+          {emailToken.length >= 6 && (
+            <AppButton
+              title="Verify"
+              onPress={() => handleVerification("verify")}
+              style={{ alignSelf: "center" }}
+            />
+          )}
+          <AppButton
+            title="Request token"
+            bare
+            onPress={() => handleVerification("request")}
+            style={{
+              alignSelf: "center",
+              width: width * 0.65,
+              marginTop: 12,
+            }}
+          />
+        </View>
+      </View>
+      <ActivityIndicator
+        visible={isLoading}
+        style={styles.emailActivity}
+        wTransparent
+      />
+    </View>
+  );
+};
+
 const EditProfileScreen = ({ navigation, route }) => {
   const {
     updateProfile,
-    recoverPassword,
-    updateMe,
-    mailVerifier,
     updateAvatar,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -140,244 +370,13 @@ const EditProfileScreen = ({ navigation, route }) => {
     setIsLoading(false);
   };
 
-  const RenderEmailPop = ({ vis }) => {
-    const [emailVeriValues, setEmailVeriValues] = useState(emailers);
-    const [isLoading, setIsLoading] = useState(false);
-    const [mailText, setMailText] = useState({
-      show: false,
-      type: "ok",
-      text: null,
-    });
-
-    const textInputOne = useRef(null);
-    const textInputTwo = useRef(null);
-    const textInputThree = useRef(null);
-    const textInputFour = useRef(null);
-    const textInputFive = useRef(null);
-    const textInputSix = useRef(null);
-
-    const emailToken = emailVeriValues
-      .map((obj) => obj.text)
-      .join("")
-      .trim();
-
-    const handleVerification = (type) => {
-      setIsLoading(true);
-      setMailText({ ...mailText, show: false });
-      if (type === "verify") {
-        if (emailToken < 6)
-          return setMailText({
-            type: "bad",
-            show: true,
-            text: "Incomplete verification code",
-          });
-
-        const sendData = {
-          token: emailToken,
-        };
-
-        mailVerifier(
-          sendData,
-          () => {
-            setIsLoading(false);
-            setPopper({ ...emailVerifiedPop, vis: true });
-            setPageData({ ...pageData, verified: true });
-            setEmailPop(false);
-          },
-          (err) => {
-            setPopper({ vis: true, msg: err, type: "failed" });
-            setIsLoading(false);
-          }
-        );
-        //
-      } else if (type === "request") {
-        const sendData = {
-          email: userInfo.email,
-          type: "verification",
-        };
-        recoverPassword(
-          sendData,
-          (resData) => {
-            setMailText({ text: resData.msg, show: true, type: "ok" });
-            setIsLoading(false);
-          },
-          (err) => {
-            const myMsg = err.includes("EREFUSED")
-              ? "Bad internet connection"
-              : err.includes("TIMEOUT")
-              ? "Poor connection, please try again"
-              : "Something went wrong!";
-            setMailText({ text: myMsg, show: true, type: "bad" });
-            setIsLoading(false);
-          }
-        );
-      }
-    };
-
-    useEffect(() => {
-      textInputOne?.current?.focus();
-    }, [vis]);
-    return (
-      <View style={[styles.emailPop, { backgroundColor: theme.background }]}>
-        <AppText size="large" style={styles.emailPopTitle} bold>
-          Email Verification
-        </AppText>
-        <Separator h={1} />
-        {mailText.show && (
-          <AppText
-            style={{
-              textAlign: "center",
-              color: mailText.type == "ok" ? colors.primary : colors.heart,
-            }}
-          >
-            {mailText.text}
-          </AppText>
-        )}
-        <View style={{ flex: 1, justifyContent: "space-around" }}>
-          <View style={styles.emailVeriBoxCont}>
-            {emailVeriValues.map((str, idx) => {
-              const emailItem = emailVeriValues[idx];
-              let txtRef = textInputOne;
-              let nxtRef = textInputTwo;
-              let prevRef = null;
-              switch (idx) {
-                case 0:
-                  txtRef = textInputOne;
-                  nxtRef = textInputTwo;
-                  prevRef = null;
-                  break;
-                case 1:
-                  txtRef = textInputTwo;
-                  nxtRef = textInputThree;
-                  prevRef = textInputOne;
-                  break;
-                case 2:
-                  txtRef = textInputThree;
-                  nxtRef = textInputFour;
-                  prevRef = textInputTwo;
-                  break;
-                case 3:
-                  txtRef = textInputFour;
-                  nxtRef = textInputFive;
-                  prevRef = textInputThree;
-                  break;
-                case 4:
-                  txtRef = textInputFive;
-                  nxtRef = textInputSix;
-                  prevRef = textInputFour;
-                  break;
-                case 5:
-                  txtRef = textInputSix;
-                  prevRef = textInputFive;
-                  nxtRef = null;
-                  break;
-
-                default:
-                  txtRef = textInputOne;
-                  nxtRef = textInputTwo;
-                  break;
-              }
-              return (
-                <View
-                  key={idx}
-                  style={{
-                    ...styles.emailVeriBox,
-                    backgroundColor: theme.extralight,
-                    borderColor: theme.mediumLight,
-                    borderWidth: emailItem.focused ? 3 : 0,
-                  }}
-                >
-                  <TextInput
-                    value={emailItem.text}
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    ref={txtRef}
-                    allowFontScaling={false}
-                    autoComplete="off"
-                    autoCorrect={false}
-                    caretHidden
-                    clearTextOnFocus
-                    // editable={emailItem.focused}
-                    onKeyPress={({ nativeEvent: { key: keyValue } }) => {
-                      const copier = [...emailVeriValues];
-                      if (keyValue === "Backspace") {
-                        if (copier[idx].text.length < 1) {
-                          if (idx != 0) {
-                            prevRef?.current?.clear();
-                            prevRef?.current?.focus();
-                            copier[idx - 1].focused = true;
-                            copier[idx].focused = false;
-                            copier[idx - 1].text = "";
-                            setEmailVeriValues(copier);
-                            txtRef.current.blur();
-                          }
-                        }
-                      }
-                    }}
-                    autoFocus={idx === 0}
-                    style={[styles.emailPopInput, { color: theme.color }]}
-                    onChangeText={(val) => {
-                      const copier = [...emailVeriValues];
-                      copier[idx].text = val;
-                      if (val.length > 0 && idx + 1 < emailVeriValues.length) {
-                        copier[idx + 1].focused = true;
-                        copier[idx].focused = false;
-                        txtRef.current.blur();
-                        nxtRef.current.focus();
-                      }
-                      setEmailVeriValues(copier);
-                    }}
-                  />
-                </View>
-              );
-            })}
-          </View>
-          <View>
-            {emailToken.length >= 6 && (
-              <AppButton
-                title="Verify"
-                onPress={() => handleVerification("verify")}
-                style={{ alignSelf: "center" }}
-              />
-            )}
-            <AppButton
-              title="Request token"
-              bare
-              onPress={() => handleVerification("request")}
-              style={{
-                alignSelf: "center",
-                width: width * 0.65,
-                marginTop: 12,
-              }}
-            />
-          </View>
-        </View>
-        <ActivityIndicator
-          visible={isLoading}
-          style={styles.emailActivity}
-          wTransparent
-        />
-      </View>
-    );
-  };
-
   return (
     <Screen style={styles.container}>
-      <AppHeader
-        title="Edit Profile"
-        RightComponent={() => (
-          <AppButton
-            naked
-            title="Change Password"
-            style={styles.changeBtn}
-            onPress={() => setToggle(!toggle)}
-          />
-        )}
-      />
+      <AppHeader title="Edit Profile" />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         overScrollMode="never"
-        contentContainerStyle={{ paddingBottom: height * 0.1 }}
+        contentContainerStyle={{ paddingBottom: height * 0.14 }}
       >
         <TouchableOpacity
           onPress={selectProfileImage}
@@ -451,20 +450,36 @@ const EditProfileScreen = ({ navigation, route }) => {
                   />
                 </View>
               )}
-              {!pageData.verified && params.isProfileCompleted && (
-                <View>
-                  <AppButton
-                    title="Verify Email"
-                    naked
-                    style={styles.verifyEmail}
-                    onPress={() => setEmailPop(true)}
-                  />
-                </View>
-              )}
               {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
               {!isLoading && (
-                <SubmitButton title="Update Profile" style={styles.submitBtn} />
+                <SubmitButton
+                  bared
+                  title="Update Profile"
+                  style={styles.submitBtn}
+                />
               )}
+              <AppText bold size="large" style={styles.action}>
+                Profile Actions
+              </AppText>
+              <View style={styles.btnContainer}>
+                {!pageData.verified && params.isProfileCompleted && (
+                  <Link
+                    name="Verify Email"
+                    onPress={() => setEmailPop(true)}
+                    style={styles.btn}
+                  />
+                )}
+                <Link
+                  name="Change Password"
+                  onPress={() => setToggle(!toggle)}
+                  style={styles.btn}
+                />
+                <Link
+                  name="Turn off my weebo locator"
+                  onPress={() => console.log("turn off")}
+                  style={styles.btn}
+                />
+              </View>
             </View>
           )}
         </Formik>
@@ -493,6 +508,18 @@ const styles = StyleSheet.create({
     width: width,
     height: height,
   },
+  action: {
+    marginTop: 10,
+  },
+  btnContainer: {
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 20,
+    padding: 10,
+    marginRight: 20,
+    marginTop: 20,
+  },
+  btn: {},
   container: {
     flex: 1,
   },
@@ -538,10 +565,6 @@ const styles = StyleSheet.create({
   form: {
     marginLeft: 20,
   },
-  changeBtn: {
-    alignSelf: "flex-end",
-    marginRight: 3,
-  },
   changePassCont: {
     marginTop: 20,
   },
@@ -554,12 +577,7 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     alignSelf: "center",
-    marginTop: width * 0.1,
-  },
-  verifyEmail: {
-    marginTop: 12,
-    alignSelf: "flex-end",
-    marginRight: width * 0.05,
+    marginVertical: 15,
   },
 });
 export default EditProfileScreen;
