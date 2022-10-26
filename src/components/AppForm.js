@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
-const screen = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 import AppText from "./AppText";
 import Icon from "./Icon";
@@ -30,8 +30,163 @@ import female from "../../assets/female.jpg";
 import female2 from "../../assets/female2.jpg";
 import AppButton from "./AppButton";
 import AppLogo from "./AppLogo";
+import AppFadeIn from "./AppFadeIn";
 
 const { validationSchemaLogin, validationSchemaRegister } = schemas;
+
+const ForgotPassword = ({ setErrMsg, setPassModal }) => {
+  const { resetPassword, recoverPassword } = useContext(AuthContext);
+
+  const [passInput, setPassInput] = useState("");
+  const [passCode, setPassCode] = useState("");
+  const [passNew, setPassNew] = useState("");
+  const [passNewConfirm, setPassNewConfirm] = useState("");
+  const [passLoading, setPasLoading] = useState(false);
+  const [passMsg, setPassMsg] = useState({ error: null, success: null });
+
+  const handleForgotPass = (type) => {
+    // setErrMsg(null);
+    if (type === "recover") {
+      setPasLoading(true);
+      recoverPassword(
+        { email: passInput },
+        () => {
+          setPassMsg({
+            error: null,
+            success: "Verification code sent to email!",
+          });
+          setPasLoading(false);
+        },
+        (err) => {
+          let msg = "";
+          if (err?.msg?.includes("getaddrinfo")) {
+            msg = "No internet connection";
+          } else {
+            msg = err;
+          }
+
+          setPassMsg({ error: msg, success: null });
+          setPasLoading(false);
+        }
+      );
+    } else if (type === "reset") {
+      setPasLoading(true);
+      if (passNewConfirm.length < 6 || passNew.length < 6) {
+        setPasLoading(false);
+
+        return setPassMsg({
+          ...passMsg,
+          error: "Password should not be less than 6 characters",
+        });
+      }
+
+      if (passNewConfirm !== passNew) {
+        setPasLoading(false);
+        return setPassMsg({ ...passMsg, error: "Passwords do not match" });
+      }
+      if (passInput.length < 2) {
+        setPasLoading(false);
+        return setPassMsg({ ...passMsg, error: "Provide an email" });
+      }
+
+      const data = {
+        token: passCode,
+        email: passInput,
+        newPass: passNew,
+      };
+      resetPassword(
+        data,
+        () => {
+          setPassMsg({
+            error: null,
+            success: "Password reset successful,Please log in!",
+          });
+          setPasLoading(false);
+          setPassModal(false);
+        },
+        (err) => {
+          setPassMsg({ ...passMsg, error: err });
+          setPasLoading(false);
+        }
+      );
+    }
+  };
+
+  return (
+    <View style={styles.content}>
+      <AppText style={{ textAlign: "center" }} bold>
+        PASSWORD RESET
+      </AppText>
+      <Separator h={1} />
+      {passMsg.error && (
+        <AppText
+          style={{
+            textAlign: "center",
+            color: colors.heart,
+            marginBottom: 5,
+          }}
+        >
+          {passMsg.error}
+        </AppText>
+      )}
+      {passMsg.success && (
+        <AppText
+          style={{
+            textAlign: "center",
+            color: colors.primary,
+            marginBottom: 5,
+          }}
+        >
+          {passMsg.success}
+        </AppText>
+      )}
+      <AppText style={{ margin: 15 }}>Enter your registered e-mail: </AppText>
+      <GrowInput mLine={false} text={passInput} setText={setPassInput} />
+      {passMsg.success && (
+        <>
+          <AppText style={{ margin: 15 }}>Enter Verification Code: </AppText>
+          <GrowInput
+            keyboardType="number-pad"
+            text={passCode}
+            setText={setPassCode}
+          />
+          <AppText style={{ margin: 15 }}>Enter New Password: </AppText>
+          <GrowInput
+            keyboardType="visible-password"
+            text={passNew}
+            setText={setPassNew}
+          />
+          <AppText style={{ margin: 15 }}>Confirm New Password: </AppText>
+          <GrowInput
+            keyboardType="visible-password"
+            text={passNewConfirm}
+            setText={setPassNewConfirm}
+          />
+        </>
+      )}
+      {passMsg.success && (
+        <AppButton
+          title="Resend code"
+          onPress={() => handleForgotPass("recover")}
+          style={styles.btn}
+          naked
+        />
+      )}
+      <AppButton
+        title={passMsg.success ? "RESET PASSWORD" : "GET TOKEN"}
+        onPress={() => handleForgotPass(passMsg.success ? "reset" : "recover")}
+        style={styles.btn}
+        bare
+      />
+      <ActivityIndicator
+        type="spin"
+        visible={passLoading}
+        wTransparent
+        style={styles.activityPass}
+      />
+    </View>
+  );
+};
 
 const AppForm = ({
   login,
@@ -52,17 +207,10 @@ const AppForm = ({
   b,
   navTo,
 }) => {
-  const { resetPassword, recoverPassword } = useContext(AuthContext);
   const navigation = useNavigation();
 
   const [showPass, setShowPass] = useState(true);
   const [gender, setGender] = useState("male");
-  const [passInput, setPassInput] = useState("");
-  const [passCode, setPassCode] = useState("");
-  const [passNew, setPassNew] = useState("");
-  const [passNewConfirm, setPassNewConfirm] = useState("");
-  const [passLoading, setPasLoading] = useState(false);
-  const [passMsg, setPassMsg] = useState({ error: null, success: null });
   const [passModal, setPassModal] = useState(false);
 
   let initialValues, schema;
@@ -74,7 +222,7 @@ const AppForm = ({
     if (register) {
       formValues.gender = gender;
     }
-    setPassInput(formValues.email ?? formValues.username);
+    // setPassInput(formValues.email ?? formValues.username);
     setElevation(false);
     onPress(formValues);
   };
@@ -91,66 +239,6 @@ const AppForm = ({
       }),
       (schema = validationSchemaRegister))
     : null;
-
-  const handleForgotPass = (type) => {
-    setErrMsg(null);
-    if (type === "modal") {
-      setPasLoading(false);
-      setPassModal(true);
-    } else if (type === "recover") {
-      setPasLoading(true);
-      recoverPassword(
-        { email: passInput },
-        () => {
-          console.log("success");
-          setPassMsg({
-            error: null,
-            success: "Verification code sent to email!",
-          });
-          setPasLoading(false);
-        },
-        (err) => {
-          setPassMsg({ error: err, success: null });
-          setPasLoading(false);
-        }
-      );
-    } else if (type === "reset") {
-      setPasLoading(true);
-      if (passNewConfirm.length < 6 || passNew.length < 6) {
-        return setPassMsg({
-          ...passMsg,
-          error: "Password should not be less than 6 characters",
-        });
-      }
-
-      if (passNewConfirm !== passNew) {
-        return setPassMsg({ ...passMsg, error: "Passwords do not match" });
-      }
-      if (passInput.length < 2)
-        return setPassMsg({ ...passMsg, error: "Provide an email" });
-
-      const data = {
-        token: passCode,
-        email: passInput,
-        newPass: passNew,
-      };
-      resetPassword(
-        data,
-        () => {
-          setPassMsg({
-            error: null,
-            success: "Password reset successful,Please log in!",
-          });
-          setPassModal(false);
-          setPasLoading(false);
-        },
-        (err) => {
-          setPassMsg({ error: err, success: null });
-          setPasLoading(false);
-        }
-      );
-    }
-  };
 
   return (
     <Screen style={styles.container}>
@@ -254,19 +342,18 @@ const AppForm = ({
               {errorMessage ? (
                 <View>
                   <AppText style={styles.error}> {errorMessage} </AppText>
-                  {passMsg.success && passMsg?.success?.contains("success") && (
+                  {/* {passMsg.success && passMsg?.success?.contains("success") && (
                     <AppText
                       style={{ textAlign: "center", color: colors.primary }}
                     >
-                      {" "}
-                      {passMsg.success}{" "}
+                      {passMsg.success}
                     </AppText>
-                  )}
+                  )} */}
                   {login && (
                     <AppButton
                       title="Forgot password?"
-                      style={{ alignSelf: "flex-end" }}
-                      onPress={() => handleForgotPass("modal")}
+                      style={{ alignSelf: "center" }}
+                      onPress={() => setPassModal(true)}
                       bare
                     />
                   )}
@@ -311,111 +398,18 @@ const AppForm = ({
         </View>
       )}
 
-      <Modal
+      <AppFadeIn
         visible={passModal}
-        transparent
-        statusBarTranslucent
-        animationType="fade"
-        onRequestClose={() => setPassModal(false)}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setPassModal(false)}
-          style={styles.modal}
-        >
-          <View style={styles.content}>
-            <AppText style={{ textAlign: "center" }} bold>
-              PASSWORD RESET
-            </AppText>
-            <Separator h={1} />
-            {passMsg.error && (
-              <AppText
-                style={{
-                  textAlign: "center",
-                  color: colors.heart,
-                  marginBottom: 5,
-                }}
-              >
-                {passMsg.error}
-              </AppText>
-            )}
-            {passMsg.success && (
-              <AppText
-                style={{
-                  textAlign: "center",
-                  color: colors.primary,
-                  marginBottom: 5,
-                }}
-              >
-                {passMsg.success}
-              </AppText>
-            )}
-            <AppText style={{ marginLeft: 10 }}>
-              Enter your registered e-mail:{" "}
-            </AppText>
-            <GrowInput
-              mLine={false}
-              style={{
-                width: screen.width * 0.7,
-                marginTop: 8,
-                marginBottom: 16,
-              }}
-              text={passInput}
-              setText={setPassInput}
-            />
-            {passMsg.success && (
-              <>
-                <AppText style={{ marginLeft: 10 }}>
-                  Enter Verification Code:{" "}
-                </AppText>
-                <GrowInput
-                  keyboardType="number-pad"
-                  text={passCode}
-                  setText={setPassCode}
-                />
-                <AppText style={{ marginLeft: 10 }}>
-                  Enter New Password:{" "}
-                </AppText>
-                <GrowInput
-                  keyboardType="visible-password"
-                  text={passNew}
-                  setText={setPassNew}
-                />
-                <AppText style={{ marginLeft: 10 }}>
-                  Confirm New Password:{" "}
-                </AppText>
-                <GrowInput
-                  keyboardType="visible-password"
-                  text={passNewConfirm}
-                  setText={setPassNewConfirm}
-                />
-              </>
-            )}
-            {passMsg.success && (
-              <AppButton
-                title="Resend code"
-                onPress={() => handleForgotPass("recover")}
-                style={{ alignSelf: "flex-end" }}
-                naked
-              />
-            )}
-            <AppButton
-              title="RESET"
-              onPress={() =>
-                handleForgotPass(passMsg.success ? "reset" : "recover")
-              }
-              style={{ alignSelf: "center", marginBottom: 40 }}
-              bare
-            />
-            <ActivityIndicator
-              type="spin"
-              visible={passLoading}
-              wTransparent
-              style={styles.activity}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        setVisible={setPassModal}
+        RenderComponent={() => (
+          <ForgotPassword
+            setPassModal={(val) => {
+              setPassModal(val);
+              setErrMsg(null);
+            }}
+          />
+        )}
+      />
     </Screen>
   );
 };
@@ -432,15 +426,21 @@ const styles = StyleSheet.create({
   },
   activity: {
     position: "absolute",
-    width: screen.width,
-    height: screen.height * 0.8,
+    width: "100%",
+    height: "100%",
   },
+  activityPass: {
+    position: "absolute",
+    width: "100%",
+    height: "115%",
+  },
+  btn: { alignSelf: "center", marginTop: 15, marginBottom: 20 },
   container: {
     flex: 1,
     alignItems: "center",
   },
   content: {
-    width: "80%",
+    width: width * 0.95,
     borderRadius: 12,
     overflow: "hidden",
     backgroundColor: colors.white,
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   info: {
     alignItems: "center",
-    marginTop: screen.width * 0.03,
+    marginTop: width * 0.03,
   },
   form: {
     marginTop: 12,

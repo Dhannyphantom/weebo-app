@@ -61,8 +61,7 @@ const growForwardedRef = forwardRef(GrowInput);
 const styles = StyleSheet.create({
   inputCont: {
     borderWidth: 3,
-    backgroundColor: colors.extraLight,
-    borderColor: colors.medium,
+    borderColor: colors.light,
     borderRadius: width * 0.02,
     width: width * 0.8,
     overflow: "hidden",
