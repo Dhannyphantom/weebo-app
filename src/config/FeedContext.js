@@ -56,11 +56,11 @@ const getShows =
     }
   };
 
-const getShowPosts = (dispatch) => async (data, sc, cb) => {
+const getInstancePosts = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
     const res = await fetchApi.get(
-      `/show_posts?showId=${data.id}&type=${data.type}`,
+      `/instance_posts?instanceID=${data.id}&type=${data.type}&instance=${data.instance}`,
       {
         headers: {
           "x-auth-token": token,
@@ -450,7 +450,7 @@ export const { Provider, Context } = createDataContext(
     getPosts,
     getStatuses,
     deletePosts,
-    getShowPosts,
+    getInstancePosts,
     getMoreReplies,
     statusUploader,
     getHomeFeeds,

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -6,7 +6,6 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 import AppText from "./AppText";
 import heartPop from "../../assets/animations/heartPop.json";
@@ -26,8 +25,6 @@ const FeedText = ({
   info,
   type,
 }) => {
-  const navigation = useNavigation();
-
   const lotRef = useRef(null);
   const opaciter = useRef(new Animated.Value(0)).current;
 
@@ -72,24 +69,21 @@ const FeedText = ({
     }).start();
   };
 
-  const isDefault = title.startsWith("##");
-  const formatedTitle = isDefault ? title.slice(2) : title;
-
   return (
     <View style={styles.container}>
-      {title && type !== "text" ? (
-        <AppText style={styles.text} bold={isDefault}>
-          {formatedTitle}
+      {type !== "text" ? (
+        <AppText style={styles.text} bold>
+          {title}
         </AppText>
       ) : (
         <TouchableOpacity
           activeOpacity={1}
           onPress={handlePress}
-          style={{ ...styles.bgCont, backgroundColor: info.bg }}
+          style={{ ...styles.bgCont, backgroundColor: info?.bg }}
         >
           <AppText
             size="xlarge"
-            style={{ ...styles.coolText, color: info.tColor }}
+            style={{ ...styles.coolText, color: info?.tColor }}
           >
             {title}
           </AppText>

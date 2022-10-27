@@ -21,15 +21,6 @@ const FeedRender = ({ item, user }) => {
   const [myComments, setMyComments] = useState([]);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const [activeSlide, setActiveSlide] = useState(1);
-  const tagObj = {
-    tagArr: item.tag,
-    tags: {
-      channel: item.tagChannel,
-      character: item.tagCharacter,
-      group: item.tagGroup,
-      show: item.tagShow,
-    },
-  };
 
   const [post, setPost] = useState({
     likes: item.likes.length,
@@ -90,7 +81,7 @@ const FeedRender = ({ item, user }) => {
       <FeedHeader
         avatar={item.user.avatar}
         feederID={item.user._id}
-        tag={tagObj}
+        tags={item.tags}
         name={item.user.username}
         followers={item.user.followers.length}
       />

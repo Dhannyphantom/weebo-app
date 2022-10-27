@@ -14,22 +14,21 @@ const FeedHeader = ({
   feederID,
   challenge,
   followers,
-  tag,
+  tags,
   show,
   size = 40,
 }) => {
   const navigation = useNavigation();
-  let channel, normal, channelName, channelID, channelSubs;
+  let channelName, channelID, channelSubs;
   // console.log(tag);
   ///TODO WORK ON THIS TAG STUFF ....
-  if (tag?.tags) {
-    const tags = tag.tags;
-    channelName = tags?.channel[0]?.name;
-    channelID = tags?.channel[0]?._id;
-    channel = tag?.tagArr.find(
-      (obj) => obj.isSpecific && obj.name === "channel"
-    );
-    channelSubs = tags?.channel[0]?.subscribers?.length;
+  const isChannel = tags?.find(
+    (obj) => obj.name === "channel" && obj.isSpecific
+  );
+  if (isChannel) {
+    channelName = isChannel?.name;
+    channelID = isChannel?._id;
+    channelSubs = isChannel?.subscribers?.length;
   }
   const handleNav = (route) => {
     if (route === "channel") {
@@ -40,7 +39,7 @@ const FeedHeader = ({
   return (
     <View style={styles.headerContainer}>
       <View style={styles.left}>
-        {name && !channel ? (
+        {name && !isChannel ? (
           <Avatar
             nameStyle={styles.avatarName}
             avatar={avatar}
@@ -48,7 +47,7 @@ const FeedHeader = ({
             name={name}
             size={size}
           />
-        ) : channel ? (
+        ) : isChannel ? (
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => handleNav("channel")}
@@ -104,7 +103,7 @@ const FeedHeader = ({
             />
           </Spacer>
           <AppText style={styles.text}>
-            {channel ? channelSubs : followers}
+            {isChannel ? channelSubs : followers}
           </AppText>
         </View>
       ) : null}
@@ -118,7 +117,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // paddingHorizontal: 8,
     width: "100%",
   },
   headText: {

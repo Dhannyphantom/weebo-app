@@ -8,7 +8,6 @@ import { Context as FeedContext } from "../config/FeedContext";
 import ActivityIndicator from "../components/ActivityIndicator";
 import MansonryList from "../components/MansonryList";
 import AppButton from "../components/AppButton";
-import AppText from "../components/AppText";
 import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
 import ThemeContext from "../config/ThemeContext";
@@ -20,7 +19,7 @@ const MyPostScreen = ({ navigation, route }) => {
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
-  const { getShowPosts } = useContext(FeedContext);
+  const { getInstancePosts } = useContext(FeedContext);
   const theme = useContext(ThemeContext);
 
   const [postsArr, setPostArr] = useState([]);
@@ -29,7 +28,7 @@ const MyPostScreen = ({ navigation, route }) => {
   const [isPostEmpty, setIsPostEmpty] = useState(true);
   const [screenTitle, setScreenTitle] = useState(null);
   const [tab, setTab] = useState({ posts: true, tagged: false });
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState({ posts: 0, tagged: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [errMsg, setErrMsg] = useState(null);
 
@@ -72,19 +71,17 @@ const MyPostScreen = ({ navigation, route }) => {
       setTab({ posts: false, tagged: true });
       if (!taggedMedia[0]) {
         setIsLoading(true);
-        getShowPosts(
-          { id: params?.info?.id, type: "tagged" },
+        getInstancePosts(
+          { id: params?.info?.id, instance: fromScreen, type: "tagged" },
           (resData) => {
-            console.log(resData);
             setTaggedMedia(resData);
-            setCount(resData.length);
-            // resData[0] && setIsPostEmpty(false);
+            setCount({ ...count, tagged: resData.length });
+            resData[0] && setIsPostEmpty(false);
             setIsLoading(false);
           },
           (errData) => {
             setErrMsg(errData.data ?? errData.msg);
             setIsLoading(false);
-            console.log(errData);
           }
         );
       }
@@ -119,11 +116,11 @@ const MyPostScreen = ({ navigation, route }) => {
         break;
       case "show":
         setScreenTitle(`${params?.info?.name}'s Collection`);
-        getShowPosts(
-          { id: params?.info?.id, type: "specific" },
+        getInstancePosts(
+          { id: params?.info?.id, instance: fromScreen, type: "specific" },
           (resData) => {
             setMedia(resData);
-            setCount(resData.length);
+            setCount({ ...count, posts: resData.length });
             resData[0] && setIsPostEmpty(false);
             setIsLoading(false);
           },
@@ -147,7 +144,7 @@ const MyPostScreen = ({ navigation, route }) => {
         counter++;
       }
     }
-    setCount(counter);
+    setCount({ ...count, posts: counter });
     setMedia(allUris);
     counter > 0 && setIsPostEmpty(false);
   }, [postsArr]);
@@ -163,18 +160,15 @@ const MyPostScreen = ({ navigation, route }) => {
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
       {["character", "show"].includes(fromScreen) && (
         <View>
-          {/* <AppText style={styles.postStat} bold>
-            {params?.info?.name} has {count} posts
-          </AppText> */}
           <TabList
             state={tab}
             items={[
               {
-                name: `Posts (${count})`,
+                name: `Posts ${count.posts > 0 ? `(${count.posts})` : ""}`,
                 tab: "posts",
               },
               {
-                name: "Tagged",
+                name: `Tagged (${count.tagged})`,
                 tab: "tagged",
               },
             ]}
@@ -182,7 +176,12 @@ const MyPostScreen = ({ navigation, route }) => {
           />
         </View>
       )}
-      {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}
+      {!isPostEmpty && tab.posts && (
+        <MansonryList data={postsArr} media={media} />
+      )}
+      {!isPostEmpty && tab.tagged && (
+        <MansonryList data={postsArr} media={taggedMedia} />
+      )}
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"
