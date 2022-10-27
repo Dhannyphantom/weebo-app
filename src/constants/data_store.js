@@ -776,6 +776,13 @@ export const settingsData = [
         default: "null",
         options: "account",
       },
+      {
+        id: "3",
+        name: "How to use",
+        type: "action",
+        default: "null",
+        options: "book",
+      },
     ],
   },
 ];

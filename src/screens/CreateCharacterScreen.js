@@ -127,7 +127,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   const [changeD, setChangeD] = useState(false);
   // createName helps render the whole as a flatlist
   const [createName, setCreateName] = useState([{ id: "1", name }]);
-  const theme = useContext(ThemeContext);
+  // const theme = useContext(ThemeContext);
 
   const weebo_points = cardState.character
     ? CHARACTER_WP
@@ -141,12 +141,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
   };
 
   const actionCallback = (obj) => {
-    console.log(obj);
-    if (obj?.data) {
-      setErrText(obj.data);
-    } else {
-      setErrText(obj.msg);
-    }
+    setErrText(obj?.data ?? obj?.msg);
     setIsLoading(false);
   };
 
@@ -311,6 +306,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                   initialValues={showFormInitials}
                   onSubmit={(formValues) => {
                     setIsLoading(true);
+                    // console.log(formValues);
                     createShow(formValues, navShow, (obj) =>
                       actionCallback(obj)
                     );

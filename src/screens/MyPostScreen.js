@@ -13,6 +13,7 @@ import AppHeader from "../components/AppHeader";
 import Screen from "../components/Screen";
 import ThemeContext from "../config/ThemeContext";
 import { StatusBar } from "expo-status-bar";
+import TabList from "../components/TabList";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
@@ -24,8 +25,10 @@ const MyPostScreen = ({ navigation, route }) => {
 
   const [postsArr, setPostArr] = useState([]);
   const [media, setMedia] = useState([]);
+  const [taggedMedia, setTaggedMedia] = useState([]);
   const [isPostEmpty, setIsPostEmpty] = useState(true);
   const [screenTitle, setScreenTitle] = useState(null);
+  const [tab, setTab] = useState({ posts: true, tagged: false });
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [errMsg, setErrMsg] = useState(null);
@@ -62,6 +65,32 @@ const MyPostScreen = ({ navigation, route }) => {
     );
   };
 
+  const onChangeTab = (type) => {
+    if (type === "posts") {
+      setTab({ posts: true, tagged: false });
+    } else if (type === "tagged") {
+      setTab({ posts: false, tagged: true });
+      if (!taggedMedia[0]) {
+        setIsLoading(true);
+        getShowPosts(
+          { id: params?.info?.id, type: "tagged" },
+          (resData) => {
+            console.log(resData);
+            setTaggedMedia(resData);
+            setCount(resData.length);
+            // resData[0] && setIsPostEmpty(false);
+            setIsLoading(false);
+          },
+          (errData) => {
+            setErrMsg(errData.data ?? errData.msg);
+            setIsLoading(false);
+            console.log(errData);
+          }
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     switch (fromScreen) {
       case "account":
@@ -91,7 +120,7 @@ const MyPostScreen = ({ navigation, route }) => {
       case "show":
         setScreenTitle(`${params?.info?.name}'s Collection`);
         getShowPosts(
-          params?.info?.id,
+          { id: params?.info?.id, type: "specific" },
           (resData) => {
             setMedia(resData);
             setCount(resData.length);
@@ -134,9 +163,23 @@ const MyPostScreen = ({ navigation, route }) => {
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
       {["character", "show"].includes(fromScreen) && (
         <View>
-          <AppText style={styles.postStat} bold>
+          {/* <AppText style={styles.postStat} bold>
             {params?.info?.name} has {count} posts
-          </AppText>
+          </AppText> */}
+          <TabList
+            state={tab}
+            items={[
+              {
+                name: `Posts (${count})`,
+                tab: "posts",
+              },
+              {
+                name: "Tagged",
+                tab: "tagged",
+              },
+            ]}
+            onPress={onChangeTab}
+          />
         </View>
       )}
       {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}

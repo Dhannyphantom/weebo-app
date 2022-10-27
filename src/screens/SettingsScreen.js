@@ -21,7 +21,7 @@ import AlertModal from "../components/AlertModal";
 import ThemeContext from "../config/ThemeContext";
 import { settingsData } from "../constants/data_store";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const alertData = {
   visible: false,
@@ -49,6 +49,9 @@ const SettingDropDown = ({ data, section, handlers }) => {
         switch (data.options) {
           case "delete":
             setAlertModal({ ...alertData, visible: true });
+            break;
+          case "book":
+            console.log("HOW TO USE");
             break;
 
           case "account":
@@ -146,16 +149,56 @@ const RenderHeader = ({ section: { title } }) => {
   return (
     <View style={styles.headerContainer}>
       <AppText size="xlarge" style={styles.headerText} bold>
-        {" "}
-        {title}{" "}
+        {title}
       </AppText>
+    </View>
+  );
+};
+
+const RenderSections = ({ item, section, editSettings }) => {
+  const theme = useContext(ThemeContext);
+  const [isEnabled, setIsEnabled] = useState(item.default);
+
+  const handleToggle = () => {
+    setIsEnabled((prevBool) => !prevBool);
+    editSettings(section.title, item.name, !isEnabled);
+
+    // code
+    if (item.name.includes("theme")) {
+      EventRegister.emit("changeTheme", !isEnabled);
+    }
+  };
+
+  return (
+    <View style={[styles.itemContainer, { backgroundColor: theme.background }]}>
+      <View style={styles.eachItem}>
+        <AppText> {item.name} </AppText>
+        <View>
+          {item.type === "toggle" && (
+            <Switch
+              trackColor={{ false: colors.unChange, true: colors.light }}
+              thumbColor={isEnabled ? colors.primary : colors.light}
+              ios_backgroundColor={colors.google}
+              onValueChange={handleToggle}
+              value={isEnabled}
+            />
+          )}
+
+          {(item.type === "dropdown" || item.type === "action") && (
+            <SettingDropDown
+              data={item}
+              section={section}
+              handlers={{ editSettings }}
+            />
+          )}
+        </View>
+      </View>
     </View>
   );
 };
 
 const SettingsScreen = () => {
   const [settings, setSettings] = useState([]);
-  const theme = useContext(ThemeContext);
 
   const readyScreen = async () => {
     const getSettings = await AsyncStorage.getItem("settings");
@@ -188,49 +231,12 @@ const SettingsScreen = () => {
   };
 
   const renderSections = ({ item, section }) => {
-    return <RenderSections item={item} section={section} />;
-  };
-
-  const RenderSections = ({ item, section }) => {
-    const [isEnabled, setIsEnabled] = useState(item.default);
-
-    const handleToggle = () => {
-      setIsEnabled((prevBool) => !prevBool);
-      editSettings(section.title, item.name, !isEnabled);
-
-      // code
-      if (item.name.includes("theme")) {
-        EventRegister.emit("changeTheme", !isEnabled);
-      }
-    };
-
     return (
-      <View
-        style={[styles.itemContainer, { backgroundColor: theme.background }]}
-      >
-        <View style={styles.eachItem}>
-          <AppText> {item.name} </AppText>
-          <View>
-            {item.type === "toggle" && (
-              <Switch
-                trackColor={{ false: colors.unChange, true: colors.light }}
-                thumbColor={isEnabled ? colors.primary : colors.light}
-                ios_backgroundColor={colors.google}
-                onValueChange={handleToggle}
-                value={isEnabled}
-              />
-            )}
-
-            {(item.type === "dropdown" || item.type === "action") && (
-              <SettingDropDown
-                data={item}
-                section={section}
-                handlers={{ editSettings }}
-              />
-            )}
-          </View>
-        </View>
-      </View>
+      <RenderSections
+        editSettings={editSettings}
+        item={item}
+        section={section}
+      />
     );
   };
 
@@ -245,6 +251,7 @@ const SettingsScreen = () => {
       <SectionList
         sections={settings}
         renderSectionHeader={RenderHeader}
+        contentContainerStyle={{ paddingBottom: height * 0.1 }}
         keyExtractor={(item) => item.id}
         renderItem={renderSections}
       />

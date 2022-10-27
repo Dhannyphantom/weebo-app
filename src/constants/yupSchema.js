@@ -134,8 +134,12 @@ const showValidationschema = Yup.object().shape({
   creator: Yup.string().required().min(3).trim().lowercase(),
   releaseDate: Yup.string().required(),
   endDate: Yup.string().required(),
-  genres: Yup.array().of(Yup.string().min(3).lowercase().trim()),
-  subGenres: Yup.array().of(Yup.string().min(3).lowercase().trim()),
+  genres: Yup.array()
+    .of(Yup.string().min(3).lowercase().trim())
+    .min(2, "Genres list shouldn't be less than two"),
+  subGenres: Yup.array()
+    .of(Yup.string().min(3).lowercase().trim())
+    .min(2, "Sub genres list shouldn't be less than two"),
   episodes: Yup.number().min(1),
   cover_photo: Yup.object()
     .shape({

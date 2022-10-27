@@ -17,13 +17,12 @@ const Shows = ({ data, searchResult, title, series, show }) => {
   if (!data) {
     return null;
   }
-  const verifiedCharacters = data?.characters?.filter((obj) => obj.verified);
-  const unVerifiedCharacters = data?.characters?.filter((obj) => !obj.verified);
+  const verifiedCharacters = data?.characters?.filter((obj) => obj?.verified);
+  const unVerifiedCharacters = data?.characters?.filter(
+    (obj) => !obj?.verified
+  );
 
-  if (!verifiedCharacters[0] && !unVerifiedCharacters[0]) return null;
-
-  // console.log("SHOWS +", verifiedCharacters);
-  // console.log("SHOWS -", unVerifiedCharacters);
+  // if (!verifiedCharacters[0] && !unVerifiedCharacters[0] && show) return null;
 
   const RenderFooter = () => {
     if (!unVerifiedCharacters[0]) return null;

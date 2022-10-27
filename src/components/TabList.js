@@ -5,7 +5,6 @@ import {
   Easing,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from "react-native";
 import Cards from "./Cards";
 import ThemeContext from "../config/ThemeContext";

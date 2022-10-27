@@ -56,14 +56,17 @@ const getShows =
     }
   };
 
-const getShowPosts = (dispatch) => async (showId, sc, cb) => {
+const getShowPosts = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/show_posts?showId=${showId}`, {
-      headers: {
-        "x-auth-token": token,
-      },
-    });
+    const res = await fetchApi.get(
+      `/show_posts?showId=${data.id}&type=${data.type}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
     sc && sc(res.data);
   } catch (err) {
     cb &&
