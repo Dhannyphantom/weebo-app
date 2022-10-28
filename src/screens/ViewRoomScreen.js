@@ -31,7 +31,6 @@ import SelectItem from "../components/SelectItem";
 import AlertModal from "../components/AlertModal";
 import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
-// import PopDownModal from "../components/PopDownModal";
 import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
 import PopDropDown from "../components/PopDropDown";
@@ -754,9 +753,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
         <PopDropDown
           visible={groupAction}
           setter={() => setGroupAction(false)}
+          headerTitle="Group Actions"
           RenderComponent={() => {
             return (
-              <>
+              <View style={{ paddingBottom: 40 }}>
                 {groupActionArr.map((item, idx) => (
                   <Link
                     name={item.title}
@@ -766,15 +766,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
                     style={styles.link}
                   />
                 ))}
-              </>
+              </View>
             );
           }}
-        />
-        <PopDownModal
-          visible={groupAction}
-          title="group actions"
-          setVisible={setGroupAction}
-          data={groupActionArr}
         />
         <AlertModal
           obj={alertModal}

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const InfoBox = ({ item, onPress }) => {
   const theme = useContext(ThemeContext);
@@ -24,7 +24,7 @@ const InfoBox = ({ item, onPress }) => {
   }
   return (
     <TouchableOpacity
-      activeOpacity={0.85}
+      activeOpacity={0.9}
       onPress={onPress}
       style={[styles.container, { backgroundColor: theme.extralight }]}
     >

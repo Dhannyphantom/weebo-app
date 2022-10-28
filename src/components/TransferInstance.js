@@ -1,11 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -15,6 +9,7 @@ import FriendBox from "./FriendBox";
 import Separator from "./Separator";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
+import AppFadeIn from "./AppFadeIn";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,58 +30,50 @@ const TransferInstance = ({
   const [errMsg, setErrMsg] = useState(null);
 
   return (
-    <Modal
+    <AppFadeIn
       visible={visible}
-      statusBarTranslucent
-      transparent
-      onRequestClose={() => setVisible(false)}
-    >
-      <TouchableOpacity
-        style={styles.modalBg}
-        onPress={() => setVisible(false)}
-        activeOpacity={1}
-      >
-        <TouchableOpacity
-          style={[styles.content, { backgroundColor: theme.extralight }]}
-          activeOpacity={1}
-        >
-          <View
-            style={[styles.container, { backgroundColor: theme.background }]}
-          >
-            <AppText
-              size="large"
-              style={{
-                textAlign: "center",
-                textTransform: "capitalize",
-                marginTop: 8,
-              }}
-              bold
+      RenderComponent={() => {
+        return (
+          <View style={[styles.content, { backgroundColor: theme.extralight }]}>
+            <View
+              style={[styles.container, { backgroundColor: theme.background }]}
             >
-              Transfer {instance}
-            </AppText>
-            <Separator h={1} />
-            {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
-            {userInfo.friends[0] ? (
-              <FriendBox
-                data={userInfo.friends}
-                type="transfer"
-                updateThisInstance={updateThisInstance}
-                typeObj={{ instance, instanceID }}
-                length={0.85}
-                instanceLogic={{ setVisible, setErrMsg }}
-                onPress={null}
-              />
-            ) : (
-              <ActivityIndicator
-                visible={true}
-                type="isEmpty"
-                text="You have no weebos"
-              />
-            )}
+              <AppText
+                size="large"
+                style={{
+                  textAlign: "center",
+                  textTransform: "capitalize",
+                  marginTop: 8,
+                }}
+                bold
+              >
+                Transfer {instance}
+              </AppText>
+              <Separator h={1} />
+              {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
+              {userInfo.friends[0] ? (
+                <FriendBox
+                  data={userInfo.friends}
+                  type="transfer"
+                  updateThisInstance={updateThisInstance}
+                  typeObj={{ instance, instanceID }}
+                  length={0.85}
+                  instanceLogic={{ setVisible, setErrMsg }}
+                  onPress={null}
+                />
+              ) : (
+                <ActivityIndicator
+                  visible={true}
+                  type="isEmpty"
+                  text="You have no weebos"
+                />
+              )}
+            </View>
           </View>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+        );
+      }}
+      setVisible={setVisible}
+    />
   );
 };
 const styles = StyleSheet.create({

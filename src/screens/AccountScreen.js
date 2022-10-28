@@ -24,6 +24,7 @@ import AlertModal from "../components/AlertModal";
 import { StatusBar } from "expo-status-bar";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "../components/AppFadeIn";
+import PopMessage from "../components/PopMessage";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {
@@ -34,44 +35,26 @@ const modalShow = {
   type: "signout",
 };
 
-const InviteWeebs = () => {
+const InviteWeebs = ({ closeModal }) => {
   const theme = useContext(ThemeContext);
   const {
-    sendInvite,
+    // sendInvite,
     state: {
       userInfo: { username, _id },
     },
   } = useContext(AuthContext);
 
+  const message = `Hi, I'm ${username}, \n Join our Weebo Community now by downloading our app in the app stores. \n\nhttp://192.168.43.236/users/invite_weebs?user?=${username}&identifier=${_id}&repo=false`;
+
   const handleInvites = async (type) => {
     switch (type) {
       case "link":
-        sendInvite(
-          _id,
-          (resData) => {
-            console.log("MY lINK");
-          },
-          (err) => {
-            console.log(err);
-            console.log(err?.err?.response?.data);
-          }
-        );
+        // USE EXPO CLIPBOARD PACKAGE
+        closeModal("copied");
         break;
       case "share":
-        const result = await Share.share({
-          message: `Hi, I'm ${username}, \n Join our Weebo Community now by downloading our app in the app stores. \n\nhttps://weebo-servers/users/invite_weebs?user?=${username}&identifier=${_id}&repo=false`,
-        });
-
-        console.log(result);
-        if (result.action === Share.shareAction) {
-          if (result.activityType) {
-            console.log(result.activityType);
-          } else {
-            console.log("just shared");
-          }
-        } else if (result.action === Share.dissmissedAction) {
-          console.log("dismissed");
-        }
+        await Share.share({ message });
+        closeModal();
         break;
 
       default:
@@ -120,6 +103,7 @@ const AccountScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [invites, setInvites] = useState(false);
   const [account, setAccount] = useState([userInfo]);
+  const [popper, setPopper] = useState({ vis: false });
 
   const theme = useContext(ThemeContext);
 
@@ -177,6 +161,23 @@ const AccountScreen = ({ navigation, route }) => {
 
   const handlePressAlert = () => {
     signOut();
+  };
+
+  const closeInviteWeebModal = (type) => {
+    switch (type) {
+      case "copied":
+        setPopper({
+          vis: true,
+          msg: "Invite link copied to clipboard successfully",
+          type: "success",
+        });
+        setInvites(false);
+        break;
+
+      default:
+        setInvites(false);
+        break;
+    }
   };
 
   const RenderHeader = () => {
@@ -367,13 +368,16 @@ const AccountScreen = ({ navigation, route }) => {
       <AppFadeIn
         visible={invites}
         setVisible={setInvites}
-        RenderComponent={InviteWeebs}
+        RenderComponent={() => (
+          <InviteWeebs closeModal={closeInviteWeebModal} />
+        )}
       />
       <AlertModal
         obj={alertModal}
         setVisible={setAlertModal}
         onPress={handlePressAlert}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </Screen>
   );
 };

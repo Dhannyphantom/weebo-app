@@ -23,7 +23,7 @@ import getTimestamp from "../constants/getTimestamp";
 import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
-const TIMER = 60 * 60 * 24 * 7 * 3; // 3 WEEKS
+const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
 
 const InstanceHeader = ({ instanceData }) => {
   const {
@@ -299,7 +299,8 @@ const InstanceHeader = ({ instanceData }) => {
         style={styles.unverifiedTagContainer}
         onPress={handleUnverifyPress}
       >
-        <View style={styles.unverifiedTag} />
+        {/* <View style={styles.unverifiedTag} /> */}
+        <AppText>Stats</AppText>
       </TouchableOpacity>
     );
   };
@@ -394,15 +395,17 @@ const InstanceHeader = ({ instanceData }) => {
             @{owner?.username}
           </AppText>
           {name && instance !== "character" && (
-            <View style={{ ...styles.headerBoxCont, ...posObj }}>
-              <Ionicons
-                name={screenIcon}
-                color={colors.primary}
-                size={width * 0.04}
-              />
-              <AppText size="xlarge" style={styles.tvText} bold>
-                {name}
-              </AppText>
+            <View style={{ ...styles.headerBoxContainer, ...posObj }}>
+              <View style={styles.headerBoxCont}>
+                <Ionicons
+                  name={screenIcon}
+                  color={colors.primary}
+                  size={width * 0.04}
+                />
+                <AppText size="xlarge" style={styles.tvText} bold>
+                  {name}
+                </AppText>
+              </View>
               <RenderUnverifiedTag />
             </View>
           )}
@@ -465,6 +468,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
+  headerBoxContainer: {
+    width: width * 0.94,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   icons: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -504,7 +513,7 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   unverifiedTagContainer: {
-    padding: 5,
+    padding: 12,
     marginLeft: 5,
     borderWidth: 2,
     borderColor: colors.heart,

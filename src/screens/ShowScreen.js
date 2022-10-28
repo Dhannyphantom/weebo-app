@@ -44,7 +44,7 @@ const hider = [
   "isManga",
   "manager",
   "verified",
-  "app_creator",
+  "instance_creator",
   "verifiedList",
   "name_j",
   "name_e",
@@ -53,13 +53,7 @@ const counter = ["characters", "groups", "followers", "posts", "challengers"];
 
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
-  const {
-    charChallengeTwo,
-    startChallengeTwo,
-    startChallengeTwoB,
-    startInfoChallenge,
-    withdrawChallenge,
-  } = useContext(ChallContext);
+  const { withdrawChallenge } = useContext(ChallContext);
   const { instanceUpdater } = useContext(CharContext);
 
   const {
@@ -101,7 +95,7 @@ const ShowScreen = ({ route, navigation }) => {
       id: "5078",
       name: "upload story",
       onPress: () => handleUploadStory(),
-      icon: "upload",
+      icon: "circle-outline",
       show: isMine,
       selected: true,
     },
@@ -110,25 +104,13 @@ const ShowScreen = ({ route, navigation }) => {
       name: "update cover",
       selected: true,
       onPress: () => handleNewCover(),
-      icon: "pencil",
+      icon: "reload",
       show: isMine,
     },
     {
       id: "2",
       name: "posts",
-      onPress: () => {
-        const navObj = {
-          id: dataState._id,
-          name: dataState?.name_j || dataState?.name_e,
-          verified: dataState?.verified,
-          isMine,
-        };
-        navigation.navigate("MyPost", {
-          screen: "show",
-          data: [],
-          info: navObj,
-        });
-      },
+      onPress: () => navigateToPosts(),
       icon: "image-multiple",
       selected: true,
       show: true,
@@ -177,7 +159,10 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "35t74085",
       name: "Transfer show",
-      onPress: () => setTransfer(true),
+      onPress: () => {
+        if (!checkIsVerified()) return;
+        setTransfer(true);
+      },
       selected: true,
       icon: "transfer",
       show: isMine,
@@ -330,6 +315,20 @@ const ShowScreen = ({ route, navigation }) => {
     return true;
   };
 
+  const navigateToPosts = () => {
+    const navObj = {
+      id: dataState._id,
+      name: dataState?.name_j || dataState?.name_e,
+      verified: dataState?.verified,
+      isMine,
+    };
+    navigation.navigate("MyPost", {
+      screen: "show",
+      data: [],
+      info: navObj,
+    });
+  };
+
   const handleUploadStory = async () => {
     // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
     // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
@@ -417,12 +416,14 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleItemPress = (item) => {
-    console.log(item.prop);
+    // console.log(item);
     switch (item.prop) {
       case "challengers":
-        setModalVis(!challengeModal);
+        setModalVis(true);
         break;
-
+      case "posts":
+        navigateToPosts();
+        break;
       default:
         break;
     }
