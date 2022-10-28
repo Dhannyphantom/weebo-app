@@ -26,10 +26,11 @@ const FeedHeader = ({
     (obj) => obj.name === "channel" && obj.isSpecific
   );
   if (isChannel) {
-    channelName = isChannel?.name;
-    channelID = isChannel?._id;
-    channelSubs = isChannel?.subscribers?.length;
+    channelName = isChannel?.channel?.name;
+    channelID = isChannel?.channel?._id;
+    channelSubs = isChannel?.channel?.subscribers?.length;
   }
+
   const handleNav = (route) => {
     if (route === "channel") {
       navigation.navigate("ChannelPost", { id: channelID });
@@ -64,7 +65,7 @@ const FeedHeader = ({
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => navigation.navigate("Show", { show })}
-              style={styles.left}
+              style={[styles.left, styles.showHeader]}
             >
               <MaterialCommunityIcons
                 name="television-play"
@@ -138,6 +139,10 @@ const styles = StyleSheet.create({
   },
   show: {
     textTransform: "capitalize",
+  },
+  showHeader: {
+    paddingVertical: 20,
+    paddingRight: 35,
   },
   challenge: {
     textTransform: "capitalize",

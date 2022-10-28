@@ -268,7 +268,7 @@ const AccountScreen = ({ navigation, route }) => {
             <View style={styles.information}>
               <AppText size="xxlarge" style={styles.name} bold>
                 {item.name && item.second_name
-                  ? `${item.second_name} ${item.name}`
+                  ? `${item.name} ${item.second_name}`
                   : "Your Name"}
               </AppText>
               <AppText style={{ marginBottom: 12 }}>{item.email}</AppText>

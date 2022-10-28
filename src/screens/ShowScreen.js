@@ -28,6 +28,7 @@ import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
 
 import { showInfoProps } from "../constants/data_store";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -98,8 +99,8 @@ const ShowScreen = ({ route, navigation }) => {
   const listItems = [
     {
       id: "5078",
-      name: "upload status",
-      onPress: () => handleUploadStaus(),
+      name: "upload story",
+      onPress: () => handleUploadStory(),
       icon: "upload",
       show: isMine,
       selected: true,
@@ -135,8 +136,10 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "1",
       name: "challenge",
-      onPress: () =>
-        setChallengeModal({ vis: true, contest: { mode: "start" } }),
+      onPress: () => {
+        if (!checkIsVerified()) return;
+        setChallengeModal({ vis: true, contest: { mode: "start" } });
+      },
       icon: "trophy-outline",
       selected: true,
       show: !isMine && !challenged,
@@ -160,11 +163,13 @@ const ShowScreen = ({ route, navigation }) => {
     {
       id: "3",
       name: "New event",
-      onPress: () =>
+      onPress: () => {
+        if (!checkIsVerified()) return;
         navigation.navigate("Event", {
           instance: "show",
           instanceID: dataState._id,
-        }),
+        });
+      },
       selected: true,
       icon: "plus",
       show: isMine,
@@ -311,9 +316,24 @@ const ShowScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleUploadStaus = async () => {
+  const checkIsVerified = () => {
+    if (!dataState?.verified) {
+      setPopper({
+        vis: true,
+        msg: `${capFirstLetter(
+          dataState?.name_j ?? dataState?.name_e
+        )} instance not verified yet`,
+        type: "failed",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleUploadStory = async () => {
     // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
     // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
+    if (!checkIsVerified()) return;
     const res = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       videoMaxDuration: 30,

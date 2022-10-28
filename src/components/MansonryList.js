@@ -52,7 +52,7 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
   );
 };
 
-export default function MansonryList({ data, media }) {
+export default function MansonryList({ media }) {
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
 
@@ -89,7 +89,7 @@ export default function MansonryList({ data, media }) {
           <MansonryItem
             item={item}
             setDisplayMedia={setDisplayMedia}
-            mediaType={data?.type ?? media[0].type}
+            mediaType={media[0].type}
           />
         )}
         refreshing={refreshing}

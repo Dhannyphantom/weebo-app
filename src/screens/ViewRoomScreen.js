@@ -31,9 +31,10 @@ import SelectItem from "../components/SelectItem";
 import AlertModal from "../components/AlertModal";
 import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
-import PopDownModal from "../components/PopDownModal";
+// import PopDownModal from "../components/PopDownModal";
 import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
+import PopDropDown from "../components/PopDropDown";
 
 const { width, height } = Dimensions.get("window");
 
@@ -750,6 +751,25 @@ const ViewRoomScreen = ({ navigation, route }) => {
           style={styles.activity}
           wTransparent
         />
+        <PopDropDown
+          visible={groupAction}
+          setter={() => setGroupAction(false)}
+          RenderComponent={() => {
+            return (
+              <>
+                {groupActionArr.map((item, idx) => (
+                  <Link
+                    name={item.title}
+                    iconName={item.icon}
+                    key={item + idx}
+                    onPress={item.onPress}
+                    style={styles.link}
+                  />
+                ))}
+              </>
+            );
+          }}
+        />
         <PopDownModal
           visible={groupAction}
           title="group actions"
@@ -799,6 +819,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     borderRadius: 15,
+  },
+  link: {
+    width: "80%",
+    alignSelf: "center",
   },
   modal: {
     flex: 1,

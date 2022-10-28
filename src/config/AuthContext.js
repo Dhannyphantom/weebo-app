@@ -287,7 +287,8 @@ const getUserData = (dispatch) => async (id, type, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error fetching user info" });
+    cb &&
+      cb({ err, msg: "Error fetching user info", data: err?.response?.data });
   }
 };
 

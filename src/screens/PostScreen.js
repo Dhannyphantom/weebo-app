@@ -54,7 +54,6 @@ const PostScreen = ({ route, navigation }) => {
   const [popper, setPopper] = useState({ vis: false });
   const [display, setDisplay] = useState(asset);
   const [errMsg, setErrMsg] = useState(null);
-  const [progBar, setProgBar] = useState(0);
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
   //get rid of one below
@@ -130,9 +129,6 @@ const PostScreen = ({ route, navigation }) => {
         console.log(err);
         console.log(err.err?.response?.data);
         setIsLoading(false);
-      },
-      (e) => {
-        setProgBar(Math.floor((e.loaded / e.total) * 100));
       }
     );
   };
@@ -203,6 +199,7 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleSearchItem = (item) => {
+    if (!item.verified) return console.log(item.verified);
     const tagObj = {
       name: item.type,
       id: item._id,
@@ -290,7 +287,7 @@ const PostScreen = ({ route, navigation }) => {
           bold
         >
           {item.dpName} -{" "}
-          <AppText style={{ color: colors.primary }} bold>
+          <AppText style={{ color: colors.heart }} bold>
             {" "}
             {item.name}
           </AppText>
@@ -392,8 +389,6 @@ const PostScreen = ({ route, navigation }) => {
                   naked
                 />
               </View>
-              {/* {isLoading && <Points prog={progBar} />} */}
-
               {showTag && (
                 <View style={{ flex: 1, marginBottom: 25 }}>
                   <SearchBar
@@ -604,7 +599,6 @@ const styles = StyleSheet.create({
   },
   error: {
     textAlign: "center",
-    textTransform: "capitalize",
     color: colors.heart,
     marginVertical: 9,
   },

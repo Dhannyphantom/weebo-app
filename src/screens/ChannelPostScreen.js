@@ -10,16 +10,13 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
-import { MaterialCommunityIcons, Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
-import Feed from "../components/Feed";
 import colors from "../constants/colors";
 import ActivityIndicator from "../components/ActivityIndicator";
-import Events from "../components/Events";
-import PopDownModal from "../components/PopDownModal";
 import EventRender from "../components/EventRender";
 import ShowUpload from "../components/ShowUpload";
 import InstanceHeader from "../components/InstanceHeader";
@@ -28,29 +25,54 @@ import AppFadeIn from "../components/AppFadeIn";
 import AppText from "../components/AppText";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import FeedRender from "../components/FeedRender";
-import Screen from "../components/Screen";
+import GrowInput from "../components/GrowInput";
 import StickyHeader from "../components/StickyHeader";
 import ThemeContext from "../config/ThemeContext";
+import PopDropDown from "../components/PopDropDown";
+import Link from "../components/Link";
+import Separator from "../components/Separator";
+import AppButton from "../components/AppButton";
 
 const { width, height } = Dimensions.get("window");
+
+const UpdateDecription = ({ visible, description, handleDescUpdate }) => {
+  const theme = useContext(ThemeContext);
+
+  const [text, setText] = useState(description ?? "");
+
+  if (!visible) return null;
+  return (
+    <View style={styles.updateContainer}>
+      <View style={[styles.update, { backgroundColor: theme.background }]}>
+        <AppText style={styles.updateHeader} size="large" bold>
+          Update Channel Description
+        </AppText>
+        <Separator h={2} />
+        <View>
+          <GrowInput text={text} setText={setText} />
+          <AppButton
+            style={styles.updateBtn}
+            title="Update"
+            bare
+            onPress={() => handleDescUpdate(text)}
+          />
+        </View>
+      </View>
+    </View>
+  );
+};
 
 const ChannelPostScreen = ({ route, navigation }) => {
   const [page, setPage] = useState({});
   const [imageLoading, setImageLoading] = useState(false);
-  const [showHead, setShowHead] = useState(false);
   const [openMedia, setOpenMedia] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-  const [popModal, setPopModal] = useState(false);
+  const [popModal, setPopModal] = useState({ topper: false, modal: false });
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [posts, setPosts] = useState([]);
-
-  const handleLeaveport = (type) => {
-    type === "l" && setShowHead(true);
-    type === "e" && setShowHead(false);
-  };
 
   const routeId = route.params.id;
   let isSubscribed, isMine, sColor;
@@ -102,7 +124,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     {
       id: "2",
       name: "Edit Channel",
-      onPress: () => setPopModal(true),
+      onPress: () => setPopModal({ modal: true, topper: false }),
       selected: true,
       icon: "circle-edit-outline",
       show: isMine,
@@ -121,7 +143,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
       title: "Update description",
       icon: "pencil",
       toggle: true,
-      onPress: () => {},
+      onPress: () => setPopModal({ ...popModal, topper: true }),
     },
     {
       id: "3",
@@ -205,12 +227,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
         dataObj,
         (data) => {
           setPage(data);
-          setPopModal(false);
+          setPopModal({ topper: false, modal: false });
           setImageLoading(false);
         },
         (err) => {
           setErrMsg(err);
-          setPopModal(false);
+          setPopModal({ topper: false, modal: false });
           setImageLoading(false);
         }
       );
@@ -236,6 +258,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
 
   const handleDescUpdate = (text) => {
+    setImageLoading(true);
     const dataObj = {
       action: "description",
       media: false,
@@ -246,10 +269,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
       dataObj,
       (data) => {
         setPage(data);
-        setPopModal(false);
+        setImageLoading(false);
+        setPopModal({ topper: false, modal: false });
       },
       (err) => {
         setErrMsg(err);
+        setImageLoading(false);
       }
     );
   };
@@ -303,6 +328,22 @@ const ChannelPostScreen = ({ route, navigation }) => {
   const handleScreenRefresh = () => {
     setRefreshing(true);
     handleGetChannel(() => setRefreshing(false));
+  };
+
+  const EditChannel = () => {
+    return (
+      <View style={{ paddingBottom: 40 }}>
+        {popData.map((item, idx) => (
+          <Link
+            name={item.title}
+            iconName={item.icon}
+            key={item + idx}
+            onPress={item.onPress}
+            style={styles.link}
+          />
+        ))}
+      </View>
+    );
   };
 
   const ListEmpty = () => {
@@ -466,14 +507,20 @@ const ChannelPostScreen = ({ route, navigation }) => {
       )}
       {/* {showHead && <Sticker title={page.name} icon="tv" />} */}
       <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
-      <PopDownModal
-        visible={popModal}
-        setVisible={setPopModal}
-        data={popData}
-        handleDone={(data) => handleDescUpdate(data)}
-        text={page.description}
-        title="Channel Action"
+      <PopDropDown
+        visible={popModal.modal}
+        setter={() => setPopModal({ topper: false, modal: false })}
+        TopperComponent={() => (
+          <UpdateDecription
+            description={page?.description}
+            visible={popModal.topper}
+            handleDescUpdate={handleDescUpdate}
+          />
+        )}
+        headerTitle="Channel Actions"
+        RenderComponent={() => <EditChannel />}
       />
+
       <AppFadeIn
         visible={openMedia}
         RenderComponent={RenderInstanceMedia}
@@ -524,6 +571,28 @@ const styles = StyleSheet.create({
   },
   newEventBtn: {},
 
+  link: {
+    width: "90%",
+    alignSelf: "center",
+  },
+  updateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  update: {
+    width: width * 0.94,
+    paddingTop: 15,
+    paddingBottom: 40,
+    borderRadius: 20,
+  },
+  updateHeader: {
+    textAlign: "center",
+  },
+  updateBtn: {
+    alignSelf: "center",
+    marginTop: 20,
+  },
   uploadBtn: {
     marginTop: 6,
   },

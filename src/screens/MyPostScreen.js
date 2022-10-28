@@ -22,7 +22,6 @@ const MyPostScreen = ({ navigation, route }) => {
   const { getInstancePosts } = useContext(FeedContext);
   const theme = useContext(ThemeContext);
 
-  const [postsArr, setPostArr] = useState([]);
   const [media, setMedia] = useState([]);
   const [taggedMedia, setTaggedMedia] = useState([]);
   const [isPostEmpty, setIsPostEmpty] = useState(true);
@@ -88,66 +87,61 @@ const MyPostScreen = ({ navigation, route }) => {
     }
   };
 
+  const fetchInstancePosts = (type) => {
+    setScreenTitle(`${params?.info?.name}'s Collection`);
+    getInstancePosts(
+      { id: params?.info?.id, instance: fromScreen, type },
+      (resData) => {
+        setMedia(resData);
+        setCount({ ...count, posts: resData.length });
+        resData[0] && setIsPostEmpty(false);
+        setIsLoading(false);
+      },
+      (errData) => {
+        setErrMsg(errData.data ?? errData.msg);
+        setIsLoading(false);
+      }
+    );
+  };
+
+  const fetchUserPosts = (userId) => {
+    getUserData(
+      userId,
+      "get_posts",
+      (resData) => {
+        setMedia(resData);
+        resData[0] && setIsPostEmpty(false);
+        setIsLoading(false);
+      },
+      (errData) => {
+        console.log(errData);
+        setIsLoading(false);
+      }
+    );
+  };
+
   useEffect(() => {
     switch (fromScreen) {
       case "account":
         setScreenTitle("My Posts");
-        getUserData(userInfo._id, "get_posts", (resData) => {
-          setPostArr(resData.posts);
-          resData[0] && !resData.posts[0] && setIsPostEmpty(false);
-          setIsLoading(false);
-        });
-        setIsLoading(false);
+        fetchUserPosts(userInfo._id);
         break;
       case "character":
         params.data[0] && setIsPostEmpty(false);
-        setPostArr(params?.data);
-        setScreenTitle(`${params?.info?.name}'s Collection`);
-        setIsLoading(false);
+        fetchInstancePosts("specific");
         break;
       case "accountBox":
         // getUserData = [id, type,sc,cb ]+
         setScreenTitle(`${params?.info?.username} Collections`);
-        getUserData(params?.info?.id, "get_posts", (resData) => {
-          setPostArr(resData.posts);
-          resData[0] && setIsPostEmpty(false);
-          setIsLoading(false);
-        });
+        fetchUserPosts(params?.info?.id);
         break;
       case "show":
-        setScreenTitle(`${params?.info?.name}'s Collection`);
-        getInstancePosts(
-          { id: params?.info?.id, instance: fromScreen, type: "specific" },
-          (resData) => {
-            setMedia(resData);
-            setCount({ ...count, posts: resData.length });
-            resData[0] && setIsPostEmpty(false);
-            setIsLoading(false);
-          },
-          (errData) => {
-            setErrMsg(errData.data ?? errData.msg);
-            setIsLoading(false);
-          }
-        );
+        fetchInstancePosts("specific");
         break;
       default:
-        setPostArr([]);
         break;
     }
   }, [navigation, params]);
-
-  useEffect(() => {
-    for (let i = 0; i < postsArr.length; i++) {
-      const e = postsArr[i];
-      allUris = allUris.concat(e.uris);
-      for (let j = 0; j < e?.uris.length; j++) {
-        counter++;
-      }
-    }
-    setCount({ ...count, posts: counter });
-    setMedia(allUris);
-    counter > 0 && setIsPostEmpty(false);
-  }, [postsArr]);
 
   return (
     <Screen
@@ -168,7 +162,7 @@ const MyPostScreen = ({ navigation, route }) => {
                 tab: "posts",
               },
               {
-                name: `Tagged (${count.tagged})`,
+                name: `Tagged ${count.tagged > 0 ? `(${count.tagged})` : ""}`,
                 tab: "tagged",
               },
             ]}
@@ -176,12 +170,8 @@ const MyPostScreen = ({ navigation, route }) => {
           />
         </View>
       )}
-      {!isPostEmpty && tab.posts && (
-        <MansonryList data={postsArr} media={media} />
-      )}
-      {!isPostEmpty && tab.tagged && (
-        <MansonryList data={postsArr} media={taggedMedia} />
-      )}
+      {!isPostEmpty && tab.posts && <MansonryList media={media} />}
+      {!isPostEmpty && tab.tagged && <MansonryList media={taggedMedia} />}
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"

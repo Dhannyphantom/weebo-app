@@ -407,7 +407,13 @@ const InstanceHeader = ({ instanceData }) => {
             </View>
           )}
           <Separator h={1} />
-          <AppText style={{ textAlign: "center", textTransform: "capitalize" }}>
+          <AppText
+            style={{
+              textAlign: "center",
+              lineHeight: 35,
+              textTransform: "capitalize",
+            }}
+          >
             {description}
           </AppText>
           <Separator h={1} />

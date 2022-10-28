@@ -77,7 +77,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     sisters: [],
     brothers: [],
     creator: userInfo._id,
-    owner: userInfo._id,
+    manager: userInfo._id,
     lover: "none",
     rival: "none",
     groups: [],
@@ -93,7 +93,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     other_names: [],
     spinoffs: [],
     creator: "",
-    app_creator: userInfo._id,
+    manager: userInfo._id,
     releaseDate: "",
     endDate: "Currently airing",
     genres: [],
@@ -338,7 +338,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     name="spinoffs"
                     type1
                   />
-                  <CreateForm headerC="creator" name="creator" />
+                  <CreateForm headerC="creator or author" name="creator" />
                   <CreateForm
                     headerC="release date"
                     name="releaseDate"

@@ -92,7 +92,7 @@ const characterValidationSchema = Yup.object().shape({
     .label("Height"),
   birthday: Yup.string().required().lowercase().trim().min(3).label("Birthday"),
   voiceActor: Yup.array()
-    .label("Sister")
+    .label("Voice actors")
     .of(Yup.string().min(2).lowercase().trim()),
   father: Yup.string().min(3).lowercase().trim().label("Father"),
   mother: Yup.string().min(3).lowercase().trim().label("Mother"),
@@ -124,23 +124,46 @@ const characterValidationSchema = Yup.object().shape({
 
 /// SHOULD MAKE NAME_J REQUIRED IF NAME_E IS EMPTY AND VICE VERSA
 const showValidationschema = Yup.object().shape({
-  name_j: Yup.string().min(3).trim().lowercase().optional(),
-  name_e: Yup.string().min(3).trim().lowercase().optional(),
+  name_j: Yup.string()
+    .min(3)
+    .trim()
+    .lowercase()
+    .optional()
+    .label("Official Japanese name"),
+  name_e: Yup.string()
+    .min(3)
+    .trim()
+    .lowercase()
+    .optional()
+    .label("Official English name"),
   other_names: Yup.array()
+    .label("Aliases or other names")
     .of(Yup.string().min(3).lowercase().trim())
     .notRequired(),
-  app_creator: Yup.string().notRequired(),
-  spinoffs: Yup.array().of(Yup.string().min(3).lowercase().trim()),
-  creator: Yup.string().required().min(3).trim().lowercase(),
-  releaseDate: Yup.string().required(),
-  endDate: Yup.string().required(),
+  manager: Yup.string().notRequired(),
+  spinoffs: Yup.array()
+    .of(Yup.string().min(3).lowercase().trim())
+    .label("Spinoffs, anime movies or manga related titles"),
+  creator: Yup.string()
+    .required()
+    .min(3)
+    .trim()
+    .lowercase()
+    .label("Creator or author"),
+  releaseDate: Yup.string().required().label("Date released"),
+  endDate: Yup.string()
+    .required()
+    .label("Date ended")
+    .default("Currently airing"),
   genres: Yup.array()
+    .label("Genres")
     .of(Yup.string().min(3).lowercase().trim())
     .min(2, "Genres list shouldn't be less than two"),
   subGenres: Yup.array()
+    .label("Sub genres")
     .of(Yup.string().min(3).lowercase().trim())
     .min(2, "Sub genres list shouldn't be less than two"),
-  episodes: Yup.number().min(1),
+  episodes: Yup.number().min(1).label("Episodes"),
   cover_photo: Yup.object()
     .shape({
       uri: Yup.string().max(255),

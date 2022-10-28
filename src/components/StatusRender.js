@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
   Modal,
   FlatList,
+  Animated,
   Dimensions,
   Image,
   TouchableOpacity,
@@ -134,11 +135,18 @@ const StatusRender = ({ data, show, setter }) => {
 
   const theme = useContext(ThemeContext);
   const safeInset = useSafeAreaInsets();
+  const opaciter = useRef(new Animated.Value(0)).current;
 
   if (!show) return null;
 
   const handleCloseModal = () => {
-    setter && setter();
+    Animated.timing(opaciter, {
+      toValue: 0,
+      duration: 350,
+      useNativeDriver: true,
+    }).start(() => {
+      setter && setter();
+    });
   };
 
   const ListEmptyComponent = () => {
@@ -171,7 +179,7 @@ const StatusRender = ({ data, show, setter }) => {
   useEffect(() => {
     const statuses = [];
     data?.forEach((obj, idx) => {
-      obj.posts.reverse().forEach((post, idxer) => {
+      obj.posts.forEach((post, idxer) => {
         let counter = obj.posts.length - idxer;
         const lastItem =
           idx == data.length - 1 && idxer == obj.posts.length - 1;
@@ -188,13 +196,24 @@ const StatusRender = ({ data, show, setter }) => {
     setDisplay({ vis: false, data: { all: data, posts: statuses } });
   }, [data, show]);
 
+  useEffect(() => {
+    if (show) {
+      Animated.timing(opaciter, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [show]);
+
   return (
     <Modal visible={show} statusBarTranslucent transparent>
-      <View
+      <Animated.View
         style={{
           ...styles.container,
           backgroundColor: theme.transparentBold,
           paddingTop: safeInset.top + 10,
+          opacity: opaciter,
         }}
       >
         <TouchableOpacity
@@ -219,7 +238,7 @@ const StatusRender = ({ data, show, setter }) => {
           renderItem={renderStatuses}
         />
         <DisplayStatus modalObj={display} setVisible={setDisplay} />
-      </View>
+      </Animated.View>
     </Modal>
   );
 };
