@@ -134,6 +134,7 @@ const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
 const ChallengePointScreen = ({ navigation }) => {
   const {
     updateUserData,
+    updateMe,
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -144,6 +145,7 @@ const ChallengePointScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [popData, setPopData] = useState({ vis: false });
   const [loadedOnce, setLoadedOnce] = useState(false);
+  const [currentPoints, setCurrentPoints] = useState(userInfo.points);
   const [pointers, setPointers] = useState([]);
 
   const PointsCard = ({ data }) => {
@@ -303,8 +305,10 @@ const ChallengePointScreen = ({ navigation }) => {
       "get_points",
       (resData) => {
         setPointers(resData.pointsActivity.reverse());
+        setCurrentPoints(resData.points);
         type === "refresh" && setRefreshing(false);
         setLoadedOnce(true);
+        userInfo.points != resData.points && updateMe(resData.points, "points");
       },
       (err) => {
         console.log("CHALLENGE POINT SCREEN", err);
@@ -411,7 +415,7 @@ const ChallengePointScreen = ({ navigation }) => {
                 size="xxxlarge"
                 bold
               >
-                {Math.min(userInfo.points, 1000)}
+                {Math.min(currentPoints, 1000)}
               </AppText>
             </View>
           </View>

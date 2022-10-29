@@ -16,6 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Context as CharContext } from "../config/CharContext";
+import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
 import ActivityIndicator from "../components/ActivityIndicator";
@@ -34,6 +35,7 @@ import InstanceInvites from "../components/InstanceInvites";
 import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
 import PopDropDown from "../components/PopDropDown";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,10 +57,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+  const { userFeedback } = useContext(FeedContext);
 
   const [pageData, setPageData] = useState({});
   const [alertModal, setAlertModal] = useState({ visible: false });
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [fBackModal, setFBackModal] = useState(false);
   const [firstLoad, setFirstLoad] = useState(false);
   const [searcher, setSearcher] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -92,6 +96,71 @@ const ViewRoomScreen = ({ navigation, route }) => {
   } else if (pageData.type === "group") {
     showInviteIcon = true;
   }
+
+  const finder = false; //
+
+  const feedBackData = [
+    {
+      id: "1",
+      title: "YES",
+      icon: "check",
+      onPress: function () {
+        setFBackModal(false);
+        const data = {
+          type: "group",
+          typeId: pageData?._id,
+          feedback: "correct",
+        };
+        userFeedback(
+          data,
+          () => {
+            setPopper({
+              vis: true,
+              msg: "Feedback sent successfully",
+              type: "success",
+            });
+          },
+          (err) => {
+            setPopper({
+              vis: true,
+              msg: err?.response?.message,
+              type: "failed",
+            });
+          }
+        );
+      },
+    },
+    {
+      id: "2",
+      title: "NO",
+      icon: "cancel",
+      onPress: function () {
+        setFBackModal(false);
+        const data = {
+          type: "group",
+          typeId: pageData?._id,
+          feedback: "wrong",
+        };
+        userFeedback(
+          data,
+          () => {
+            setPopper({
+              vis: true,
+              msg: "Feedback sent successfully",
+              type: "success",
+            });
+          },
+          (err) => {
+            setPopper({
+              vis: true,
+              msg: err?.response?.message,
+              type: "failed",
+            });
+          }
+        );
+      },
+    },
+  ];
 
   const gradientColor =
     theme.mode === "light"
@@ -465,6 +534,41 @@ const ViewRoomScreen = ({ navigation, route }) => {
     );
   };
 
+  const RenderFeedback = () => {
+    const feedbackQuestion = `Is ${capFirstLetter(
+      pageData?.name
+    )} a group or an organization in ${capFirstLetter(
+      pageData?.show?.name_j ?? pageData?.show?.name_e
+    )}`;
+    return (
+      <View style={{ paddingBottom: width * 0.04 }}>
+        <AppText
+          style={{
+            textAlign: "center",
+            width: width * 0.75,
+            alignSelf: "center",
+          }}
+        >
+          {feedbackQuestion}
+        </AppText>
+        <View style={{ alignItems: "center", marginTop: 15 }}>
+          {feedBackData.map((obj, idx) => (
+            <Link
+              key={idx}
+              name={obj.title}
+              iconName={obj.icon}
+              style={{ width: width * 0.8 }}
+              onPress={obj.onPress}
+            />
+          ))}
+          <AppText style={{ color: colors.medium, marginTop: 20 }}>
+            Earn 2WP by verifying instance
+          </AppText>
+        </View>
+      </View>
+    );
+  };
+
   const RenderRemoveCharacter = () => {
     //
     const handleCharacterSelect = (item) => {
@@ -673,6 +777,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
                   onPress={handleCharacterInvites}
                   name={isManager ? "Invite Characters" : "Join"}
                 />
+                <Link
+                  iconName="check"
+                  onPress={() => setFBackModal(true)}
+                  name="Verifiy Group Instance"
+                />
                 {isManager && (
                   <>
                     <Link
@@ -769,6 +878,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
               </View>
             );
           }}
+        />
+        <PopDropDown
+          visible={fBackModal}
+          setter={() => setFBackModal(false)}
+          headerTitle="INSTANCE VERIFICATION"
+          RenderComponent={RenderFeedback}
         />
         <AlertModal
           obj={alertModal}

@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import ActivityIndicator from "./ActivityIndicator";
@@ -559,4 +558,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
+
+export const RenderFeedback = RenderFeedback;
 export default InstanceHeader;

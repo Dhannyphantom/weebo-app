@@ -157,7 +157,9 @@ const HomeScreen = ({ navigation, route }) => {
         }
       );
     } else {
-      setScreenBool({ ...screenBool, loadMore: false });
+      if (screenBool.loadMore) {
+        setScreenBool({ ...screenBool, loadMore: false });
+      }
     }
   };
 
