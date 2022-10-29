@@ -20,9 +20,85 @@ import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
 import ThemeContext from "../config/ThemeContext";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
+
+export const RenderVerifyInfo = ({
+  vName,
+  vList,
+  vFollowers,
+  vInstance,
+  vInstanceID,
+}) => {
+  const theme = useContext(ThemeContext);
+  const countdown = getTimestamp(vInstanceID ?? 0, "countdown", TIMER);
+  const vPostive = vList?.filter((obj) => obj.feedback === "correct").length;
+  const vNegative = vList?.filter((obj) => obj.feedback === "wrong").length;
+
+  const totalPercentile =
+    (vFollowers / 2000) * 50 + ((vPostive - vNegative) / 1000) * 50;
+
+  return (
+    <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>
+      <AppText style={styles.verifyModalTitle} size="large" bold>
+        {vName} verification stats
+      </AppText>
+      <View style={styles.verifyModalContent}>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <AppText size="xxlarge" bold>
+            {vFollowers}
+          </AppText>
+          <AppText bold style={{ color: colors.medium }}>
+            Followers
+          </AppText>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <AppText size="xxlarge" bold>
+            {vPostive}
+          </AppText>
+          <AppText bold style={{ color: colors.medium }}>
+            +ve Feedback
+          </AppText>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <AppText size="xxlarge" bold>
+            {vNegative}
+          </AppText>
+          <AppText bold style={{ color: colors.medium }}>
+            -ve Feedback
+          </AppText>
+        </View>
+
+        <ActivityIndicator visible={false} style={styles.activity} />
+      </View>
+      <AppText
+        size="xxlarge"
+        style={{ textAlign: "center", color: colors.primary }}
+        bold
+      >
+        {Number(totalPercentile).toFixed(2)}%
+      </AppText>
+      <AppText style={styles.verifyModalSubtext}>
+        {capFirstLetter(vInstance)} will be deleted if not verified in{" "}
+        {countdown}
+      </AppText>
+    </View>
+  );
+};
 
 const InstanceHeader = ({ instanceData }) => {
   const {
@@ -75,22 +151,6 @@ const InstanceHeader = ({ instanceData }) => {
       : instance == "show"
       ? `Is ${instanceName?.toUpperCase()} the official title of an anime or manga in the Animedom?`
       : null;
-
-  const pFeedback = verifiedList?.filter(
-    (obj) => obj.feedback === "correct"
-  ).length;
-  const nFeedback = verifiedList?.filter(
-    (obj) => obj.feedback === "wrong"
-  ).length;
-
-  const totalPercentile =
-    (followers / 2000) * 50 + ((pFeedback - nFeedback) / 1000) * 50;
-
-  const countdown = getTimestamp(
-    instanceID ? instanceID : 0,
-    "countdown",
-    TIMER
-  );
 
   const isChannel = instance == "channel";
 
@@ -226,67 +286,6 @@ const InstanceHeader = ({ instanceData }) => {
             </AppText>
           )}
         </View>
-      </View>
-    );
-  };
-
-  const RenderVerifyInfo = () => {
-    return (
-      <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>
-        <AppText style={styles.verifyModalTitle} size="large" bold>
-          {instanceName} verification stats
-        </AppText>
-        <View style={styles.verifyModalContent}>
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <AppText size="xxlarge" bold>
-              {followers}
-            </AppText>
-            <AppText bold style={{ color: colors.medium }}>
-              Followers
-            </AppText>
-          </View>
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <AppText size="xxlarge" bold>
-              {pFeedback}
-            </AppText>
-            <AppText bold style={{ color: colors.medium }}>
-              +ve Feedback
-            </AppText>
-          </View>
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <AppText size="xxlarge" bold>
-              {nFeedback}
-            </AppText>
-            <AppText bold style={{ color: colors.medium }}>
-              -ve Feedback
-            </AppText>
-          </View>
-
-          <ActivityIndicator visible={false} style={styles.activity} />
-        </View>
-        <AppText
-          size="xxlarge"
-          style={{ textAlign: "center", color: colors.primary }}
-          bold
-        >
-          {Number(totalPercentile).toFixed(2)}%
-        </AppText>
-        <AppText style={styles.verifyModalSubtext}>
-          {instance[0].toUpperCase() + instance.slice(1)} will be deleted if not
-          verified in {countdown}
-        </AppText>
       </View>
     );
   };
@@ -452,7 +451,15 @@ const InstanceHeader = ({ instanceData }) => {
         <AppFadeIn
           visible={verifyModal}
           setVisible={setVerifyModal}
-          RenderComponent={RenderVerifyInfo}
+          RenderComponent={() => (
+            <RenderVerifyInfo
+              vName={instanceName}
+              vInstance={instance}
+              vList={verifiedList}
+              vFollowers={followers}
+              vInstanceID={instanceID}
+            />
+          )}
         />
       </View>
     </>
@@ -559,5 +566,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const RenderFeedback = RenderFeedback;
 export default InstanceHeader;

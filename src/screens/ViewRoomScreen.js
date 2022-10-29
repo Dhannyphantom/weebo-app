@@ -36,6 +36,8 @@ import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
 import PopDropDown from "../components/PopDropDown";
 import { capFirstLetter } from "../constants/helpers";
+import { RenderVerifyInfo } from "../components/InstanceHeader";
+import AppFadeIn from "../components/AppFadeIn";
 
 const { width, height } = Dimensions.get("window");
 
@@ -71,6 +73,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [showCharacters, setShowCharacters] = useState(false);
   const [showRemoveCharacter, setShowRemoveCharacter] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState([]);
+  const [verifyModal, setVerifyModal] = useState(false);
   const [searchList, setSearchList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false, msg: null, type: null });
@@ -778,6 +781,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
                   name={isManager ? "Invite Characters" : "Join"}
                 />
                 <Link
+                  iconName="plus"
+                  onPress={() => setVerifyModal(true)}
+                  name="Verification stats"
+                />
+                <Link
                   iconName="check"
                   onPress={() => setFBackModal(true)}
                   name="Verifiy Group Instance"
@@ -884,6 +892,19 @@ const ViewRoomScreen = ({ navigation, route }) => {
           setter={() => setFBackModal(false)}
           headerTitle="INSTANCE VERIFICATION"
           RenderComponent={RenderFeedback}
+        />
+        <AppFadeIn
+          visible={verifyModal}
+          setVisible={setVerifyModal}
+          RenderComponent={() => (
+            <RenderVerifyInfo
+              vName={pageData?.name}
+              vInstance="group"
+              vList={pageData?.verifiedList}
+              vFollowers={pageData?.followers?.length}
+              vInstanceID={pageData?._id}
+            />
+          )}
         />
         <AlertModal
           obj={alertModal}
