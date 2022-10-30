@@ -709,7 +709,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
             visible
             type="isEmpty"
             text="No characters in this group"
-            // style={styles.activityTwo}
           />
         </View>
       )}
@@ -732,7 +731,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
             placeholder="Invite Characters..."
           />
           {searchList[0] ? (
-            <View style={styles.searchInstance}>
+            <View
+              style={[
+                styles.searchInstance,
+                { backgroundColor: theme.extralight },
+              ]}
+            >
               <SearchInstance
                 data={searchList}
                 onPress={handleSendInvite}
@@ -784,13 +788,15 @@ const ViewRoomScreen = ({ navigation, route }) => {
               <View style={{ paddingBottom: 40 }}>
                 {listItems.map((item, idx) => {
                   if (item.show) {
-                    <Link
-                      name={item.name}
-                      iconName={item.icon}
-                      key={item + idx}
-                      onPress={item.onPress}
-                      style={styles.link}
-                    />;
+                    return (
+                      <Link
+                        name={item.name}
+                        iconName={item.icon}
+                        key={item + idx}
+                        onPress={item.onPress}
+                        style={styles.link}
+                      />
+                    );
                   }
                 })}
               </View>

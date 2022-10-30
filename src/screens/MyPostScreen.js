@@ -33,8 +33,9 @@ const MyPostScreen = ({ navigation, route }) => {
 
   const params = route.params;
   const fromScreen = params?.screen;
-  let counter = 0;
-  let allUris = [];
+  const isInstance = ["character", "group", "show"].includes(fromScreen);
+
+  console.log(params);
 
   const addNewPost = async () => {
     // LIMIT INSTANCE POSTS
@@ -53,7 +54,7 @@ const MyPostScreen = ({ navigation, route }) => {
   };
 
   const CharHeaderComp = () => {
-    if (!["character", "show"].includes(fromScreen)) return null;
+    if (!isInstance) return null;
     return (
       <View style={styles.ballHead}>
         {params?.info?.isMine && params?.info?.verified && (
@@ -126,16 +127,13 @@ const MyPostScreen = ({ navigation, route }) => {
         setScreenTitle("My Posts");
         fetchUserPosts(userInfo._id);
         break;
-      case "character":
-        params.data[0] && setIsPostEmpty(false);
-        fetchInstancePosts("specific");
-        break;
       case "accountBox":
-        // getUserData = [id, type,sc,cb ]+
         setScreenTitle(`${params?.info?.username} Collections`);
         fetchUserPosts(params?.info?.id);
         break;
       case "show":
+      case "group":
+      case "character":
         fetchInstancePosts("specific");
         break;
       default:
@@ -152,7 +150,7 @@ const MyPostScreen = ({ navigation, route }) => {
     >
       <StatusBar style="dark" />
       <AppHeader title={screenTitle} RightComponent={CharHeaderComp} />
-      {["character", "show"].includes(fromScreen) && (
+      {isInstance && (
         <View>
           <TabList
             state={tab}

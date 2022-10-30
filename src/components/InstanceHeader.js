@@ -145,11 +145,21 @@ const InstanceHeader = ({ instanceData }) => {
 
   const feedbackQuestion =
     instance === "character"
-      ? `Is ${instanceName
-          .slice(0, instanceName?.search(" "))
-          .toUpperCase()} the first name of a character in ${instanceShow?.toUpperCase()} show?`
+      ? `Is ${capFirstLetter(
+          instanceName.slice(0, instanceName?.search(" "))
+        )} the first name of a character in ${capFirstLetter(
+          instanceShow
+        )} show?`
       : instance == "show"
-      ? `Is ${instanceName?.toUpperCase()} the official title of an anime or manga in the Animedom?`
+      ? `Is ${capFirstLetter(
+          instanceName
+        )} the official title of an anime or manga in the Animedom?`
+      : instance === "group"
+      ? `Is ${capFirstLetter(
+          instanceName
+        )} an organization or a group, team, squad and the likes in ${capFirstLetter(
+          instanceShow
+        )}`
       : null;
 
   const isChannel = instance == "channel";

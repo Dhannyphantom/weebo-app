@@ -51,14 +51,14 @@ const Shows = ({ data, searchResult, title, series, show }) => {
           {unVerifiedCharacters.map((item, idx) => (
             <ChallengeCard
               image={item.cover_photo}
-              avatar={item.owner && item.owner.avatar}
+              avatar={item.manager && item.manager.avatar}
               name={item.dpName}
               id={item._id}
               key={idx}
               isVerified={item.verified}
               bScale={3}
               subTitleStyle={{ marginTop: 2.5 }}
-              owner={item.owner}
+              manager={item.manager}
               show={item.show.name_j ?? item.show.name_e}
               followers={item.followers}
               onPress={() =>
@@ -94,13 +94,13 @@ const Shows = ({ data, searchResult, title, series, show }) => {
               <>
                 <ChallengeCard
                   image={item.cover_photo}
-                  avatar={item.owner && item.owner.avatar}
+                  avatar={item.manager && item.manager.avatar}
                   name={item.dpName}
                   id={item._id}
                   isVerified={item.verified}
                   bScale={3}
                   subTitleStyle={{ marginTop: 2.5 }}
-                  owner={item.owner}
+                  manager={item.manager}
                   show={item.show.name_j ?? item.show.name_e}
                   followers={item.followers}
                   onPress={() =>
@@ -126,7 +126,7 @@ const Shows = ({ data, searchResult, title, series, show }) => {
               <>
                 <ChallengeCard
                   image={item.cover_photo}
-                  avatar={!series ? item.owner.avatar : item.app_creator.avatar}
+                  avatar={!series ? item.manager.avatar : item.manager.avatar}
                   name={item.name_j ?? item.name_e ?? item.dpName}
                   seriesChar={series ? item.followers : null}
                   series={series}

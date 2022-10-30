@@ -531,8 +531,8 @@ const ShowScreen = ({ route, navigation }) => {
                     id={item._id}
                     show={item?.show?.name_j ?? item?.show?.name_e}
                     followers={item.followers}
-                    avatar={item?.owner?.avatar}
-                    owner={item.owner}
+                    avatar={item?.manager?.avatar}
+                    manager={item.manager}
                     image={item.cover_photo}
                     onPress={() =>
                       navigation.navigate("Character", {

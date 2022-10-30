@@ -60,7 +60,7 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const charID = character?._id;
   const userID = userInfo._id;
-  const ownerID = character?.owner?._id;
+  const ownerID = character?.manager?._id;
   const followingArr = userInfo.following;
   const follow = followingArr?.find((obj) => obj._id == charID);
   const challConst = character?.challengers?.find(
@@ -183,7 +183,7 @@ const CharacterScreen = ({ route, navigation }) => {
     verifiedList: character.verifiedList,
     followers: character?.followers?.length,
     coverLoading: isCoverLoading,
-    owner: character.owner,
+    owner: character?.manager,
     handleLeftPress: () => handleFollowPress(),
     handleRightPress: null,
   };
@@ -650,6 +650,7 @@ const CharacterScreen = ({ route, navigation }) => {
             />
           )}
         />
+
         <InstanceChallenger
           visible={challengeModal.vis}
           data={{

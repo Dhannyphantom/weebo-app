@@ -32,7 +32,7 @@ const Card = ({
   show,
   avaterSize = 45,
   series,
-  owner,
+  manager,
   onPress,
   id,
   mSize,
@@ -122,14 +122,14 @@ const Card = ({
             style={styles.image}
           />
           <View style={styles.proPic}>
-            {owner && owner?._id === app_constants.appID ? null : (
+            {manager && manager?._id === app_constants.appID ? null : (
               <Spacer p={10}>
                 <ProfilePic
                   source={avatar}
                   border={1.5}
                   borderRad={avaterSize / 3}
                   borderColor={colors.white}
-                  userID={owner?._id}
+                  userID={manager?._id}
                   size={avaterSize}
                 />
               </Spacer>
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1.8,
     },
-    marginTop: 1.8,
+    marginTop: 3,
     borderRadius: RADIUS,
   },
   image: {
@@ -230,15 +230,15 @@ const styles = StyleSheet.create({
   info: {
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 35,
-    paddingBottom: 10,
+    justifyContent: "flex-end",
+    paddingTop: 15,
+    paddingBottom: 9,
   },
   iconContainer: {
     position: "absolute",
     width: "100%",
     zIndex: 5,
-    top: -55,
+    top: -45,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   title: {
     // marginTop: 15,
-    marginBottom: 5,
+    marginBottom: 2,
     textTransform: "capitalize",
   },
   subTitle: {
