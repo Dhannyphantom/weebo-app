@@ -35,8 +35,9 @@ import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
 import PopDropDown from "../components/PopDropDown";
 import { capFirstLetter } from "../constants/helpers";
-import { RenderVerifyInfo } from "../components/InstanceHeader";
+import InstanceHeader, { RenderVerifyInfo } from "../components/InstanceHeader";
 import AppFadeIn from "../components/AppFadeIn";
+import InstanceChallenger from "../components/InstanceChallenger";
 
 const { width, height } = Dimensions.get("window");
 
@@ -66,6 +67,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [groupAction, setGroupAction] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [verifyModal, setVerifyModal] = useState(false);
+  const [challengeModal, setChallengeModal] = useState({
+    vis: false,
+    contest: null,
+  });
   const [searchList, setSearchList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false, msg: null, type: null });
@@ -77,16 +82,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
-  let isManager;
+  let isManager = false,
+    showInviteIcon = false;
   if (params?.instance?.manager == userInfo._id) {
     isManager = true;
-  } else {
-    isManager = false;
   }
-  let showInviteIcon = false;
-  if (pageData.type === "show") {
-    showInviteIcon = false;
-  } else if (pageData.type === "group") {
+
+  if (pageData.type === "group") {
     showInviteIcon = true;
   }
 
@@ -224,6 +226,38 @@ const ViewRoomScreen = ({ navigation, route }) => {
     // },
   ];
 
+  const listItems = [
+    {
+      id: "5078",
+      name: "Challenge",
+      onPress: () => setChallengeModal({ vis: true }),
+      icon: "trophy-outline",
+      show: !isManager,
+      selected: true,
+    },
+  ];
+
+  const headerData = {
+    cover_photo: pageData?.cover_photo,
+    description: null,
+    coverLoading: isLoading,
+    listItems,
+    owner: pageData?.manager,
+    screenIcon: "people",
+    verified: pageData?.verified,
+    handleLeftPress: () => handleGroupFollow(),
+    handleRightPress: () => setFBackModal(true),
+    followers: pageData?.followers,
+    verifiedList: pageData?.verifiedList,
+    subscribers: null,
+    feedback: pageData,
+    namePosition: "center",
+    leftColor: colors.medium,
+    name: pageData?.name,
+  };
+
+  const handleGroupFollow = () => {};
+
   const handleCharacterInvites = () => {
     // setPopper({ vis: true, msg: "Invite sent", type: "success" });
     // return;
@@ -267,8 +301,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
     }
   };
 
-  const fetchRoomCharacters = () => {
-    setRefreshing(true);
+  const fetchRoomCharacters = (type) => {
+    type === "refresh" && setRefreshing(true);
+
     roomCharacters(
       params.data,
       (resData) => {
@@ -281,11 +316,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
             { _id: "right-spacer" },
           ],
         });
-        setRefreshing(false);
+        type === "refresh" && setRefreshing(false);
       },
       (err) => {
         setErrMsg(err?.response?.data);
-        setRefreshing(false);
+        type === "refresh" && setRefreshing(false);
       }
     );
   };
@@ -623,7 +658,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    fetchRoomCharacters();
+    fetchRoomCharacters("load");
   }, [navigation]);
 
   useEffect(() => {
@@ -641,7 +676,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
         snapToAlignment="start"
         snapToInterval={ITEM_SIZE}
         refreshing={refreshing}
-        onRefresh={fetchRoomCharacters}
+        onRefresh={() => fetchRoomCharacters("refresh")}
         decelerationRate={0}
         bounces={false}
         renderToHardwareTextureAndroid
@@ -659,9 +694,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
       <RenderPageFooter />
       <ActivityIndicator visible={isLoading} style={styles.activity} />
       {pageData?.characters?.length <= 2 && (
-        <>
-          <ActivityIndicator
-            visible={pageData?.characters.length <= 2}
+        <View style={{ position: "absolute", top: 0, width }}>
+          <InstanceHeader instanceData={headerData} />
+          {/* <ActivityIndicator
+            visible
             type="isEmpty"
             text="There are no Character Instances yet"
             style={styles.activity}
@@ -682,6 +718,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
                   onPress={() => setFBackModal(true)}
                   name="Verifiy Group Instance"
                 />
+                <Link
+                  iconName="check"
+                  onPress={() => setChallengeModal({ vis: true })}
+                  name="Challenge"
+                />
                 {isManager && (
                   <>
                     <Link
@@ -695,8 +736,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
                 )}
               </View>
             )}
-          />
-        </>
+          /> */}
+        </View>
       )}
       {showSearch && (
         <Screen
@@ -737,8 +778,21 @@ const ViewRoomScreen = ({ navigation, route }) => {
         />
         <PopUpModal
           visible={popModal.characters}
-          setter={setPopModal({ ...popModal, characters: false })}
+          setter={() => setPopModal({ ...popModal, characters: false })}
           ContentComponent={RenderAllPopups}
+        />
+
+        <InstanceChallenger
+          visible={challengeModal.vis}
+          data={{
+            instance: "group",
+            id: pageData?._id,
+            name: pageData?.name,
+            owner: pageData?.manager,
+            contest: challengeModal.contest,
+          }}
+          fetchInstance={fetchRoomCharacters}
+          setter={() => setChallengeModal({ vis: null, contest: null })}
         />
 
         <ActivityIndicator

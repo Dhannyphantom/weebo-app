@@ -656,17 +656,17 @@ const CharacterScreen = ({ route, navigation }) => {
             instance: "character",
             id: character._id,
             name: character?.name,
-            owner: character?.owner,
+            owner: character?.manager,
             contest: challengeModal.contest,
           }}
           fetchInstance={handleFetchCharacter}
           setter={() => setChallengeModal({ vis: null, contest: null })}
         />
-        <DropDown
+        {/* <DropDown
           lists={listItems}
           visible={dropDown}
           setVisible={setDropDown}
-        />
+        /> */}
         <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
         <AlertModal
           obj={alertModal}
