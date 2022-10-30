@@ -326,7 +326,7 @@ const InstanceHeader = ({ instanceData }) => {
           >
             <ActivityIndicator
               visible={coverLoading}
-              type="spin"
+              style={styles.activity}
               wTransparent
             />
             {!verified && !isChannel && (
@@ -466,6 +466,11 @@ const InstanceHeader = ({ instanceData }) => {
   );
 };
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
   },

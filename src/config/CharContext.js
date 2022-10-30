@@ -239,7 +239,7 @@ const deleteInstance = () => async (data, sc, cb) => {
 const instanceUpdater = (dispatch) => async (data, sc, cb) => {
   let router,
     requestObj = {};
-
+  // TODO:: MAKE A SINGLE ROUTE TO UPDATE ALL INSTANCE
   switch (data.instance) {
     case "character":
       router = "updateCharacterInstance";
@@ -289,7 +289,12 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
     );
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error updating instance info" });
+    cb &&
+      cb({
+        err,
+        msg: "Error updating instance",
+        data: err?.response?.data,
+      });
   }
 };
 

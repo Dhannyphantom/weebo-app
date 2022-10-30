@@ -55,7 +55,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { userFeedback, followInstance } = useContext(FeedContext);
+  const { followInstance } = useContext(FeedContext);
 
   const [pageData, setPageData] = useState({});
   const [searcher, setSearcher] = useState("");
@@ -76,23 +76,19 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-  const [bools, setBools] = useState(boolsObj);
 
   const params = route.params;
   // params = { instance}
   const scrollX = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
-  let isManager = false,
-    showInviteIcon = false;
+  let showInviteIcon = false;
   const isFollowing = pageData?.followers?.includes(userInfo._id);
+  const isManager = pageData?.manager?._id == userInfo._id;
   const hasSentFeedback = pageData?.verifiedList?.find(
     (obj) => obj.user == userInfo._id
   );
-
-  if (params?.instance?.manager == userInfo._id) {
-    isManager = true;
-  }
+  const [bools, setBools] = useState(boolsObj);
 
   if (pageData.type === "group") {
     showInviteIcon = true;
@@ -139,44 +135,87 @@ const ViewRoomScreen = ({ navigation, route }) => {
     },
   ];
 
-  const groupActionArr = [
+  const listItems = [
+    {
+      id: "507848",
+      name: "upload story",
+      onPress: () => {
+        if (checkIsVerified()) {
+          handleUploadStory();
+        }
+      },
+      icon: "circle-outline",
+      show: isManager,
+      selected: true,
+    },
+    {
+      id: "5",
+      name: "update cover",
+      selected: true,
+      onPress: () => handleCoverImageChange(),
+      icon: "reload",
+      show: isManager,
+    },
     {
       id: "2",
-      title: "Update Cover photo",
-      onPress: () => handleCoverImageChange(),
+      name: "posts",
+      onPress: () => navigateToPosts(),
       icon: "image-multiple",
-    },
-    {
-      id: "349",
-      title: "Challenge",
-      onPress: () => handleCoverImageChange(),
-      icon: "image-multiple",
-      show: !isManager,
-    },
-    {
-      id: "349",
-      title: "Challengers",
-      onPress: () => handleCoverImageChange(),
-      icon: "image-multiple",
+      selected: true,
       show: true,
     },
-    // {
-    //   id: "458093240",
-    //   icon: "delete",
-    //   title: "Remove Character",
-    //   show: isManager,
-    //   onPress: () => setShowRemoveCharacter(true),
-    // },
-  ];
-
-  const listItems = [
     {
       id: "5078",
       name: "Challenge",
-      onPress: () => setChallengeModal({ vis: true }),
+      onPress: () => {
+        if (checkIsVerified()) {
+          setChallengeModal({ vis: true });
+        }
+      },
       icon: "trophy-outline",
       show: !isManager,
       selected: true,
+    },
+    {
+      id: "7",
+      name: "challengers",
+      onPress: () => setBools({ ...bools, challengers: true }),
+      icon: "trophy",
+      selected: true,
+      show: true,
+    },
+    {
+      id: "169576",
+      name: "Withdraw challenge",
+      onPress: () => handleWithdrawChallenge(),
+      icon: "trophy-outline",
+      selected: true,
+      show: !isManager, // && you are a challenger
+    },
+    {
+      id: "3",
+      name: "New event",
+      onPress: () => {
+        if (!checkIsVerified()) return;
+        navigation.navigate("Event", {
+          instance: "group",
+          instanceID: pageData?._id,
+        });
+      },
+      selected: true,
+      icon: "plus",
+      show: isManager,
+    },
+    {
+      id: "35t74085",
+      name: "Transfer group",
+      onPress: () => {
+        if (!checkIsVerified()) return;
+        console.log("tranfer");
+      },
+      selected: true,
+      icon: "transfer",
+      show: isManager,
     },
   ];
 
@@ -199,7 +238,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
       instanceShow: pageData?.show?.name_j ?? pageData?.show?.name_e,
       instance: "group",
     },
-    namePosition: "center",
     leftColor: bools.followed ? colors.primary : colors.medium,
     name: pageData?.name,
   };
@@ -210,7 +248,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       instance: "group",
       instanceID: pageData?._id,
     };
-    if (isFollowing) {
+    if (bools.followed) {
       // UNFOLLOWS
       followObj.action = "unfollow";
     } else {
@@ -220,13 +258,42 @@ const ViewRoomScreen = ({ navigation, route }) => {
       followObj,
       (_resData) => {
         setBools({ ...bools, cover: false, followed: true });
+        fetchRoomCharacters("load");
       },
       (err) => {
-        console.log(err);
+        // console.log(err);
         setErrMsg(err?.response.data);
         setBools({ ...bools, cover: false });
       }
     );
+  };
+
+  const handleUploadStory = () => {};
+
+  const checkIsVerified = () => {
+    if (!pageData?.verified) {
+      setPopper({
+        vis: true,
+        msg: `${capFirstLetter(pageData?.name)} group instance not verified`,
+        type: "failed",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const navigateToPosts = () => {
+    const navObj = {
+      id: pageData?._id,
+      name: pageData?.name,
+      verified: pageData?.verified,
+      isMine: isManager,
+    };
+    navigation.navigate("MyPost", {
+      screen: "group",
+      data: [],
+      info: navObj,
+    });
   };
 
   const handleCharacterInvites = () => {
@@ -247,26 +314,27 @@ const ViewRoomScreen = ({ navigation, route }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     if (!res.cancelled) {
-      setIsLoading(true);
+      setBools({ ...bools, cover: true });
       const dataObj = {
-        action: "cover",
+        action: "cover_photo",
         actionData: res,
         instance: "group",
         instanceID: pageData?._id,
         media: true,
       };
+
       instanceUpdater(
         dataObj,
         (resData) => {
-          const newData = { ...pageData };
-          newData.cover_photo = resData.cover_photo;
-          setPageData(newData);
-          setGroupAction(false);
+          setPageData({ ...pageData, cover_photo: resData.cover_photo });
           setPopper({ vis: true, type: "success", msg: "Cover updated" });
-          setIsLoading(false);
+          setGroupAction(false);
+          setBools({ ...bools, cover: false });
         },
         (err) => {
-          setPopper({ vis: true, type: "failed", msg: err });
+          console.log(err);
+          setPopper({ vis: true, type: "failed", msg: err.data ?? err.msg });
+          setBools({ ...bools, cover: false });
         }
       );
     }
@@ -489,6 +557,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const RenderPageFooter = () => {
+    if (!pageData?.verified) return null;
     return (
       <View style={styles.footerView}>
         <FloatIcons data={floatData} />
@@ -512,41 +581,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
     } else if (popModal.invites) {
       return <RenderInvites />;
     }
-  };
-
-  const RenderFeedback = () => {
-    const feedbackQuestion = `Is ${capFirstLetter(
-      pageData?.name
-    )} a group or an organization in ${capFirstLetter(
-      pageData?.show?.name_j ?? pageData?.show?.name_e
-    )}`;
-    return (
-      <View style={{ paddingBottom: width * 0.04 }}>
-        <AppText
-          style={{
-            textAlign: "center",
-            width: width * 0.75,
-            alignSelf: "center",
-          }}
-        >
-          {feedbackQuestion}
-        </AppText>
-        <View style={{ alignItems: "center", marginTop: 15 }}>
-          {feedBackData.map((obj, idx) => (
-            <Link
-              key={idx}
-              name={obj.title}
-              iconName={obj.icon}
-              style={{ width: width * 0.8 }}
-              onPress={obj.onPress}
-            />
-          ))}
-          <AppText style={{ color: colors.medium, marginTop: 20 }}>
-            Earn 2WP by verifying instance
-          </AppText>
-        </View>
-      </View>
-    );
   };
 
   const RenderMyCharacters = () => {
@@ -633,6 +667,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
   }, [navigation]);
 
   useEffect(() => {
+    setBools({ ...bools, followed: isFollowing });
+  }, [isFollowing]);
+
+  useEffect(() => {
     searchRef?.current?.focus();
   }, [showSearch]);
 
@@ -667,6 +705,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>
           <InstanceHeader instanceData={headerData} />
+          <ActivityIndicator
+            visible
+            type="isEmpty"
+            text="No characters in this group"
+            // style={styles.activityTwo}
+          />
         </View>
       )}
       {showSearch && (
@@ -738,15 +782,17 @@ const ViewRoomScreen = ({ navigation, route }) => {
           RenderComponent={() => {
             return (
               <View style={{ paddingBottom: 40 }}>
-                {groupActionArr.map((item, idx) => (
-                  <Link
-                    name={item.title}
-                    iconName={item.icon}
-                    key={item + idx}
-                    onPress={item.onPress}
-                    style={styles.link}
-                  />
-                ))}
+                {listItems.map((item, idx) => {
+                  if (item.show) {
+                    <Link
+                      name={item.name}
+                      iconName={item.icon}
+                      key={item + idx}
+                      onPress={item.onPress}
+                      style={styles.link}
+                    />;
+                  }
+                })}
               </View>
             );
           }}
