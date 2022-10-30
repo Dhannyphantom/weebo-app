@@ -29,7 +29,6 @@ import colors from "../constants/colors";
 import PopMessage from "../components/PopMessage";
 import PopUpModal from "../components/PopUpModal";
 import SelectItem from "../components/SelectItem";
-import AlertModal from "../components/AlertModal";
 import FloatIcons from "../components/FloatIcons";
 import InstanceInvites from "../components/InstanceInvites";
 import ThemeContext from "../config/ThemeContext";
@@ -49,29 +48,22 @@ const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 const BACKDROP_HEIGHT = height * 0.65;
 
 const ViewRoomScreen = ({ navigation, route }) => {
-  const {
-    roomCharacters,
-    getCharacters,
-    instanceUpdater,
-    sendInvite,
-    deleteInstance,
-  } = useContext(CharContext);
+  const { roomCharacters, getCharacters, instanceUpdater, sendInvite } =
+    useContext(CharContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
   const { userFeedback } = useContext(FeedContext);
 
   const [pageData, setPageData] = useState({});
-  const [alertModal, setAlertModal] = useState({ visible: false });
-  const [pageLoaded, setPageLoaded] = useState(false);
   const [fBackModal, setFBackModal] = useState(false);
-  const [firstLoad, setFirstLoad] = useState(false);
   const [searcher, setSearcher] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [showInvites, setShowInvites] = useState(false);
+  const [popModal, setPopModal] = useState({
+    characters: false,
+    invites: false,
+  });
   const [groupAction, setGroupAction] = useState(false);
-  const [showCharacters, setShowCharacters] = useState(false);
-  const [showRemoveCharacter, setShowRemoveCharacter] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [verifyModal, setVerifyModal] = useState(false);
   const [searchList, setSearchList] = useState([]);
@@ -79,8 +71,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [popper, setPopper] = useState({ vis: false, msg: null, type: null });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-
-  // console.log(pageData.invites);
 
   const params = route.params;
   // params = { instance}
@@ -99,8 +89,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
   } else if (pageData.type === "group") {
     showInviteIcon = true;
   }
-
-  const finder = false; //
 
   const feedBackData = [
     {
@@ -185,7 +173,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       text: "See Invites",
       isProfile: { vis: false, data: null },
       show: showInviteIcon,
-      onPress: () => setShowInvites(true),
+      onPress: () => setPopModal({ ...popModal, invites: true }),
     },
     {
       id: "507734",
@@ -199,10 +187,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
       id: "9806792",
       isProfile: {
         vis: true,
-        data: pageData?.manager ?? pageData?.app_creator,
+        data: pageData?.manager,
       },
       show: true,
-      onPress: () => setShowInvites(true),
+      onPress: () => setPopModal({ ...popModal, invites: true }),
     },
   ];
 
@@ -214,19 +202,26 @@ const ViewRoomScreen = ({ navigation, route }) => {
       icon: "image-multiple",
     },
     {
-      id: "458093240",
-      icon: "delete",
-      title: "Remove Character",
-      show: isManager,
-      onPress: () => setShowRemoveCharacter(true),
+      id: "349",
+      title: "Challenge",
+      onPress: () => handleCoverImageChange(),
+      icon: "image-multiple",
+      show: !isManager,
     },
     {
-      id: "230428",
-      icon: "trash-can",
-      title: "Delete Group",
-      show: isManager,
-      onPress: () => handleDeleteInstance("alert"),
+      id: "349",
+      title: "Challengers",
+      onPress: () => handleCoverImageChange(),
+      icon: "image-multiple",
+      show: true,
     },
+    // {
+    //   id: "458093240",
+    //   icon: "delete",
+    //   title: "Remove Character",
+    //   show: isManager,
+    //   onPress: () => setShowRemoveCharacter(true),
+    // },
   ];
 
   const handleCharacterInvites = () => {
@@ -235,7 +230,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
     if (isManager) {
       setShowSearch(!showSearch);
     } else {
-      setShowCharacters(true);
+      setPopModal({ ...popModal, characters: true });
+      set;
     }
   };
 
@@ -285,13 +281,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
             { _id: "right-spacer" },
           ],
         });
-        setPageLoaded(true);
-        setFirstLoad(true);
         setRefreshing(false);
       },
       (err) => {
         setErrMsg(err?.response?.data);
-        setPageLoaded(true);
         setRefreshing(false);
       }
     );
@@ -331,36 +324,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
         setErrMsg(err);
       }
     );
-  };
-
-  const handleDeleteInstance = (type) => {
-    if (type === "alert") {
-      setAlertModal({
-        visible: true,
-        title: "Delete Group",
-        message: "Are sure you want to delete this group?",
-        btn: "YES",
-        type: "delete_group",
-      });
-    } else if (type === "delete") {
-      setIsLoading(true);
-
-      const deleteObj = {
-        instance: "group",
-        instanceID: pageData._id,
-      };
-
-      deleteInstance(
-        deleteObj,
-        (resData) => {
-          navigation.goBack();
-        },
-        (err) => {
-          setPopper({ vis: true, type: "fail", msg: err });
-          setIsLoading(false);
-        }
-      );
-    }
   };
 
   const handleCloseSearch = () => {
@@ -531,10 +494,18 @@ const ViewRoomScreen = ({ navigation, route }) => {
     return (
       <InstanceInvites
         data={pageData?.invites}
-        setVisible={() => setShowInvites(false)}
+        setVisible={() => setPopModal({ ...popModal, invites: false })}
         instance={{ name: pageData.name, id: pageData._id, type: "group" }}
       />
     );
+  };
+
+  const RenderAllPopups = () => {
+    if (popModal.characters) {
+      return <RenderMyCharacters />;
+    } else if (popModal.invites) {
+      return <RenderInvites />;
+    }
   };
 
   const RenderFeedback = () => {
@@ -572,85 +543,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
     );
   };
 
-  const RenderRemoveCharacter = () => {
-    //
-    const handleCharacterSelect = (item) => {
-      const index = selectedCharacters.findIndex(
-        (obj) => obj.name == item.name
-      );
-      if (index == -1) {
-        setSelectedCharacters([...selectedCharacters, item]);
-      } else if (index > -1) {
-        setSelectedCharacters(
-          selectedCharacters.filter((obj) => obj.name !== item.name)
-        );
-      }
-    };
-
-    const renderCharactersOwned = ({ item }) => {
-      if (!item.name) return null;
-      return (
-        <SelectItem
-          item={item}
-          check={selectedCharacters}
-          pickItem={handleCharacterSelect}
-        />
-      );
-    };
-
-    const RenderFooterComponent = () => {
-      if (!selectedCharacters[0]) return null;
-
-      const handleRemoveCharacter = () => {
-        const sendCharacters = selectedCharacters.map((item) => item._id);
-        const removeCharData = {
-          instance: "character",
-          instanceID: sendCharacters,
-          group: params.roomID,
-          type: "remove",
-        };
-        console.log(removeCharData);
-        handleSendInvite(null, removeCharData);
-      };
-
-      return (
-        <View>
-          <AppButton
-            title="Remove character"
-            bare
-            RIcon="delete"
-            onPress={handleRemoveCharacter}
-            style={{ alignSelf: "center", marginTop: 10 }}
-          />
-        </View>
-      );
-    };
-
-    return (
-      <View style={styles.modal}>
-        <FlatList
-          data={pageData?.characters}
-          keyExtractor={(item) => item._id}
-          renderItem={renderCharactersOwned}
-          ListEmptyComponent={
-            <ActivityIndicator
-              type="isEmpty"
-              text="There are no characters in this group"
-              style={{ marginTop: 50 }}
-              visible={true}
-            />
-          }
-          ListFooterComponent={RenderFooterComponent}
-        />
-        <ActivityIndicator
-          type="spin"
-          visible={isLoading}
-          style={styles.activityTwo}
-          wTransparent
-        />
-      </View>
-    );
-  };
   const RenderMyCharacters = () => {
     //
     const handleCharacterSelect = (item) => {
@@ -765,8 +657,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
         renderItem={renderCharacters}
       />
       <RenderPageFooter />
-      <ActivityIndicator visible={!pageLoaded} style={styles.activity} />
-      {pageData?.characters?.length <= 2 && firstLoad && (
+      <ActivityIndicator visible={isLoading} style={styles.activity} />
+      {pageData?.characters?.length <= 2 && (
         <>
           <ActivityIndicator
             visible={pageData?.characters.length <= 2}
@@ -794,13 +686,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
                   <>
                     <Link
                       iconName="format-list-text"
-                      onPress={() => setShowInvites(true)}
+                      onPress={() =>
+                        setPopModal({ ...popModal, invites: true })
+                      }
                       name="See Invites"
-                    />
-                    <Link
-                      iconName="format-list-text"
-                      onPress={() => handleDeleteInstance("alert")}
-                      name="Delete Group"
                     />
                   </>
                 )}
@@ -847,20 +736,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
           setter={() => setPopper({ vis: false, msg: null })}
         />
         <PopUpModal
-          visible={showCharacters}
-          setVisible={setShowCharacters}
-          ContentComponent={RenderMyCharacters}
+          visible={popModal.characters}
+          setter={setPopModal({ ...popModal, characters: false })}
+          ContentComponent={RenderAllPopups}
         />
-        <PopUpModal
-          visible={showRemoveCharacter}
-          setVisible={setShowRemoveCharacter}
-          ContentComponent={RenderRemoveCharacter}
-        />
-        <PopUpModal
-          visible={showInvites}
-          setVisible={setShowInvites}
-          ContentComponent={RenderInvites}
-        />
+
         <ActivityIndicator
           type="spin"
           visible={isLoading}
@@ -905,11 +785,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
               vInstanceID={pageData?._id}
             />
           )}
-        />
-        <AlertModal
-          obj={alertModal}
-          setVisible={setAlertModal}
-          onPress={() => handleDeleteInstance("delete")}
         />
       </>
     </View>

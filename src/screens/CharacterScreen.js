@@ -62,14 +62,14 @@ const CharacterScreen = ({ route, navigation }) => {
   const userID = userInfo._id;
   const ownerID = character?.owner?._id;
   const followingArr = userInfo.following;
-  const checkerArr = followingArr?.filter((obj) => obj._id === charID);
-  const challengerIds = character?.challengers?.map((obj) => obj.user._id);
-  const challConst = challengerIds?.includes(userID);
+  const follow = followingArr?.find((obj) => obj._id == charID);
+  const challConst = character?.challengers?.find(
+    (obj) => obj?.user?._id == userID
+  );
   const isMine = userID === ownerID;
   const charFollowers = character?.followers?.length;
   const charFavs = character?.favorites?.length;
   const isFav = character?.favorites?.includes(userID);
-  const follow = checkerArr?.map((obj) => obj._id).includes(charID);
 
   const [characterTab, setCharacterTab] = useState({
     post: false,
@@ -96,7 +96,6 @@ const CharacterScreen = ({ route, navigation }) => {
   const [dropDown, setDropDown] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [openMedia, setOpenMedia] = useState(false);
-
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [popper, setPopper] = useState({ vis: false });
 
