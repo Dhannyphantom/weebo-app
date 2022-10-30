@@ -47,6 +47,7 @@ const ITEM_SIZE = Platform.OS === "ios" ? width * 0.72 : width * 0.74;
 const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 const BACKDROP_HEIGHT = height * 0.65;
+const boolsObj = { cover: false, followed: false };
 
 const ViewRoomScreen = ({ navigation, route }) => {
   const { roomCharacters, getCharacters, instanceUpdater, sendInvite } =
@@ -54,10 +55,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { userFeedback } = useContext(FeedContext);
+  const { userFeedback, followInstance } = useContext(FeedContext);
 
   const [pageData, setPageData] = useState({});
-  const [fBackModal, setFBackModal] = useState(false);
   const [searcher, setSearcher] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [popModal, setPopModal] = useState({
@@ -73,9 +73,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
   });
   const [searchList, setSearchList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [popper, setPopper] = useState({ vis: false, msg: null, type: null });
+  const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+  const [bools, setBools] = useState(boolsObj);
 
   const params = route.params;
   // params = { instance}
@@ -84,6 +85,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const theme = useContext(ThemeContext);
   let isManager = false,
     showInviteIcon = false;
+  const isFollowing = pageData?.followers?.includes(userInfo._id);
+  const hasSentFeedback = pageData?.verifiedList?.find(
+    (obj) => obj.user == userInfo._id
+  );
+
   if (params?.instance?.manager == userInfo._id) {
     isManager = true;
   }
@@ -91,69 +97,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
   if (pageData.type === "group") {
     showInviteIcon = true;
   }
-
-  const feedBackData = [
-    {
-      id: "1",
-      title: "YES",
-      icon: "check",
-      onPress: function () {
-        setFBackModal(false);
-        const data = {
-          type: "group",
-          typeId: pageData?._id,
-          feedback: "correct",
-        };
-        userFeedback(
-          data,
-          () => {
-            setPopper({
-              vis: true,
-              msg: "Feedback sent successfully",
-              type: "success",
-            });
-          },
-          (err) => {
-            setPopper({
-              vis: true,
-              msg: err?.response?.message,
-              type: "failed",
-            });
-          }
-        );
-      },
-    },
-    {
-      id: "2",
-      title: "NO",
-      icon: "cancel",
-      onPress: function () {
-        setFBackModal(false);
-        const data = {
-          type: "group",
-          typeId: pageData?._id,
-          feedback: "wrong",
-        };
-        userFeedback(
-          data,
-          () => {
-            setPopper({
-              vis: true,
-              msg: "Feedback sent successfully",
-              type: "success",
-            });
-          },
-          (err) => {
-            setPopper({
-              vis: true,
-              msg: err?.response?.message,
-              type: "failed",
-            });
-          }
-        );
-      },
-    },
-  ];
 
   const gradientColor =
     theme.mode === "light"
@@ -240,23 +183,51 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const headerData = {
     cover_photo: pageData?.cover_photo,
     description: null,
-    coverLoading: isLoading,
+    coverLoading: bools.cover,
     listItems,
     owner: pageData?.manager,
     screenIcon: "people",
     verified: pageData?.verified,
     handleLeftPress: () => handleGroupFollow(),
-    handleRightPress: () => setFBackModal(true),
-    followers: pageData?.followers,
+    followers: pageData?.followers?.length,
     verifiedList: pageData?.verifiedList,
     subscribers: null,
-    feedback: pageData,
+    feedback: {
+      instanceID: pageData?._id,
+      finder: hasSentFeedback,
+      instanceName: pageData?.name,
+      instanceShow: pageData?.show?.name_j ?? pageData?.show?.name_e,
+      instance: "group",
+    },
     namePosition: "center",
-    leftColor: colors.medium,
+    leftColor: bools.followed ? colors.primary : colors.medium,
     name: pageData?.name,
   };
 
-  const handleGroupFollow = () => {};
+  const handleGroupFollow = () => {
+    setBools({ ...bools, cover: true });
+    let followObj = {
+      instance: "group",
+      instanceID: pageData?._id,
+    };
+    if (isFollowing) {
+      // UNFOLLOWS
+      followObj.action = "unfollow";
+    } else {
+      followObj.action = "follow";
+    }
+    followInstance(
+      followObj,
+      (_resData) => {
+        setBools({ ...bools, cover: false, followed: true });
+      },
+      (err) => {
+        console.log(err);
+        setErrMsg(err?.response.data);
+        setBools({ ...bools, cover: false });
+      }
+    );
+  };
 
   const handleCharacterInvites = () => {
     // setPopper({ vis: true, msg: "Invite sent", type: "success" });
@@ -696,47 +667,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>
           <InstanceHeader instanceData={headerData} />
-          {/* <ActivityIndicator
-            visible
-            type="isEmpty"
-            text="There are no Character Instances yet"
-            style={styles.activity}
-            ComponentRenderer={() => (
-              <View style={styles.links}>
-                <Link
-                  iconName="plus"
-                  onPress={handleCharacterInvites}
-                  name={isManager ? "Invite Characters" : "Join"}
-                />
-                <Link
-                  iconName="plus"
-                  onPress={() => setVerifyModal(true)}
-                  name="Verification stats"
-                />
-                <Link
-                  iconName="check"
-                  onPress={() => setFBackModal(true)}
-                  name="Verifiy Group Instance"
-                />
-                <Link
-                  iconName="check"
-                  onPress={() => setChallengeModal({ vis: true })}
-                  name="Challenge"
-                />
-                {isManager && (
-                  <>
-                    <Link
-                      iconName="format-list-text"
-                      onPress={() =>
-                        setPopModal({ ...popModal, invites: true })
-                      }
-                      name="See Invites"
-                    />
-                  </>
-                )}
-              </View>
-            )}
-          /> */}
         </View>
       )}
       {showSearch && (
@@ -821,12 +751,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
             );
           }}
         />
-        <PopDropDown
-          visible={fBackModal}
-          setter={() => setFBackModal(false)}
-          headerTitle="INSTANCE VERIFICATION"
-          RenderComponent={RenderFeedback}
-        />
+
         <AppFadeIn
           visible={verifyModal}
           setVisible={setVerifyModal}

@@ -378,7 +378,6 @@ const ShowScreen = ({ route, navigation }) => {
 
   const handleFollowShow = () => {
     setIsCoverLoading(true);
-    console.log(isFollowed);
     let followObj = {
       instance: "show",
       instanceID: dataState._id,
