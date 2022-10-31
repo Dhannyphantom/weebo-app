@@ -19,6 +19,7 @@ const TransferInstance = ({
   visible,
   setVisible,
   instance = "character",
+  setter,
   updateThisInstance,
   instanceID,
 }) => {
@@ -58,7 +59,7 @@ const TransferInstance = ({
                   updateThisInstance={updateThisInstance}
                   typeObj={{ instance, instanceID }}
                   length={0.85}
-                  instanceLogic={{ setVisible, setErrMsg }}
+                  instanceLogic={{ setVisible, setter, setErrMsg }}
                   onPress={null}
                 />
               ) : (
@@ -66,6 +67,7 @@ const TransferInstance = ({
                   visible={true}
                   type="isEmpty"
                   text="You have no weebos"
+                  style={{ borderRadius: 15 }}
                 />
               )}
             </View>
@@ -73,6 +75,7 @@ const TransferInstance = ({
         );
       }}
       setVisible={setVisible}
+      setter={setter}
     />
   );
 };

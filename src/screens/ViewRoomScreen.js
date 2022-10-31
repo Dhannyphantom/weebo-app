@@ -39,6 +39,7 @@ import InstanceHeader, { RenderVerifyInfo } from "../components/InstanceHeader";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
 import ShowUpload from "../components/ShowUpload";
+import TransferInstance from "../components/TransferInstance";
 
 const { width, height } = Dimensions.get("window");
 
@@ -48,7 +49,7 @@ const ITEM_SIZE = Platform.OS === "ios" ? width * 0.72 : width * 0.74;
 const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 const BACKDROP_HEIGHT = height * 0.65;
-const boolsObj = { cover: false, followed: false };
+const boolsObj = { cover: false, followed: false, transfer: false };
 const popObj = {
   characters: false,
   vis: false,
@@ -212,6 +213,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
           instance: "group",
           instanceID: pageData?._id,
         });
+        onCloseModal();
       },
       selected: true,
       icon: "plus",
@@ -219,10 +221,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
     },
     {
       id: "35t74085",
-      name: "Transfer group",
+      name: "Transfer Group",
       onPress: () => {
         if (!checkIsVerified()) return;
-        console.log("tranfer");
+        setBools({ ...bools, transfer: true });
       },
       selected: true,
       icon: "transfer",
@@ -338,6 +340,14 @@ const ViewRoomScreen = ({ navigation, route }) => {
       data: [],
       info: navObj,
     });
+  };
+
+  const updateThisInstance = (prop, val) => {
+    console.log(prop, val);
+    return;
+    const oldCharObj = { ...pageData };
+    oldCharObj[prop] = val;
+    setPageData(oldCharObj);
   };
 
   const handleCharacterInvites = () => {
@@ -855,6 +865,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
         />
 
         <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+        <TransferInstance
+          visible={bools.transfer}
+          instance="group"
+          updateThisInstance={updateThisInstance}
+          instanceID={pageData?._id}
+          setter={() => setBools({ ...bools, transfer: false })}
+        />
 
         <AppFadeIn
           visible={verifyModal}

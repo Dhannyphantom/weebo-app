@@ -98,16 +98,11 @@ const FriendBox = ({
       instanceTransfer(
         actionObj,
         (resData) => {
-          let instanceParam;
-          if (typeObj.instance === "show") {
-            instanceParam = "app_creator";
-          } else if (typeOj.instance === "character") {
-            instanceParam = "owner";
-          }
-          updateThisInstance(instanceParam, resData.currOwner);
+          updateThisInstance("manager", resData.curr_manager);
           typeObj.instance === "character" &&
-            updateMe(resData.prevOwner, "charactersOwned");
-          instanceLogic.setVisible(false);
+            updateMe(resData.prev_manager, "charactersOwned");
+          instanceLogic.setVisible && instanceLogic.setVisible(false);
+          instanceLogic.setter && instanceLogic.setter();
           setIsLoading(false);
         },
         (err) => {
