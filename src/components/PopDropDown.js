@@ -74,7 +74,6 @@ const PopDropDown = ({
           disabled={disableCloseTouch}
           style={styles.container}
         >
-          {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
           <Animated.View
             style={{
               opacity: opaciter,
@@ -84,7 +83,6 @@ const PopDropDown = ({
           >
             {TopperComponent && <TopperComponent />}
           </Animated.View>
-          {/* </TouchableOpacity> */}
           <Animated.View style={{ transform: [{ translateY: translator }] }}>
             <TouchableOpacity
               activeOpacity={1}
@@ -117,7 +115,6 @@ const styles = StyleSheet.create({
     borderTopStartRadius: width * 0.04,
     borderTopEndRadius: width * 0.04,
     backgroundColor: colors.white,
-    // minHeight: height * 0.3,
   },
   headerTitle: {
     textAlign: "center",

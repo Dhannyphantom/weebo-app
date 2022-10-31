@@ -103,7 +103,11 @@ const ShowScreen = ({ route, navigation }) => {
       id: "5",
       name: "update cover",
       selected: true,
-      onPress: () => handleNewCover(),
+      onPress: () => {
+        if (checkIsVerified()) {
+          handleNewCover();
+        }
+      },
       icon: "reload",
       show: isMine,
     },

@@ -26,9 +26,9 @@ const CoverUpload = ({ show, type = "character", name }) => {
 
   let aspectR;
   if (show) {
-    aspectR = [30, 25];
+    aspectR = [5, 3];
   } else {
-    aspectR = [12, 14];
+    aspectR = [6, 7];
   }
   const theme = useContext(ThemeContext);
 

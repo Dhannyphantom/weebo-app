@@ -35,8 +35,6 @@ const MyPostScreen = ({ navigation, route }) => {
   const fromScreen = params?.screen;
   const isInstance = ["character", "group", "show"].includes(fromScreen);
 
-  console.log(params);
-
   const addNewPost = async () => {
     // LIMIT INSTANCE POSTS
 

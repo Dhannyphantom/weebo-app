@@ -38,6 +38,7 @@ import { capFirstLetter } from "../constants/helpers";
 import InstanceHeader, { RenderVerifyInfo } from "../components/InstanceHeader";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
+import ShowUpload from "../components/ShowUpload";
 
 const { width, height } = Dimensions.get("window");
 
@@ -48,6 +49,12 @@ const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 const BACKDROP_HEIGHT = height * 0.65;
 const boolsObj = { cover: false, followed: false };
+const popObj = {
+  characters: false,
+  vis: false,
+  invites: false,
+  close: null,
+};
 
 const ViewRoomScreen = ({ navigation, route }) => {
   const { roomCharacters, getCharacters, instanceUpdater, sendInvite } =
@@ -60,11 +67,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [pageData, setPageData] = useState({});
   const [searcher, setSearcher] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [popModal, setPopModal] = useState({
-    characters: false,
-    invites: false,
-  });
+  const [popModal, setPopModal] = useState(popObj);
   const [groupAction, setGroupAction] = useState(false);
+  const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [verifyModal, setVerifyModal] = useState(false);
   const [challengeModal, setChallengeModal] = useState({
@@ -101,22 +106,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const floatData = [
     {
-      id: "189686",
-      icon: "account-plus",
-      text: isManager ? "Invite Character" : "Join",
-      show: true,
-      isProfile: { vis: false, data: null },
-      onPress: () => handleCharacterInvites(),
-    },
-    {
-      id: "9806792",
-      icon: "format-list-text",
-      text: "See Invites",
-      isProfile: { vis: false, data: null },
-      show: showInviteIcon,
-      onPress: () => setPopModal({ ...popModal, invites: true }),
-    },
-    {
       id: "507734",
       icon: "menu",
       text: "Actions",
@@ -125,23 +114,42 @@ const ViewRoomScreen = ({ navigation, route }) => {
       onPress: () => setGroupAction(true),
     },
     {
+      id: "7",
+      text: "Challengers",
+      onPress: () => setBools({ ...bools, challengers: true }),
+      icon: "trophy",
+      selected: true,
+      isProfile: { vis: false, data: null },
+      show: true,
+    },
+    {
+      id: "2",
+      text: "Posts",
+      onPress: () => navigateToPosts(),
+      icon: "image-multiple",
+      selected: true,
+      isProfile: { vis: false, data: null },
+      show: true,
+    },
+    {
       id: "9806792",
       isProfile: {
         vis: true,
         data: pageData?.manager,
       },
       show: true,
-      onPress: () => setPopModal({ ...popModal, invites: true }),
+      onPress: () => setPopModal({ ...popModal, vis: true, invites: true }),
     },
   ];
 
   const listItems = [
     {
       id: "507848",
-      name: "upload story",
+      name: "Upload Story",
       onPress: () => {
         if (checkIsVerified()) {
           handleUploadStory();
+          onCloseModal();
         }
       },
       icon: "circle-outline",
@@ -150,19 +158,28 @@ const ViewRoomScreen = ({ navigation, route }) => {
     },
     {
       id: "5",
-      name: "update cover",
+      name: "Update Cover",
       selected: true,
       onPress: () => handleCoverImageChange(),
       icon: "reload",
       show: isManager,
     },
     {
-      id: "2",
-      name: "posts",
-      onPress: () => navigateToPosts(),
-      icon: "image-multiple",
-      selected: true,
+      id: "9806792",
+      icon: "format-list-text",
+      name: "See Invites",
+      show: showInviteIcon,
+      onPress: () => setPopModal({ ...popModal, vis: true, invites: true }),
+    },
+    {
+      id: "189686",
+      icon: "account-plus",
+      name: isManager ? "Add or Invite Characters" : "Join",
       show: true,
+      onPress: () => {
+        handleCharacterInvites();
+        onCloseModal();
+      },
     },
     {
       id: "5078",
@@ -170,20 +187,14 @@ const ViewRoomScreen = ({ navigation, route }) => {
       onPress: () => {
         if (checkIsVerified()) {
           setChallengeModal({ vis: true });
+          onCloseModal();
         }
       },
       icon: "trophy-outline",
       show: !isManager,
       selected: true,
     },
-    {
-      id: "7",
-      name: "challengers",
-      onPress: () => setBools({ ...bools, challengers: true }),
-      icon: "trophy",
-      selected: true,
-      show: true,
-    },
+
     {
       id: "169576",
       name: "Withdraw challenge",
@@ -194,7 +205,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     },
     {
       id: "3",
-      name: "New event",
+      name: "New Event",
       onPress: () => {
         if (!checkIsVerified()) return;
         navigation.navigate("Event", {
@@ -268,7 +279,33 @@ const ViewRoomScreen = ({ navigation, route }) => {
     );
   };
 
-  const handleUploadStory = () => {};
+  const onCloseModal = () => {
+    setPopModal({ ...popModal, close: "close" });
+  };
+
+  const handleUploadStory = async () => {
+    // TODO:: UPDATE ONLY THE COVER FIELD IN THE CHARACTER OBJ
+    // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
+
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+    });
+
+    if (!res.cancelled) {
+      // setIsCoverLoading(true);
+      setBools({ ...bools, cover: true });
+      const statusObj = {
+        instance: "group",
+        instanceID: pageData?._id,
+        post: {
+          ...res,
+        },
+      };
+      delete statusObj.post.cancelled;
+
+      setShowUpload({ vis: true, data: statusObj });
+    }
+  };
 
   const checkIsVerified = () => {
     if (!pageData?.verified) {
@@ -280,6 +317,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
       return false;
     }
     return true;
+  };
+
+  const handleStatusVisibility = (bool) => {
+    if (bool) {
+      setPopper({ vis: true, type: "success", msg: "Status uploaded" });
+    }
+    setShowUpload({ vis: false, data: null });
   };
 
   const navigateToPosts = () => {
@@ -302,7 +346,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     if (isManager) {
       setShowSearch(!showSearch);
     } else {
-      setPopModal({ ...popModal, characters: true });
+      setPopModal({ ...popModal, vis: true, characters: true });
       set;
     }
   };
@@ -569,7 +613,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
     return (
       <InstanceInvites
         data={pageData?.invites}
-        setVisible={() => setPopModal({ ...popModal, invites: false })}
+        setVisible={() =>
+          setPopModal({ ...popModal, vis: false, invites: false })
+        }
         instance={{ name: pageData.name, id: pageData._id, type: "group" }}
       />
     );
@@ -755,8 +801,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
           setter={() => setPopper({ vis: false, msg: null })}
         />
         <PopUpModal
-          visible={popModal.characters}
-          setter={() => setPopModal({ ...popModal, characters: false })}
+          visible={popModal.vis}
+          setter={() => setPopModal(popObj)}
           ContentComponent={RenderAllPopups}
         />
 
@@ -781,7 +827,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
         />
         <PopDropDown
           visible={groupAction}
-          setter={() => setGroupAction(false)}
+          setter={() => {
+            setPopModal({ ...popModal, close: null });
+            setGroupAction(false);
+          }}
+          closer={() => popModal.close}
           headerTitle="Group Actions"
           RenderComponent={() => {
             return (
@@ -803,6 +853,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
             );
           }}
         />
+
+        <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
 
         <AppFadeIn
           visible={verifyModal}

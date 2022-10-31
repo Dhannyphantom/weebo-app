@@ -12,13 +12,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const SearchInstance = ({ data, title, onPress, type }) => {
   //
   const renderTags = ({ item }) => {
     return (
-      <TouchableOpacity activeOpacity={0.9} onPress={() => onPress(item)}>
+      <TouchableOpacity
+        disabled={!item.verified}
+        activeOpacity={0.9}
+        onPress={() => onPress(item)}
+      >
         <View
           style={type === "rect" ? styles.rectImageStyle : styles.boxImageStyle}
         >
@@ -26,6 +30,13 @@ const SearchInstance = ({ data, title, onPress, type }) => {
             source={{ uri: item?.cover_photo?.uri }}
             style={styles.image}
           />
+          {!item.verified && (
+            <View style={styles.unverified}>
+              <AppText bold size="large" style={styles.unverifiedText}>
+                unverified
+              </AppText>
+            </View>
+          )}
         </View>
         <LinearGradient
           colors={["transparent", "#111"]}
@@ -115,6 +126,25 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.primary,
     marginLeft: 10,
+  },
+  unverified: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  unverifiedText: {
+    borderColor: colors.heart,
+    borderWidth: 2,
+    color: colors.heart,
+    paddingLeft: 12,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingBottom: 6,
+    borderRadius: 12,
   },
 });
 export default SearchInstance;
