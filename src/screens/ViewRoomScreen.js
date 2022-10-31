@@ -40,6 +40,7 @@ import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
 import ShowUpload from "../components/ShowUpload";
 import TransferInstance from "../components/TransferInstance";
+import CharChallengerScreen from "./CharChallengerScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -53,8 +54,50 @@ const boolsObj = { cover: false, followed: false, transfer: false };
 const popObj = {
   characters: false,
   vis: false,
+  challengers: false,
   invites: false,
   close: null,
+};
+
+const RenderChallengers = ({ name, id, setChallengeModal, isManager }) => {
+  const [loading, setLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState(null);
+  const [challengers, setChallengers] = useState([]);
+
+  const { fetchGroupProperty } = useContext(CharContext);
+
+  const fetchChallengers = (type) => {
+    type !== "fresh" && setLoading(true);
+    fetchGroupProperty(
+      { id, prop: "challengers" },
+      (resData) => {
+        // console.log(resData);
+        setLoading(false);
+        setChallengers(resData.challengers);
+      },
+      (errData) => {
+        // console.log(errData);
+        setErrMsg(errData.data ?? errData.msg);
+        setLoading(false);
+      }
+    );
+  };
+
+  useEffect(() => {
+    fetchChallengers("fresh");
+  }, []);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <CharChallengerScreen
+        challengerArr={challengers}
+        name={name + " group"}
+        setChallengeModal={setChallengeModal}
+        isMine={isManager}
+      />
+      <ActivityIndicator visible={loading} />
+    </View>
+  );
 };
 
 const ViewRoomScreen = ({ navigation, route }) => {
@@ -117,11 +160,33 @@ const ViewRoomScreen = ({ navigation, route }) => {
     {
       id: "7",
       text: "Challengers",
-      onPress: () => setBools({ ...bools, challengers: true }),
+      onPress: () => setPopModal({ ...popModal, vis: true, challengers: true }),
       icon: "trophy",
       selected: true,
       isProfile: { vis: false, data: null },
       show: true,
+    },
+    {
+      id: "5078",
+      text: "Challenge",
+      isProfile: { vis: false, data: null },
+      onPress: () => {
+        if (checkIsVerified()) {
+          setChallengeModal({ vis: true });
+          onCloseModal();
+        }
+      },
+      icon: "trophy-outline",
+      show: !isManager,
+      selected: true,
+    },
+    {
+      id: "169576",
+      name: "Withdraw challenge",
+      onPress: () => handleWithdrawChallenge(),
+      icon: "trophy-outline",
+      selected: true,
+      show: !isManager && false, // && you are a challenger
     },
     {
       id: "2",
@@ -181,28 +246,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
         handleCharacterInvites();
         onCloseModal();
       },
-    },
-    {
-      id: "5078",
-      name: "Challenge",
-      onPress: () => {
-        if (checkIsVerified()) {
-          setChallengeModal({ vis: true });
-          onCloseModal();
-        }
-      },
-      icon: "trophy-outline",
-      show: !isManager,
-      selected: true,
-    },
-
-    {
-      id: "169576",
-      name: "Withdraw challenge",
-      onPress: () => handleWithdrawChallenge(),
-      icon: "trophy-outline",
-      selected: true,
-      show: !isManager, // && you are a challenger
     },
     {
       id: "3",
@@ -343,11 +386,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const updateThisInstance = (prop, val) => {
-    console.log(prop, val);
-    return;
-    const oldCharObj = { ...pageData };
-    oldCharObj[prop] = val;
-    setPageData(oldCharObj);
+    setPageData({ ...pageData, [prop]: val });
   };
 
   const handleCharacterInvites = () => {
@@ -636,6 +675,15 @@ const ViewRoomScreen = ({ navigation, route }) => {
       return <RenderMyCharacters />;
     } else if (popModal.invites) {
       return <RenderInvites />;
+    } else if (popModal.challengers) {
+      return (
+        <RenderChallengers
+          name={pageData?.name}
+          isManager={isManager}
+          id={pageData?._id}
+          setChallengeModal={setChallengeModal}
+        />
+      );
     }
   };
 

@@ -339,7 +339,7 @@ const getChannels = (dispatch) => async (sc, cb) => {
     sc && sc(res.data);
   } catch (err) {
     console.log(err);
-    cb && cb("Error getting channels info");
+    cb && cb("Error fetching channels info");
   }
 };
 
@@ -372,7 +372,7 @@ const getAChannel = (dispatch) => async (id, sc, cb) => {
     sc && sc(res.data);
   } catch (err) {
     console.log(err);
-    cb && cb("Error getting channels info");
+    cb && cb("Error fetching channels info");
   }
 };
 const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
@@ -390,11 +390,33 @@ const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
     cb &&
       cb({
         err,
-        msg: "Error getting channels info",
+        msg: "Error fetching channels info",
         data: err?.response?.data,
       });
   }
 };
+
+const fetchGroupProperty = () => async (data, sc, cb) => {
+  const { id, prop } = data;
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get(`/group_data?id=${id}&prop=${prop}`, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    console.log(err);
+    cb &&
+      cb({
+        err,
+        msg: "Error fetching group data",
+        data: err?.response?.data,
+      });
+  }
+};
+
 const searchChannels = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -454,6 +476,7 @@ export const { Context, Provider } = createDataContext(
     instanceUpdater,
     roomCharacters,
     followChar,
+    fetchGroupProperty,
     fetchInfoProperties,
     deleteInstance,
     inviteActions,

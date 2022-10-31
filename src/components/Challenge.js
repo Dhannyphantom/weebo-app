@@ -152,6 +152,11 @@ const Challenge = ({
         },
       },
       item: cardProps.id,
+      roomID: cardProps.id,
+      data: {
+        instance: "group",
+        instanceID: cardProps.id,
+      },
     });
   };
 
@@ -301,7 +306,7 @@ const Challenge = ({
           />
         </View>
         <ChallengeCard
-          series={instance.show}
+          series={instance.show || instance.group}
           onPress={handleChallengeCardPress}
           {...cardProps}
         />

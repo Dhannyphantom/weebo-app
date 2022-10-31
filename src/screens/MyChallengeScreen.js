@@ -91,6 +91,14 @@ const MyChallengeScreen = ({ navigation, route }) => {
         coverImage = item?.show?.cover_photo;
         title = item.show.creator;
         followers = item?.show?.followers;
+      } else if (isGroup) {
+        name = item?.group?.name;
+        nav = "Room";
+        id = item?.group?._id;
+        coverImage = item?.group?.cover_photo;
+        title = item?.group?.show?.name_j || item.group?.show?.name_e;
+        followers = item?.group?.followers;
+        // probably a group
       }
 
       return (
@@ -101,11 +109,11 @@ const MyChallengeScreen = ({ navigation, route }) => {
             cardProps={{
               id,
               image: coverImage,
-              owner: item.owner,
+              owner: item.manager,
               show: title,
               name,
               followers,
-              avatar: item?.owner?.avatar,
+              avatar: item?.manager?.avatar,
             }}
             score1={item.challengerScore}
             nav={nav}
@@ -114,10 +122,10 @@ const MyChallengeScreen = ({ navigation, route }) => {
             instance={{ show: isShow, character: isCharacter, group: isGroup }}
             name1={item?.challenger?.username}
             name1ID={item?.challenger?._id}
-            name2={item?.owner?.username}
-            name2ID={item?.owner?._id}
+            name2={item?.manager?.username}
+            name2ID={item?.manager?._id}
             avatar1={item.challenger.avatar}
-            avatar2={item.owner.avatar}
+            avatar2={item.manager.avatar}
             challengeID={item._id}
             ownerInfo={item.challengerInfo}
             challengerInfo={item.ownerInfo}

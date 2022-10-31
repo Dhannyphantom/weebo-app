@@ -14,7 +14,6 @@ const CharChallengerScreen = ({
   const challLength = challengerArr.length;
 
   const handleCalls = (item) => {
-    console.log(item);
     setChallengeModal({ vis: true, contest: item });
   };
 

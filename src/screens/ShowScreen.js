@@ -375,9 +375,7 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const updateThisInstance = (prop, val) => {
-    const oldCharObj = { ...dataState };
-    oldCharObj[prop] = val;
-    setDataState(oldCharObj);
+    setDataState({ ...dataState, [prop]: val });
   };
 
   const handleFollowShow = () => {
