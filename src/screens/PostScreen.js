@@ -478,13 +478,7 @@ const PostScreen = ({ route, navigation }) => {
                     aspectRatio: display.width / display.height,
                   }}
                 >
-                  <Image
-                    source={{ uri: display.uri }}
-                    style={{
-                      ...styles.image,
-                      borderRadius: display.width * 0.02,
-                    }}
-                  />
+                  <Image source={{ uri: display.uri }} style={styles.image} />
                   <ActivityIndicator
                     style={styles.activity}
                     visible={isLoading}
@@ -610,7 +604,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    borderRadius: 25,
+    borderRadius: 14,
     overflow: "hidden",
     width: "100%",
     height: "100%",

@@ -16,6 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Context as CharContext } from "../config/CharContext";
+import { Context as ChallContext } from "../config/ChallContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -107,6 +108,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
   const { followInstance } = useContext(FeedContext);
+  const { withdrawChallenge } = useContext(ChallContext);
 
   const [pageData, setPageData] = useState({});
   const [searcher, setSearcher] = useState("");
@@ -167,7 +169,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       show: true,
     },
     {
-      id: "5078",
+      id: "50745988",
       text: "Challenge",
       isProfile: { vis: false, data: null },
       onPress: () => {
@@ -177,7 +179,21 @@ const ViewRoomScreen = ({ navigation, route }) => {
         }
       },
       icon: "trophy-outline",
-      show: !isManager,
+      show: !isManager && !pageData?.hasChallengedAlready,
+      selected: true,
+    },
+    {
+      id: "5078",
+      text: "Withdraw Challenge",
+      isProfile: { vis: false, data: null },
+      onPress: () => {
+        if (checkIsVerified()) {
+          handleWithdrawChallenge();
+          onCloseModal();
+        }
+      },
+      icon: "trophy-outline",
+      show: !isManager && pageData?.hasChallengedAlready,
       selected: true,
     },
     {
@@ -196,6 +212,15 @@ const ViewRoomScreen = ({ navigation, route }) => {
       selected: true,
       isProfile: { vis: false, data: null },
       show: true,
+    },
+    {
+      id: "vdush2",
+      text: bools.followed ? "Unfollow" : "Follow", // or Unfollow
+      onPress: () => handleGroupFollow(),
+      icon: "star",
+      selected: true,
+      isProfile: { vis: false, data: null },
+      show: !isManager,
     },
     {
       id: "9806792",
@@ -489,6 +514,23 @@ const ViewRoomScreen = ({ navigation, route }) => {
         setIsLoading(false);
         setPopper({ vis: true, msg: err, type: "fail" });
         setErrMsg(err);
+      }
+    );
+  };
+
+  const handleWithdrawChallenge = () => {
+    const data = {
+      instanceID: pageData?._id,
+      instance: "group",
+    };
+    withdrawChallenge(
+      data,
+      (res) => {
+        setPopper({ vis: true, type: "success", msg: "Challenge withdrawn" });
+        fetchRoomCharacters("cover");
+      },
+      (err) => {
+        setPopper({ vis: true, type: "failed", msg: err });
       }
     );
   };

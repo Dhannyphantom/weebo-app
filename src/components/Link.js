@@ -20,7 +20,7 @@ const Link = ({
   const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
-      activeOpacity={clickable ? 0.6 : 1}
+      activeOpacity={clickable ? 0.85 : 1}
       onPress={clickable ? onPress : null}
       style={[
         {
