@@ -14,49 +14,50 @@ import colors from "../constants/colors";
 
 const { width } = Dimensions.get("window");
 
+export const DisplayInstance = ({ item, onPress, type }) => {
+  return (
+    <TouchableOpacity
+      disabled={!item.verified}
+      activeOpacity={0.9}
+      onPress={() => onPress && onPress(item)}
+    >
+      <View
+        style={type === "rect" ? styles.rectImageStyle : styles.boxImageStyle}
+      >
+        <Image source={{ uri: item?.cover_photo?.uri }} style={styles.image} />
+        {!item.verified && (
+          <View style={styles.unverified}>
+            <AppText bold size="large" style={styles.unverifiedText}>
+              unverified
+            </AppText>
+          </View>
+        )}
+      </View>
+      <LinearGradient
+        colors={["transparent", "#111"]}
+        style={
+          type === "rect"
+            ? { ...styles.rectImageStyle, position: "absolute" }
+            : { ...styles.boxImageStyle, position: "absolute" }
+        }
+      >
+        <View style={styles.textCont}>
+          <AppText style={styles.name} bold>
+            {item.name ?? item.name_j ?? item.name_e}
+          </AppText>
+          <AppText style={styles.subName}>
+            {item.creator ?? item?.show?.name_j ?? item?.show?.name_e}
+          </AppText>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
+
 const SearchInstance = ({ data, title, onPress, type }) => {
   //
   const renderTags = ({ item }) => {
-    return (
-      <TouchableOpacity
-        disabled={!item.verified}
-        activeOpacity={0.9}
-        onPress={() => onPress(item)}
-      >
-        <View
-          style={type === "rect" ? styles.rectImageStyle : styles.boxImageStyle}
-        >
-          <Image
-            source={{ uri: item?.cover_photo?.uri }}
-            style={styles.image}
-          />
-          {!item.verified && (
-            <View style={styles.unverified}>
-              <AppText bold size="large" style={styles.unverifiedText}>
-                unverified
-              </AppText>
-            </View>
-          )}
-        </View>
-        <LinearGradient
-          colors={["transparent", "#111"]}
-          style={
-            type === "rect"
-              ? { ...styles.rectImageStyle, position: "absolute" }
-              : { ...styles.boxImageStyle, position: "absolute" }
-          }
-        >
-          <View style={styles.textCont}>
-            <AppText style={styles.name} bold>
-              {item.name ?? item.name_j ?? item.name_e}
-            </AppText>
-            <AppText style={styles.subName}>
-              {item.creator ?? item?.show?.name_j ?? item?.show?.name_e}
-            </AppText>
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
+    return <DisplayInstance item={item} onPress={onPress} type={type} />;
   };
 
   return (

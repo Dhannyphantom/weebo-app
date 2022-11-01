@@ -36,6 +36,8 @@ import {
   subGenres,
 } from "../constants/data_store";
 import getFormatTime from "../constants/getFormatTime";
+import { DisplayInstance } from "./SearchInstance";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -123,8 +125,10 @@ const Challenger = ({
     setLoading(true);
     const isMedia = asset.type !== "info_accept" && asset.type !== "info";
 
+    // console.log(type, asset.type.replace("_accept", ""));
+
     // VALIDATION
-    if (type !== asset.type) {
+    if (type !== asset.type.replace("_accept", "")) {
       setPopper({
         vis: true,
         msg: "Choose a challenge mode",
@@ -155,7 +159,7 @@ const Challenger = ({
 
     acceptInstanceChallenge(
       sendData,
-      (resData) => {
+      (_resData) => {
         setAsset(null);
         setLoading(false);
         fetchInstance("cover");
@@ -212,7 +216,7 @@ const Challenger = ({
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <AppText style={styles.title}>
-        A chance to be a Weebo Instance Manager by challenging this instance
+        A chance to become an Instance Manager
       </AppText>
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       {!isManager ? (
@@ -394,12 +398,14 @@ const InfoProps = ({ item, state }) => {
 
   const [selected, setSelected] = useState(item.selected);
   const [info, setInfo] = useState(String(item.value));
+
   const [modal, setModal] = useState(false); // will be modified for datetime picker also
 
   const shouldShowBtn = info !== String(item.value);
   const isDropDown = challenger_info_lookup.dropdown.includes(item.key);
   const isDatetime = challenger_info_lookup.datetime.includes(item.key);
   const isListItem = ["genres", "subGenres"].includes(item.key);
+  const isCharactersList = item.key === "characters";
 
   const updateAssetArr = (arr) => {
     return arr.map((obj) => {
@@ -447,6 +453,29 @@ const InfoProps = ({ item, state }) => {
     }
   };
 
+  const addCharacters = (val) => {
+    // existing characters
+    // console.log(val);
+    // return;
+    if (val.startsWith("remove_")) {
+      // remove str
+      setInfo((prev) => {
+        const strToRemove = val.slice(7).trim();
+        const isFirstOccurance = prev.indexOf(strToRemove) === 0;
+        const edited = prev.replace(
+          isFirstOccurance ? "" : `, ${strToRemove}`,
+          ""
+        );
+        return edited;
+      });
+    } else {
+      setInfo((prev) => {
+        const isFirstOccurance = prev.length < 1;
+        return isFirstOccurance ? val : prev.trim() + `, ${val}`;
+      });
+    }
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -456,7 +485,7 @@ const InfoProps = ({ item, state }) => {
       >
         <View style={styles.infoTitle}>
           <AppText size="large" bold>
-            {item.title[0].toUpperCase() + item.title.slice(1)}
+            {capFirstLetter(item.title)}
           </AppText>
           <MaterialCommunityIcons
             name={selected ? "circle" : "circle-outline"}
@@ -483,6 +512,56 @@ const InfoProps = ({ item, state }) => {
                   size={30}
                 />
               </TouchableOpacity>
+            </View>
+          ) : isCharactersList ? (
+            <View>
+              <FlatList
+                data={item.characters}
+                keyExtractor={(item) => item._id}
+                ListHeaderComponent={() => {
+                  return (
+                    <View>
+                      <AppText style={styles.pickerText}>
+                        Pick characters that are not members of this group
+                      </AppText>
+                    </View>
+                  );
+                }}
+                renderItem={({ item }) => {
+                  const isAdded = info.includes(item.name);
+                  return (
+                    <View
+                      style={{ ...styles.rowWide, justifyContent: "center" }}
+                    >
+                      <DisplayInstance item={item} onPress={null} type="rect" />
+                      <TouchableOpacity
+                        onPress={() =>
+                          addCharacters(
+                            isAdded ? `remove_${item.name}` : item.name
+                          )
+                        }
+                        activeOpacity={0.8}
+                        style={{ marginLeft: 50 }}
+                      >
+                        {!isAdded && (
+                          <MaterialCommunityIcons
+                            size={30}
+                            name="circle-outline"
+                            color={colors.medium}
+                          />
+                        )}
+                        {isAdded && (
+                          <Feather
+                            size={24}
+                            name="check-circle"
+                            color={colors.primary}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+              />
             </View>
           ) : (
             <TouchableOpacity
@@ -564,6 +643,8 @@ const InfoList = ({ value, onPress }) => {
 const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
   const [loading, setLoading] = useState(false);
   const [assetData, setAssetData] = useState(asset?.data ?? []);
+  const [showInfo, setShowInfo] = useState(false);
+
   const theme = useContext(ThemeContext);
   const { fetchInfoProperties } = useContext(CharContext);
   const topper = useSafeAreaInsets().top;
@@ -615,23 +696,43 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
       )}
       {asset && asset.type === "info" && (
         <>
-          <AppText style={{ ...styles.title, marginTop: 15 }} size="large" bold>
-            Select Invalid Info
-          </AppText>
-          <Separator h={2} />
-          <AppText style={styles.title}>
-            Choose and select info properties that you're sure are wrong or
-            incomplete information
-          </AppText>
-          <View style={[styles.row, styles.instance]}>
-            <AppText style={{ textTransform: "capitalize" }} size="large" bold>
-              {data?.name} -{" "}
+          <View style={styles.rowWide}>
+            <AppText style={{ ...styles.title }} size="large" bold>
+              Select Invalid Info
             </AppText>
-            <AppText size="large" style={{ color: colors.primary }} bold>
-              {" "}
-              {data.instance}{" "}
-            </AppText>
+            <TouchableOpacity
+              style={{ padding: 14 }}
+              onPress={() => setShowInfo(!showInfo)}
+            >
+              <MaterialCommunityIcons
+                name="information-outline"
+                size={26}
+                color={colors.medium}
+              />
+            </TouchableOpacity>
           </View>
+          <Separator h={2} m={5} />
+          {showInfo && (
+            <>
+              <AppText style={styles.title}>
+                Choose and select info properties that you're sure are wrong or
+                incomplete information
+              </AppText>
+              <View style={[styles.row, styles.instance]}>
+                <AppText
+                  style={{ textTransform: "capitalize" }}
+                  size="large"
+                  bold
+                >
+                  {data?.name} -{" "}
+                </AppText>
+                <AppText size="large" style={{ color: colors.primary }} bold>
+                  {" "}
+                  {data.instance}{" "}
+                </AppText>
+              </View>
+            </>
+          )}
           <View style={{ flex: 1 }}>
             <FlatList
               data={assetData}
@@ -841,13 +942,26 @@ const styles = StyleSheet.create({
   modalContainer: {
     height: height * 0.75,
   },
+  pickerText: {
+    textAlign: "center",
+    width: "85%",
+    alignSelf: "center",
+  },
   row: {
     flexDirection: "row",
     alignSelf: "center",
+    alignItems: "center",
+  },
+  rowWide: {
+    width: "100%",
+    flexDirection: "row",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingLeft: 14,
   },
   title: {
     textAlign: "center",
-    marginBottom: 8,
   },
   video: {
     position: "absolute",
