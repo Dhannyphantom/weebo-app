@@ -99,7 +99,6 @@ const Shows = ({ data, searchResult, title, series, show }) => {
                   id={item._id}
                   isVerified={item.verified}
                   bScale={3}
-                  subTitleStyle={{ marginTop: 2.5 }}
                   manager={item.manager}
                   show={item.show.name_j ?? item.show.name_e}
                   followers={item.followers}

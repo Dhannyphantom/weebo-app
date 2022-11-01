@@ -34,7 +34,7 @@ const InfoChallenge = ({ data, size = "small", flatKey, color }) => {
     return (
       <View style={styles.textCont}>
         <AppText bold style={styles.title}>
-          {item.prop}
+          {item.title}
         </AppText>
         {item.value && item.value != "null" && (
           <AppText
@@ -102,7 +102,9 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     textAlign: "center",
     color: colors.white,
-    fontSize: 10,
+    // backgroundColor: "red",
+    width: "90%",
+    alignSelf: "center",
   },
 });
 export default InfoChallenge;

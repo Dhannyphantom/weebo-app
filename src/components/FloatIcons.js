@@ -96,7 +96,9 @@ const FloatIcons = ({ data }) => {
                       onPress={obj.onPress}
                       activeOpacity={0.85}
                     />
-                    <AppText style={styles.text}>{obj.text}</AppText>
+                    <AppText bold style={styles.text}>
+                      {obj.text}
+                    </AppText>
                   </>
                 ) : (
                   <View style={styles.picContainer}>
@@ -112,6 +114,7 @@ const FloatIcons = ({ data }) => {
                         marginLeft: 2,
                         backgroundColor: theme.background,
                         ...styles.text,
+                        color: colors.black,
                       }}
                       bold
                     >
@@ -154,6 +157,7 @@ const styles = StyleSheet.create({
   text: {
     padding: 6,
     borderRadius: width * 0.018,
+    color: colors.white,
   },
   modal: {
     position: "absolute",

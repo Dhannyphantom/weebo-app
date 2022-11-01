@@ -97,11 +97,6 @@ const Challenge = ({
     posts: [image1, image2],
   };
 
-  const vidFeed = {
-    type: "video",
-    posts: [image1, image2],
-  };
-
   const handleVote = (type) => {
     if (type === "challenger") {
       if (finderC == undefined && finderO == undefined) {
