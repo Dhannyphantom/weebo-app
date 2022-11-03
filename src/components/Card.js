@@ -22,8 +22,6 @@ import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
 const { width } = Dimensions.get("window");
 
-const RADIUS = width * 0.025;
-
 const Card = ({
   image,
   avatar,
@@ -34,6 +32,7 @@ const Card = ({
   series,
   manager,
   onPress,
+  btmPadding = 16,
   id,
   mSize,
   style,
@@ -176,7 +175,7 @@ const Card = ({
             disablePress
           />
         </View>
-        <View style={[styles.info]}>
+        <View style={[styles.info, { paddingTop: btmPadding }]}>
           <AppText
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -217,15 +216,15 @@ const styles = StyleSheet.create({
       height: 1.8,
     },
     marginTop: 3,
-    borderRadius: RADIUS,
+    borderRadius: 8,
   },
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: RADIUS,
+    borderRadius: 8,
   },
   imageContainer: {
-    borderRadius: RADIUS,
+    borderRadius: 8,
   },
   info: {
     width: "100%",

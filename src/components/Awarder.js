@@ -14,7 +14,8 @@ const c_types = ["c_single_character", "c_many_characters"];
 const Awarder = ({ item }) => {
   const isShow = item.tag === "show";
   const isCharacter = item.tag === "character";
-  const [showStat, setShowStat] = useState(false);
+  const isGroup = item.tag === "group";
+  // const [showStat, setShowStat] = useState(false);
   let winner, winnerScore, loserScore, winnerCharacter, awardTitle, imageObj;
 
   if (isCharacter) {
@@ -22,10 +23,10 @@ const Awarder = ({ item }) => {
       width: width * 0.4,
       height: width * 0.7,
     };
-  } else if (isShow) {
+  } else if (isShow || isGroup) {
     imageObj = {
-      width: width * 0.55,
-      height: width * 0.49,
+      width: width * 0.68,
+      height: width * 0.45,
     };
   } else if (item.tag === "channel") {
     imageObj = {
@@ -38,7 +39,7 @@ const Awarder = ({ item }) => {
     winner = item?.winUsers[0]?.user;
     winnerScore = item?.winUsers[0]?.score;
     loserScore = item?.loseUsers[0]?.score;
-    winnerCharacter = item?.winCharacters[0]?.character;
+    winnerCharacter = item?.winCharacters[0]?.character ?? item?.tagGroup;
     if (isShow) {
       winnerCharacter = item?.winShows[0]?.show;
     }
@@ -52,11 +53,6 @@ const Awarder = ({ item }) => {
   }
 
   awardTitle = item.title;
-
-  // const loser = item?.loseUsers[0]?.user;
-  // const loserCharacter = item?.loseCharacters[0]?.character;
-  // const loserCharacterScore = item?.loseCharacters[0]?.score;
-  // const winnerCharacterScore = item?.winCharacters[0]?.score;
 
   return (
     <View style={styles.container}>
@@ -81,8 +77,7 @@ const Awarder = ({ item }) => {
                 @{winner.username}
               </AppText>
               <AppText size="large" style={{ color: colors.heart }} bold>
-                {" "}
-                WINS{" "}
+                WINS
               </AppText>
             </View>
           </View>
@@ -127,8 +122,7 @@ const Awarder = ({ item }) => {
           )}
 
           <AppText style={{ color: colors.white, textTransform: "capitalize" }}>
-            {" "}
-            {item.tag}{" "}
+            {item.tag}
           </AppText>
         </View>
       </View>
@@ -168,3 +162,11 @@ const styles = StyleSheet.create({
   winText: { color: colors.heart, textAlign: "center", marginTop: 3 },
 });
 export default Awarder;
+
+/*
+  // const loser = item?.loseUsers[0]?.user;
+  // const loserCharacter = item?.loseCharacters[0]?.character;
+  // const loserCharacterScore = item?.loseCharacters[0]?.score;
+  // const winnerCharacterScore = item?.winCharacters[0]?.score;
+
+*/

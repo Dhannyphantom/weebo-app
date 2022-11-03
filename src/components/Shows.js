@@ -82,12 +82,10 @@ const Shows = ({ data, searchResult, title, series, show }) => {
             followers={data.followers.length}
           />
           <FlatList
-            // data={data?.characters}
             data={verifiedCharacters}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item._id}
-            // overScrollMode="never"
             ListFooterComponent={RenderFooter}
             contentContainerStyle={{ alignItems: "center" }}
             renderItem={({ item }) => (

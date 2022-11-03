@@ -6,10 +6,12 @@ import Card from "./Card";
 import FeedHeader from "./FeedHeader";
 import Separator from "./Separator";
 
-const screen = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const Awards = ({ data }) => {
   const navigation = useNavigation();
+
+  console.log(data);
 
   return (
     <View style={styles.container}>

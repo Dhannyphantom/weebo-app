@@ -1,12 +1,14 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import Spacer from "./Spacer";
 import Avatar from "./Avatar";
+
+const { width } = Dimensions.get("screen");
 
 const FeedHeader = ({
   avatar,
@@ -55,7 +57,7 @@ const FeedHeader = ({
             style={styles.left}
           >
             <Feather name="tv" size={20} color={colors.primary} />
-            <AppText style={styles.headText} bold>
+            <AppText size="xlarge" style={styles.headText} bold>
               {channelName}
             </AppText>
           </TouchableOpacity>
@@ -67,14 +69,11 @@ const FeedHeader = ({
               onPress={() => navigation.navigate("Show", { show })}
               style={[styles.left, styles.showHeader]}
             >
-              <MaterialCommunityIcons
-                name="television-play"
-                size={18}
-                color={colors.primary}
-              />
+              <Ionicons name="ios-tv" size={25} color={colors.primary} />
               <AppText
                 style={{ ...styles.headText, textTransform: "capitalize" }}
                 bold
+                size="xlarge"
               >
                 {show.name_j || show.name_e}
               </AppText>
@@ -122,9 +121,8 @@ const styles = StyleSheet.create({
   },
   headText: {
     marginLeft: 7,
-    fontSize: 15,
     color: colors.primary,
-    maxWidth: "80%",
+    maxWidth: width * 0.6,
   },
   left: {
     flexDirection: "row",

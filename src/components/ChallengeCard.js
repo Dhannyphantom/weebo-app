@@ -17,6 +17,7 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
         cardWidth={CARD_WIDTH}
         infoStyle={styles.info}
         avaterSize={CARD_WIDTH / 5}
+        btmPadding={40}
         bIcon={CARD_WIDTH / 6.5}
         {...otherProps}
       />
@@ -28,9 +29,10 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
           style={{ ...styles.card, width: series ? 220 : 140 }}
           btmStyle={{ ...styles.btmContainer, width: series ? 220 : 140 }}
           iconContainerStyle={styles.iconContainer}
-          mIcon={series ? 150 / 2.8 : 140 / 2.8}
+          mIcon={series ? CARD_WIDTH / 5 : CARD_WIDTH / 5.5}
           subTitleStyle={styles.subTitle}
-          bIcon={25}
+          bIcon={series ? CARD_WIDTH / 8 : CARD_WIDTH / 10}
+          btmPadding={20}
           series={seriesChar}
           avaterSize={30}
           infoStyle={styles.infoContainer}
@@ -46,12 +48,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   card: {
-    //135
-    //163
     marginTop: 10,
     height: 163,
-    // borderTopEndRadius: 2,
-    // borderTopStartRadius: 2,
   },
   btmContainer: {
     height: 60,
@@ -74,8 +72,7 @@ const styles = StyleSheet.create({
     height: screen.height * 0.28,
   },
   btmStyle: {
-    width: CARD_WIDTH,
-    height: CARD_WIDTH / 2.9,
+    paddingTop: 30,
   },
 });
 export default ChallengeCard;
