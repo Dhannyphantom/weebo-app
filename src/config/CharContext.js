@@ -323,7 +323,7 @@ const createChannel = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error creating channel" });
+    cb && cb({ err, msg: "Error creating channel", data: err?.response?.data });
   }
   // ==========================================
 };

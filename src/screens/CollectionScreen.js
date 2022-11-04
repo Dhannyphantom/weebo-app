@@ -168,8 +168,6 @@ const ShareCollection = ({ setter, id }) => {
 };
 
 const CollectionScreen = ({ route, navigation }) => {
-  const [postsArr, setPostArr] = useState([]);
-  const [media, setMedia] = useState([]);
   const [dropMenu, setDropMenu] = useState(false);
   const [prompt, setPrompt] = useState({ visible: false });
   const [renameModal, setRenameModal] = useState(false);
@@ -183,8 +181,6 @@ const CollectionScreen = ({ route, navigation }) => {
 
   const pageData = route?.params?.item;
 
-  let counter = 0;
-  let allUris = [];
   const dropLists = [
     {
       id: uuid.v4(),
@@ -241,25 +237,13 @@ const CollectionScreen = ({ route, navigation }) => {
         break;
     }
   };
+  const media = [];
 
   useEffect(() => {
-    for (let i = 0; i < postsArr.length; i++) {
-      const e = postsArr[i];
-      allUris = allUris.concat(e.uris);
-      for (let j = 0; j < e?.uris.length; j++) {
-        counter++;
-      }
-    }
-    setMedia(allUris);
-    counter > 0 && setIsPostEmpty(false);
-  }, [postsArr]);
-
-  useEffect(() => {
-    setPostArr(pageData.posts);
-  }, [route]);
-
-  useEffect(() => {
-    setCollection(pageData);
+    collection?.posts?.forEach((obj) => {
+      media.push(...obj.uris);
+    });
+    setCollection({ ...pageData, media });
   }, []);
 
   return (
@@ -276,7 +260,7 @@ const CollectionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-      {!isPostEmpty && <MansonryList data={postsArr} media={media.reverse()} />}
+      {!isPostEmpty && <MansonryList media={[]} />}
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
       <AppFadeIn

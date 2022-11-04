@@ -56,7 +56,7 @@ const FeedHeader = ({
             onPress={() => handleNav("channel")}
             style={styles.left}
           >
-            <Feather name="tv" size={20} color={colors.primary} />
+            <Feather name="tv" size={22} color={colors.primary} />
             <AppText size="xlarge" style={styles.headText} bold>
               {channelName}
             </AppText>
@@ -69,7 +69,7 @@ const FeedHeader = ({
               onPress={() => navigation.navigate("Show", { show })}
               style={[styles.left, styles.showHeader]}
             >
-              <Ionicons name="ios-tv" size={25} color={colors.primary} />
+              <Ionicons name="ios-tv" size={22} color={colors.primary} />
               <AppText
                 style={{ ...styles.headText, textTransform: "capitalize" }}
                 bold

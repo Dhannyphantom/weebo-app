@@ -26,7 +26,7 @@ const Awarder = ({ item }) => {
   } else if (isShow || isGroup) {
     imageObj = {
       width: width * 0.68,
-      height: width * 0.45,
+      minHeight: width * 0.45,
     };
   } else if (item.tag === "channel") {
     imageObj = {
@@ -100,12 +100,12 @@ const Awarder = ({ item }) => {
           </View>
         )}
         <View style={styles.body}>
-          <View style={styles.headerA}>
+          {/* <View style={styles.headerA}>
             <AntDesign name="Trophy" color={colors.white} size={width * 0.03} />
             <AppText numberOfLines={3} style={styles.title} bold>
               {awardTitle}
             </AppText>
-          </View>
+          </View> */}
           <AppText style={{ color: colors.light, marginTop: 8 }} bold>
             {winnerScore} {loserScore ? `- ${loserScore}` : "votes"}
           </AppText>

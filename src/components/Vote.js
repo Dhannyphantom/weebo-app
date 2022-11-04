@@ -135,14 +135,17 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
             )}
             {cardInfo.type === "video" && (
               <View style={styles.videoContainer}>
-                <PostVideo
-                  vidUri={cardInfo?.media?.uri}
+                {/* <PostVideo
+                  source={cardInfo?.media}
                   small
                   feed={vidFeed}
                   showMediaFunc={handleShowMedia}
                   disableDoublePress
                   viewable={false}
-                />
+                /> */}
+                <AppText>
+                  Display a video thumb and use MediaModal to play video{" "}
+                </AppText>
               </View>
             )}
           </View>
@@ -159,25 +162,27 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 9,
+    justifyContent: "center",
   },
   infoContainer: {
     width: width * 0.4,
     height: width * 0.4,
     backgroundColor: colors.extraLight,
     borderRadius: width * 0.022,
-    marginLeft: width * 0.01,
+    marginLeft: 10,
     marginVertical: width * 0.022,
     justifyContent: "center",
     alignItems: "center",
   },
   imageContainer: {
-    width: width * 0.4,
-    maxHeight: height * 0.4,
-    marginLeft: width * 0.01,
-    marginVertical: width * 0.022,
+    width: "100%",
   },
   imageContainerCont: {
-    height: height * 0.4,
+    width: width * 0.6,
+    maxHeight: height * 0.7,
+    marginLeft: 10,
+    marginVertical: width * 0.022,
+    // height: height * 0.4,
   },
   image: {
     width: "100%",
@@ -204,14 +209,13 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     height: height * 0.46,
-    marginLeft: width * 0.01,
+    marginLeft: 10,
   },
   voter: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
     paddingHorizontal: 15,
-    bottom: 5,
   },
 });
 export default Vote;

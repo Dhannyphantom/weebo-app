@@ -88,7 +88,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   if (page._id) {
     isSubscribed = page.subscribers.includes(userInfo._id);
-    isMine = page.owner._id === userInfo._id;
+    isMine = page.manager._id === userInfo._id;
     sColor = isSubscribed ? colors.heart : colors.medium;
   }
 
@@ -159,7 +159,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     name: page.name,
     description: page.description,
     cover_photo: page.cover_photo,
-    owner: page.owner,
+    owner: page.manager,
     listItems,
     feedback: {
       instanceID: "1",

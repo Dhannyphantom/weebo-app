@@ -207,8 +207,8 @@ const ChannelScreen = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.profilePic}>
             <ProfilePic
-              source={item.owner.avatar}
-              userID={item.owner._id}
+              source={item.manager.avatar}
+              userID={item.manager._id}
               size={50}
             />
             <AppText bold style={styles.descText}>
@@ -275,8 +275,9 @@ const ChannelScreen = ({ navigation }) => {
         setIsLoading(false);
         setModal(false);
       },
-      (err1, err2) => {
-        setErrMsg(err2 ?? err1);
+      (errData) => {
+        console.log(errData);
+        setErrMsg(errData.data ?? errData.msg);
         setIsLoading(false);
       }
     );
@@ -287,12 +288,12 @@ const ChannelScreen = ({ navigation }) => {
   };
 
   const renderChannels = ({ item }) => {
-    if (boxState.m && item.owner._id == userInfo._id) {
+    if (boxState.m && item.manager._id == userInfo._id) {
       return <ChannelListComp item={item} />;
     } else if (
       boxState.s &&
       !item.subscribers.includes(userInfo._id) &&
-      item.owner._id != userInfo._id
+      item.manager._id != userInfo._id
     ) {
       return <ChannelListComp item={item} subscribe />;
     }
@@ -301,7 +302,7 @@ const ChannelScreen = ({ navigation }) => {
   const renderChannelsTwo = ({ item }) => {
     if (
       boxState.s &&
-      item.owner._id !== userInfo._id &&
+      item.manager._id !== userInfo._id &&
       item.subscribers.includes(userInfo._id)
     ) {
       return <ChannelListComp item={item} unsubscribe small />;
@@ -338,8 +339,10 @@ const ChannelScreen = ({ navigation }) => {
   };
 
   const renderSeachResults = ({ item }) => {
+    console.log(item);
+    return null;
     let unsubscribe, isMine, subscribe;
-    if (item.owner._id == userInfo._id) {
+    if (item.manager._id == userInfo._id) {
       isMine = true;
       unsubscribe = false;
       subscribe = false;
