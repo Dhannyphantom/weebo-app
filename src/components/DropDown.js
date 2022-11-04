@@ -25,7 +25,14 @@ const { width, height } = Dimensions.get("window");
 const BOX_SIZE = width * 0.5;
 const BOX_OFFSET = BOX_SIZE + 40;
 
-const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
+const DropDown = ({
+  visible,
+  listKey,
+  closeFunc,
+  setVisible,
+  setter,
+  lists,
+}) => {
   // list = [{id, name, show, onPress, icon, iconPack}]
   if (!visible) return null;
 
@@ -84,7 +91,6 @@ const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
 
   const handleCloseModal = () => {
     closeFunc && closeFunc();
-    // setVisible(false);
     handleBoxAction(false);
   };
 
@@ -94,12 +100,18 @@ const DropDown = ({ visible, listKey, closeFunc, setVisible, lists }) => {
         toValue: 0,
         useNativeDriver: true,
         easing: Easing.elastic(0.8),
-      }).start(() => setVisible(vis));
+      }).start(() => {
+        setVisible && setVisible(vis);
+        setter && setter(vis);
+      });
     } else {
       Animated.timing(translator, {
         toValue: BOX_OFFSET,
         useNativeDriver: true,
-      }).start(() => setVisible(vis));
+      }).start(() => {
+        setVisible && setVisible(vis);
+        setter && setter(vis);
+      });
     }
   };
 

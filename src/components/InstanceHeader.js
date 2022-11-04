@@ -417,7 +417,7 @@ const InstanceHeader = ({ instanceData }) => {
               <RenderUnverifiedTag />
             </View>
           )}
-          <Separator h={1} />
+          <Separator h={2} />
           <AppText
             style={{
               textAlign: "center",
@@ -427,7 +427,7 @@ const InstanceHeader = ({ instanceData }) => {
           >
             {description}
           </AppText>
-          <Separator h={1} />
+          <Separator h={2} />
           {name && instance === "character" && (
             <View style={styles.nameContainer}>
               <Fontisto

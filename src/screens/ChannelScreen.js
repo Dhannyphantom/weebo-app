@@ -227,6 +227,7 @@ const ChannelScreen = ({ navigation }) => {
                 <AppButton
                   title="SUBSCRIBE"
                   bare
+                  style={{ alignSelf: "center" }}
                   onPress={() => handleSubscribe("sub", item._id)}
                 />
               </View>

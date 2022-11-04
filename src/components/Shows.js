@@ -10,7 +10,14 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 
 const { width } = Dimensions.get("window");
-const Shows = ({ data, searchResult, title, series, show }) => {
+const Shows = ({
+  data,
+  searchResult,
+  noHeader = false,
+  title,
+  series,
+  show,
+}) => {
   const navigation = useNavigation();
 
   const header = series ? "Show" : "Character";
@@ -75,12 +82,14 @@ const Shows = ({ data, searchResult, title, series, show }) => {
     <>
       {show && (
         <View>
-          <FeedHeader
-            show={data}
-            feederID={data._id}
-            follow="following"
-            followers={data.followers.length}
-          />
+          {!noHeader && (
+            <FeedHeader
+              show={data}
+              feederID={data._id}
+              follow="following"
+              followers={data.followers.length}
+            />
+          )}
           <FlatList
             data={verifiedCharacters}
             horizontal
@@ -113,7 +122,11 @@ const Shows = ({ data, searchResult, title, series, show }) => {
 
       {searchResult && (
         <View>
-          <FeedHeader challenge={title ? title : `${header} Search Results`} />
+          {!noHeader && (
+            <FeedHeader
+              challenge={title ? title : `${header} Search Results`}
+            />
+          )}
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}

@@ -175,7 +175,11 @@ const ShowScreen = ({ route, navigation }) => {
 
   const headerObj = {
     _id: dataState?._id,
-    name: dataState?.name_j || dataState?.name_e,
+    name: `${
+      dataState?.name_j && dataState?.name_e
+        ? dataState.name_j + "\n" + "(" + dataState.name_e + ")"
+        : dataState?.name_j ?? dataState?.name_e
+    }`,
     description: `By ${dataState.creator}`,
     cover_photo: dataState?.cover_photo,
     owner: dataState?.manager,

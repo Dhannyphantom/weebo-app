@@ -111,6 +111,7 @@ const CharactersList = ({ route, navigation }) => {
       <AppHeader title={HEADER_TITLE} RightComponent={RightComp} />
       <FlatList
         data={["OTAKU"]}
+        contentContainerStyle={{ paddingBottom: height * 0.12 }}
         keyExtractor={(item) => item}
         renderItem={() => {
           return (
@@ -128,17 +129,17 @@ const CharactersList = ({ route, navigation }) => {
               )}
               <View style={styles.charList}>
                 {favorites[0] && (
-                  <Show data={favorites} searchResult title="My Favorites" />
+                  <>
+                    <AppText size="xlarge" style={styles.charHeaderTitle} bold>
+                      Favorites
+                    </AppText>
+                    <Show noHeader data={favorites} searchResult />
+                  </>
                 )}
                 {myCharacters[0] && (
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <MaterialCommunityIcons
-                      name="ninja"
-                      size={width * 0.03}
-                      color={colors.primary}
-                    />
-                    <AppText style={styles.charHeaderTitle} bold>
-                      Regulars
+                  <View style={{ width }}>
+                    <AppText size="xlarge" style={styles.charHeaderTitle} bold>
+                      Characters
                     </AppText>
                   </View>
                 )}
@@ -158,8 +159,8 @@ const CharactersList = ({ route, navigation }) => {
                           id={item._id}
                           show={item?.show?.name_j ?? item?.show?.name_e}
                           followers={item.followers}
-                          avatar={item.owner && item.owner.avatar}
-                          owner={item.owner}
+                          avatar={item.manager && item.manager.avatar}
+                          owner={item.manager}
                           image={item.cover_photo}
                           onPress={() =>
                             navigation.navigate("Character", { item: item._id })
@@ -191,7 +192,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   charHeaderTitle: {
-    color: colors.primary,
+    color: colors.medium,
+    textAlign: "center",
+    marginTop: 10,
   },
   cardCont: {
     width: CARD_WIDTH,

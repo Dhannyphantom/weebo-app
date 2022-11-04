@@ -111,7 +111,7 @@ const CharInfoScreen = ({
       <CharFlat name="groups" icon="account-multiple" id="c" />
 
       <View style={styles.btnCont}>
-        {isMine && !challenged ? (
+        {isMine && !challenged && character?.verified ? (
           <AppButton
             style={styles.btnAction}
             title="Transfer"

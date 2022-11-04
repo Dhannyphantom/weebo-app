@@ -9,10 +9,11 @@ import MediaModal from "./MediaModal";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import getVideoTime from "../constants/getVideoTime";
+import DropDown from "./DropDown";
 
 const { width, height } = Dimensions.get("window");
 
-const MansonryItem = ({ item, setDisplayMedia }) => {
+const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   const isVideoImage = item.type != "image";
   const theme = useContext(ThemeContext);
   const handlePress = () => {
@@ -32,6 +33,7 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
       <TouchableOpacity
         style={[styles.itemContainer, { backgroundColor: theme.white }]}
         activeOpacity={1}
+        onLongPress={() => openMenu(item)}
         onPress={handlePress}
       >
         <LoaderImage image={item} isVideoImage={isVideoImage} />
@@ -55,6 +57,7 @@ const MansonryItem = ({ item, setDisplayMedia }) => {
 export default function MansonryList({ media }) {
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
+  const [menu, setMenu] = useState({ vis: false, item: null });
 
   const theme = useContext(ThemeContext);
 
@@ -68,6 +71,29 @@ export default function MansonryList({ media }) {
   const onEndReached = () => {
     // console.log("End Reached");
   };
+
+  const openMenu = (item) => {
+    setMenu({ vis: true, item });
+  };
+
+  const menuList = [
+    {
+      id: "1",
+      name: "Add to Collection",
+      show: true,
+      onPress: () => console.log(menu.item),
+      icon: "plus",
+      iconPack: "F",
+    },
+    {
+      id: "2",
+      name: "Delete Post",
+      show: true,
+      onPress: () => console.log("Delete"),
+      icon: "trash",
+      iconPack: "F",
+    },
+  ];
 
   return (
     <View
@@ -89,6 +115,7 @@ export default function MansonryList({ media }) {
           <MansonryItem
             item={item}
             setDisplayMedia={setDisplayMedia}
+            openMenu={openMenu}
             mediaType={media[0].type}
           />
         )}
@@ -98,6 +125,13 @@ export default function MansonryList({ media }) {
         onEndReached={onEndReached}
       />
       <MediaModal modalObject={displayMedia} setVisible={setDisplayMedia} />
+      <DropDown
+        visible={menu.vis}
+        set={setMenu}
+        setter={(vis) => setMenu({ ...menu, vis })}
+        listKey="@menu"
+        lists={menuList}
+      />
     </View>
   );
 }
