@@ -10,13 +10,11 @@ import {
   Easing,
   Keyboard,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
 import colors from "../constants/colors";
-import { gradients } from "../constants/colors";
 import AppText from "./AppText";
 import Link from "./Link";
 import Separator from "./Separator";
@@ -25,6 +23,7 @@ import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
+import { CollectionCard } from "../screens/SavedCollectionScreen";
 
 const { height, width } = Dimensions.get("window");
 
@@ -125,28 +124,9 @@ const AppModal = ({
       );
     };
 
-    const renderCollection = ({ item, index }) => {
-      let colNum;
-      index % 2 == 0 ? (colNum = 1) : (colNum = 2);
-      return (
-        <TouchableOpacity
-          onPress={() => handleAddToCollection(item)}
-          activeOpacity={0.85}
-        >
-          <LinearGradient
-            colors={[gradients[colNum].bg, gradients[colNum].bg1]}
-            style={styles.collBox}
-          >
-            <AppText style={styles.collText} bold>
-              {item.name}
-            </AppText>
-          </LinearGradient>
-        </TouchableOpacity>
-      );
-    };
-
     return (
       <>
+        {/* use RenderCollections component from SavedCollectioScreen */}
         <FlatList
           data={collectionData}
           style={{ flex: 1, height: height * 0.54 }}
@@ -174,7 +154,13 @@ const AppModal = ({
           }
           numColumns={3}
           keyExtractor={(item, index) => item + index}
-          renderItem={renderCollection}
+          renderItem={({ item, index }) => (
+            <CollectionCard
+              onPress={handleAddToCollection}
+              item={item}
+              index={index}
+            />
+          )}
         />
         <ActivityIndicator
           style={{ position: "absolute", width: "100%", height: height * 0.5 }}

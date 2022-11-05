@@ -34,6 +34,7 @@ const MyPostScreen = ({ navigation, route }) => {
   const params = route.params;
   const fromScreen = params?.screen;
   const isInstance = ["character", "group", "show"].includes(fromScreen);
+  const isMine = params?.info?.isMine;
 
   const addNewPost = async () => {
     // LIMIT INSTANCE POSTS
@@ -55,8 +56,8 @@ const MyPostScreen = ({ navigation, route }) => {
     if (!isInstance) return null;
     return (
       <View style={styles.ballHead}>
-        {params?.info?.isMine && params?.info?.verified && (
-          <AppButton naked title="Add New Post" onPress={addNewPost} />
+        {isMine && params?.info?.verified && (
+          <AppButton naked title="New Post" onPress={addNewPost} />
         )}
       </View>
     );
@@ -166,8 +167,12 @@ const MyPostScreen = ({ navigation, route }) => {
           />
         </View>
       )}
-      {!isPostEmpty && tab.posts && <MansonryList media={media} />}
-      {!isPostEmpty && tab.tagged && <MansonryList media={taggedMedia} />}
+      {!isPostEmpty && tab.posts && (
+        <MansonryList media={media} data={{ isMine }} />
+      )}
+      {!isPostEmpty && tab.tagged && (
+        <MansonryList media={taggedMedia} data={{ isMine }} />
+      )}
       <ActivityIndicator
         visible={isPostEmpty && !isLoading}
         type="isEmpty"
@@ -194,21 +199,7 @@ const styles = StyleSheet.create({
   ballHead: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
-    marginHorizontal: 12,
-    marginBottom: 5,
     alignItems: "center",
-  },
-
-  postCollection: {
-    marginTop: 15,
-    flex: 1,
-  },
-  postStat: {
-    textTransform: "capitalize",
-    textAlign: "center",
-    marginBottom: 9,
-    marginTop: 5,
   },
 });
 export default MyPostScreen;

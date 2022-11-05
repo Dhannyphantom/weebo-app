@@ -328,7 +328,11 @@ const AccountScreen = ({ navigation, route }) => {
               name="My Post Collection"
               iconName="image-multiple"
               onPress={() =>
-                navigation.navigate("MyPost", { screen: "account" })
+                navigation.navigate("MyPost", {
+                  // COMPLICATING THINGS. USE THE PARENT OBJECT ONLY
+                  screen: "account",
+                  info: { isMine: true },
+                })
               }
             />
             <Link

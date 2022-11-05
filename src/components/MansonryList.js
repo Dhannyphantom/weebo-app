@@ -4,12 +4,16 @@ import MasonryList from "@react-native-seoul/masonry-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ThemeContext from "../config/ThemeContext";
 
+import { Context as AuthContext } from "../config/AuthContext";
+
 import LoaderImage from "./LoaderImage";
 import MediaModal from "./MediaModal";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import getVideoTime from "../constants/getVideoTime";
 import DropDown from "./DropDown";
+import AppFadeIn from "./AppFadeIn";
+import { RenderCollections } from "../screens/SavedCollectionScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,12 +58,69 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   );
 };
 
-export default function MansonryList({ media }) {
+const RenderUserCollections = ({ isMine, item }) => {
+  const {
+    state: { userInfo },
+    addToCollection,
+  } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
+
+  const [loading, setLoading] = useState(true);
+  const [collections, setCollections] = useState(
+    isMine ? userInfo.my_collections : []
+  );
+
+  // fetch collections by userIds
+  const fetchCollections = () => {};
+
+  const onAddToCollection = (item) => {
+    const data = {
+      name: item.name,
+      isSingle: true,
+      postData: {
+        postId: "pId",
+        type: "save", // was post b4
+        uris: [item],
+      },
+    };
+    addToCollection(
+      data,
+      () => {
+        setPopData({
+          vis: true,
+          type: "success",
+          msg: "Added to collection!",
+        });
+        setIsNewCollLoading(false);
+      },
+      (err) => {
+        setErrMsg(err);
+        setIsNewCollLoading(false);
+      }
+    );
+  };
+
+  return (
+    <View style={[styles.collections, { backgroundColor: theme.background }]}>
+      <RenderCollections
+        onPress={onAddToCollection}
+        collections={collections}
+        noPadding
+      />
+    </View>
+  );
+};
+
+export default function MansonryList({ media, data }) {
+  // data = {isMine}
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const [menu, setMenu] = useState({ vis: false, item: null });
+  const [actions, setActions] = useState({ collection: false });
 
   const theme = useContext(ThemeContext);
+
+  // console.log("MANSONRY DATA: ", data);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -81,7 +142,7 @@ export default function MansonryList({ media }) {
       id: "1",
       name: "Add to Collection",
       show: true,
-      onPress: () => console.log(menu.item),
+      onPress: () => setActions({ ...actions, collection: true }),
       icon: "plus",
       iconPack: "F",
     },
@@ -132,6 +193,13 @@ export default function MansonryList({ media }) {
         listKey="@menu"
         lists={menuList}
       />
+      <AppFadeIn
+        visible={actions.collection}
+        setter={() => setActions({ ...actions, collection: false })}
+        RenderComponent={() => (
+          <RenderUserCollections isMine={data?.isMine} item={menu.item} />
+        )}
+      />
     </View>
   );
 }
@@ -139,6 +207,13 @@ export default function MansonryList({ media }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  collections: {
+    width: width * 0.96,
+    height: height * 0.9,
+    borderRadius: 18,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   itemContainer: {
     marginLeft: width * 0.015,

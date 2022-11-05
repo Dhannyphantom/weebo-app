@@ -24,6 +24,7 @@ import GrowInput from "../components/GrowInput";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppFadeIn from "../components/AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -98,7 +99,58 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   );
 };
 
-const SavedCollectionScreen = ({ navigation }) => {
+export const CollectionCard = ({ index, onPress, item }) => {
+  const navigation = useNavigation();
+  let colNum;
+  index % 2 == 0 ? (colNum = 1) : (colNum = 2);
+
+  const onCardPress = () => {
+    onPress ? onPress(item) : navigation.navigate("Collection", { item });
+  };
+
+  return (
+    <TouchableOpacity activeOpacity={0.85} onPress={onCardPress}>
+      <LinearGradient
+        colors={[gradients[colNum].bg, gradients[colNum].bg1]}
+        style={styles.collBox}
+      >
+        <AppText style={styles.collText} bold>
+          {item.name}
+        </AppText>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
+
+export const RenderCollections = ({
+  collections,
+  onPress,
+  noPadding = false,
+}) => {
+  return (
+    <FlatList
+      data={collections}
+      contentContainerStyle={{
+        paddingBottom: height * (noPadding ? 0 : 0.11),
+      }}
+      ListEmptyComponent={
+        <ActivityIndicator
+          type="isEmpty"
+          style={styles.activityEmpty}
+          text="No collections..."
+          visible={true}
+        />
+      }
+      numColumns={3}
+      keyExtractor={(item) => item._id}
+      renderItem={({ item, index }) => (
+        <CollectionCard onPress={onPress} item={item} index={index} />
+      )}
+    />
+  );
+};
+
+const SavedCollectionScreen = () => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -107,26 +159,6 @@ const SavedCollectionScreen = ({ navigation }) => {
   const [myCollections, setMyCollections] = useState(userInfo.my_collections);
   const [modalVis, setModalVis] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const renderCollections = ({ item, index }) => {
-    let colNum;
-    index % 2 == 0 ? (colNum = 1) : (colNum = 2);
-    return (
-      <TouchableOpacity
-        activeOpacity={0.85}
-        onPress={() => navigation.navigate("Collection", { item })}
-      >
-        <LinearGradient
-          colors={[gradients[colNum].bg, gradients[colNum].bg1]}
-          style={styles.collBox}
-        >
-          <AppText style={styles.collText} bold>
-            {item.name}
-          </AppText>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  };
 
   const createdNewCollection = (collections) => {
     setMyCollections(collections);
@@ -159,23 +191,7 @@ const SavedCollectionScreen = ({ navigation }) => {
         </AppText>
         &nbsp; collections
       </AppText>
-      <FlatList
-        data={myCollections}
-        contentContainerStyle={{
-          paddingBottom: height * 0.11,
-        }}
-        ListEmptyComponent={
-          <ActivityIndicator
-            type="isEmpty"
-            style={styles.activityEmpty}
-            text="No collections..."
-            visible={true}
-          />
-        }
-        numColumns={3}
-        keyExtractor={(item) => item._id}
-        renderItem={renderCollections}
-      />
+      <RenderCollections collections={myCollections} />
       <AppFadeIn
         visible={modalVis}
         setVisible={setModalVis}
@@ -206,8 +222,9 @@ const styles = StyleSheet.create({
     height,
   },
   activityEmpty: {
-    width,
+    width: "100%",
     height: height * 0.8,
+    borderRadius: 20,
   },
   activityNew: {
     position: "absolute",
