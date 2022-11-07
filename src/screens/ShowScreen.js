@@ -176,7 +176,7 @@ const ShowScreen = ({ route, navigation }) => {
   const headerObj = {
     _id: dataState?._id,
     name: `${
-      dataState?.name_j && dataState?.name_e
+      dataState?.name_j && dataState?.name_e && dataState?.name_e != "none"
         ? dataState.name_j + "\n" + "(" + dataState.name_e + ")"
         : dataState?.name_j ?? dataState?.name_e
     }`,

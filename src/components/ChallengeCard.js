@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   card: {
-    marginTop: 10,
     height: 163,
   },
   btmContainer: {

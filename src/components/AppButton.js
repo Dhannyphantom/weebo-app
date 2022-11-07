@@ -16,6 +16,7 @@ const AppButton = ({
   style,
   title,
   bare,
+  disabled,
   bareWhite,
   bareRed,
   naked,
@@ -25,7 +26,11 @@ const AppButton = ({
   return (
     <>
       {noDefault && (
-        <TouchableOpacity activeOpacity={0.85} onPress={onPress}>
+        <TouchableOpacity
+          disabled={disabled}
+          activeOpacity={0.85}
+          onPress={onPress}
+        >
           {loading ? (
             <View style={styles.loader}>
               <ActivityIndicator visible={loading} size={0.2} />
@@ -54,7 +59,11 @@ const AppButton = ({
         </TouchableOpacity>
       )}
       {sec && (
-        <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
+        <TouchableOpacity
+          disabled={disabled}
+          activeOpacity={0.7}
+          onPress={onPress}
+        >
           <View style={[styles.accent, style]}>
             {LIcon && (
               <MaterialCommunityIcons
@@ -81,6 +90,7 @@ const AppButton = ({
         <TouchableOpacity
           activeOpacity={bareWhite ? 0.85 : 0.4}
           onPress={onPress}
+          disabled={disabled}
         >
           <View
             style={[
@@ -121,7 +131,11 @@ const AppButton = ({
         </TouchableOpacity>
       )}
       {naked && (
-        <TouchableOpacity activeOpacity={0.4} onPress={onPress}>
+        <TouchableOpacity
+          disabled={disabled}
+          activeOpacity={0.4}
+          onPress={onPress}
+        >
           <View style={[styles.naked, style]}>
             {LIcon && (
               <MaterialCommunityIcons

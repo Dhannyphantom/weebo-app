@@ -369,6 +369,7 @@ const ChangePassword = ({ closeModal }) => {
       { ...formValues, type: "password" },
       () => closeModal(),
       (err) => {
+        console.log(err);
         setErrMsg(err?.data ?? err?.msg);
         setLoading(false);
       }
@@ -429,7 +430,6 @@ const EditProfileScreen = ({ navigation, route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
   const params = route.params;
-  // SOMETHING WRONG WITH THE ERROR MESSAGE
   const [toggle, setToggle] = useState(false);
   const [pageData, setPageData] = useState(userInfo);
   const [emailPop, setEmailPop] = useState(false);
@@ -491,11 +491,10 @@ const EditProfileScreen = ({ navigation, route }) => {
       formValues,
       () => navigation.pop(),
       (err) => {
-        setErrMsg(err);
+        setErrMsg(err?.data ?? err?.msg);
         setIsLoading(false);
       }
     );
-    setIsLoading(false);
   };
 
   return (
@@ -564,13 +563,12 @@ const EditProfileScreen = ({ navigation, route }) => {
                 }
               />
               {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
-              {!isLoading && (
-                <SubmitButton
-                  bared
-                  title="Update Profile"
-                  style={styles.submitBtn}
-                />
-              )}
+              <SubmitButton
+                bared
+                disabled={isLoading}
+                title="Update Profile"
+                style={styles.submitBtn}
+              />
               <AppText bold size="large" style={styles.action}>
                 Profile Actions
               </AppText>
@@ -598,9 +596,7 @@ const EditProfileScreen = ({ navigation, route }) => {
         </Formik>
       </ScrollView>
       <View style={styles.activity}>
-        {isLoading && (
-          <ActivityIndicator type="spin" visible={isLoading} wTransparent />
-        )}
+        <ActivityIndicator type="spin" visible={isLoading} wTransparent />
       </View>
       <AppFadeIn
         visible={emailPop}
