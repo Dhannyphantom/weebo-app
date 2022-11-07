@@ -40,7 +40,7 @@ const AppModal = ({
   postUris,
   boxState,
   setBoxState,
-  getPosts,
+  updatePosts,
   placeholder,
 }) => {
   const { addNewCollection } = useContext(FeedContext);
@@ -187,7 +187,7 @@ const AppModal = ({
       pId,
       text,
       () => {
-        getPosts();
+        updatePosts();
       },
       (err) => setError(err)
     );

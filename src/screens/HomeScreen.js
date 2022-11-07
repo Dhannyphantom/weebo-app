@@ -56,7 +56,10 @@ Notifications.setNotificationHandler({
 });
 
 const HomeScreen = ({ navigation, route }) => {
-  const { getHomeFeeds } = useContext(FeedContext);
+  const {
+    getHomeFeeds,
+    state: { posts },
+  } = useContext(FeedContext);
 
   const {
     tryLocalSignin,
@@ -99,10 +102,7 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  const readyHomeScreen = async (cb) => {
-    await NavigationBar.setButtonStyleAsync(theme.bar);
-    await NavigationBar.setBackgroundColorAsync(theme.background);
-    tryLocalSignin();
+  const fetchHomeData = (cb) => {
     getHomeFeeds(
       null,
       (resData) => {
@@ -119,6 +119,13 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       }
     );
+  };
+
+  const readyHomeScreen = async (cb) => {
+    await NavigationBar.setButtonStyleAsync(theme.bar);
+    await NavigationBar.setBackgroundColorAsync(theme.background);
+    tryLocalSignin();
+    fetchHomeData(cb);
   };
 
   const renderHome = ({ item }) => {
@@ -261,6 +268,13 @@ const HomeScreen = ({ navigation, route }) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    console.log("FETCH...........")
+    if (lodadedOnce) {
+      fetchHomeData();
+    }
+  }, [posts]);
 
   return (
     <>

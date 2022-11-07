@@ -30,10 +30,10 @@ const FeedFooter = ({
   user,
 }) => {
   const {
-    commentPost,
-    replyComments,
+    // commentPost,
+    // replyComments,
     getComments,
-    getPosts,
+    updatePosts,
     editPostCaption,
     deletePosts,
   } = useContext(FeedContext);
@@ -111,7 +111,8 @@ const FeedFooter = ({
       deletePosts(
         id,
         () => {
-          getPosts();
+          updatePosts();
+          setPost({ ...post, loading: false });
           // setPost(false);
         },
         (err) => {
@@ -217,7 +218,7 @@ const FeedFooter = ({
           postUris={postUris}
           isVideo={isVideo}
           isText={isText}
-          getPosts={getPosts}
+          updatePosts={updatePosts}
           editPostCaption={editPostCaption}
           pId={id}
           boxState={boxState}

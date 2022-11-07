@@ -44,6 +44,7 @@ const ChannelHeaderComp = ({
   channels,
   renderChannelsTwo,
 }) => {
+  // console.log(checkSubChannels);
   return (
     <View>
       <TabList
@@ -56,9 +57,12 @@ const ChannelHeaderComp = ({
       />
 
       <View>
-        {checkSubChannels && boxState.s && !checkOwnerChannels && (
-          <HeaderTitle text="Subscribed Channels" />
-        )}
+        <HeaderTitle
+          text="Subscribed Channels"
+          show={boxState.s && channels[0]}
+        />
+        {/* {checkSubChannels && boxState.s && !checkOwnerChannels && (
+        )} */}
         <FlatList
           data={channels}
           extraData={boxState}
@@ -544,6 +548,7 @@ const styles = StyleSheet.create({
   },
   descText: {
     marginLeft: 8,
+    maxWidth: "88%",
     color: colors.white,
   },
   error: {
@@ -594,12 +599,12 @@ const styles = StyleSheet.create({
   },
   imageCont: {
     width: width * 0.96,
-    height: width * 0.96 - 100,
+    maxHeight: (width * 0.96) / 1.7,
     alignSelf: "center",
   },
   imageContTwo: {
     width: width * 0.56,
-    height: width * 0.48,
+    height: (width * 0.56) / 1.7,
     alignSelf: "center",
     marginHorizontal: 10,
   },
@@ -666,6 +671,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginLeft: 6,
+    maxWidth: "85%",
   },
 });
 export default ChannelScreen;

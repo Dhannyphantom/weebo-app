@@ -4,19 +4,15 @@ import baseURL from "../api/baseURL";
 import fetchApi from "../api/fetchApi";
 import postApi from "../api/postApi";
 import followApi from "../api/followApi";
-import instanceApi from "../api/instanceApi";
 
 const feedReducer = (state, action) => {
   switch (action.type) {
     case "get_statuses":
       return { ...state, statuses: action.payload };
-    case "add_new_post":
-      return { ...state, posts: [action.payload, ...state.posts] };
-    case "get_posts":
+    case "update_posts":
       return {
         ...state,
-        posts: action.payload.posts,
-        challengeFeeds: action.payload.challengeFeeds,
+        posts: state.posts + 1,
       };
     case "get_shows":
       return { ...state, shows: action.payload };
@@ -116,23 +112,8 @@ const getMoreReplies = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const getPosts = (dispatch) => async (sc, cb) => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const response = await fetchApi.get("/posts", {
-      headers: {
-        "x-auth-token": token,
-        "Cache-Control": "no-cache,no-store,must-revalidate",
-        Pragma: "no-cache",
-        Expires: 0,
-      },
-    });
-    sc && sc(response.data);
-    dispatch({ type: "get_posts", payload: response.data });
-    if (cb) cb();
-  } catch (err) {
-    dispatch({ type: "add_error", payload: err.response.data });
-  }
+const updatePosts = (dispatch) => () => {
+  dispatch({ type: "update_posts" });
 };
 
 const getGroups = (dispatch) => async (sc, cb) => {
@@ -420,7 +401,6 @@ const getHomeFeeds = (dispatch) => async (query, sc, cb) => {
       },
       timeout: 15000,
     });
-    // dispatch({ type: "get_statuses", payload: res.data });
     sc && sc(res.data);
   } catch (err) {
     cb && cb(err);
@@ -447,7 +427,7 @@ export const { Provider, Context } = createDataContext(
     getShows,
     getGroups,
     likePost,
-    getPosts,
+    updatePosts,
     getStatuses,
     deletePosts,
     getInstancePosts,
@@ -466,5 +446,5 @@ export const { Provider, Context } = createDataContext(
     postPix,
     userFeedback,
   },
-  { shows: [], posts: [], statuses: [], challengeFeeds: [] }
+  { shows: [], posts: 0, statuses: [], challengeFeeds: [] }
 );
