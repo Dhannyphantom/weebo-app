@@ -40,7 +40,7 @@ const PostVideo = ({
   full,
   posProp,
   handleLike,
-  allowVideoEditing,
+  // allowVideoEditing,
   handleViewPost,
   playFunc,
   post,
@@ -51,7 +51,8 @@ const PostVideo = ({
   autoPlayer = true,
   disableThumb = false,
   onLoadEnd,
-  onLoadStart,
+  onLongPress,
+  // onLoadStart,
   showMediaFunc,
   viewable = true,
   style,
@@ -179,12 +180,12 @@ const PostVideo = ({
   };
 
   const handleContLongPress = () => {
-    if (disableLongPress) return;
+    if (disableLongPress) {
+      onLongPress && onLongPress();
+      return;
+    }
     setPlayAction(false);
-    // navigation.navigate("Display", {
-    //   item: feed.posts[0],
-    //   data: { ...feed, pos: vidObj.positionMillis },
-    // });
+
     const modalData = {
       item: feed?.posts.find((obj) => obj.uri == source.uri),
       feed: { ...feed, pos: vidObj.positionMillis },

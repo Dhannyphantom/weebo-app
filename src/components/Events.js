@@ -28,25 +28,25 @@ import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
+import TabList from "./TabList";
+import { RenderCoverUpload } from "./CoverUpload";
 
 const { width, height } = Dimensions.get("window");
 
-const eventTypeArr = [
-  {
-    id: "1",
-    name: "Image",
-    selected: true,
-  },
-  {
-    id: "2",
-    name: "Video",
-    selected: false,
-  },
-  {
-    id: "3",
-    name: "Text",
-    selected: false,
-  },
+const eventTypes = {
+  image: true,
+  video: false,
+  text: false,
+};
+const typeFalsy = {
+  image: false,
+  video: false,
+  text: false,
+};
+const tabItems = [
+  { tab: "image", name: "Image" },
+  { tab: "video", name: "Video" },
+  { tab: "text", name: "Text" },
 ];
 
 const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
@@ -54,9 +54,8 @@ const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
 const Events = ({ closer, instance, instanceID }) => {
   const { handleNewEvents } = useContext(AcctContext);
   const { updateMe } = useContext(AuthContext);
-  const theme = useContext(ThemeContext);
 
-  const [type, setType] = useState(eventTypeArr);
+  const [type, setType] = useState(eventTypes);
   const [asset, setAsset] = useState(null);
   const [title, setTitle] = useState("");
   const [isInput, setIsInput] = useState(false);
@@ -70,25 +69,10 @@ const Events = ({ closer, instance, instanceID }) => {
   const [mode, setMode] = useState("date");
   const [showDate, setShowDate] = useState(false);
 
-  const finder = type.find((obj) => obj.selected === true);
-  const isVid = finder.name === "Video";
-  const isImage = finder.name === "Image";
-  const isText = finder.name === "Text";
   const cpCalculator = Math.round(number * (number / 6));
-  let mediaBtnTitle;
-  if (!asset && isImage) {
-    mediaBtnTitle = "Add Image";
-  } else if (!asset && isVid) {
-    mediaBtnTitle = "Add Video";
-  } else if (asset && isImage && asset.type === "image") {
-    mediaBtnTitle = "Change Image";
-  } else if (asset && isVid && asset.type === "video") {
-    mediaBtnTitle = "Change Video";
-  } else if (asset && asset.type === "image" && isVid) {
-    mediaBtnTitle = "Add Video";
-  } else if (asset && asset.type === "video" && isImage) {
-    mediaBtnTitle = "Add Image";
-  }
+  const activeTabName = tabItems.find((obj) => type[obj.tab]).name;
+  const showImage = asset && type.image && asset.type === "image";
+  const showVideo = asset && type.video && asset.type == "video";
 
   const handleChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -110,11 +94,11 @@ const Events = ({ closer, instance, instanceID }) => {
   const handleAssetPick = async () => {
     setAsset(null);
     let res;
-    if (isImage) {
+    if (type.image) {
       res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
-    } else if (isVid) {
+    } else if (type.video) {
       res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       });
@@ -139,12 +123,12 @@ const Events = ({ closer, instance, instanceID }) => {
       setIsLoading(false);
       return;
     }
-    if (!asset && !isText) {
+    if (!asset && !type.text) {
       setErrMsg("Please provide event data");
       setIsLoading(false);
       return;
     }
-    if (input.length < 2 && isText) {
+    if (input.length < 2 && type.text) {
       setErrMsg("Please provide event message");
       setIsLoading(false);
       return;
@@ -154,13 +138,13 @@ const Events = ({ closer, instance, instanceID }) => {
     const data = {
       title,
       eventTime: date,
-      c_type: isText ? "text" : asset.type,
+      c_type: type.text ? "text" : asset.type,
       instance,
       points: cpCalculator,
-      isMedia: !isText,
+      isMedia: !type.text,
       instanceID,
       challengersNum: number,
-      challengeInfo: isText ? input : sendAsset,
+      challengeInfo: type.text ? input : sendAsset,
     };
     handleNewEvents(
       data,
@@ -178,7 +162,6 @@ const Events = ({ closer, instance, instanceID }) => {
             msg: err?.err?.response?.data?.err,
             type: "failed",
           });
-          return;
         }
 
         setErrMsg(err.msg);
@@ -186,31 +169,8 @@ const Events = ({ closer, instance, instanceID }) => {
     );
   };
 
-  const renderEventTypes = ({ item }) => {
-    const isSelected = item.selected ? colors.primary : theme.medium;
-    const handleTypePress = () => {
-      const copyArr = [...type];
-      const index = copyArr.findIndex((obj) => obj.id == item.id);
-      const indexSelected = copyArr.findIndex((obj) => obj.selected === true);
-      if (index < 0) return;
-      copyArr[indexSelected].selected = false;
-      copyArr[index].selected = true;
-      setType(copyArr);
-    };
-
-    return (
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={handleTypePress}
-        style={styles.eventType}
-        key={item.id}
-      >
-        <Feather name="check-circle" size={16} color={isSelected} />
-        <AppText style={{ ...styles.eventTypeText, color: isSelected }}>
-          {item.name}
-        </AppText>
-      </TouchableOpacity>
-    );
+  const onChangeTab = (item) => {
+    setType({ ...typeFalsy, [item]: true });
   };
 
   const renderEvents = () => {
@@ -219,31 +179,34 @@ const Events = ({ closer, instance, instanceID }) => {
         <AppText style={styles.subTitles} bold>
           Choose Event Type:
         </AppText>
-        <View style={styles.eventTypeCont}>
-          {type.map((obj) => renderEventTypes({ item: obj }))}
-        </View>
+        <TabList items={tabItems} state={type} onPress={onChangeTab} />
         <AppText style={styles.subTitles} bold>
           Give Event Title:
         </AppText>
-        <GrowInput text={title} setText={setTitle} placeholder="Event title" />
+        <GrowInput
+          text={title}
+          mLine={false}
+          setText={setTitle}
+          placeholder="Event title"
+        />
 
         <AppText style={styles.subTitles} bold>
           Schedule Event Day-time:
         </AppText>
         <View>
-          <AppText style={styles.title}>
+          <AppText size="xlarge" bold style={styles.title}>
             {getFormatTime(date, null, "date")} {getFormatTime(date)}
           </AppText>
           <View style={styles.eventTypeCont}>
             <AppButton
-              title="set date"
+              title="Set Date"
               onPress={() => handleTime("date")}
-              naked
+              bare
             />
             <AppButton
-              title="set time"
+              title="Set Time"
               onPress={() => handleTime("time")}
-              naked
+              bare
             />
           </View>
           {showDate && (
@@ -278,7 +241,7 @@ const Events = ({ closer, instance, instanceID }) => {
         <AppText style={styles.subTitles} bold>
           My Media:
         </AppText>
-        {(isImage || isVid) && (
+        {(type.image || type.video) && (
           <View
             style={{
               flex: 1,
@@ -287,43 +250,57 @@ const Events = ({ closer, instance, instanceID }) => {
               alignItems: "center",
             }}
           >
-            <AppButton
-              style={{ alignSelf: "center" }}
-              title={mediaBtnTitle}
+            <RenderCoverUpload
+              show={type.image}
+              visible={
+                type.image && (asset && asset.type == "image" ? false : true)
+              }
               onPress={handleAssetPick}
-              naked
+              type={activeTabName}
             />
-            {asset && isImage && asset.type === "image" && (
-              <View
+            <RenderCoverUpload
+              visible={
+                type.video && (asset && asset.type == "video" ? false : true)
+              }
+              show={type.image}
+              onPress={handleAssetPick}
+              type={activeTabName}
+            />
+            {showImage && (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={handleAssetPick}
                 style={{
                   ...styles.mediaContainer,
                   aspectRatio: asset.width / asset.height,
                 }}
               >
                 <Image source={{ uri: asset.uri }} style={styles.media} />
-              </View>
+              </TouchableOpacity>
             )}
-            {asset && isVid && asset.type == "video" && (
+            {showVideo && (
               <PostVideo
                 source={asset}
                 style={styles.postVideo}
+                onLongPress={handleAssetPick}
                 disableThumb
+                disableLongPress
                 viewable={false}
               />
             )}
           </View>
         )}
-        {isText && (
+        {type.text && (
           <KeyboardAvoidingView
             behavior={isInput ? "position" : null}
-            keyboardVerticalOffset={isInput ? height * 0.2 : 0}
+            // keyboardVerticalOffset={isInput ? 1 : 0}
           >
             <View style={styles.inputContainer}>
               <TextInput
                 value={input}
                 onChangeText={(val) => setInput(val)}
                 multiline
-                placeholder="Add event info"
+                placeholder="Ask a Question"
                 onFocus={() => setIsInput(true)}
                 onBlur={() => setIsInput(false)}
                 style={styles.input}
@@ -331,24 +308,22 @@ const Events = ({ closer, instance, instanceID }) => {
             </View>
           </KeyboardAvoidingView>
         )}
-        <View>
+        <View style={styles.btns}>
           <AppButton
+            LIcon="check"
             title="SCHEDULE"
-            style={{ alignSelf: "center", marginTop: 15 }}
             onPress={handleStartEvent}
+            bare
           />
           <AppButton
             title="CANCEL"
-            style={{
-              alignSelf: "center",
-              width: width * 0.6,
-              marginTop: 5,
-            }}
             onPress={() => {
               // setStatusBarStyle("light");
               closer && closer();
             }}
+            LIcon="cancel"
             bare
+            bareRed
           />
         </View>
       </View>
@@ -384,7 +359,7 @@ const Events = ({ closer, instance, instanceID }) => {
       <PopMessage
         popData={popper}
         setter={() => setPopper({ vis: false })}
-        timer={0.35}
+        timer={1}
       />
     </>
   );
@@ -398,6 +373,13 @@ const styles = StyleSheet.create({
   },
   addBtn: {
     right: width * 0.07,
+  },
+  btns: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginTop: 20,
+    marginHorizontal: 60,
   },
   content: {
     flex: 1,
@@ -449,7 +431,7 @@ const styles = StyleSheet.create({
   media: {
     height: "100%",
     width: "100%",
-    borderRadius: width * 0.03,
+    borderRadius: 12,
   },
   mediaContainer: {
     maxHeight: height * 0.92,

@@ -19,9 +19,47 @@ const { width, height } = Dimensions.get("window");
 const PICW = width * 0.85;
 const PICH = width * 0.65;
 
+export const RenderCoverUpload = ({
+  show,
+  visible = true,
+  type,
+  onPress,
+  coverImage,
+}) => {
+  if (!visible) return null;
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={{
+          ...styles.coverZone,
+          backgroundColor: theme.extralight,
+          width: show ? PICW : PICH,
+          height: show ? PICH : PICW,
+        }}
+        activeOpacity={0.8}
+        onPress={onPress} //handleCoverImage
+      >
+        {!coverImage && (
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons
+              name="camera"
+              size={35}
+              color={theme.medium}
+            />
+            <AppText>Upload {type} media</AppText>
+          </View>
+        )}
+        {coverImage && (
+          <Image source={{ uri: coverImage }} style={styles.image} />
+        )}
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const CoverUpload = ({ show, type = "character", name }) => {
-  const { setFieldValue, setFieldError, isSubmitting, values, errors } =
-    useFormikContext();
+  const { setFieldValue, setFieldError, values, errors } = useFormikContext();
   const [coverImage, setCoverImage] = useState(null);
 
   let aspectR;
@@ -30,7 +68,6 @@ const CoverUpload = ({ show, type = "character", name }) => {
   } else {
     aspectR = [6, 7];
   }
-  const theme = useContext(ThemeContext);
 
   const handleCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -57,46 +94,12 @@ const CoverUpload = ({ show, type = "character", name }) => {
 
   return (
     <>
-      <View style={styles.container}>
-        <View
-          style={{
-            ...styles.coverZone,
-            backgroundColor: theme.extralight,
-            width: show ? PICW : PICH,
-            height: show ? PICH : PICW,
-          }}
-        >
-          {!coverImage && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.iconContainer}
-              onPress={handleCoverImage}
-            >
-              <MaterialCommunityIcons
-                name="camera"
-                size={35}
-                color={theme.medium}
-              />
-              <AppText>Upload {type} cover image</AppText>
-            </TouchableOpacity>
-          )}
-          {coverImage && (
-            <Image source={{ uri: coverImage }} style={styles.image} />
-          )}
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => setCoverImage(null)}
-          style={[styles.reloadBtn, { backgroundColor: theme.extralight }]}
-        >
-          <MaterialCommunityIcons
-            name="reload"
-            size={25}
-            color={colors.medium}
-            // color={theme.bar}
-          />
-        </TouchableOpacity>
-      </View>
+      <RenderCoverUpload
+        coverImage={coverImage}
+        onPress={handleCoverImage}
+        show={show}
+        type={type}
+      />
       {errors[name] && (
         <AppText style={styles.errorText}> {errors[name]} </AppText>
       )}

@@ -44,6 +44,7 @@ const boolsObj = {
   loadMore: true,
   lodadedOnce: false,
   showSlide: false,
+  loader: false,
   showStatus: false,
 };
 
@@ -72,8 +73,8 @@ const HomeScreen = ({ navigation, route }) => {
   const [stories, setStories] = useState([]);
   const [errMsg, setErrMsg] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [screenBool, setScreenBool] = useState(boolsObj);
-  const { loadMore, lodadedOnce, showSlide, showStatus } = screenBool;
+  const [bools, setBools] = useState(boolsObj);
+  const { loadMore, lodadedOnce, showSlide, showStatus } = bools;
 
   const actionFlatRef = useRef(null);
   const notificationListener = useRef();
@@ -89,33 +90,38 @@ const HomeScreen = ({ navigation, route }) => {
     if (type === "get") {
       if (getGuides) {
         const guidesData = JSON.parse(getGuides);
-        !guidesData.home && setScreenBool({ ...screenBool, showSlide: true });
+        !guidesData.home && setBools({ ...bools, showSlide: true });
       } else {
-        setScreenBool({ ...screenBool, showSlide: true });
+        setBools({ ...bools, showSlide: true });
       }
     } else if (type === "set") {
       const setGuides = {
         home: true,
       };
       await AsyncStorage.setItem("guides", JSON.stringify(setGuides));
-      setScreenBool({ ...screenBool, showSlide: false });
+      setBools({ ...bools, showSlide: false });
     }
   };
 
-  const fetchHomeData = (cb) => {
+  const fetchHomeData = (cb, loader) => {
+    loader && setBools({ ...bools, loader: true });
     getHomeFeeds(
       null,
       (resData) => {
         // SETTERS
         setStories(resData.stories);
         setFeeds(resData.feeds);
-        setScreenBool({ ...screenBool, lodadedOnce: true });
+        setBools({ ...bools, lodadedOnce: true });
         handleHomeScreenGuide("get");
+        loader && setBools({ ...bools, loader: false });
+
         cb && cb();
       },
       (err) => {
         console.log(err?.response?.data);
         setErrMsg("Error fetching feeds");
+        loader && setBools({ ...bools, loader: false });
+
         cb && cb();
       }
     );
@@ -164,8 +170,8 @@ const HomeScreen = ({ navigation, route }) => {
         }
       );
     } else {
-      if (screenBool.loadMore) {
-        setScreenBool({ ...screenBool, loadMore: false });
+      if (bools.loadMore) {
+        setBools({ ...bools, loadMore: false });
       }
     }
   };
@@ -217,7 +223,7 @@ const HomeScreen = ({ navigation, route }) => {
   const renderActions = ({ item, index }) => {
     const handleNav = () => {
       if (item.nav === "modal") {
-        setScreenBool({ ...screenBool, showStatus: true });
+        setBools({ ...bools, showStatus: true });
       } else {
         navigation.navigate(item.nav);
       }
@@ -247,7 +253,7 @@ const HomeScreen = ({ navigation, route }) => {
         <StatusRender
           data={stories}
           show={showStatus}
-          setter={() => setScreenBool({ ...screenBool, showStatus: false })}
+          setter={() => setBools({ ...bools, showStatus: false })}
         />
 
         {showStatus && <Separator h={1} />}
@@ -270,9 +276,8 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    console.log("FETCH...........")
     if (lodadedOnce) {
-      fetchHomeData();
+      fetchHomeData(null, true);
     }
   }, [posts]);
 
@@ -288,9 +293,7 @@ const HomeScreen = ({ navigation, route }) => {
         <HomeHeader characters={userInfo.charactersOwned} />
 
         {!feeds?.results[0] ? (
-          <>
-            <RenderPageHeader />
-          </>
+          <RenderPageHeader />
         ) : (
           <>
             <Viewport.Tracker>
@@ -330,6 +333,11 @@ const HomeScreen = ({ navigation, route }) => {
         style={styles.pageActiviy}
         text="No feeds yet, please follow a Weebo Instance"
         transparent
+      />
+      <ActivityIndicator
+        visible={bools.loader}
+        style={styles.activity}
+        wTransparent
       />
     </>
   );
@@ -379,6 +387,11 @@ async function schedulePushNotification() {
 }
 
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width,
+    height,
+  },
   actionFooter: {
     marginLeft: 50,
   },

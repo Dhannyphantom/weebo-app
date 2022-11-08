@@ -174,8 +174,9 @@ const FeedRender = ({ item, user }) => {
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",
-    width: "100%",
-    height: "100%",
+    // width: "100%",
+    width: width * 0.97,
+    height: "105%",
   },
   container: {
     flex: 1,

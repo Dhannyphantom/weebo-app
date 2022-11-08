@@ -40,7 +40,6 @@ const ChannelHeaderComp = ({
   boxState,
   handleBoxChange,
   checkSubChannels,
-  checkOwnerChannels,
   channels,
   renderChannelsTwo,
 }) => {
@@ -61,8 +60,6 @@ const ChannelHeaderComp = ({
           text="Subscribed Channels"
           show={boxState.s && channels[0]}
         />
-        {/* {checkSubChannels && boxState.s && !checkOwnerChannels && (
-        )} */}
         <FlatList
           data={channels}
           extraData={boxState}
@@ -73,6 +70,7 @@ const ChannelHeaderComp = ({
           listKey="21"
         />
       </View>
+      <HeaderTitle text="All Channels" show={boxState.s && checkSubChannels} />
     </View>
   );
 };
@@ -112,10 +110,6 @@ const ChannelScreen = ({ navigation }) => {
 
   const checkSubChannels = channels.find((obj) =>
     obj?.subscribers.includes(userInfo._id)
-  );
-
-  const checkOwnerChannels = channels.find(
-    (obj) => obj?.owner?._id === userInfo._id
   );
 
   const init = {
@@ -511,7 +505,6 @@ const ChannelScreen = ({ navigation }) => {
           <ChannelHeaderComp
             boxState={boxState}
             channels={channels}
-            checkOwnerChannels={checkOwnerChannels}
             handleBoxChange={handleBoxChange}
             renderChannelsTwo={renderChannelsTwo}
             checkSubChannels={checkSubChannels}

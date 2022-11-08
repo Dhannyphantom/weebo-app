@@ -16,6 +16,8 @@ const { width } = Dimensions.get("screen");
 const TAB_WIDTH = width * 0.85;
 
 export default function TabList({ items = [], state, onPress }) {
+  // items = [{ tab: "s", name: "Channels" }]
+  // state = { s: true, m: false }
   const theme = useContext(ThemeContext);
   const slider = useRef(new Animated.Value(0)).current;
 
