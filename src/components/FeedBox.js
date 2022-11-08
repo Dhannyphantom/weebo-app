@@ -38,6 +38,13 @@ const FeedBox = ({
     });
   };
 
+  let borderProps = {};
+
+  if (border) {
+    borderProps.borderWidth = 3;
+    borderProps.borderColor = colors.primary;
+  }
+
   const handleMediaPress = () => {
     if (onPress) {
       onPress();
@@ -49,7 +56,12 @@ const FeedBox = ({
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.white }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.white, ...borderProps },
+      ]}
+    >
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           {pack === "m" && (
@@ -151,6 +163,7 @@ const FeedBox = ({
 const styles = StyleSheet.create({
   container: {
     width: width * 0.96,
+    marginTop: 5,
     borderRadius: 20,
     alignSelf: "center",
     elevation: 2,

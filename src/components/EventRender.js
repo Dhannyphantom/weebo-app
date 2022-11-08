@@ -104,8 +104,9 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
         title2={title2}
         image={imgData}
         statLeft={statLeft}
+        border
         rightColored={joiner}
-        icon="ninja"
+        icon="ninja" //change ICON
         mediaType={mediaType}
         onPress={null}
         midBtnPress={() => handleJoin(item._id)}

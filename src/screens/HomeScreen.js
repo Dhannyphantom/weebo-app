@@ -155,7 +155,7 @@ const HomeScreen = ({ navigation, route }) => {
   const handleEndReached = (cb) => {
     if (feeds.hasOwnProperty("next")) {
       getHomeFeeds(
-        { limit: 5, page: feeds.next.page },
+        { limit: 15, page: feeds.next.page },
         (resData) => {
           setFeeds({
             ...resData,

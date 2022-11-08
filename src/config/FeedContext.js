@@ -389,7 +389,7 @@ const getStatuses = (dispatch) => async (sc, cb) => {
 const getHomeFeeds = (dispatch) => async (query, sc, cb) => {
   const uri = query
     ? `/homeData?limit=${query.limit}&page=${query.page}`
-    : `/homeData?limit=5&page=1`;
+    : `/homeData?limit=15&page=1`;
   try {
     const token = await AsyncStorage.getItem("token");
     const res = await fetchApi.get(uri, {
