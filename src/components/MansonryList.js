@@ -60,21 +60,14 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   );
 };
 
-const RenderUserCollections = ({ isMine, setPopper, item }) => {
-  const {
-    state: { userInfo },
-    addToCollection,
-  } = useContext(AuthContext);
+const RenderUserCollections = ({ isMine, collections = [], item }) => {
+  const { addToCollection } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
 
-  const [bools, setBools] = useState({ fetch: true, loading: false });
-  const [collections, setCollections] = useState(userInfo.my_collections);
+  const [bools, setBools] = useState({ loading: false });
   const [errMsg, setErrMsg] = useState(null);
-
-  // fetch collections by userIds
-  const fetchCollections = () => {
-    setBools({ ...bools, fetch: false });
-  };
+  const [msg, setMsg] = useState(null);
+  const [popper, setPopper] = useState({ vis: false });
 
   const onAddToCollection = (coll_item) => {
     setBools({ ...bools, loading: true });
@@ -87,34 +80,38 @@ const RenderUserCollections = ({ isMine, setPopper, item }) => {
         uris: [item],
       },
     };
+    setErrMsg(null);
+    setMsg(null);
 
     addToCollection(
       data,
-      () => {
+      (_resData) => {
+        // setMsg("Added to collection successfully");
         setPopper({
           vis: true,
+          msg: "Added to collection successfully",
           type: "success",
-          msg: "Added to collection!",
         });
         setBools({ ...bools, loading: false });
-        // setLoading(false);
       },
       (err) => {
         console.log(err);
         setErrMsg(err.data ?? err.msg);
         setBools({ ...bools, loading: false });
         // setLoading(false);
-      }
+      },
+      false //callDispatch = false
     );
   };
-
-  useEffect(() => {
-    fetchCollections();
-  }, []);
 
   return (
     <View style={[styles.collections, { backgroundColor: theme.background }]}>
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+      {msg && (
+        <AppText bold size="large" style={styles.message}>
+          {msg}
+        </AppText>
+      )}
       <RenderCollections
         onPress={onAddToCollection}
         collections={collections}
@@ -122,9 +119,10 @@ const RenderUserCollections = ({ isMine, setPopper, item }) => {
       />
       <ActivityIndicator
         style={styles.activity}
-        visible={bools.fetch || bools.loading}
+        visible={bools.loading}
         wTransparent={bools.loading}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };
@@ -133,12 +131,14 @@ export default function MansonryList({ media, handleRefresh, data }) {
   // data = {isMine}
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
-  const [menu, setMenu] = useState({ vis: false, item: null });
+  const [menu, setMenu] = useState({ vis: false, item: null, collections: [] });
   const [actions, setActions] = useState({ collection: false });
-  const [popper, setPopper] = useState({ vis: false });
-  const [errMsg, setErrMsg] = useState(null);
 
   const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+    getUserData,
+  } = useContext(AuthContext);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -149,8 +149,25 @@ export default function MansonryList({ media, handleRefresh, data }) {
     // console.log("End Reached");
   };
 
+  const fetchCollections = () => {
+    getUserData(
+      {
+        id: userInfo._id,
+        type: "get_collections",
+        query: "",
+      },
+      (resData) => {
+        // setBools({ ...bools, fetch: false });
+        setMenu({ ...menu, collections: resData.my_collections });
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
+  };
+
   const openMenu = (item) => {
-    setMenu({ vis: true, item });
+    setMenu({ ...menu, vis: true, item });
   };
 
   const menuList = [
@@ -171,6 +188,10 @@ export default function MansonryList({ media, handleRefresh, data }) {
       iconPack: "F",
     },
   ];
+
+  useEffect(() => {
+    fetchCollections();
+  }, []);
 
   return (
     <View
@@ -215,12 +236,11 @@ export default function MansonryList({ media, handleRefresh, data }) {
         RenderComponent={() => (
           <RenderUserCollections
             isMine={data?.isMine}
-            setPopper={setPopper}
+            collections={menu.collections}
             item={menu.item}
           />
         )}
       />
-      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 }
@@ -236,10 +256,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   collections: {
-    width: width * 0.96,
+    width: width * 0.98,
     height: height * 0.9,
     borderRadius: 18,
-    paddingHorizontal: 10,
+    paddingLeft: 5,
     paddingVertical: 5,
   },
   error: {
@@ -263,6 +283,13 @@ const styles = StyleSheet.create({
     paddingBottom: height * 0.11,
     paddingTop: 5,
     paddingRight: width * 0.015,
+  },
+  message: {
+    textAlign: "center",
+    marginVertical: 12,
+    width: "80%",
+    alignSelf: "center",
+    color: colors.greenDark,
   },
   vidTime: {
     color: colors.white,

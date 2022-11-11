@@ -345,25 +345,32 @@ const instanceTransfer = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const addToCollection = (dispatch) => async (data, sc, cb) => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const res = await authApi.post("/add_to_collection", data, {
-      headers: {
-        "x-auth-token": token,
-      },
-      timeout: 30000,
-    });
-    dispatch({
-      type: "update_me",
-      payload: { data: res.data, prop: "my_collections" },
-    });
-    sc && sc(res.data);
-  } catch (err) {
-    cb &&
-      cb({ err, msg: "Error updating collection", data: err?.response?.data });
-  }
-};
+const addToCollection =
+  (dispatch) =>
+  async (data, sc, cb, callDispatch = true) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const res = await authApi.post("/add_to_collection", data, {
+        headers: {
+          "x-auth-token": token,
+        },
+        timeout: 30000,
+      });
+      callDispatch &&
+        dispatch({
+          type: "update_me",
+          payload: { data: res.data, prop: "my_collections" },
+        });
+      sc && sc(res.data);
+    } catch (err) {
+      cb &&
+        cb({
+          err,
+          msg: "Error updating collection",
+          data: err?.response?.data,
+        });
+    }
+  };
 
 const mailVerifier = (dispatch) => async (mailData, sc, cb) => {
   try {
