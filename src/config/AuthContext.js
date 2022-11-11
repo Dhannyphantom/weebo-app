@@ -276,10 +276,12 @@ const characterCreated = (dispatch) => (data) => {
   dispatch({ type: "update_profile", payload: data });
 };
 
-const getUserData = (dispatch) => async (id, type, sc, cb) => {
+const getUserData = (dispatch) => async (data, sc, cb) => {
+  // HAVE CHANGED THE PARAMS FOR THIS FUNCTION SO UPDATE THIS ^^
+  const { id, type, query } = data;
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/userProfile/${id}/${type}`, {
+    const res = await fetchApi.get(`/userProfile/${id}/${type}?data=${query}`, {
       headers: {
         "x-auth-token": token,
       },

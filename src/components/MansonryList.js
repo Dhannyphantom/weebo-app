@@ -58,7 +58,7 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   );
 };
 
-const RenderUserCollections = ({ isMine, item }) => {
+const RenderUserCollections = ({ isMine, setErrMsg, item }) => {
   const {
     state: { userInfo },
     addToCollection,
@@ -78,8 +78,8 @@ const RenderUserCollections = ({ isMine, item }) => {
       name: item.name,
       isSingle: true,
       postData: {
-        postId: "pId",
-        type: "save", // was post b4
+        postId: item.postId,
+        type: "post", // was post b4
         uris: [item],
       },
     };
@@ -91,11 +91,12 @@ const RenderUserCollections = ({ isMine, item }) => {
           type: "success",
           msg: "Added to collection!",
         });
-        setIsNewCollLoading(false);
+        // setLoading(false);
       },
       (err) => {
+        console.log(err);
         setErrMsg(err);
-        setIsNewCollLoading(false);
+        // setLoading(false);
       }
     );
   };
@@ -117,6 +118,7 @@ export default function MansonryList({ media, data }) {
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const [menu, setMenu] = useState({ vis: false, item: null });
   const [actions, setActions] = useState({ collection: false });
+  const [errMsg, setErrMsg] = useState(null);
 
   const theme = useContext(ThemeContext);
 
@@ -197,7 +199,11 @@ export default function MansonryList({ media, data }) {
         visible={actions.collection}
         setter={() => setActions({ ...actions, collection: false })}
         RenderComponent={() => (
-          <RenderUserCollections isMine={data?.isMine} item={menu.item} />
+          <RenderUserCollections
+            isMine={data?.isMine}
+            setErrMsg={setErrMsg}
+            item={menu.item}
+          />
         )}
       />
     </View>

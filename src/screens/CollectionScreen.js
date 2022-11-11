@@ -172,12 +172,15 @@ const CollectionScreen = ({ route, navigation }) => {
   const [prompt, setPrompt] = useState({ visible: false });
   const [renameModal, setRenameModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
-  const [collection, setCollection] = useState({});
-  const [isPostEmpty, setIsPostEmpty] = useState(true);
+  const [collection, setCollection] = useState({ media: [] });
   const [popper, setPopper] = useState({ vis: false });
 
   const theme = useContext(ThemeContext);
-  const { updateCollection } = useContext(AuthContext);
+  const {
+    updateCollection,
+    getUserData,
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   const pageData = route?.params?.item;
 
@@ -237,19 +240,32 @@ const CollectionScreen = ({ route, navigation }) => {
         break;
     }
   };
-  const media = [];
+
+  const fetchCollectionPosts = () => {
+    getUserData(
+      {
+        id: userInfo._id, // could be any user so change this,
+        type: "get_collection_posts",
+        query: pageData.name,
+      },
+      (resData) => {
+        // console.log(resData);
+        setCollection({ name: pageData?.name, media: resData.collections });
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
+  };
 
   useEffect(() => {
-    collection?.posts?.forEach((obj) => {
-      media.push(...obj.uris);
-    });
-    setCollection({ ...pageData, media });
+    fetchCollectionPosts();
   }, []);
 
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title={`${collection.name ?? pageData.name} Collections`}
+        title={`${collection?.name ?? pageData.name} Collections`}
         RightComponent={() => (
           <TouchableOpacity
             activeOpacity={0.8}
@@ -260,7 +276,7 @@ const CollectionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-      {!isPostEmpty && <MansonryList media={[]} />}
+      <MansonryList media={collection?.media} data={{ isMine: false }} />
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
       <AppFadeIn
