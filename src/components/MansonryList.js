@@ -138,11 +138,16 @@ export default function MansonryList({ media, handleRefresh, data }) {
   const {
     state: { userInfo },
     getUserData,
+    deleteMediaItem,
   } = useContext(AuthContext);
 
   const onRefresh = () => {
     setRefreshing(true);
-    handleRefresh(() => setRefreshing(false));
+    if (handleRefresh) {
+      handleRefresh(() => setRefreshing(false));
+    } else {
+      setRefreshing(false);
+    }
   };
 
   const onEndReached = () => {
@@ -170,6 +175,28 @@ export default function MansonryList({ media, handleRefresh, data }) {
     setMenu({ ...menu, vis: true, item });
   };
 
+  const onDeleteCollectionItem = () => {
+    // id, type, itemId
+    const sendData = {
+      itemId: menu.item._id,
+      id: data.type == "post" ? menu.item.postId : data.collectionId,
+      type: data.type,
+    };
+
+    // return console.log(sendData);
+
+    deleteMediaItem(
+      sendData,
+      (resData) => {
+        console.log(resData);
+        handleRefresh();
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
+  };
+
   const menuList = [
     {
       id: "1",
@@ -180,10 +207,18 @@ export default function MansonryList({ media, handleRefresh, data }) {
       iconPack: "F",
     },
     {
+      id: "3",
+      name: "Flag as inappropriate",
+      show: !data?.isMine,
+      onPress: () => setActions({ ...actions, collection: true }),
+      icon: "flag",
+      iconPack: "F",
+    },
+    {
       id: "2",
       name: "Delete Post",
-      show: true,
-      onPress: () => console.log("Delete"),
+      show: data?.isMine,
+      onPress: () => onDeleteCollectionItem(),
       icon: "trash",
       iconPack: "F",
     },

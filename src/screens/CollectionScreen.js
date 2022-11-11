@@ -284,7 +284,7 @@ const CollectionScreen = ({ route, navigation }) => {
       <MansonryList
         media={collection?.media}
         handleRefresh={fetchCollectionPosts}
-        data={{ isMine: true }}
+        data={{ isMine: true, type: "collection", collectionId: pageData._id }}
       />
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />

@@ -372,6 +372,25 @@ const addToCollection =
     }
   };
 
+const deleteMediaItem = (dispatch) => async (data, sc, cb) => {
+  // data = {id, itemId, type}
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.delete(
+      `/collection_item?type=${data.type}&id=${data.id}&itemId=${data.itemId}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error deleting media", data: err?.response?.data });
+  }
+};
+
 const mailVerifier = (dispatch) => async (mailData, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -597,6 +616,7 @@ export const { Context, Provider } = createDataContext(
     updateMe,
     setPushToken,
     mailVerifier,
+    deleteMediaItem,
     sendInvite,
     updateProfile,
     fetchNearbyWeebs,
