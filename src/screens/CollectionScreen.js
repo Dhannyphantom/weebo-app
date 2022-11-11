@@ -244,7 +244,7 @@ const CollectionScreen = ({ route, navigation }) => {
     }
   };
 
-  const fetchCollectionPosts = () => {
+  const fetchCollectionPosts = (cb) => {
     getUserData(
       {
         id: userInfo._id, // could be any user so change this,
@@ -254,9 +254,11 @@ const CollectionScreen = ({ route, navigation }) => {
       (resData) => {
         // console.log(resData);
         setCollection({ name: pageData?.name, media: resData.collections });
+        cb && cb();
       },
       (errData) => {
         console.log(errData);
+        cb && cb();
       }
     );
   };
@@ -279,7 +281,11 @@ const CollectionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-      <MansonryList media={collection?.media} data={{ isMine: false }} />
+      <MansonryList
+        media={collection?.media}
+        handleRefresh={fetchCollectionPosts}
+        data={{ isMine: true }}
+      />
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
       <AppFadeIn

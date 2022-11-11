@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import MasonryList from "@react-native-seoul/masonry-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -14,6 +14,8 @@ import getVideoTime from "../constants/getVideoTime";
 import DropDown from "./DropDown";
 import AppFadeIn from "./AppFadeIn";
 import { RenderCollections } from "../screens/SavedCollectionScreen";
+import PopMessage from "./PopMessage";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("window");
 
@@ -58,77 +60,89 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   );
 };
 
-const RenderUserCollections = ({ isMine, setErrMsg, item }) => {
+const RenderUserCollections = ({ isMine, setPopper, item }) => {
   const {
     state: { userInfo },
     addToCollection,
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
 
-  const [loading, setLoading] = useState(true);
-  const [collections, setCollections] = useState(
-    isMine ? userInfo.my_collections : []
-  );
+  const [bools, setBools] = useState({ fetch: true, loading: false });
+  const [collections, setCollections] = useState(userInfo.my_collections);
+  const [errMsg, setErrMsg] = useState(null);
 
   // fetch collections by userIds
-  const fetchCollections = () => {};
+  const fetchCollections = () => {
+    setBools({ ...bools, fetch: false });
+  };
 
-  const onAddToCollection = (item) => {
+  const onAddToCollection = (coll_item) => {
+    setBools({ ...bools, loading: true });
     const data = {
-      name: item.name,
+      name: coll_item.name,
       isSingle: true,
       postData: {
-        postId: item.postId,
+        postId: coll_item.postId ?? item.postId,
         type: "post", // was post b4
         uris: [item],
       },
     };
+
     addToCollection(
       data,
       () => {
-        setPopData({
+        setPopper({
           vis: true,
           type: "success",
           msg: "Added to collection!",
         });
+        setBools({ ...bools, loading: false });
         // setLoading(false);
       },
       (err) => {
         console.log(err);
-        setErrMsg(err);
+        setErrMsg(err.data ?? err.msg);
+        setBools({ ...bools, loading: false });
         // setLoading(false);
       }
     );
   };
 
+  useEffect(() => {
+    fetchCollections();
+  }, []);
+
   return (
     <View style={[styles.collections, { backgroundColor: theme.background }]}>
+      {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       <RenderCollections
         onPress={onAddToCollection}
         collections={collections}
         noPadding
       />
+      <ActivityIndicator
+        style={styles.activity}
+        visible={bools.fetch || bools.loading}
+        wTransparent={bools.loading}
+      />
     </View>
   );
 };
 
-export default function MansonryList({ media, data }) {
+export default function MansonryList({ media, handleRefresh, data }) {
   // data = {isMine}
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const [menu, setMenu] = useState({ vis: false, item: null });
   const [actions, setActions] = useState({ collection: false });
+  const [popper, setPopper] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
 
   const theme = useContext(ThemeContext);
 
-  // console.log("MANSONRY DATA: ", data);
-
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1500);
+    handleRefresh(() => setRefreshing(false));
   };
 
   const onEndReached = () => {
@@ -201,16 +215,23 @@ export default function MansonryList({ media, data }) {
         RenderComponent={() => (
           <RenderUserCollections
             isMine={data?.isMine}
-            setErrMsg={setErrMsg}
+            setPopper={setPopper}
             item={menu.item}
           />
         )}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
+  },
   container: {
     flex: 1,
   },
@@ -220,6 +241,13 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingHorizontal: 10,
     paddingVertical: 5,
+  },
+  error: {
+    textAlign: "center",
+    marginVertical: 10,
+    color: colors.heart,
+    width: "80%",
+    alignSelf: "center",
   },
   itemContainer: {
     marginLeft: width * 0.015,

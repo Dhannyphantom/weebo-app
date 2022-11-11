@@ -360,7 +360,8 @@ const addToCollection = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb(err?.response?.data);
+    cb &&
+      cb({ err, msg: "Error updating collection", data: err?.response?.data });
   }
 };
 

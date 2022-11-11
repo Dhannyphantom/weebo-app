@@ -109,8 +109,11 @@ const AccountBox = ({
 
   useEffect(() => {
     getUserData(
-      userID,
-      "get_account",
+      {
+        id: userID,
+        type: "get_account",
+        query: "",
+      },
       (data) => {
         setStatus(data.status);
         setProfileData([data.user]);
@@ -232,7 +235,7 @@ const AccountBox = ({
                   onPress={() =>
                     onLink("MyPost", {
                       screen: isMine ? "account" : "accountBox",
-                      info: { username: info.username, id: info._id },
+                      info: { username: info.username, id: info._id, isMine },
                     })
                   }
                 />
