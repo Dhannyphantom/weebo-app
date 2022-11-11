@@ -86,8 +86,11 @@ const ShareCollection = ({ setter, id }) => {
   const fetchWeebs = useCallback(() => {
     // setLoading(true);
     getUserData(
-      userInfo._id,
-      "get_weebs",
+      {
+        id: userInfo._id,
+        type: "get_weebs",
+        query: "",
+      },
       (res_data) => {
         setWeebos(res_data.friends);
         setLoading(false);

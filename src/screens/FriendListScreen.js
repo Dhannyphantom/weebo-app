@@ -38,8 +38,11 @@ const FriendListScreen = ({ route, navigation }) => {
   const fetchWeebs = (noLoader) => {
     !noLoader && setIsLoading(true);
     getUserData(
-      userInfo._id,
-      "get_weebs",
+      {
+        id: userInfo._id,
+        type: "get_weebs",
+        query: "",
+      },
       (res_data) => {
         setWeebos({
           weebs: res_data.friends,

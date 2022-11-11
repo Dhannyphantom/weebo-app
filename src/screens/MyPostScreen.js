@@ -106,8 +106,11 @@ const MyPostScreen = ({ navigation, route }) => {
 
   const fetchUserPosts = (userId) => {
     getUserData(
-      userId,
-      "get_posts",
+      {
+        id: userId,
+        type: "get_posts",
+        query: "",
+      },
       (resData) => {
         setMedia(resData);
         resData[0] && setIsPostEmpty(false);

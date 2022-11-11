@@ -118,8 +118,10 @@ const AlertScreen = ({ navigation }) => {
   const fetchScreenData = (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
     getUserData(
-      userInfo._id,
-      "get_notifications",
+      {
+        id: userInfo._id,
+        type: "get_notifications",
+      },
       (resData) => {
         setAlertApi(resData.notifications.reverse());
         setLoadedOnce(true);

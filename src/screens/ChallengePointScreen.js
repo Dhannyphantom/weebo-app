@@ -301,8 +301,10 @@ const ChallengePointScreen = ({ navigation }) => {
   const fetchScreenData = (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
     getUserData(
-      userInfo._id,
-      "get_points",
+      {
+        id: userInfo._id,
+        type: "get_points",
+      },
       (resData) => {
         setPointers(resData.pointsActivity.reverse());
         setCurrentPoints(resData.points);

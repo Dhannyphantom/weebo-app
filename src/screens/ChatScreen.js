@@ -83,8 +83,11 @@ const ChatScreen = ({ navigation }) => {
       }
     }
     getUserData(
-      userInfo._id,
-      "get_chats",
+      {
+        id: userInfo._id,
+        type: "get_chats",
+        query: "",
+      },
       async (resData) => {
         const my_chats = resData.chats.filter((obj) =>
           obj.hasOwnProperty("user")

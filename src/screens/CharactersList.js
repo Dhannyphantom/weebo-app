@@ -77,7 +77,7 @@ const CharactersList = ({ route, navigation }) => {
         selector = "get_characters";
         break;
     }
-    getUserData(otherId, selector, (data) => {
+    getUserData({ id: otherId }, selector, (data) => {
       data.favorites && setFavorites(data.favorites);
       if (data.following) {
         const followingChar = data.following;
