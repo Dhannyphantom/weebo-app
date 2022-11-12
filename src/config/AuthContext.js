@@ -377,7 +377,7 @@ const deleteMediaItem = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
     const res = await authApi.delete(
-      `/collection_item?type=${data.type}&id=${data.id}&itemId=${data.itemId}`,
+      `/collection_item?type=${data.type}&id=${data.id}&itemId=${data.itemId}&postId=${data.postId}`,
       {
         headers: {
           "x-auth-token": token,

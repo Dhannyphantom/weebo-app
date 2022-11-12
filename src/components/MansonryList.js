@@ -180,6 +180,7 @@ export default function MansonryList({ media, handleRefresh, data }) {
     const sendData = {
       itemId: menu.item._id,
       id: data.type == "post" ? menu.item.postId : data.collectionId,
+      postId: menu.item.postId,
       type: data.type,
     };
 
@@ -258,6 +259,7 @@ export default function MansonryList({ media, handleRefresh, data }) {
         onEndReached={onEndReached}
       />
       <MediaModal modalObject={displayMedia} setVisible={setDisplayMedia} />
+
       <DropDown
         visible={menu.vis}
         set={setMenu}
