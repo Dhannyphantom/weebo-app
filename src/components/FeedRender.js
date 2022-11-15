@@ -108,13 +108,15 @@ const FeedRender = ({ item, user }) => {
           />
         ) : item.type === "video" ? (
           <View style={{ flex: 1 }}>
+            {/* DISPLAY A THUMB AND ONLY SHOW VIDEO WHEN IT'S PLAYING */}
             <PostVideo
               source={item?.posts[0]}
-              feed={item}
-              handleLike={handleLike}
-              handleViewPost={handleViewPost}
-              showMediaFunc={handleShowMedia}
-              post={post}
+              // feed={item}
+              onDoublePress={handleLike}
+              showHearts
+              onFinishedPlaying={handleViewPost}
+              onLongPress={handleShowMedia}
+              // post={post}
             />
           </View>
         ) : item.type === "text" ? null : null}

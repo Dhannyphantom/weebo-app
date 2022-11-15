@@ -4,9 +4,8 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from "react-native";
-import { Video, AVPlaybackStatus } from "expo-av";
+import { Video } from "expo-av";
 import LottieView from "lottie-react-native";
 import colors from "../constants/colors";
 
@@ -19,18 +18,21 @@ const { width, height } = Dimensions.get("screen");
 const LOTTIE_SIZE = width * 0.35;
 
 const RenderLottie = ({ vis, type = "play" }) => {
+  // type = "like" || "play"
   const lottie = useRef(null);
   const opaciter = useRef(new Animated.Value(0)).current;
 
-  let lottieAnimation;
+  let lottieAnimation, lottieTime;
 
   switch (type) {
     case "like":
       lottieAnimation = heartPop;
+      lottieTime = { show: { x: 45, y: 90 }, hide: { x: 0, y: 40 } };
       break;
 
     default:
       lottieAnimation = pause_play;
+      lottieTime = { show: { x: 170, y: 220 }, hide: { x: 60, y: 110 } };
       break;
   }
 
@@ -48,7 +50,7 @@ const RenderLottie = ({ vis, type = "play" }) => {
           useNativeDriver: true,
         }),
       ]).start();
-      lottie?.current?.play(170, 220);
+      lottie?.current?.play(lottieTime?.show?.x, lottieTime?.show?.y);
     } else {
       // hide animation
       opaciter.setValue(1);
@@ -57,7 +59,7 @@ const RenderLottie = ({ vis, type = "play" }) => {
         duration: 2000,
         useNativeDriver: true,
       }).start();
-      lottie?.current?.play(60, 110);
+      lottie?.current?.play(lottieTime?.hide?.x, lottieTime?.hide?.y);
     }
   }, [vis]);
 
@@ -75,23 +77,70 @@ const RenderLottie = ({ vis, type = "play" }) => {
   );
 };
 
-export default function PostVideo({ source }) {
+export default function PostVideo({
+  source,
+  onDoublePress,
+  onFinishedPlaying,
+  onLongPress,
+  showHearts,
+}) {
   const [status, setStatus] = useState({});
 
   const video = useRef(null);
 
-  const handleVideoAction = () => {
-    // console.log(status);
+  let touchTime = 0,
+    timed;
+
+  const onPlayVideo = () => {
     if (status.playableDurationMillis === status.positionMillis) {
       video?.current?.playFromPositionAsync(0);
     }
     status.isPlaying ? video.current.pauseAsync() : video.current.playAsync();
   };
 
+  const handleVideoAction = () => {
+    if (!onDoublePress) return onPlayVideo();
+    const now = new Date().getTime();
+    const diff = now - touchTime;
+    let dPress = null;
+    clearTimeout(timed);
+
+    if (diff < 400 && diff > 0) {
+      // double press
+      if (!onDoublePress) return;
+      dPress = true;
+      if (onDoublePress) {
+        onDoublePress();
+        showHearts && setStatus({ ...status, like: !!status.like });
+      }
+    } else {
+      // single press
+      timed = setTimeout(() => {
+        if (!dPress) {
+          onPlayVideo();
+        }
+      }, 400);
+    }
+    touchTime = new Date().getTime();
+  };
+
+  const handleLongPress = () => {
+    if (!onLongPress) return;
+    video.current.pauseAsync();
+    onLongPress();
+  };
+
+  useEffect(() => {
+    if (status.playableDurationMillis - 500 <= status.positionMillis) {
+      onFinishedPlaying && onFinishedPlaying();
+    }
+  }, [status]);
+
   return (
     <TouchableOpacity
       onPress={handleVideoAction}
       activeOpacity={1}
+      onLongPress={handleLongPress}
       style={styles.container}
     >
       <Video
@@ -102,7 +151,10 @@ export default function PostVideo({ source }) {
         isLooping={false}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
-      <RenderLottie vis={status.isPlaying} />
+      <RenderLottie
+        vis={status.isPlaying || status.like}
+        type={status.like ? "like" : "play"}
+      />
     </TouchableOpacity>
   );
 }
@@ -113,7 +165,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.dark,
-    width: "96%",
+    width: "98%",
     alignSelf: "center",
     borderRadius: 15,
   },
@@ -133,6 +185,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: height * 0.75,
+    height: height * 0.7,
+    borderRadius: 16,
   },
 });
