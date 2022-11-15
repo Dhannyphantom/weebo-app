@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
 
 import colors from "../constants/colors";
 import Search from "./Search";
@@ -19,11 +18,11 @@ import AppButton from "./AppButton";
 import AppLogo from "./AppLogo";
 import ActionMenu from "./ActionMenu";
 import ActivityIndicator from "./ActivityIndicator";
-import vidMaxChecker from "../constants/vidMaxChecker";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "./AppFadeIn";
 
 import { gradients } from "../constants/colors";
+import { launchGallery } from "../constants/helpers";
 
 const screen = Dimensions.get("window");
 
@@ -62,19 +61,11 @@ const HomeHeader = ({ characters }) => {
   const handleNav = async (type) => {
     if (type === "post") {
       setModalVis(false);
-      const res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        quality: 0.7,
-      });
-      // if (res.cancelled) ;
-      if (!res.cancelled) {
-        if (res.type === "video") {
-          const { bool, vidErr } = vidMaxChecker(res.duration, 5);
-          if (bool) return setErrMsg(vidErr);
-        }
-        navigation.navigate("Post", { uri: res });
-      } else {
-        return setModalVis(false);
+      const { _error, result } = await launchGallery();
+      if (_error) {
+        setErrMsg(_error);
+      } else if (result) {
+        navigation.navigate("Post", { assets: result });
       }
     } else if (type === "contest") {
       setCMode(true);

@@ -75,6 +75,7 @@ const PostScreen = ({ route, navigation }) => {
   const tagGroups = tagLists.filter((obj) => obj.type === "group");
   const tagShows = tagLists.filter((obj) => obj.type === "show");
   const tagCharacters = tagLists.filter((obj) => obj.type === "character");
+  const assetType = assets[0].type;
   //
   const theme = useContext(ThemeContext);
   const getBgColor = () => {
@@ -89,7 +90,7 @@ const PostScreen = ({ route, navigation }) => {
   };
   const data = {
     title: writer ? textObj : text.trim(),
-    type: writer ? "text" : assets[0].type,
+    type: writer ? "text" : assetType,
     post: media,
     instancePost: router.type ? instanceData : null,
     meta: media, // was flax b4
@@ -138,12 +139,15 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleAddMore = async () => {
-    const { _error, result } = await launchGallery(assets[0].type);
+    const { result } = await launchGallery(
+      assetType,
+      false,
+      assetType === "image"
+    );
 
     if (result) {
-      console.log(result);
-      setDisplay(result);
-      setMedia([...media, ...result.assets]);
+      setDisplay(result[0]);
+      setMedia([...media, ...result]);
     }
   };
 
@@ -431,7 +435,7 @@ const PostScreen = ({ route, navigation }) => {
                     )}
                 </View>
               )}
-              {!writer && assets[0].type === "video" && (
+              {!writer && assetType === "video" && (
                 <View style={{ flex: 1 }}>
                   {display && (
                     <PostVideo
@@ -458,7 +462,7 @@ const PostScreen = ({ route, navigation }) => {
                   />
                 </View>
               )}
-              {!writer && assets[0].type === "image" && display && (
+              {!writer && assetType === "image" && display && (
                 <View
                   style={{
                     ...styles.imageCont,
@@ -474,7 +478,7 @@ const PostScreen = ({ route, navigation }) => {
                   />
                 </View>
               )}
-              {!writer && assets[0].type === "image" && (
+              {!writer && assetType === "image" && (
                 <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
                   <FlatList
                     data={media}

@@ -137,7 +137,7 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
   const formData = new FormData();
   formData.append("data", JSON.stringify({ ...data, bucket: "posts" }));
   for (let i = 0; i < data.post.length; i++) {
-    const e = data.post[i];
+    const e = data.post[i].uri;
     const imageObject = {
       name: e.slice(-40),
       fileName: e.slice(-40),
@@ -290,6 +290,7 @@ const editPostCaption = (dispatch) => async (pId, text, sc, cb) => {
     cb && cb("Error updating post caption");
   }
 };
+
 const deletePosts = (dispatch) => async (pId, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");

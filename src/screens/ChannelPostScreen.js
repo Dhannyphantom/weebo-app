@@ -178,7 +178,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
   const handleUploadBtn = async (type) => {
     if (type === "upload") {
-      const { _error, result } = await launchGallery("all", false, true);
+      const { _error, result } = await launchGallery("all");
 
       if (_error) {
         return setPopper({
