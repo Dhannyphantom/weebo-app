@@ -7,12 +7,6 @@ import Otaku from "./src/Otaku";
 import { View } from "react-native";
 import mobileAds from "react-native-google-mobile-ads";
 
-mobileAds()
-  .initialize()
-  .then((adapterStatuses) => {
-    // Initialization complete!
-  });
-
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -42,6 +36,12 @@ export default function App() {
           "sen-bold-b2": require("./assets/fonts/sen/Sen-ExtraBold.ttf"),
         });
         await requestImageLibraryPermission();
+        // await mobileAds()?.initialize();
+        // mobileAds()
+        //   .initialize()
+        //   .then((adapterStatuses) => {
+        //     // Initialization complete!
+        //   });
       } catch (e) {
         console.warn(e);
       } finally {

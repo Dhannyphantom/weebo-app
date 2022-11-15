@@ -32,6 +32,7 @@ import PopDropDown from "../components/PopDropDown";
 import Link from "../components/Link";
 import Separator from "../components/Separator";
 import AppButton from "../components/AppButton";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -177,21 +178,18 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
   const handleUploadBtn = async (type) => {
     if (type === "upload") {
-      const res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-      });
-      if (!res.cancelled) {
-        const { bool, vidErr } = vidMaxChecker(res.duration, 5);
-        if (bool) {
-          return setPopper({
-            type: "failed",
-            msg: vidErr,
-            vis: true,
-          });
-        }
+      const { _error, result } = await launchGallery("all", false, true);
+
+      if (_error) {
+        return setPopper({
+          type: "failed",
+          msg: _error,
+          vis: true,
+        });
+      } else if (result) {
         setOpenMedia(false);
         navigation.navigate("Post", {
-          uri: res,
+          assets: result,
           type: "channel",
           id: page._id,
           name: page.name,

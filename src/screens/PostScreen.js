@@ -9,13 +9,11 @@ import {
   FlatList,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 
 import Avatar from "../components/Avatar";
 import Screen from "../components/Screen";
 import colors from "../constants/colors";
-import vidMaxChecker from "../constants/vidMaxChecker";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -31,6 +29,7 @@ import PopMessage from "../components/PopMessage";
 import SearchInstance from "../components/SearchInstance";
 import ThemeContext from "../config/ThemeContext";
 import { postColors as colorSet } from "../constants/colors";
+import { launchGallery } from "../constants/helpers";
 const screen = Dimensions.get("window");
 
 const PostScreen = ({ route, navigation }) => {
@@ -43,7 +42,14 @@ const PostScreen = ({ route, navigation }) => {
   const router = route.params;
   const writer = route.params.write;
   // write = {id , write(bool)}
-  const asset = writer ? null : route.params.uri;
+  const assets = writer
+    ? null
+    : router?.assets?.map((obj) => ({
+        uri: obj.uri,
+        width: obj.width,
+        height: obj.height,
+        type: obj.type,
+      }));
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -52,13 +58,11 @@ const PostScreen = ({ route, navigation }) => {
   const [tagged, setTagged] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
-  const [display, setDisplay] = useState(asset);
+  const [display, setDisplay] = useState(assets[0]);
   const [errMsg, setErrMsg] = useState(null);
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
-  //get rid of one below
-  const [media, setMedia] = useState(writer ? [] : [asset.uri]);
-  const [flatStuffs, setFlatStuffs] = useState(writer ? [] : [asset]);
+  const [media, setMedia] = useState(writer ? [] : assets);
 
   const flatt = useRef();
   const searchInputRef = useRef(null);
@@ -85,10 +89,10 @@ const PostScreen = ({ route, navigation }) => {
   };
   const data = {
     title: writer ? textObj : text.trim(),
-    type: writer ? "text" : asset.type,
+    type: writer ? "text" : assets[0].type,
     post: media,
     instancePost: router.type ? instanceData : null,
-    meta: flatStuffs,
+    meta: media, // was flax b4
     tags: tagged,
   };
 
@@ -134,36 +138,26 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleAddMore = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.5,
-    });
-    if (result.cancelled || media.length > 9) return;
-    setDisplay(result);
-    setMedia([...media, result.uri]);
-    setFlatStuffs([...flatStuffs, result]);
+    const { _error, result } = await launchGallery(assets[0].type);
+
+    if (result) {
+      console.log(result);
+      setDisplay(result);
+      setMedia([...media, ...result.assets]);
+    }
   };
 
   const handleChangeVideo = async () => {
     const prevPost = display;
     setDisplay(null);
     setErrMsg(null);
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-    });
 
-    //// CHECK THE DURATION
-
-    if (!res.cancelled) {
-      const { bool, vidErr } = vidMaxChecker(res.duration, 5);
-      if (bool) {
-        setMedia([]);
-        return setErrMsg(vidErr);
-      }
-      setMedia(res);
-      setDisplay(res);
-    } else {
+    const { _error, result } = await launchGallery("video");
+    if (_error) {
       setDisplay(prevPost);
+    } else {
+      setMedia(result[0]);
+      setDisplay(result[0]);
     }
   };
 
@@ -172,9 +166,8 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleRemoveImage = (item) => {
-    setFlatStuffs(flatStuffs.filter((obj) => obj.uri !== item.uri));
-    setMedia(media.filter((uri) => uri !== item.uri));
-    display.uri == item.uri ? setDisplay(flatStuffs[0]) : null;
+    setMedia((prev) => prev.filter((uri) => uri !== item.uri));
+    display.uri == item.uri ? setDisplay(media[0]) : null;
   };
 
   const handleSearchTag = () => {
@@ -310,12 +303,6 @@ const PostScreen = ({ route, navigation }) => {
   }, [router]);
 
   useEffect(() => {
-    if (!flatStuffs[0] && !writer) {
-      navigation.goBack();
-    }
-  }, [flatStuffs]);
-
-  useEffect(() => {
     if (!tagged[0]) {
       searchInputRef?.current?.focus();
     }
@@ -444,7 +431,7 @@ const PostScreen = ({ route, navigation }) => {
                     )}
                 </View>
               )}
-              {!writer && asset.type === "video" && (
+              {!writer && assets[0].type === "video" && (
                 <View style={{ flex: 1 }}>
                   {display && (
                     <PostVideo
@@ -453,7 +440,7 @@ const PostScreen = ({ route, navigation }) => {
                       viewable={false}
                       disableDoublePress
                       disableLongPress
-                      dim={{ width: asset.width, height: asset.height }}
+                      dim={{ width: assets.width, height: assets.height }}
                     />
                   )}
                   <AppButton
@@ -471,7 +458,7 @@ const PostScreen = ({ route, navigation }) => {
                   />
                 </View>
               )}
-              {!writer && asset.type === "image" && display && (
+              {!writer && assets[0].type === "image" && display && (
                 <View
                   style={{
                     ...styles.imageCont,
@@ -487,10 +474,10 @@ const PostScreen = ({ route, navigation }) => {
                   />
                 </View>
               )}
-              {!writer && asset.type === "image" && (
+              {!writer && assets[0].type === "image" && (
                 <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
                   <FlatList
-                    data={flatStuffs}
+                    data={media}
                     keyExtractor={(item) => item.uri}
                     ref={flatt}
                     onContentSizeChange={() => flatt.current.scrollToEnd()}
