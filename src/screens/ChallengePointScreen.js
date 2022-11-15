@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { AdMobRewarded } from "expo-ads-admob";
+// import { AdMobRewarded } from "expo-ads-admob";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -59,7 +59,7 @@ const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
         return;
       }
       try {
-        await AdMobRewarded.showAdAsync();
+        // await AdMobRewarded.showAdAsync();
       } catch (err) {
         // display err
         setPopData({
@@ -199,8 +199,8 @@ const ChallengePointScreen = ({ navigation }) => {
 
   const adsServer = async () => {
     try {
-      await AdMobRewarded.setAdUnitID(ADS_ID);
-      await AdMobRewarded.requestAdAsync({ servePersonalizedAds: true });
+      // await AdMobRewarded.setAdUnitID(ADS_ID);
+      // await AdMobRewarded.requestAdAsync({ servePersonalizedAds: true });
       setAdLoaded({ vis: true, firstLoad: true });
     } catch (err) {
       // handle err
@@ -320,47 +320,47 @@ const ChallengePointScreen = ({ navigation }) => {
     );
   };
 
-  useEffect(() => {
-    const unsubscribeEnter = navigation.addListener("focus", () => {
-      adsServer();
-    });
+  // useEffect(() => {
+  //   const unsubscribeEnter = navigation.addListener("focus", () => {
+  //     adsServer();
+  //   });
 
-    return () => {
-      unsubscribeEnter;
-    };
-  }, [navigation]);
+  //   return () => {
+  //     unsubscribeEnter;
+  //   };
+  // }, [navigation]);
 
   useEffect(() => {
     fetchScreenData("load");
     handleAdsStorage();
-    AdMobRewarded.addEventListener(
-      "rewardedVideoUserDidEarnReward",
-      async () => {
-        const userData = {
-          action: "ads_reward",
-          actionData: ADS_POINT,
-          instance: "user",
-          instanceID: userInfo._id,
-        };
-        updateUserData(userData, async () => {
-          try {
-            const getter = await AsyncStorage.getItem("ads");
-            const getAds = JSON.parse(getter);
-            getAds.videosLeft = getAds.videosLeft - 1;
-            getAds.lastWatched = new Date();
-            // REMEMBER SETTER
-            await AsyncStorage.setItem("ads", JSON.stringify(getAds));
-            setAdInfo(getAds);
-          } catch (err) {
-            //
-            console.log("ASYNC STORAGE", err);
-          }
-        });
-      }
-    );
-    return () => {
-      AdMobRewarded.removeAllListeners();
-    };
+    // AdMobRewarded.addEventListener(
+    //   "rewardedVideoUserDidEarnReward",
+    //   async () => {
+    //     const userData = {
+    //       action: "ads_reward",
+    //       actionData: ADS_POINT,
+    //       instance: "user",
+    //       instanceID: userInfo._id,
+    //     };
+    //     updateUserData(userData, async () => {
+    //       try {
+    //         const getter = await AsyncStorage.getItem("ads");
+    //         const getAds = JSON.parse(getter);
+    //         getAds.videosLeft = getAds.videosLeft - 1;
+    //         getAds.lastWatched = new Date();
+    //         // REMEMBER SETTER
+    //         await AsyncStorage.setItem("ads", JSON.stringify(getAds));
+    //         setAdInfo(getAds);
+    //       } catch (err) {
+    //         //
+    //         console.log("ASYNC STORAGE", err);
+    //       }
+    //     });
+    //   }
+    // );
+    // return () => {
+    //   // AdMobRewarded.removeAllListeners();
+    // };
   }, []);
 
   return (

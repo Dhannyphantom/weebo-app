@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import MaskedView from "@react-native-community/masked-view";
+import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";

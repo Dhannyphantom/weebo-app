@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as Font from "expo-font";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from "expo-splash-screen";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-
 import Otaku from "./src/Otaku";
-const loaderFunc = async () => {
-  return await Font.loadAsync({
-    sen: require("./assets/fonts/sen/Sen-Regular.ttf"),
-    "reglise-black": require("./assets/fonts/reglise/ReglisseBack-eZewm.otf"),
-    reglise: require("./assets/fonts/reglise/Reglisse-0WOD9.otf"),
-    fonter: require("./assets/fonts/SnackerComicPersonalUseOnly-g3Z5.ttf"),
-    "sen-bold-b1": require("./assets/fonts/sen/Sen-Bold.ttf"),
-    "sen-bold-b2": require("./assets/fonts/sen/Sen-ExtraBold.ttf"),
+import { View } from "react-native";
+import mobileAds from "react-native-google-mobile-ads";
+
+mobileAds()
+  .initialize()
+  .then((adapterStatuses) => {
+    // Initialization complete!
   });
-};
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (dataLoaded) await SplashScreen.hideAsync();
+  }, [dataLoaded]);
 
   const requestImageLibraryPermission = async () => {
     const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -28,19 +31,35 @@ export default function App() {
   };
 
   useEffect(() => {
-    //TODO: REQUEST ALL PERMISSION LATER
-    requestImageLibraryPermission();
+    async function prepare() {
+      try {
+        await Font.loadAsync({
+          sen: require("./assets/fonts/sen/Sen-Regular.ttf"),
+          "reglise-black": require("./assets/fonts/reglise/ReglisseBack-eZewm.otf"),
+          reglise: require("./assets/fonts/reglise/Reglisse-0WOD9.otf"),
+          fonter: require("./assets/fonts/SnackerComicPersonalUseOnly-g3Z5.ttf"),
+          "sen-bold-b1": require("./assets/fonts/sen/Sen-Bold.ttf"),
+          "sen-bold-b2": require("./assets/fonts/sen/Sen-ExtraBold.ttf"),
+        });
+        await requestImageLibraryPermission();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setDataLoaded(true);
+      }
+    }
+    prepare();
   }, []);
 
   if (!dataLoaded) {
-    return (
-      <AppLoading
-        startAsync={loaderFunc}
-        onFinish={() => setDataLoaded(true)}
-        onError={(err) => console.log(err)}
-      />
-    );
+    return null;
   }
 
-  return <Otaku />;
+  return (
+    <>
+      <View onLayout={onLayoutRootView} />
+      <Otaku />
+    </>
+  );
 }

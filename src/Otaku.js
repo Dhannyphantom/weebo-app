@@ -65,12 +65,15 @@ const Otaku = () => {
     };
   });
 
-  useEffect(async () => {
-    const settingsStr = await AsyncStorageLib.getItem("settings");
-    if (settingsStr) {
-      const settingsData = JSON.parse(settingsStr);
-      setThemeMode(settingsData[1].data[0].default);
+  useEffect(() => {
+    async function prepareSettings() {
+      const settingsStr = await AsyncStorageLib.getItem("settings");
+      if (settingsStr) {
+        const settingsData = JSON.parse(settingsStr);
+        setThemeMode(settingsData[1].data[0].default);
+      }
     }
+    prepareSettings();
   }, []);
 
   return (
@@ -93,12 +96,15 @@ export default function Providers() {
     };
   });
 
-  useEffect(async () => {
-    const settingsStr = await AsyncStorageLib.getItem("settings");
-    if (settingsStr) {
-      const settingsData = JSON.parse(settingsStr);
-      setThemeMode(settingsData[1].data[0].default);
+  useEffect(() => {
+    async function prepareSettings() {
+      const settingsStr = await AsyncStorageLib.getItem("settings");
+      if (settingsStr) {
+        const settingsData = JSON.parse(settingsStr);
+        setThemeMode(settingsData[1].data[0].default);
+      }
     }
+    prepareSettings();
   }, []);
 
   return (

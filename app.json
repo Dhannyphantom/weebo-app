@@ -21,11 +21,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-3603875446667492~7241419988"
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "cstr6suwn9.skadnetwork"
+          }
+        ]
       }
     },
     "android": {
@@ -33,12 +40,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-3603875446667492~4709489944"
-      }
+      "package": "com.phantom.weebo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a6378b43-7106-4c59-a10a-94224fff1c10"
+      }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-3603875446667492~4709489944",
+    "ios_app_id": "ca-app-pub-3603875446667492~7241419988"
   }
 }
