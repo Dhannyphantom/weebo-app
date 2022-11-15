@@ -22,7 +22,17 @@ const RenderLottie = ({ vis, type = "play" }) => {
   const lottie = useRef(null);
   const opaciter = useRef(new Animated.Value(0)).current;
 
-  let lottieAnimation = pause_play;
+  let lottieAnimation;
+
+  switch (type) {
+    case "like":
+      lottieAnimation = heartPop;
+      break;
+
+    default:
+      lottieAnimation = pause_play;
+      break;
+  }
 
   useEffect(() => {
     if (vis) {
@@ -71,6 +81,10 @@ export default function PostVideo({ source }) {
   const video = useRef(null);
 
   const handleVideoAction = () => {
+    // console.log(status);
+    if (status.playableDurationMillis === status.positionMillis) {
+      video?.current?.playFromPositionAsync(0);
+    }
     status.isPlaying ? video.current.pauseAsync() : video.current.playAsync();
   };
 
@@ -85,7 +99,7 @@ export default function PostVideo({ source }) {
         style={styles.video}
         source={source}
         resizeMode="contain"
-        isLooping
+        isLooping={false}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
       <RenderLottie vis={status.isPlaying} />
@@ -99,7 +113,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.dark,
-    width,
+    width: "96%",
+    alignSelf: "center",
+    borderRadius: 15,
   },
   lottie: {
     position: "absolute",
