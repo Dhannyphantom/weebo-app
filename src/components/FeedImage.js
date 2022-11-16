@@ -19,8 +19,6 @@ const FeedImage = ({
   image,
   handleLike,
   lDisabled,
-  feed,
-  translator,
   showMediaFunc,
   disableTouch = false,
   dbDisabled,
@@ -61,11 +59,7 @@ const FeedImage = ({
       timed = setTimeout(() => {
         if (!dPress) {
           if (!lDisabled) {
-            const modalData = {
-              item: image,
-              feed,
-            };
-            showMediaFunc && showMediaFunc(modalData);
+            showMediaFunc && showMediaFunc({ ...image, type: "image" });
           }
         }
       }, 250);

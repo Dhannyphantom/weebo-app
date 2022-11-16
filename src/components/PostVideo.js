@@ -17,26 +17,29 @@ const { width, height } = Dimensions.get("screen");
 
 const LOTTIE_SIZE = width * 0.35;
 
-const RenderLottie = ({ vis, type = "play" }) => {
+const RenderLottie = ({ vis, type = "play", loaded }) => {
   // type = "like" || "play"
   const lottie = useRef(null);
   const opaciter = useRef(new Animated.Value(0)).current;
 
-  let lottieAnimation, lottieTime;
+  let lottieAnimation, lottieTime, sizer;
 
   switch (type) {
     case "like":
       lottieAnimation = heartPop;
       lottieTime = { show: { x: 45, y: 90 }, hide: { x: 0, y: 40 } };
+      sizer = 2;
       break;
 
     default:
       lottieAnimation = pause_play;
       lottieTime = { show: { x: 170, y: 220 }, hide: { x: 60, y: 110 } };
+      sizer = 1;
       break;
   }
 
-  useEffect(() => {
+  const handleAnimations = () => {
+    if (!loaded) return null;
     if (vis) {
       // show animation
       Animated.sequence([
@@ -46,7 +49,7 @@ const RenderLottie = ({ vis, type = "play" }) => {
         }),
         Animated.timing(opaciter, {
           toValue: 0,
-          delay: 1500,
+          delay: 1000,
           useNativeDriver: true,
         }),
       ]).start();
@@ -56,11 +59,15 @@ const RenderLottie = ({ vis, type = "play" }) => {
       opaciter.setValue(1);
       Animated.timing(opaciter, {
         toValue: 0,
-        duration: 2000,
+        duration: 2200,
         useNativeDriver: true,
       }).start();
       lottie?.current?.play(lottieTime?.hide?.x, lottieTime?.hide?.y);
     }
+  };
+
+  useEffect(() => {
+    handleAnimations();
   }, [vis]);
 
   return (
@@ -71,7 +78,11 @@ const RenderLottie = ({ vis, type = "play" }) => {
         // onAnimationFinish={() => handleAnimFinish("play")}
         ref={lottie}
         loop={false}
-        style={styles.lottieAnim}
+        style={{
+          ...styles.lottieAnim,
+          width: LOTTIE_SIZE * sizer,
+          height: LOTTIE_SIZE * sizer,
+        }}
       />
     </Animated.View>
   );
@@ -81,10 +92,14 @@ export default function PostVideo({
   source,
   onDoublePress,
   onFinishedPlaying,
+  style,
   onLongPress,
+  loop = false,
   showHearts,
+  disableLongPress,
 }) {
   const [status, setStatus] = useState({});
+  const [bools, setBools] = useState({ showHearts: false, loaded: false });
 
   const video = useRef(null);
 
@@ -110,8 +125,9 @@ export default function PostVideo({
       if (!onDoublePress) return;
       dPress = true;
       if (onDoublePress) {
+        showHearts && setBools({ ...bools, showHearts: !bools.showHearts });
         onDoublePress();
-        showHearts && setStatus({ ...status, like: !!status.like });
+        return;
       }
     } else {
       // single press
@@ -127,7 +143,7 @@ export default function PostVideo({
   const handleLongPress = () => {
     if (!onLongPress) return;
     video.current.pauseAsync();
-    onLongPress();
+    onLongPress({ ...source, pos: status.positionMillis });
   };
 
   useEffect(() => {
@@ -136,24 +152,35 @@ export default function PostVideo({
     }
   }, [status]);
 
+  useEffect(() => {
+    if (loop) video.current.playAsync();
+  }, []);
+
   return (
     <TouchableOpacity
       onPress={handleVideoAction}
       activeOpacity={1}
       onLongPress={handleLongPress}
-      style={styles.container}
+      style={[styles.container, style]}
     >
       <Video
         ref={video}
         style={styles.video}
         source={source}
         resizeMode="contain"
-        isLooping={false}
+        onLoad={() => setBools({ ...bools, loaded: true })}
+        isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
       <RenderLottie
-        vis={status.isPlaying || status.like}
-        type={status.like ? "like" : "play"}
+        vis={status.isPlaying && !bools.showHearts}
+        type="play"
+        loaded={bools.loaded}
+      />
+      <RenderLottie
+        vis={bools.showHearts && !status.isPlaying}
+        type="like"
+        loaded={bools.loaded}
       />
     </TouchableOpacity>
   );
@@ -167,6 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark,
     width: "98%",
     alignSelf: "center",
+    height: height * 0.7,
     borderRadius: 15,
   },
   lottie: {
@@ -185,7 +213,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: height * 0.7,
+    height: "100%",
     borderRadius: 16,
   },
 });

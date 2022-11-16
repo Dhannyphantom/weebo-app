@@ -24,8 +24,9 @@ const { width, height } = Dimensions.get("window");
 const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   // modalObject = {vis: bool, data: {feed: {type: string, pos: number(isVideo)}, item: {uri, width, height}}}
   const isVisible = modalObject.vis;
-  const modalData = modalObject.data;
-  if (!isVisible || !modalData) return null;
+  const item = modalObject.item;
+  // item = {uri, width, height, type, pos,  postId}
+  if (!isVisible || !item) return null;
 
   const { viewPostVideo } = useContext(FeedContext);
 
@@ -41,7 +42,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
     PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => {
         // DISABLE GESTURES FOR VIDEO DISPLAY
-        // if (params.type === "video") {
+        // if (assetType === "video") {
         //   return false;
         // }
         return true;
@@ -69,14 +70,11 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
     })
   ).current;
 
-  const params = modalData.feed;
-  // data = {type,pos(isVid), }
-  const item = modalData.item;
-  // item = {uri, width, height}
+  const assetType = item?.type;
 
   const handleViewPost = () => {
     setPost({ ...post, viewed: true, views: post.views + 1 });
-    viewPostVideo(params._id, (err) => {
+    viewPostVideo(item.postId, (err) => {
       setErrMsg(err);
       //display error message
     });
@@ -93,7 +91,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
         visible={isVisible}
         onRequestClose={handleCloseModal}
         statusBarTranslucent
-        transparent={params.type === "video" ? false : true}
+        transparent={assetType === "video" ? false : true}
         animationType="fade"
       >
         <Animated.View
@@ -105,7 +103,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
             }),
           }}
         >
-          {params.type === "image" ? (
+          {assetType === "image" ? (
             <Animated.View
               {...mediaMoverResponder.panHandlers}
               style={{
@@ -113,7 +111,6 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               }}
             >
               <FeedImage
-                feed={params}
                 showMediaFunc={modalActions?.showMediaFunc}
                 image={item}
                 style={{ width }}
@@ -123,7 +120,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
                 liked={modalActions?.liked}
               />
             </Animated.View>
-          ) : params.type === "video" ? (
+          ) : assetType === "video" ? (
             <Animated.View
               panHandlers={{ ...mediaMoverResponder.panHandlers }}
               style={{
@@ -133,36 +130,34 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
             >
               <PostVideo
                 source={item}
-                contStyle={styles.vidComp}
-                disableTouch
-                posProp={params.pos}
-                handleViewPost={handleViewPost}
-                post={post}
-                full
-                disableLongPress
+                style={styles.vidComp}
+                // disableTouch
+                // pos={item.pos}
+                onFinishedPlaying={handleViewPost}
+                loop
               />
             </Animated.View>
-          ) : params.type === "text" ? (
+          ) : assetType === "text" ? (
             <Animated.View
               {...mediaMoverResponder.panHandlers}
               style={{
                 ...styles.textCont,
-                backgroundColor: params.textInfo.bg,
+                backgroundColor: item.textInfo.bg,
                 transform: [{ translateY: mediaTranslator }],
               }}
             >
               <AppText
-                style={{ ...styles.textItem, color: params.textInfo.tColor }}
+                style={{ ...styles.textItem, color: item.textInfo.tColor }}
                 size="xxlarge"
                 bold
               >
                 {item}
               </AppText>
             </Animated.View>
-          ) : params.type === "info" ? (
+          ) : assetType === "info" ? (
             <InfoChallenge
-              data={params.infoData}
-              color={params.color}
+              data={item.infoData}
+              color={item.color}
               size="full"
             />
           ) : null}
@@ -212,7 +207,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   vidComp: {
-    justifyContent: "center",
+    width,
+    height,
   },
 });
 export default MediaModal;

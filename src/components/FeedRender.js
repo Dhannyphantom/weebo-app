@@ -6,6 +6,7 @@ import FeedText from "./FeedText";
 import MediaModal from "./MediaModal";
 import AppCarousel from "./AppCarousel";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Context as AuthContext } from "../config/AuthContext";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import PostVideo from "./PostVideo";
@@ -17,6 +18,9 @@ const { width } = Dimensions.get("window");
 
 const FeedRender = ({ item, user }) => {
   const { likePost, viewPostVideo } = useContext(FeedContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   const [myComments, setMyComments] = useState([]);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
@@ -47,6 +51,7 @@ const FeedRender = ({ item, user }) => {
   };
 
   const handleViewPost = () => {
+    if (item.views.includes(userInfo._id)) return;
     setPost({ ...post, viewed: true, views: post.views + 1 });
     viewPostVideo(item._id, (err) => {
       setErrMsg(err);
@@ -54,7 +59,7 @@ const FeedRender = ({ item, user }) => {
   };
 
   const handleShowMedia = (mediaObj) => {
-    setDisplayMedia({ vis: true, data: mediaObj });
+    setDisplayMedia({ vis: true, item: { ...mediaObj, postId: item._id } });
   };
 
   useEffect(() => {
