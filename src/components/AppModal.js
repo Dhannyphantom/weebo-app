@@ -24,6 +24,7 @@ import ActivityIndicator from "./ActivityIndicator";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
 import { CollectionCard } from "../screens/SavedCollectionScreen";
+import { downloadMedia } from "../constants/helpers";
 
 const { height, width } = Dimensions.get("window");
 
@@ -194,7 +195,7 @@ const AppModal = ({
     handleCloseModal();
   };
 
-  const showContent = (str, close) => {
+  const showContent = async (str, close) => {
     if (str?.startsWith("edit")) {
       contentXb.setValue(0.85);
       Animated.timing(contentX, {
@@ -211,6 +212,21 @@ const AppModal = ({
         str && onPress(str);
       });
       contentX.setValue(0.85);
+    } else if (str?.startsWith("download")) {
+      const { result, error } = await downloadMedia(postUris);
+      if (error) {
+        setPopData({
+          vis: true,
+          msg: error,
+          type: "failed",
+        });
+      } else if (result) {
+        setPopData({
+          vis: true,
+          msg: "Media saved",
+          type: "success",
+        });
+      }
     } else if (close) {
       if (str === "delete") return onPress(str);
       Animated.parallel([

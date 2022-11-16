@@ -5,7 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import Otaku from "./src/Otaku";
 import { View } from "react-native";
-import mobileAds from "react-native-google-mobile-ads";
+// import mobileAds from "react-native-google-mobile-ads";
 
 SplashScreen.preventAutoHideAsync();
 
