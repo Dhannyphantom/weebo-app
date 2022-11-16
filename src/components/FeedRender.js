@@ -119,6 +119,7 @@ const FeedRender = ({ item, user }) => {
               // feed={item}
               onDoublePress={handleLike}
               showHearts
+              style={{ width: width * 0.95 }}
               onFinishedPlaying={handleViewPost}
               onLongPress={handleShowMedia}
               // post={post}

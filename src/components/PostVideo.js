@@ -4,9 +4,14 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { Video } from "expo-av";
 import LottieView from "lottie-react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Viewport } from "@skele/components";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import colors from "../constants/colors";
 
 // lottie animations
@@ -14,8 +19,12 @@ import pause_play from "../../assets/animations/play_pause_white.json";
 import heartPop from "../../assets/animations/heartPop.json";
 
 const { width, height } = Dimensions.get("screen");
+const ViewportAwareVideo = Viewport.Aware(TouchableOpacity);
 
 const LOTTIE_SIZE = width * 0.35;
+
+let touchTime = 0,
+  timed;
 
 const RenderLottie = ({ vis, type = "play", loaded }) => {
   // type = "like" || "play"
@@ -94,23 +103,22 @@ export default function PostVideo({
   onFinishedPlaying,
   style,
   onLongPress,
+  pos = 0,
   loop = false,
   showHearts,
-  disableLongPress,
 }) {
   const [status, setStatus] = useState({});
   const [bools, setBools] = useState({ showHearts: false, loaded: false });
 
   const video = useRef(null);
 
-  let touchTime = 0,
-    timed;
-
   const onPlayVideo = () => {
     if (status.playableDurationMillis === status.positionMillis) {
       video?.current?.playFromPositionAsync(0);
     }
-    status.isPlaying ? video.current.pauseAsync() : video.current.playAsync();
+    status.isPlaying
+      ? video?.current?.pauseAsync()
+      : video?.current?.playAsync();
   };
 
   const handleVideoAction = () => {
@@ -146,6 +154,21 @@ export default function PostVideo({
     onLongPress({ ...source, pos: status.positionMillis });
   };
 
+  const handleViewport = async (type) => {
+    if (type === "enter") {
+      // if auto video play is on then play video
+      const strSettings = await AsyncStorage.getItem("settings");
+      if (!strSettings) return;
+      const settings = JSON.parse(strSettings);
+      const videoSettings = settings
+        .find((obj) => obj.title === "General")
+        .data.find((obj) => obj.key === "vid");
+      videoSettings.default && video.current.playAsync();
+    } else {
+      video?.current?.pauseAsync();
+    }
+  };
+
   useEffect(() => {
     if (status.playableDurationMillis - 500 <= status.positionMillis) {
       onFinishedPlaying && onFinishedPlaying();
@@ -157,21 +180,35 @@ export default function PostVideo({
   }, []);
 
   return (
-    <TouchableOpacity
+    <ViewportAwareVideo
       onPress={handleVideoAction}
       activeOpacity={1}
       onLongPress={handleLongPress}
       style={[styles.container, style]}
+      onViewportEnter={() => handleViewport("enter")}
+      onViewportLeave={() => handleViewport("leave")}
     >
       <Video
         ref={video}
         style={styles.video}
         source={source}
         resizeMode="contain"
+        positionMillis={pos}
+        posterSource={{ uri: source.thumb }}
         onLoad={() => setBools({ ...bools, loaded: true })}
         isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
+      {!status.isPlaying && (
+        <View style={styles.playIcon}>
+          <MaterialCommunityIcons
+            name="motion-play"
+            size={40}
+            style={{ margin: 10 }}
+            color={colors.white}
+          />
+        </View>
+      )}
       <RenderLottie
         vis={status.isPlaying && !bools.showHearts}
         type="play"
@@ -182,7 +219,7 @@ export default function PostVideo({
         type="like"
         loaded={bools.loaded}
       />
-    </TouchableOpacity>
+    </ViewportAwareVideo>
   );
 }
 
@@ -210,6 +247,11 @@ const styles = StyleSheet.create({
     width: LOTTIE_SIZE,
     height: LOTTIE_SIZE,
     alignSelf: "center",
+  },
+  playIcon: {
+    position: "absolute",
+    top: 0,
+    left: 0,
   },
   video: {
     width: "100%",
