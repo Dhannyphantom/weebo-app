@@ -9,7 +9,6 @@ import {
   TextInput,
 } from "react-native";
 import { Formik } from "formik";
-import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -31,6 +30,7 @@ import ThemeContext from "../config/ThemeContext";
 const { editValidationSchema, passwordInitials } = yupSchema;
 import { emailers } from "../constants/data_store";
 import Link from "../components/Link";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -452,19 +452,14 @@ const EditProfileScreen = ({ navigation, route }) => {
   };
 
   const selectProfileImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 0.6,
-    });
-    if (!result.cancelled) {
+    const { results } = await launchGallery("image", true, false, [4, 4]);
+    if (results) {
       setImageLoading(true);
 
       updateAvatar(
-        result,
+        results[0],
         () => {
-          setPageData({ ...pageData, avatar: result.uri });
+          setPageData({ ...pageData, avatar: results[0].uri });
           setImageLoading(false);
         },
         (err) => {

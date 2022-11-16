@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import { Viewport } from "@skele/components";
-import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as FeedContext } from "../config/FeedContext";
@@ -28,7 +27,7 @@ import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
 
 import { showInfoProps } from "../constants/data_store";
-import { capFirstLetter } from "../constants/helpers";
+import { capFirstLetter, launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -268,16 +267,12 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleNewCover = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [30, 25],
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!res.cancelled) {
+    const { results } = await launchGallery("image", true, false, [30, 25]);
+    if (results) {
       setIsCoverLoading(true);
       const dataObj = {
         action: "cover",
-        actionData: res,
+        actionData: results[0],
         instance: "show",
         instanceID: dataState._id,
         media: true,
@@ -341,18 +336,16 @@ const ShowScreen = ({ route, navigation }) => {
     // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
     // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
     if (!checkIsVerified()) return;
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      videoMaxDuration: 30,
-    });
 
-    if (!res.cancelled) {
+    const { results } = await launchGallery("all", false, false, null, 45);
+
+    if (results) {
       // setIsCoverLoading(true);
       const statusObj = {
         instance: "show",
         instanceID: dataState._id,
         post: {
-          ...res,
+          ...results[0],
         },
       };
       delete statusObj.post.cancelled;

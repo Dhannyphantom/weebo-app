@@ -12,7 +12,6 @@ import {
 import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
-import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Context as CharContext } from "../config/CharContext";
@@ -35,7 +34,7 @@ import InstanceInvites from "../components/InstanceInvites";
 import ThemeContext from "../config/ThemeContext";
 import Link from "../components/Link";
 import PopDropDown from "../components/PopDropDown";
-import { capFirstLetter } from "../constants/helpers";
+import { capFirstLetter, launchGallery } from "../constants/helpers";
 import InstanceHeader, { RenderVerifyInfo } from "../components/InstanceHeader";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
@@ -357,22 +356,18 @@ const ViewRoomScreen = ({ navigation, route }) => {
     // TODO:: UPDATE ONLY THE COVER FIELD IN THE CHARACTER OBJ
     // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
 
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-    });
+    const { results } = await launchGallery("all", false, false, null, 45);
 
-    if (!res.cancelled) {
+    if (results) {
       // setIsCoverLoading(true);
       setBools({ ...bools, cover: true });
       const statusObj = {
         instance: "group",
         instanceID: pageData?._id,
         post: {
-          ...res,
+          ...results[0],
         },
       };
-      delete statusObj.post.cancelled;
-
       setShowUpload({ vis: true, data: statusObj });
     }
   };
@@ -426,16 +421,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const handleCoverImageChange = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [25, 16],
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!res.cancelled) {
+    const { results } = await launchGallery("image", true, false, [25, 16]);
+
+    if (results) {
       setBools({ ...bools, cover: true });
       const dataObj = {
         action: "cover_photo",
-        actionData: res,
+        actionData: results[0],
         instance: "group",
         instanceID: pageData?._id,
         media: true,

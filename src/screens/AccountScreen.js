@@ -8,7 +8,6 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import AppText from "../components/AppText";
@@ -25,6 +24,7 @@ import { StatusBar } from "expo-status-bar";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "../components/AppFadeIn";
 import PopMessage from "../components/PopMessage";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 const modalShow = {
@@ -126,19 +126,13 @@ const AccountScreen = ({ navigation, route }) => {
     : (placeholder = require("../../assets/female.jpg"));
 
   const selectProfileImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 0.6,
-    });
-    if (!result.cancelled) {
+    const { results } = await launchGallery("image", true, false, [4, 4]);
+    if (results) {
       setImageLoading(true);
-      delete result.cancelled;
       updateAvatar(
-        result,
+        results[0],
         (res) => {
-          setAccount([{ ...account[0], avatar: result.uri }]);
+          setAccount([{ ...account[0], avatar: results[0].uri }]);
           setImageLoading(false);
         },
         (err) => {

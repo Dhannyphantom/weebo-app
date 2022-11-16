@@ -37,33 +37,39 @@ export const launchGallery = async (
   });
 
   if (result.canceled) {
+    console.log(type);
     return {
       _error: "Operation cancelled",
-      result: null,
+      results: null,
     };
   } else {
-    if (type === "video") {
+    // Operation not cancelled
+    if (result.assets[0].type === "video") {
       const { bool, vidErr } = vidMaxChecker(
         result.assets[0].duration,
         vidDuration
       );
+
       if (bool) {
         return {
           _error: vidErr,
-          result: null,
+          results: null,
         };
       }
     }
 
     return {
-      result: result.assets,
+      results: result.assets,
       _error: null,
     };
   }
 };
 
-const assetsArr = [];
 export const downloadMedia = async (media) => {
+  const assetsArr = [];
+  const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
+  const isiOS = Platform.OS === "ios";
+
   if (Array.isArray(media)) {
     const assetPromises = media.map(async (obj) => {
       const filename = obj.uri.slice(-30);
@@ -71,6 +77,19 @@ export const downloadMedia = async (media) => {
       try {
         const downloadedFile = await FileSystem.downloadAsync(obj.uri, fileUri);
         // check if media has already been downloaded
+        if (downloadedFile.status !== 200) {
+          return { error: "Download failed", result: null };
+        }
+        // for non image downloads with iOS
+        if (
+          isiOS &&
+          imageFileExts.every((ext) => !downloadedFile.uri.endsWith(ext))
+        ) {
+          // that is it's probably a video or other files,
+          const UTI = "public.item";
+          await Sharing.shareAsync(downloadedFile.uri, { UTI });
+        }
+
         const asset = await MediaLibrary.createAssetAsync(downloadedFile.uri);
         assetsArr.push(asset);
       } catch (err) {
@@ -78,6 +97,11 @@ export const downloadMedia = async (media) => {
       }
     });
     await Promise.all([...assetPromises]);
+    if (
+      isiOS &&
+      imageFileExts.every((ext) => !downloadedFile.uri.endsWith(ext))
+    )
+      return;
     try {
       const album = await MediaLibrary.getAlbumAsync("Weebo");
       if (album == null) {
@@ -98,15 +122,12 @@ export const downloadMedia = async (media) => {
     const filename = media.uri.slice(-30);
     const fileUri = `${FileSystem.documentDirectory}${filename}`;
     const downloadedFile = await FileSystem.downloadAsync(media.uri, fileUri);
-    const isiOS = Platform.OS === "ios";
 
     if (downloadedFile.status !== 200) {
       return { error: "Download failed", result: null };
     }
 
     // for non image downloads with iOS
-    const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
-
     if (
       isiOS &&
       imageFileExts.every((ext) => !downloadedFile.uri.endsWith(ext))

@@ -4,11 +4,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  FlatList,
   Animated,
   RefreshControl,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
@@ -23,7 +21,6 @@ import InstanceHeader from "../components/InstanceHeader";
 import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
 import AppText from "../components/AppText";
-import vidMaxChecker from "../constants/vidMaxChecker";
 import FeedRender from "../components/FeedRender";
 import GrowInput from "../components/GrowInput";
 import StickyHeader from "../components/StickyHeader";
@@ -178,7 +175,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
   const handleUploadBtn = async (type) => {
     if (type === "upload") {
-      const { _error, result } = await launchGallery("all");
+      const { _error, results } = await launchGallery("all");
 
       if (_error) {
         return setPopper({
@@ -186,10 +183,10 @@ const ChannelPostScreen = ({ route, navigation }) => {
           msg: _error,
           vis: true,
         });
-      } else if (result) {
+      } else if (results) {
         setOpenMedia(false);
         navigation.navigate("Post", {
-          assets: result,
+          assets: results,
           type: "channel",
           id: page._id,
           name: page.name,
@@ -206,18 +203,14 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
 
   const handleCoverChange = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [25, 16],
-    });
+    const { results } = await launchGallery("image", true, false, [25, 16]);
 
-    if (!res.cancelled) {
+    if (results) {
       setImageLoading(true);
       const dataObj = {
         action: "cover",
         media: true,
-        actionData: res,
+        actionData: results[0],
         channel: page._id,
       };
 
@@ -277,23 +270,17 @@ const ChannelPostScreen = ({ route, navigation }) => {
     );
   };
   const handleUploadStaus = async () => {
-    // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
-    // MEANS YOU WANT TO GRAB THE IMAGE FROM GALLERY
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      videoMaxDuration: 30,
-    });
+    const { results } = await launchGallery("all", false, false, null, 45);
 
-    if (!res.cancelled) {
+    if (results) {
       // setIsCoverLoading(true);
       const statusObj = {
         instance: "channel",
         instanceID: page._id,
         post: {
-          ...res,
+          ...results[0],
         },
       };
-      delete statusObj.post.cancelled;
 
       setShowUpload({ vis: true, data: statusObj });
     }

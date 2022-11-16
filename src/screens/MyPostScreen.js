@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -13,6 +12,7 @@ import Screen from "../components/Screen";
 import ThemeContext from "../config/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import TabList from "../components/TabList";
+import { launchGallery } from "../constants/helpers";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
@@ -38,13 +38,10 @@ const MyPostScreen = ({ navigation, route }) => {
 
   const addNewPost = async () => {
     // LIMIT INSTANCE POSTS
-
-    const data = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-    });
-    if (!data.cancelled) {
+    const { results } = await launchGallery("all");
+    if (results) {
       navigation.navigate("Post", {
-        uri: data,
+        assets: results,
         type: fromScreen,
         id: params?.info?.id,
         name: params?.info.name,

@@ -6,7 +6,6 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
@@ -19,7 +18,6 @@ import { Context as CharContext } from "../config/CharContext";
 import { Context as FeedContext } from "../config/FeedContext";
 import { charPropInfos } from "../constants/data_store";
 import ActivityIndicator from "../components/ActivityIndicator";
-import DropDown from "../components/DropDown";
 import AlertModal from "../components/AlertModal";
 import CharInfoScreen from "./CharInfoScreen";
 import CharChallengerScreen from "./CharChallengerScreen";
@@ -31,6 +29,7 @@ import InstanceInvites from "../components/InstanceInvites";
 import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -387,32 +386,33 @@ const CharacterScreen = ({ route, navigation }) => {
         msg: "Character is yet to be verified",
       });
     }
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      videoMaxDuration: 15,
-    });
 
-    if (!res.cancelled) {
+    const { results, _error } = await launchGallery(
+      "all",
+      false,
+      false,
+      null,
+      45
+    );
+
+    if (results) {
       // setIsCoverLoading(true);
-      const vidMaxLength = 45 * 1000;
-      if (res.type === "video" && res.duration > vidMaxLength) {
-        return setPopper({
-          type: "failed",
-          vis: true,
-          msg: "Video length exceeds 45 seconds",
-        });
-      }
 
       const statusObj = {
         instance: "character",
         instanceID: character._id,
         post: {
-          ...res,
+          ...results[0],
         },
       };
-      delete statusObj.post.cancelled;
 
       setShowUpload({ vis: true, data: statusObj });
+    } else if (_error) {
+      return setPopper({
+        type: "failed",
+        vis: true,
+        msg: _error,
+      });
     }
   };
 
@@ -424,17 +424,13 @@ const CharacterScreen = ({ route, navigation }) => {
         msg: "Character is yet to be verified",
       });
     }
-    // TODO:: UPDATE ONY THE COVER FIELD IN THE CHARACTER OBJ
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [12, 14],
-    });
-    if (!res.cancelled) {
+
+    const { results } = await launchGallery("image", true, false, [12, 14]);
+    if (results) {
       setIsCoverLoading(true);
       const dataObj = {
         action: "cover",
-        actionData: res,
+        actionData: results[0],
         instance: "character",
         instanceID: character._id,
         media: true,

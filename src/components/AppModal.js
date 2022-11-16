@@ -58,6 +58,7 @@ const AppModal = ({
   const [showText, setShowText] = useState(false);
   const [popData, setPopData] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
+  const [bools, setBools] = useState({ loading: false });
 
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
@@ -213,6 +214,7 @@ const AppModal = ({
       });
       contentX.setValue(0.85);
     } else if (str?.startsWith("download")) {
+      setBools({ ...bools, loading: true });
       const { result, error } = await downloadMedia(postUris);
       if (error) {
         setPopData({
@@ -220,13 +222,14 @@ const AppModal = ({
           msg: error,
           type: "failed",
         });
-      } else if (result) {
+      } else {
         setPopData({
           vis: true,
           msg: "Media saved",
           type: "success",
         });
       }
+      setBools({ ...bools, loading: false });
     } else if (close) {
       if (str === "delete") return onPress(str);
       Animated.parallel([
@@ -445,6 +448,11 @@ const AppModal = ({
               )}
             </View>
           </TouchableOpacity>
+          <ActivityIndicator
+            visible={bools.loading}
+            style={styles.activity}
+            wTransparent
+          />
         </Animated.View>
       </TouchableOpacity>
       <PopMessage popData={popData} setter={() => setPopData({ vis: false })} />
@@ -452,6 +460,13 @@ const AppModal = ({
   );
 };
 const styles = StyleSheet.create({
+  activity: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   bg: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",

@@ -139,15 +139,15 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleAddMore = async () => {
-    const { result } = await launchGallery(
+    const { results } = await launchGallery(
       assetType,
       false,
       assetType === "image"
     );
 
-    if (result) {
-      setDisplay(result[0]);
-      setMedia([...media, ...result]);
+    if (results) {
+      setDisplay(results[0]);
+      setMedia([...media, ...results]);
     }
   };
 
@@ -156,12 +156,12 @@ const PostScreen = ({ route, navigation }) => {
     setDisplay(null);
     setErrMsg(null);
 
-    const { _error, result } = await launchGallery("video");
+    const { _error, results } = await launchGallery("video");
     if (_error) {
       setDisplay(prevPost);
     } else {
-      setMedia(result[0]);
-      setDisplay(result[0]);
+      setMedia(results[0]);
+      setDisplay(results[0]);
     }
   };
 

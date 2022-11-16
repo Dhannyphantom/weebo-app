@@ -6,7 +6,7 @@ export default (videoMillis, duration = 105) => {
     // EXCEEDS DURATION
     return {
       bool: true,
-      vidErr: `Video maxlength of ${duration}seconds exceeded`,
+      vidErr: `Video maxlength of ${duration} seconds exceeded`,
     };
   } else {
     return { bool: false, vidErr: null };
