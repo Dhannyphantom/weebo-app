@@ -22,8 +22,6 @@
     "@skele/components": "^1.0.0-alpha.40",
     "axios": "^1.1.3",
     "expo": "~47.0.3",
-    "expo-ads-admob": "^13.0.0",
-    "expo-app-loading": "~2.1.1",
     "expo-av": "~13.0.1",
     "expo-blur": "~12.0.1",
     "expo-constants": "~14.0.2",

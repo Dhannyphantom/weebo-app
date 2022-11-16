@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-// import { AdMobRewarded } from "expo-ads-admob";
+import {
+  RewardedAd,
+  RewardedAdEventType,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -23,8 +27,17 @@ const { width, height } = Dimensions.get("window");
 const ADS_POINT = 5;
 
 const ADS_ID = Platform.select({
-  ios: "ca-app-pub-3603875446667492/8881804714",
-  android: "ca-app-pub-3603875446667492/3217430636",
+  ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8881804714",
+  android: __DEV__
+    ? TestIds.REWARDED
+    : "ca-app-pub-3603875446667492/3217430636",
+});
+
+const keywords = ["anime", "weeb", "otaku", "comics", "manga", "manhwa"];
+
+const rewarded = RewardedAd.createForAdRequest(ADS_ID, {
+  requestNonPersonalizedAdsOnly: true,
+  keywords,
 });
 
 const CLEAR_ALERT = {
@@ -59,7 +72,7 @@ const ScreenHeaderRight = ({ isLoaded, screenSetter, num }) => {
         return;
       }
       try {
-        // await AdMobRewarded.showAdAsync();
+        rewarded.show();
       } catch (err) {
         // display err
         setPopData({
@@ -197,25 +210,6 @@ const ChallengePointScreen = ({ navigation }) => {
     );
   };
 
-  const adsServer = async () => {
-    try {
-      // await AdMobRewarded.setAdUnitID(ADS_ID);
-      // await AdMobRewarded.requestAdAsync({ servePersonalizedAds: true });
-      setAdLoaded({ vis: true, firstLoad: true });
-    } catch (err) {
-      // handle err
-      const errAds = err?.message;
-      console.log(err?.message);
-      if (err?.message?.includes("already loaded")) {
-        setAdLoaded({ vis: true, firstLoad: true });
-      } else if (errAds?.includes("resolve host")) {
-        console.log("do something different");
-      } else {
-        setAdLoaded({ vis: false, err: err?.message, firstLoad: true });
-      }
-    }
-  };
-
   const handleAdsStorage = async () => {
     // SETTING UP DAILY WATCH ADS
     const getAdsData = JSON.parse(await AsyncStorage.getItem("ads"));
@@ -320,47 +314,55 @@ const ChallengePointScreen = ({ navigation }) => {
     );
   };
 
-  // useEffect(() => {
-  //   const unsubscribeEnter = navigation.addListener("focus", () => {
-  //     adsServer();
-  //   });
+  useEffect(() => {
+    const unsubscribeLoaded = rewarded.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => {
+        setAdLoaded({ vis: true, firstLoad: true });
+      }
+    );
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      (reward) => {
+        async () => {
+          console.log("REWARD", reward);
+          const userData = {
+            action: "ads_reward",
+            actionData: ADS_POINT,
+            instance: "user",
+            instanceID: userInfo._id,
+          };
+          updateUserData(userData, async () => {
+            try {
+              const getter = await AsyncStorage.getItem("ads");
+              const getAds = JSON.parse(getter);
+              getAds.videosLeft = getAds.videosLeft - 1;
+              getAds.lastWatched = new Date();
+              // REMEMBER SETTER
+              await AsyncStorage.setItem("ads", JSON.stringify(getAds));
+              setAdInfo(getAds);
+              setAdLoaded({ ...adLoaded, vis: false });
+              rewarded.load();
+            } catch (err) {
+              //
+              console.log("ASYNC STORAGE", err);
+            }
+          });
+        };
+      }
+    );
 
-  //   return () => {
-  //     unsubscribeEnter;
-  //   };
-  // }, [navigation]);
+    rewarded.load();
+
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  }, []);
 
   useEffect(() => {
     fetchScreenData("load");
     handleAdsStorage();
-    // AdMobRewarded.addEventListener(
-    //   "rewardedVideoUserDidEarnReward",
-    //   async () => {
-    //     const userData = {
-    //       action: "ads_reward",
-    //       actionData: ADS_POINT,
-    //       instance: "user",
-    //       instanceID: userInfo._id,
-    //     };
-    //     updateUserData(userData, async () => {
-    //       try {
-    //         const getter = await AsyncStorage.getItem("ads");
-    //         const getAds = JSON.parse(getter);
-    //         getAds.videosLeft = getAds.videosLeft - 1;
-    //         getAds.lastWatched = new Date();
-    //         // REMEMBER SETTER
-    //         await AsyncStorage.setItem("ads", JSON.stringify(getAds));
-    //         setAdInfo(getAds);
-    //       } catch (err) {
-    //         //
-    //         console.log("ASYNC STORAGE", err);
-    //       }
-    //     });
-    //   }
-    // );
-    // return () => {
-    //   // AdMobRewarded.removeAllListeners();
-    // };
   }, []);
 
   return (
