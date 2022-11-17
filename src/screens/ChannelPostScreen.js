@@ -490,7 +490,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
       ) : (
         <ActivityIndicator type="spin" visible={true} />
       )}
-      {/* {showHead && <Sticker title={page.name} icon="tv" />} */}
       <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
       <PopDropDown
         visible={popModal.modal}

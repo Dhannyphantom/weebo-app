@@ -35,6 +35,7 @@ const AlertScreen = ({ navigation }) => {
   const {
     readNotification,
     getUserData,
+    wipeNotifications,
     state: { userInfo },
   } = useContext(AuthContext);
   const [alertApi, setAlertApi] = useState([]);
@@ -55,9 +56,11 @@ const AlertScreen = ({ navigation }) => {
   };
 
   const hasReadAll = alertApi.every((obj) => obj.read);
+  // const hasReadAll = false;
 
   const handleDeleteAll = () => {
     setAlertApi([]);
+    wipeNotifications(null, (errData) => console.log(errData));
   };
 
   const handlePrompt = () => {

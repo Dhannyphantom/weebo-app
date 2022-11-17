@@ -38,7 +38,8 @@ import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
 
-// import NativeAds, { adsManager } from "../components/NativeAds";
+import NativeAds from "../components/NativeAds";
+import * as FacebookAds from "expo-ads-facebook";
 
 const { width, height } = Dimensions.get("window");
 const ONLINE_MODE = false;
@@ -293,11 +294,6 @@ const HomeScreen = ({ navigation, route }) => {
         }}
       >
         <HomeHeader characters={userInfo.charactersOwned} />
-        {/* <NativeAds
-          adsManager={adsManager}
-          onAdLoaded={(ad) => console.log(ad)}
-          onError={(error) => console.warn(error)}
-        /> */}
 
         {!feeds?.results[0] ? (
           <RenderPageHeader />

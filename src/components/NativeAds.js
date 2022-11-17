@@ -13,29 +13,30 @@ export const FB_ADS_ID = Platform.select({
     : "ca-app-pub-3603875446667492/3217430636",
 });
 
-export const adsManager = new FacebookAds.NativeAdsManager(FB_ADS_ID, 2);
+// export const adsManager = new FacebookAds.NativeAdsManager(FB_ADS_ID, 2);
 
 const NativeAds = ({ nativeAd }) => {
+  console.log(nativeAd);
   return (
     <View style={styles.container}>
       <AppText> {nativeAd.advertiserName} </AppText>
       <AppText bold> {nativeAd.headline} </AppText>
       <AppText bold> {nativeAd.bodyText} </AppText>
 
-      <AdMediaView />
+      {/* <AdMediaView />
       <AdIconView />
       <AdTriggerView>
         <AppText>{nativeAd.bodyText}</AppText>
-      </AdTriggerView>
+      </AdTriggerView> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    width: 400,
+    height: 500,
+    backgroundColor: "red",
   },
 });
 

@@ -25,12 +25,7 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   const handlePress = () => {
     setDisplayMedia({
       vis: true,
-      data: {
-        item,
-        feed: {
-          type: isVideoImage ? "video" : "image",
-        },
-      },
+      item: { ...item, type: isVideoImage ? "video" : "image" },
     });
   };
 

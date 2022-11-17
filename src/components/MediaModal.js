@@ -22,7 +22,7 @@ const useHeight = barheight > 25 ? barheight + height * 0.0005 : barheight + 1;
 const { width, height } = Dimensions.get("window");
 
 const MediaModal = ({ modalObject, setVisible, modalActions }) => {
-  // modalObject = {vis: bool, data: {feed: {type: string, pos: number(isVideo)}, item: {uri, width, height}}}
+  // modalObject = {vis: bool, item: obj}
   const isVisible = modalObject.vis;
   const item = modalObject.item;
   // item = {uri, width, height, type, pos,  postId}

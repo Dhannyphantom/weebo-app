@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#151515"
     },
     "updates": {
@@ -52,8 +52,7 @@
           "isAutoInitEnabled": true,
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
-      ],
-      "react-native-fbads"
+      ]
     ]
   },
   "react-native-google-mobile-ads": {

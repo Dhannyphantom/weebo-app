@@ -6,6 +6,8 @@ import {
   Dimensions,
   RefreshControl,
 } from "react-native";
+import * as FacebookAds from "expo-ads-facebook";
+
 import { AntDesign } from "@expo/vector-icons";
 
 import { Context as ChallContext } from "../config/ChallContext";
@@ -21,6 +23,9 @@ import Awarder from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
+import NativeAds, { FB_ADS_ID } from "../components/NativeAds";
+
+export const adsManager = new FacebookAds.NativeAdsManager(FB_ADS_ID, 3);
 
 const { width, height } = Dimensions.get("window");
 
@@ -188,6 +193,11 @@ const ChallengeScreen = ({ navigation }) => {
             }
           />
         )}
+      />
+      <NativeAds
+        adsManager={adsManager}
+        onAdLoaded={(ad) => console.log(ad)}
+        onError={(error) => console.warn(error)}
       />
       {!challengeInfo[0] && !awardData[0] && loadedOnce && (
         <FlatList

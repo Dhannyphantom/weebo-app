@@ -414,7 +414,31 @@ const readNotification = (dispatch) => async (notifyData, sc, cb) => {
     });
     sc && sc();
   } catch (err) {
-    cb && cb(err?.response?.data);
+    cb &&
+      cb({
+        err,
+        msg: "Error updating notification",
+        data: err?.response?.data,
+      });
+  }
+};
+
+const wipeNotifications = (dispatch) => async (sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    await authApi.delete("/notifications", {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc();
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error updating notification",
+        data: err?.response?.data,
+      });
   }
 };
 
@@ -611,6 +635,7 @@ export const { Context, Provider } = createDataContext(
     getMyData,
     readNotification,
     notificationSender,
+    wipeNotifications,
     updateAvatar,
     updateUserData,
     updateMe,

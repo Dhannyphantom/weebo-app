@@ -12,7 +12,7 @@ SplashScreen.preventAutoHideAsync();
 mobileAds()
   .initialize()
   .then((adapterStatus) => {
-    console.log("Mobile Ads Initialized", adapterStatus);
+    // console.log("Mobile Ads Initialized", adapterStatus);
   });
 
 export default function App() {
