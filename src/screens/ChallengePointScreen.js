@@ -28,7 +28,7 @@ const ADS_POINT = 5;
 
 const ADS_ID = Platform.select({
   ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8881804714",
-  android: __DEV__
+  android: !__DEV__
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/3217430636",
 });
@@ -323,32 +323,29 @@ const ChallengePointScreen = ({ navigation }) => {
     );
     const unsubscribeEarned = rewarded.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
-      (reward) => {
-        async () => {
-          console.log("REWARD", reward);
-          const userData = {
-            action: "ads_reward",
-            actionData: ADS_POINT,
-            instance: "user",
-            instanceID: userInfo._id,
-          };
-          updateUserData(userData, async () => {
-            try {
-              const getter = await AsyncStorage.getItem("ads");
-              const getAds = JSON.parse(getter);
-              getAds.videosLeft = getAds.videosLeft - 1;
-              getAds.lastWatched = new Date();
-              // REMEMBER SETTER
-              await AsyncStorage.setItem("ads", JSON.stringify(getAds));
-              setAdInfo(getAds);
-              setAdLoaded({ ...adLoaded, vis: false });
-              rewarded.load();
-            } catch (err) {
-              //
-              console.log("ASYNC STORAGE", err);
-            }
-          });
+      async (reward) => {
+        const userData = {
+          action: "ads_reward",
+          actionData: ADS_POINT,
+          instance: "user",
+          instanceID: userInfo._id,
         };
+        updateUserData(userData, async () => {
+          try {
+            const getter = await AsyncStorage.getItem("ads");
+            const getAds = JSON.parse(getter);
+            getAds.videosLeft = getAds.videosLeft - 1;
+            getAds.lastWatched = new Date();
+            // REMEMBER SETTER
+            await AsyncStorage.setItem("ads", JSON.stringify(getAds));
+            setAdInfo(getAds);
+            setAdLoaded({ ...adLoaded, vis: false });
+            rewarded.load();
+          } catch (err) {
+            //
+            console.log("ASYNC STORAGE", err);
+          }
+        });
       }
     );
 

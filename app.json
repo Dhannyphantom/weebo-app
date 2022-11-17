@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "plugins": [],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -40,7 +39,20 @@
       "eas": {
         "projectId": "a6378b43-7106-4c59-a10a-94224fff1c10"
       }
-    }
+    },
+    "facebookScheme": "fb1234567891234567",
+    "facebookAppId": "406752991548934",
+    "facebookDisplayName": "Weebo App",
+    "facebookAutoLogAppEventsEnabled": true,
+    "facebookAdvertiserIDCollectionEnabled": true,
+    "plugins": [
+      [
+        "expo-ads-facebook",
+        {
+          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ]
+    ]
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-3603875446667492~4709489944",
