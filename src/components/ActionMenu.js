@@ -65,7 +65,11 @@ const ActionMenu = ({
               <AppText size="large" bold style={styles.title}>
                 {title}
               </AppText>
-              {subTitle && <AppText style={styles.subTxt}>{subTitle}</AppText>}
+              {subTitle && (
+                <AppText size="small" style={styles.subTxt}>
+                  {subTitle}
+                </AppText>
+              )}
             </View>
           </View>
         </LinearGradient>
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
   },
   subTxt: {
     color: colors.black,
-    width: "100%",
+    width: "80%",
     opacity: 0.5,
     marginTop: 5,
   },

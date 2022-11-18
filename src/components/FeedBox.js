@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   author: {
     textTransform: "uppercase",
-    width: width * 0.33,
+    minWidth: width * 0.33,
     textAlign: "center",
   },
   bgImage: {

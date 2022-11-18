@@ -183,7 +183,7 @@ const ChallengePointScreen = ({ navigation }) => {
       <View style={styles.cardContainer}>
         <View style={{ ...styles.separator, backgroundColor: pointsColor }}>
           <MaterialCommunityIcons
-            name="alpha-c-circle"
+            name="alpha-w-circle"
             size={width * 0.12}
             color={colors.white}
             style={{ opacity: 0.2 }}
@@ -405,7 +405,7 @@ const ChallengePointScreen = ({ navigation }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="alpha-c-circle"
+                  name="alpha-w-circle"
                   size={width * 0.06}
                   color={colors.white}
                   style={{ opacity: 0.2 }}

@@ -245,8 +245,8 @@ const AppForm = ({
       <View style={styles.info}>
         <AppLogo type="icon" />
         {/* <AppText style={{ marginTop: 16 }}>Welcome to the Community! </AppText> */}
-        <AppText style={{ marginTop: 7, marginBottom: 14 }}>
-          Weebo welcomes you into it's community
+        <AppText style={styles.title}>
+          Connect and have fun with your fellow weebs
         </AppText>
       </View>
       <Spacer style={styles.headerTitleCont}>
@@ -477,6 +477,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  title: {
+    maxWidth: "60%",
+    marginTop: 7,
+    marginBottom: 14,
+    textAlign: "center",
   },
   headerTitle: {
     fontSize: 12,

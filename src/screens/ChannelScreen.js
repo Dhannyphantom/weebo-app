@@ -7,6 +7,7 @@ import {
   Modal,
   FlatList,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -31,10 +32,21 @@ import LoaderImage from "../components/LoaderImage";
 import ThemeContext from "../config/ThemeContext";
 import TabList from "../components/TabList";
 import AppFadeIn from "../components/AppFadeIn";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
 const validationSchema = scheme.channelValidation;
+
+const init = {
+  name: "",
+  cover_photo: {
+    width: 0,
+    height: 0,
+    uri: "",
+  },
+  description: "",
+};
 
 const ChannelHeaderComp = ({
   boxState,
@@ -88,9 +100,197 @@ const HeaderTitle = ({ text, show }) => {
   );
 };
 
-const ChannelScreen = ({ navigation }) => {
-  const { createChannel, getChannels, subscribeChannel, searchChannels } =
-    useContext(CharContext);
+const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
+  const theme = useContext(ThemeContext);
+  const { createChannel } = useContext(CharContext);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState(null);
+
+  const handleFormSubmit = (formValues) => {
+    setIsLoading(true);
+    setErrMsg(null);
+    createChannel(
+      formValues,
+      (data) => {
+        setBoxState({ s: false, m: true });
+        addNewElement(data);
+        setIsLoading(false);
+        setModal(false);
+      },
+      (errData) => {
+        console.log(errData);
+        setErrMsg(errData.data ?? errData.msg);
+        setIsLoading(false);
+      }
+    );
+  };
+
+  return (
+    <View style={[styles.border, { backgroundColor: theme.backgroundLight }]}>
+      <View style={[styles.content, { backgroundColor: theme.background }]}>
+        <AppText style={styles.title} bold>
+          Create new channel
+        </AppText>
+        <Separator h={1} />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          <CreateFormik
+            initialValues={init}
+            validationSchema={validationSchema}
+            onSubmit={handleFormSubmit}
+          >
+            <AppText style={{ color: theme.medium, textAlign: "center" }} bold>
+              Will require 150CP
+            </AppText>
+            <View style={{ padding: 12 }}>
+              <CreateForm
+                name="name"
+                header="Channel Name:"
+                mutable="Give your channel a name"
+              />
+              <CreateForm
+                name="description"
+                header="Channel's Desciption:"
+                placeholder="Write something about your channel"
+                grow
+              />
+              <CoverUpload type="channel" show name="cover_photo" />
+              <View style={styles.btns}>
+                <SubmitButton title="CREATE" bared style={styles.submitBtn} />
+                <AppButton
+                  title="Cancel"
+                  LIcon="cancel"
+                  style={styles.submitBtn}
+                  bare
+                  bareRed
+                  onPress={() => setModal(false)}
+                />
+              </View>
+            </View>
+          </CreateFormik>
+        </ScrollView>
+        <View style={styles.activity}>
+          {isLoading && (
+            <ActivityIndicator type="spin" visible={true} wTransparent />
+          )}
+        </View>
+        {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
+      </View>
+    </View>
+  );
+};
+
+const ChannelListComp = ({
+  item,
+  subscribe,
+  addNewElement,
+  isMine,
+  small,
+  unsubscribe,
+}) => {
+  const navigation = useNavigation();
+  const { subscribeChannel } = useContext(CharContext);
+  const handleSubscribe = (type, id) => {
+    subscribeChannel(
+      type,
+      id,
+      (data) => {
+        addNewElement(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  };
+  const handleImagePress = (id) => {
+    navigation.navigate("ChannelPost", { id });
+  };
+
+  return (
+    <View style={{ marginBottom: 5 }}>
+      <View style={styles.header}>
+        <Feather name="tv" size={18} color={colors.primary} />
+        <AppText style={styles.titleText} bold>
+          {item.name}
+        </AppText>
+      </View>
+      <View style={small ? styles.imageContTwo : styles.imageCont}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => handleImagePress(item._id)}
+          style={small ? styles.imageContTwo : styles.imageCont}
+        >
+          <LoaderImage
+            image={item.cover_photo}
+            borderRadius={width * 0.03}
+            noAspect
+            style={small ? styles.imageTwo : styles.image}
+          />
+          <View style={styles.imageBg}></View>
+        </TouchableOpacity>
+        <View style={styles.profilePic}>
+          <ProfilePic
+            source={item.manager.avatar}
+            userID={item.manager._id}
+            size={50}
+          />
+          <AppText
+            size={small ? "small" : "normal"}
+            bold
+            ellipsizeMode="tail"
+            numberOfLines={3}
+            style={styles.descText}
+          >
+            {item.description?.substring(0, small ? 25 : 50)}
+          </AppText>
+        </View>
+      </View>
+      {/* {!small && <Separator h={1} />} */}
+      {!small && (
+        <View style={styles.stats}>
+          <AppText style={styles.statsItem}>
+            <AppText bold>{item.posts.length}</AppText> posts{" "}
+          </AppText>
+          {subscribe && (
+            <View style={{ flex: 0.5 }}>
+              <AppButton
+                title="SUBSCRIBE"
+                bare
+                style={{ alignSelf: "center" }}
+                onPress={() => handleSubscribe("sub", item._id)}
+              />
+            </View>
+          )}
+          {(isMine || (!unsubscribe && !subscribe)) && (
+            <View style={styles.statsItem}>
+              <AppText size="normal" bold style={{ color: colors.primary }}>
+                MANAGING
+              </AppText>
+            </View>
+          )}
+          {unsubscribe && (
+            <AppButton
+              title="UN-SUBSCRIBE"
+              style={styles.statsItem}
+              onPress={() => handleSubscribe("unsub", item._id)}
+              bare
+            />
+          )}
+          <AppText style={styles.statsItem}>
+            <AppText bold>{item.subscribers.length}</AppText> subscribers{" "}
+          </AppText>
+        </View>
+      )}
+      {!small && <Separator h={1} />}
+    </View>
+  );
+};
+
+const ChannelScreen = () => {
+  const { getChannels, searchChannels } = useContext(CharContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -100,7 +300,6 @@ const ChannelScreen = ({ navigation }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [boxState, setBoxState] = useState({ s: true, m: false });
-  const [isLoading, setIsLoading] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [modal, setModal] = useState(false);
@@ -112,20 +311,7 @@ const ChannelScreen = ({ navigation }) => {
     obj?.subscribers.includes(userInfo._id)
   );
 
-  const init = {
-    name: "",
-    cover_photo: {
-      width: 0,
-      height: 0,
-      uri: "",
-    },
-    description: "",
-  };
   const searchRef = useRef(null);
-
-  const handleImagePress = (id) => {
-    navigation.navigate("ChannelPost", { id });
-  };
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -167,94 +353,6 @@ const ChannelScreen = ({ navigation }) => {
     setChannels(cArr);
   };
 
-  const handleSubscribe = (type, id) => {
-    subscribeChannel(
-      type,
-      id,
-      (data) => {
-        addNewElement(data);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  };
-
-  const ChannelListComp = ({ item, subscribe, isMine, small, unsubscribe }) => {
-    return (
-      <View style={{ marginBottom: 5 }}>
-        <View style={styles.header}>
-          <Feather name="tv" size={18} color={colors.primary} />
-          <AppText style={styles.titleText} bold>
-            {item.name}
-          </AppText>
-        </View>
-        <View style={small ? styles.imageContTwo : styles.imageCont}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => handleImagePress(item._id)}
-            style={small ? styles.imageContTwo : styles.imageCont}
-          >
-            <LoaderImage
-              image={item.cover_photo}
-              borderRadius={width * 0.03}
-              noAspect
-              style={small ? styles.imageTwo : styles.image}
-            />
-            <View style={styles.imageBg}></View>
-          </TouchableOpacity>
-          <View style={styles.profilePic}>
-            <ProfilePic
-              source={item.manager.avatar}
-              userID={item.manager._id}
-              size={50}
-            />
-            <AppText bold style={styles.descText}>
-              {item.description}
-            </AppText>
-          </View>
-        </View>
-        {/* {!small && <Separator h={1} />} */}
-        {!small && (
-          <View style={styles.stats}>
-            <AppText style={styles.statsItem}>
-              <AppText bold>{item.posts.length}</AppText> posts{" "}
-            </AppText>
-            {subscribe && (
-              <View style={{ flex: 0.5 }}>
-                <AppButton
-                  title="SUBSCRIBE"
-                  bare
-                  style={{ alignSelf: "center" }}
-                  onPress={() => handleSubscribe("sub", item._id)}
-                />
-              </View>
-            )}
-            {(isMine || (!unsubscribe && !subscribe)) && (
-              <View style={styles.statsItem}>
-                <AppText size="xlarge" bold style={{ color: colors.primary }}>
-                  MANAGING
-                </AppText>
-              </View>
-            )}
-            {unsubscribe && (
-              <AppButton
-                title="UN-SUBSCRIBE"
-                style={styles.statsItem}
-                onPress={() => handleSubscribe("unsub", item._id)}
-                bare
-              />
-            )}
-            <AppText style={styles.statsItem}>
-              <AppText bold>{item.subscribers.length}</AppText> subscribers{" "}
-            </AppText>
-          </View>
-        )}
-        {!small && <Separator h={1} />}
-      </View>
-    );
-  };
-
   const handleBoxChange = (type) => {
     if (type === "s") {
       setBoxState({ s: true, m: false });
@@ -263,38 +361,21 @@ const ChannelScreen = ({ navigation }) => {
     }
   };
 
-  const handleFormSubmit = (formValues) => {
-    setIsLoading(true);
-    setErrMsg(null);
-    createChannel(
-      formValues,
-      (data) => {
-        setBoxState({ s: false, m: true });
-        addNewElement(data);
-        setIsLoading(false);
-        setModal(false);
-      },
-      (errData) => {
-        console.log(errData);
-        setErrMsg(errData.data ?? errData.msg);
-        setIsLoading(false);
-      }
-    );
-  };
-
   const handleNewChannel = () => {
     setModal(true);
   };
 
   const renderChannels = ({ item }) => {
     if (boxState.m && item.manager._id == userInfo._id) {
-      return <ChannelListComp item={item} />;
+      return <ChannelListComp addNewElement={addNewElement} item={item} />;
     } else if (
       boxState.s &&
       !item.subscribers.includes(userInfo._id) &&
       item.manager._id != userInfo._id
     ) {
-      return <ChannelListComp item={item} subscribe />;
+      return (
+        <ChannelListComp addNewElement={addNewElement} item={item} subscribe />
+      );
     }
   };
 
@@ -304,7 +385,14 @@ const ChannelScreen = ({ navigation }) => {
       item.manager._id !== userInfo._id &&
       item.subscribers.includes(userInfo._id)
     ) {
-      return <ChannelListComp item={item} unsubscribe small />;
+      return (
+        <ChannelListComp
+          addNewElement={addNewElement}
+          item={item}
+          unsubscribe
+          small
+        />
+      );
     }
   };
 
@@ -359,52 +447,10 @@ const ChannelScreen = ({ navigation }) => {
       <ChannelListComp
         item={item}
         unsubscribe={unsubscribe}
+        addNewElement={addNewElement}
         isMine={isMine}
         subscribe={subscribe}
       />
-    );
-  };
-
-  const CreateChannelForm = () => {
-    return (
-      <View style={[styles.border, { backgroundColor: theme.backgroundLight }]}>
-        <View style={[styles.content, { backgroundColor: theme.background }]}>
-          <AppText style={styles.title} bold>
-            Create new channel
-          </AppText>
-          <Separator h={1} />
-          <CreateFormik
-            initialValues={init}
-            validationSchema={validationSchema}
-            onSubmit={handleFormSubmit}
-          >
-            <AppText style={{ color: theme.medium }} bold>
-              Will require 150CP
-            </AppText>
-            <View style={{ padding: 12 }}>
-              <CreateForm
-                name="name"
-                header="Channel Name:"
-                mutable="Give your channel a name"
-              />
-              <CreateForm
-                name="description"
-                header="Channel's Desciption:"
-                placeholder="Write something about your channel"
-                grow
-              />
-              <CoverUpload type="channel" show name="cover_photo" />
-              <SubmitButton title="CREATE" bared style={styles.submitBtn} />
-            </View>
-          </CreateFormik>
-          <View style={styles.activity}>
-            {isLoading && (
-              <ActivityIndicator type="spin" visible={true} wTransparent />
-            )}
-          </View>
-          {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
-        </View>
-      </View>
     );
   };
 
@@ -514,7 +560,13 @@ const ChannelScreen = ({ navigation }) => {
       <AppFadeIn
         visible={modal}
         setVisible={setModal}
-        RenderComponent={CreateChannelForm}
+        RenderComponent={() => (
+          <CreateChannelForm
+            setModal={setModal}
+            setBoxState={setBoxState}
+            addNewElement={addNewElement}
+          />
+        )}
       />
     </Screen>
   );
@@ -531,6 +583,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 
+  btns: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+  },
+
   content: {
     minHeight: height * 0.6,
     maxHeight: height * 0.85,
@@ -541,7 +599,7 @@ const styles = StyleSheet.create({
   },
   descText: {
     marginLeft: 8,
-    maxWidth: "88%",
+    maxWidth: "78%",
     color: colors.white,
   },
   error: {
@@ -640,13 +698,13 @@ const styles = StyleSheet.create({
     marginTop: width * 0.04,
   },
   submitBtn: {
-    width: width * 0.5,
     alignSelf: "center",
     marginTop: 10,
   },
   statsItem: {
     alignItems: "center",
     flex: 0.25,
+    marginVertical: 10,
     textAlign: "center",
   },
   stats: {

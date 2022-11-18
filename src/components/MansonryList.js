@@ -122,12 +122,28 @@ const RenderUserCollections = ({ isMine, collections = [], item }) => {
   );
 };
 
+const RenderEmptyList = () => {
+  return (
+    <View style={styles.empty}>
+      <ActivityIndicator
+        visible
+        type="isEmpty"
+        style={styles.activity}
+        text="No media"
+        transparent
+      />
+    </View>
+  );
+};
+
 export default function MansonryList({ media, handleRefresh, data }) {
   // data = {isMine}
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const [menu, setMenu] = useState({ vis: false, item: null, collections: [] });
-  const [actions, setActions] = useState({ collection: false });
+  const [actions, setActions] = useState({
+    collection: false,
+  });
 
   const theme = useContext(ThemeContext);
   const {
@@ -233,14 +249,14 @@ export default function MansonryList({ media, handleRefresh, data }) {
     >
       <MasonryList
         data={media}
-        keyExtractor={(item, index) => item._id}
+        keyExtractor={(item) => item._id}
         numColumns={2}
         style={{
           ...styles.mansonry,
           backgroundColor: theme.backgroundExtralight,
         }}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item, i }) => (
+        renderItem={({ item }) => (
           <MansonryItem
             item={item}
             setDisplayMedia={setDisplayMedia}
@@ -249,6 +265,7 @@ export default function MansonryList({ media, handleRefresh, data }) {
           />
         )}
         refreshing={refreshing}
+        ListEmptyComponent={() => <RenderEmptyList />}
         onRefresh={onRefresh}
         onEndReachedThreshold={0.1}
         onEndReached={onEndReached}
@@ -300,6 +317,10 @@ const styles = StyleSheet.create({
     color: colors.heart,
     width: "80%",
     alignSelf: "center",
+  },
+  empty: {
+    width,
+    height: height * 0.8,
   },
   itemContainer: {
     marginLeft: width * 0.015,

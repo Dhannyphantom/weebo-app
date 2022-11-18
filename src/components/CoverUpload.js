@@ -7,12 +7,12 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { useFormikContext } from "formik";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -70,18 +70,14 @@ const CoverUpload = ({ show, type = "character", name }) => {
   }
 
   const handleCoverImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: aspectR,
-      quality: 1,
-    });
+    const { results } = await launchGallery("image", true, false, aspectR);
 
-    if (!result.cancelled) {
-      setCoverImage(result.uri);
+    if (results) {
+      setCoverImage(results[0].uri);
       setFieldValue(name, {
-        width: result.width,
-        height: result.height,
-        uri: result.uri,
+        width: results[0].width,
+        height: results[0].height,
+        uri: results[0].uri,
       });
     }
   };
