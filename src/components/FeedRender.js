@@ -94,7 +94,6 @@ const FeedRender = ({ item, user }) => {
         title={item.title}
         type={item.type}
         info={item.textInfo}
-        feed={item}
         showMediaFunc={handleShowMedia}
         handleLike={handleLike}
         liked={post.liked}

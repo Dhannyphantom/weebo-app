@@ -142,16 +142,16 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               {...mediaMoverResponder.panHandlers}
               style={{
                 ...styles.textCont,
-                backgroundColor: item.textInfo.bg,
+                backgroundColor: item.bg,
                 transform: [{ translateY: mediaTranslator }],
               }}
             >
               <AppText
-                style={{ ...styles.textItem, color: item.textInfo.tColor }}
+                style={{ ...styles.textItem, color: item.tColor }}
                 size="xxlarge"
                 bold
               >
-                {item}
+                {item.title}
               </AppText>
             </Animated.View>
           ) : assetType === "info" ? (

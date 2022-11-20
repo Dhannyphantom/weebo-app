@@ -58,7 +58,7 @@ const PostScreen = ({ route, navigation }) => {
   const [tagged, setTagged] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
-  const [display, setDisplay] = useState(assets[0]);
+  const [display, setDisplay] = useState(assets ? assets[0] : {});
   const [errMsg, setErrMsg] = useState(null);
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
@@ -75,7 +75,7 @@ const PostScreen = ({ route, navigation }) => {
   const tagGroups = tagLists.filter((obj) => obj.type === "group");
   const tagShows = tagLists.filter((obj) => obj.type === "show");
   const tagCharacters = tagLists.filter((obj) => obj.type === "character");
-  const assetType = assets[0].type;
+  const assetType = assets && assets[0]?.type;
   //
   const theme = useContext(ThemeContext);
   const getBgColor = () => {

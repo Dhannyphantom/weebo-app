@@ -9,10 +9,8 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import getFormatTime from "../constants/getFormatTime";
-import * as ImagePicker from "expo-image-picker";
 import { setStatusBarStyle } from "expo-status-bar";
 
 import { Context as AcctContext } from "../config/AcctContext";
@@ -27,9 +25,9 @@ import PopMessage from "./PopMessage";
 import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
 import vidMaxChecker from "../constants/vidMaxChecker";
-import ThemeContext from "../config/ThemeContext";
 import TabList from "./TabList";
 import { RenderCoverUpload } from "./CoverUpload";
+import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -95,13 +93,16 @@ const Events = ({ closer, instance, instanceID }) => {
     setAsset(null);
     let res;
     if (type.image) {
-      res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      });
+      const { results } = await launchGallery("image", true);
+      if (results) {
+        res = results[0];
+      }
     } else if (type.video) {
-      res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      });
+      const { results } = await launchGallery("video", false, false, null, 60);
+      if (results) {
+        res = results[0];
+      }
+
       // RESTRICT VIDEO LIMIT
       const { vidErr, bool } = vidMaxChecker(res.duration, 4);
       if (bool) {

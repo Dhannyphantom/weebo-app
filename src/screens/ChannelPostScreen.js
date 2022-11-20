@@ -471,7 +471,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true }
             )}
-            contentContainerStyle={{ paddingBottom: height * 0.04 }}
+            contentContainerStyle={{ paddingBottom: height * 0.1 }}
             overScrollMode="never"
             refreshControl={
               <RefreshControl

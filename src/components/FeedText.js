@@ -20,12 +20,13 @@ const FeedText = ({
   title,
   handleLike,
   showMediaFunc,
-  feed,
+  textInfo,
   liked,
   info,
   type,
 }) => {
   const lotRef = useRef(null);
+
   const opaciter = useRef(new Animated.Value(0)).current;
 
   let touchTime = 0,
@@ -52,8 +53,7 @@ const FeedText = ({
       // single
       timed = setTimeout(() => {
         if (!dPress) {
-          // navigation.navigate("Display", { item: title, data: feed });
-          showMediaFunc({ item: title, feed });
+          showMediaFunc({ title, ...info, type: "text" });
         }
       }, 250);
     }
