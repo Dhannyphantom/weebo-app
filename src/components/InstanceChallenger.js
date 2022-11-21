@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as MediaPicker from "expo-image-picker";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -37,28 +36,9 @@ import {
 } from "../constants/data_store";
 import getFormatTime from "../constants/getFormatTime";
 import { DisplayInstance } from "./SearchInstance";
-import { capFirstLetter } from "../constants/helpers";
+import { capFirstLetter, launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("screen");
-
-const launchGallery = async (type) => {
-  const MediaType =
-    type === "image"
-      ? MediaPicker.MediaTypeOptions.Images
-      : MediaPicker.MediaTypeOptions.Videos;
-
-  const res = await MediaPicker.launchImageLibraryAsync({
-    mediaTypes: MediaType,
-    allowsEditing: true,
-    allowsMultipleSelection: false,
-  });
-
-  if (!res.cancelled) {
-    return { data: res };
-  } else {
-    return { error: "Cancelled" };
-  }
-};
 
 const Challenger = ({
   data,
@@ -175,13 +155,23 @@ const Challenger = ({
   const initializeChallenge = async (type) => {
     switch (type) {
       case "image":
-        const { error, data } = await launchGallery("image");
-        !error && setAsset(data);
+        const { results } = await launchGallery("image", true, false);
+        results && setAsset(results[0]);
 
         break;
       case "video":
-        const { error: error2, data: data2 } = await launchGallery("video");
-        !error2 && setAsset(data2);
+        const { _error, results: videos } = await launchGallery(
+          "video",
+          false,
+          false,
+          null,
+          60
+        );
+        if (_error) {
+          setErrMsg(_error);
+        } else {
+          setAsset(videos[0]);
+        }
         break;
       case "info":
         setAsset({ type: "info" });
@@ -200,12 +190,22 @@ const Challenger = ({
         setAsset({ type: "info_accept", data: "info" });
         break;
       case "image":
-        const { error, data } = await launchGallery("image");
-        !error && setAsset(data);
+        const { results } = await launchGallery("image", true, false);
+        results && setAsset(results[0]);
         break;
       case "video":
-        const { error: err, data: data2 } = await launchGallery("video");
-        !err && setAsset(data2);
+        const { _error, results: videos } = await launchGallery(
+          "video",
+          false,
+          false,
+          null,
+          60
+        );
+        if (_error) {
+          setErrMsg(_error);
+        } else {
+          setAsset(videos[0]);
+        }
         break;
 
       default:

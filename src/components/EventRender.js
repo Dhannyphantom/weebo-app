@@ -1,14 +1,13 @@
 import React, { useContext, useState } from "react";
 import { FlatList, View } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 
 import { Context as AcctContext } from "../config/AcctContext";
 
 import FeedBox from "./FeedBox";
 import JoinEvents from "./JoinEvents";
 import getFormatTime from "../constants/getFormatTime";
-import vidMaxChecker from "../constants/vidMaxChecker";
 import PopMessage from "./PopMessage";
+import { launchGallery } from "../constants/helpers";
 
 const RenderEvents = ({ item, userID, handleJoinEvent }) => {
   const [joiner, setJoiner] = useState(false);
@@ -42,19 +41,25 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
     try {
       let res;
       if (mediaType == "image") {
-        res = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        });
+        const { results } = await launchGallery("image", true, false);
+        if (results) {
+          res = results[0];
+        }
       } else if (mediaType == "video") {
-        res = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        });
-        const { vidErr, bool } = vidMaxChecker(res.duration, 4);
-        if (bool) {
+        const { _error, results } = await launchGallery(
+          "video",
+          false,
+          false,
+          null,
+          60
+        );
+        if (results) {
+          res = results[0];
+        } else if (_error) {
           return setPopper({
             type: "failed",
             vis: true,
-            msg: vidErr,
+            msg: _error,
           });
         }
       } else {

@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   statText: {
-    width: width * 0.33,
+    width: (width * 0.95) / 3,
     textAlign: "center",
     alignSelf: "center",
   },

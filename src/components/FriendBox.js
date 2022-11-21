@@ -52,7 +52,7 @@ const FriendBox = ({
             id: userID,
             type: "remove",
           },
-          (resData) => {
+          (_resData) => {
             //resData = [] of friends
             // updateMe({ data: resData, prop: "friends" });
             setAdded(false);
@@ -73,7 +73,7 @@ const FriendBox = ({
             id: userID,
             type: "add",
           },
-          (resData) => {
+          (_resData) => {
             // updateMe({ data: resData, prop: "friends" });
             setAdded(true);
             setErrMsg(null);

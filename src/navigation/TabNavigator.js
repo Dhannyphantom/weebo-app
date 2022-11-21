@@ -171,13 +171,13 @@ const TabButton = (props) => {
     if (focused) {
       Animated.timing(scaler, {
         toValue: 1,
-        duration: 450,
+        duration: 1000,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(scaler, {
         toValue: 0.7,
-        duration: 450,
+        duration: 1000,
         useNativeDriver: true,
       }).start();
     }
