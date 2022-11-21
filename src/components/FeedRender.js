@@ -51,7 +51,7 @@ const FeedRender = ({ item, user }) => {
   };
 
   const handleViewPost = () => {
-    if (item.views.includes(userInfo._id)) return;
+    if (item.views.includes(userInfo._id) || post.viewed) return;
     setPost({ ...post, viewed: true, views: post.views + 1 });
     viewPostVideo(item._id, (err) => {
       setErrMsg(err);

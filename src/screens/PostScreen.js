@@ -521,7 +521,7 @@ const PostScreen = ({ route, navigation }) => {
                       style={{ ...styles.input, color: getBgColor().text }}
                       placeholderTextColor={getBgColor().text}
                       multiline
-                      maxLength={150}
+                      maxLength={800}
                       numberOfLines={6}
                       placeholder="Write a post..."
                     />

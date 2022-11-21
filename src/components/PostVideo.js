@@ -108,9 +108,15 @@ export default function PostVideo({
   showHearts,
 }) {
   const [status, setStatus] = useState({});
-  const [bools, setBools] = useState({ showHearts: false, loaded: false });
+  const [bools, setBools] = useState({
+    showHearts: false,
+    loaded: false,
+    onFinishedCalled: false,
+  });
 
   const video = useRef(null);
+
+  // console.log(status.isBuffering, status);
 
   const onPlayVideo = () => {
     if (status.playableDurationMillis === status.positionMillis) {
@@ -170,8 +176,13 @@ export default function PostVideo({
   };
 
   useEffect(() => {
-    if (status.playableDurationMillis - 500 <= status.positionMillis) {
-      onFinishedPlaying && onFinishedPlaying();
+    if (!bools.onFinishedCalled) {
+      const percentageWatched =
+        (status.positionMillis / status.playableDurationMillis) * 100;
+      if (percentageWatched >= 50) {
+        onFinishedPlaying && onFinishedPlaying();
+        setBools({ ...bools, onFinishedCalled: true });
+      }
     }
   }, [status]);
 

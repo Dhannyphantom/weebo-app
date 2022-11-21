@@ -35,17 +35,22 @@ const FriendBox = ({
     addWeeb,
     instanceTransfer,
     updateMe,
+    requestWeeb,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
 
+  // console.log(data);
+
   const RenderMyFriends = ({ item, isMine, isFriends }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [added, setAdded] = useState(isFriends);
+    const [status, setStatus] = useState(item.status);
 
-    const handleUnweebing = (userID, isFriends) => {
+    const handleUnweebing = (userID, _isFriends) => {
       setIsLoading(true);
-      if (isFriends) {
+      setErrMsg(null);
+      if (_isFriends) {
         //unWeeb
         addWeeb(
           {
@@ -56,7 +61,7 @@ const FriendBox = ({
             //resData = [] of friends
             // updateMe({ data: resData, prop: "friends" });
             setAdded(false);
-            setErrMsg(null);
+            setStatus("request");
             setIsLoading(false);
             callback && callback();
           },
@@ -68,6 +73,7 @@ const FriendBox = ({
         );
       } else {
         // add weeb
+
         addWeeb(
           {
             id: userID,
@@ -76,9 +82,9 @@ const FriendBox = ({
           (_resData) => {
             // updateMe({ data: resData, prop: "friends" });
             setAdded(true);
-            setErrMsg(null);
             setIsLoading(false);
-            callback && callback();
+            setStatus("un-weeb");
+            setIsLoading(false);
           },
           (err) => {
             setIsLoading(false);
@@ -112,6 +118,37 @@ const FriendBox = ({
       );
     };
 
+    const weebActions = () => {
+      setIsLoading(true);
+      switch (status) {
+        case "request":
+          requestWeeb(
+            { id: item._id, type: "add" },
+            (_data) => {
+              setStatus("un-request");
+              setIsLoading(false);
+            },
+            (err) => setErrMsg(err)
+          );
+          break;
+        case "un-request":
+          requestWeeb(
+            { id: item._id, type: "remove" },
+            (_data) => {
+              setStatus("request");
+              setIsLoading(false);
+            },
+            (err) => setErrMsg(err)
+          );
+          break;
+        case "un-weeb":
+          handleUnweebing(item._id, true);
+          break;
+        default:
+          break;
+      }
+    };
+
     return (
       <TouchableOpacity
         activeOpacity={onPress ? 0.9 : 1}
@@ -136,12 +173,23 @@ const FriendBox = ({
             {!isLoading ? (
               <>
                 {type === "weeb" && (
-                  <AppButton
-                    title={isMine ? null : added ? "Unweeb" : "Add Weeb"}
-                    onPress={() => handleUnweebing(item._id, added)}
-                    naked
-                    style={styles.btn}
-                  />
+                  <>
+                    {status ? (
+                      <AppButton
+                        title={status}
+                        onPress={() => weebActions()}
+                        naked
+                        style={styles.btn}
+                      />
+                    ) : (
+                      <AppButton
+                        title={isMine ? null : added ? "Unweeb" : "Request"}
+                        onPress={() => handleUnweebing(item._id, added)}
+                        naked
+                        style={styles.btn}
+                      />
+                    )}
+                  </>
                 )}
                 {type === "transfer" && (
                   <AppButton

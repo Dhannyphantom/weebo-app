@@ -61,11 +61,11 @@ const HomeHeader = ({ characters }) => {
   const handleNav = async (type) => {
     if (type === "post") {
       setModalVis(false);
-      const { _error, result } = await launchGallery();
+      const { _error, results } = await launchGallery("all");
       if (_error) {
         setErrMsg(_error);
-      } else if (result) {
-        navigation.navigate("Post", { assets: result });
+      } else if (results) {
+        navigation.navigate("Post", { assets: results });
       }
     } else if (type === "contest") {
       setCMode(true);

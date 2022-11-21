@@ -16,15 +16,7 @@ const screen = Dimensions.get("window");
 const CONT_WIDTH = screen.width * 0.92;
 const LOTTIE_SIZE = screen.width * 0.8;
 
-const FeedText = ({
-  title,
-  handleLike,
-  showMediaFunc,
-  textInfo,
-  liked,
-  info,
-  type,
-}) => {
+const FeedText = ({ title, handleLike, showMediaFunc, liked, info, type }) => {
   const lotRef = useRef(null);
 
   const opaciter = useRef(new Animated.Value(0)).current;
@@ -85,7 +77,7 @@ const FeedText = ({
             size="xlarge"
             style={{ ...styles.coolText, color: info?.tColor }}
           >
-            {title}
+            {info.text}
           </AppText>
           <Animated.View
             style={{
@@ -114,8 +106,8 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   coolText: {
-    fontSize: 22,
     textAlign: "center",
+    maxWidth: "90%",
   },
   bgCont: {
     width: CONT_WIDTH,

@@ -151,7 +151,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
                 size="xxlarge"
                 bold
               >
-                {item.title}
+                {item.text}
               </AppText>
             </Animated.View>
           ) : assetType === "info" ? (
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   textItem: {
-    fontSize: 25,
     textAlign: "center",
+    maxWidth: "92%",
   },
   vidCont: {
     flex: 1,

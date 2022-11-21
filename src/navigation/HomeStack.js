@@ -9,7 +9,6 @@ import ShowScreen from "../screens/ShowScreen";
 import PostScreen from "../screens/PostScreen";
 import ImageGallery from "../components/ImageGallery";
 import NewChallenge from "../screens/NewChallenge";
-import WritePostScreen from "../screens/WritePostScreen";
 import ChannelScreen from "../screens/ChannelScreen";
 import MyPostScreen from "../screens/MyPostScreen";
 import ViewRoomScreen from "../screens/ViewRoomScreen";
@@ -31,7 +30,6 @@ const HomeStack = () => {
       <Stack.Screen name="Show" component={ShowScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
       <Stack.Screen name="Friends" component={FriendListScreen} />
-      <Stack.Screen name="Write" component={WritePostScreen} />
       <Stack.Screen name="Channel" component={ChannelScreen} />
       <Stack.Screen name="ChannelPost" component={ChannelPostScreen} />
       <Stack.Screen
