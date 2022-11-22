@@ -165,7 +165,7 @@ const AppModal = ({
           )}
         />
         <ActivityIndicator
-          style={{ position: "absolute", width: "100%", height: height * 0.5 }}
+          style={styles.activityCollection}
           type="spin"
           visible={isNewCollLoading}
           wTransparent
@@ -466,6 +466,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  activityCollection: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
   bg: {
     flex: 1,

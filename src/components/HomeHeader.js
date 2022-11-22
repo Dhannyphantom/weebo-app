@@ -89,9 +89,9 @@ const HomeHeader = ({ characters }) => {
 
   const handlePick = (item) => {
     const index = selectChar.findIndex((obj) => obj.name == item.name);
-    if (index == -1) {
+    if (index < 0) {
       setSelectChar([...selectChar, item]);
-    } else if (index > -1) {
+    } else {
       setSelectChar(selectChar.filter((obj) => obj.name !== item.name));
     }
   };

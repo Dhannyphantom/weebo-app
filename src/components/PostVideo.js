@@ -37,7 +37,7 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
     case "like":
       lottieAnimation = heartPop;
       lottieTime = { show: { x: 45, y: 90 }, hide: { x: 0, y: 40 } };
-      sizer = 2;
+      sizer = 2.2;
       break;
 
     default:
@@ -48,7 +48,7 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   }
 
   const handleAnimations = () => {
-    if (!loaded) return null;
+    if (!loaded) return;
     if (vis) {
       // show animation
       Animated.sequence([
@@ -84,7 +84,6 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
       <LottieView
         source={lottieAnimation}
         autoPlay={false}
-        // onAnimationFinish={() => handleAnimFinish("play")}
         ref={lottie}
         loop={false}
         style={{
@@ -116,15 +115,23 @@ export default function PostVideo({
 
   const video = useRef(null);
 
-  // console.log(status.isBuffering, status);
-
   const onPlayVideo = () => {
     if (status.playableDurationMillis === status.positionMillis) {
       video?.current?.playFromPositionAsync(0);
     }
-    status.isPlaying
-      ? video?.current?.pauseAsync()
-      : video?.current?.playAsync();
+    if (status.isPlaying) {
+      video?.current?.pauseAsync();
+    } else {
+      try {
+        setBools({
+          ...bools,
+          showHearts: false,
+        });
+        video?.current?.playAsync();
+      } catch (e) {
+        console.log(e);
+      }
+    }
   };
 
   const handleVideoAction = () => {
@@ -139,7 +146,11 @@ export default function PostVideo({
       if (!onDoublePress) return;
       dPress = true;
       if (onDoublePress) {
-        showHearts && setBools({ ...bools, showHearts: !bools.showHearts });
+        showHearts &&
+          setBools({
+            ...bools,
+            showHearts: !bools.showHearts,
+          });
         onDoublePress();
         return;
       }
@@ -169,7 +180,14 @@ export default function PostVideo({
       const videoSettings = settings
         .find((obj) => obj.title === "General")
         .data.find((obj) => obj.key === "vid");
-      videoSettings.default && video.current.playAsync();
+
+      if (videoSettings.default) {
+        try {
+          video?.current?.playAsync();
+        } catch (e) {
+          console.log(e);
+        }
+      }
     } else {
       video?.current?.pauseAsync();
     }
@@ -187,7 +205,14 @@ export default function PostVideo({
   }, [status]);
 
   useEffect(() => {
-    if (loop) video.current.playAsync();
+    // video.current.loadAsync(source.uri);
+    if (loop) {
+      try {
+        video?.current?.playAsync();
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }, []);
 
   return (
@@ -220,16 +245,8 @@ export default function PostVideo({
           />
         </View>
       )}
-      <RenderLottie
-        vis={status.isPlaying && !bools.showHearts}
-        type="play"
-        loaded={bools.loaded}
-      />
-      <RenderLottie
-        vis={bools.showHearts && !status.isPlaying}
-        type="like"
-        loaded={bools.loaded}
-      />
+      <RenderLottie vis={bools.showHearts} type="like" loaded={bools.loaded} />
+      <RenderLottie vis={status.isPlaying} type="play" loaded={bools.loaded} />
     </ViewportAwareVideo>
   );
 }

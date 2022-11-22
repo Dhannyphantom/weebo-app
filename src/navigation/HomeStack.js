@@ -8,7 +8,6 @@ import CreateCharacterScreen from "../screens/CreateCharacterScreen";
 import ShowScreen from "../screens/ShowScreen";
 import PostScreen from "../screens/PostScreen";
 import ImageGallery from "../components/ImageGallery";
-import NewChallenge from "../screens/NewChallenge";
 import ChannelScreen from "../screens/ChannelScreen";
 import MyPostScreen from "../screens/MyPostScreen";
 import ViewRoomScreen from "../screens/ViewRoomScreen";
@@ -19,6 +18,7 @@ import ShowsScreen from "../screens/ShowsScreen";
 import FriendListScreen from "../screens/FriendListScreen";
 import ChannelPostScreen from "../screens/ChannelPostScreen";
 import EventScreen from "../screens/EventScreen";
+import ContestCharacterScreen from "../screens/ContestCharacterScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +44,7 @@ const HomeStack = () => {
       <Stack.Screen name="Room" component={ViewRoomScreen} />
       <Stack.Screen name="Shows" component={ShowsScreen} />
       <Stack.Screen name="Post" component={PostScreen} />
-      <Stack.Screen name="Contest" component={NewChallenge} />
+      <Stack.Screen name="Contest" component={ContestCharacterScreen} />
       <Stack.Screen name="Gallery" component={ImageGallery} />
       <Stack.Screen name="CreateCharacter" component={CreateCharacterScreen} />
     </Stack.Navigator>

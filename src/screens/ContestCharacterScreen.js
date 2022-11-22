@@ -19,7 +19,7 @@ import ActivityIndicator from "../components/ActivityIndicator";
 const { width, height } = Dimensions.get("window");
 const CONTEST_CP = 50;
 
-const NewChallenge = ({ route, navigation }) => {
+const ContestCharacterScreen = ({ route, navigation }) => {
   const { getCharacters } = useContext(CharContext);
   const { charChallenge } = useContext(ChallContext);
   const {
@@ -42,7 +42,7 @@ const NewChallenge = ({ route, navigation }) => {
   const renderMyCharacters = ({ item }) => {
     return (
       <ChallengeCard
-        avatar={item.owner.avatar}
+        avatar={item.manager.avatar}
         id={item._id}
         image={item.cover_photo}
         name={item.dpName}
@@ -286,4 +286,4 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
-export default NewChallenge;
+export default ContestCharacterScreen;

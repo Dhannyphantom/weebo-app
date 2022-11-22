@@ -178,7 +178,7 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
           id: item.character._id,
           image: item.character.cover_photo,
           followers: item.character.followers,
-          avatar: item.character.owner.avatar,
+          avatar: item.character.manager.avatar,
           name: item.character.dpName,
           show: item.character.show.name_j ?? item.character.show.name_e,
         }}
@@ -302,14 +302,14 @@ const styles = StyleSheet.create({
   },
   username: {
     marginTop: 6,
-    fontSize: 9,
+    textAlign: "center",
   },
   voteHeader: {
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
     marginBottom: 55,
-    marginLeft: 10,
+    marginHorizontal: 10,
   },
 });
 export default VoteLogic;
