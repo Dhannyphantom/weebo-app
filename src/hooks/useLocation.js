@@ -23,8 +23,11 @@ export default function useLocation() {
     }
   };
 
-  useEffect(async () => {
-    await requestPermission();
+  useEffect(() => {
+    async function initialze() {
+      await requestPermission();
+    }
+    initialze();
   }, []);
 
   const data = { error: errMsg, loading };

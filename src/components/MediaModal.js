@@ -5,6 +5,7 @@ import {
   PanResponder,
   Animated,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
@@ -148,7 +149,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
             >
               <AppText
                 style={{ ...styles.textItem, color: item.tColor }}
-                size="xxlarge"
+                size="xlarge"
                 bold
               >
                 {item.text}

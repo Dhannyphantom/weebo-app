@@ -215,7 +215,9 @@ const AppModal = ({
       contentX.setValue(0.85);
     } else if (str?.startsWith("download")) {
       setBools({ ...bools, loading: true });
-      const { result, error } = await downloadMedia(postUris);
+      const { result, error } = downloadMedia(postUris);
+      // fix download media await promise
+      console.log(error, result);
       if (error) {
         setPopData({
           vis: true,

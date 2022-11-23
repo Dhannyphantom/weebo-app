@@ -5,6 +5,11 @@ import * as MediaLibrary from "expo-media-library";
 import { Platform } from "react-native";
 import vidMaxChecker from "./vidMaxChecker";
 
+// downloadMedia function
+const assetsArr = [];
+const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
+const isiOS = Platform.OS === "ios";
+
 export const capFirstLetter = (str) => {
   return str[0].toUpperCase() + str.slice(1);
 };
@@ -66,16 +71,13 @@ export const launchGallery = async (
 };
 
 export const downloadMedia = async (media) => {
-  const assetsArr = [];
-  const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
-  const isiOS = Platform.OS === "ios";
-
   if (Array.isArray(media)) {
+    let downloadedFile;
     const assetPromises = media.map(async (obj) => {
       const filename = obj.uri.slice(-30);
       const fileUri = `${FileSystem.documentDirectory}${filename}`;
+      downloadedFile = await FileSystem.downloadAsync(obj.uri, fileUri);
       try {
-        const downloadedFile = await FileSystem.downloadAsync(obj.uri, fileUri);
         // check if media has already been downloaded
         if (downloadedFile.status !== 200) {
           return { error: "Download failed", result: null };
@@ -115,6 +117,7 @@ export const downloadMedia = async (media) => {
       }
       return { error: null, result: "success" };
     } catch (err) {
+      console.log(err.message);
       return { error: "Saving media failed", result: null };
     }
   } else {

@@ -74,7 +74,9 @@ const FeedText = ({ title, handleLike, showMediaFunc, liked, info, type }) => {
           style={{ ...styles.bgCont, backgroundColor: info?.bg }}
         >
           <AppText
-            size="xlarge"
+            size="large"
+            numberOfLines={7}
+            ellipsizeMode="tail"
             style={{ ...styles.coolText, color: info?.tColor }}
           >
             {info.text}
@@ -108,6 +110,8 @@ const styles = StyleSheet.create({
   coolText: {
     textAlign: "center",
     maxWidth: "90%",
+    maxHeight: "80%",
+    lineHeight: 28,
   },
   bgCont: {
     width: CONT_WIDTH,

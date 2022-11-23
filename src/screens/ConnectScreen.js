@@ -23,9 +23,10 @@ import colors from "../constants/colors";
 import ProfilePic from "../components/ProfilePic";
 import Separator from "../components/Separator";
 import PopMessage from "../components/PopMessage";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("screen");
-const searchFilters = [
+const SEARCH_FILTERS = [
   { keypath: "Shape Layer 1", color: "#fff3e0" },
   { keypath: "Shape Layer 2", color: "#ff9100" },
   { keypath: "Shape Layer 3", color: "#ffb74d" },
@@ -37,8 +38,21 @@ const searchFilters = [
   { keypath: "Shape Layer 9", color: "#fff3e0" },
   { keypath: "Shape Layer 10", color: "#ff9100" },
 ];
+const SEARCH_FILTERS_DARK = [
+  { keypath: "Shape Layer 1", color: "#131e2a" },
+  { keypath: "Shape Layer 2", color: "#263950" },
+  { keypath: "Shape Layer 3", color: "#2f4765" },
+  { keypath: "Shape Layer 4", color: "#131e2a" },
+  { keypath: "Shape Layer 5", color: "#263950" },
+  { keypath: "Shape Layer 6", color: "#2f4765" },
+  { keypath: "Shape Layer 7", color: "#263950" },
+  { keypath: "Shape Layer 8", color: "#131e2a" },
+  { keypath: "Shape Layer 9", color: "#2f4765" },
+  { keypath: "Shape Layer 10", color: "#131e2a" },
+];
 const PROFILE_WIDTH = 150;
 const NUM_COLUMNS = Math.floor(width / 150);
+const LIGHT_COLORS = ["#ff9100", "#ffb74d", "#fff3e0"];
 
 const Weebs = ({ item, index }) => {
   const opaciter = useRef(new Animated.Value(0)).current;
@@ -94,8 +108,9 @@ const Weebs = ({ item, index }) => {
         {"@"}
         {item.username}
       </AppText>
+
       <AppText style={{ textTransform: "capitalize", color: colors.light }}>
-        {item.city}
+        {capFirstLetter(item.gender)} &bull; {item.city}
       </AppText>
     </Animated.View>
   );
@@ -159,6 +174,13 @@ const ConnectScreen = ({ navigation }) => {
   const opaciter = useRef(new Animated.Value(0)).current;
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const gradients =
+    theme.mode === "light"
+      ? LIGHT_COLORS
+      : [theme.transparentBolder, theme.transparentBold, theme.transparent];
+
+  const parentColor = theme.mode === "light" ? "#ff9100" : theme.background;
 
   const handleSearch = () => {
     // check if user has updated his profile;
@@ -238,26 +260,33 @@ const ConnectScreen = ({ navigation }) => {
   }, [modal]);
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        style={styles.background}
-        colors={["#ff9100", "#ffb74d", "#fff3e0"]}
-      >
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: parentColor,
+        },
+      ]}
+    >
+      <LinearGradient style={styles.background} colors={gradients}>
         <View style={styles.activity}>
           <LottieView
             source={searchAnim}
-            colorFilters={searchFilters}
+            colorFilters={
+              theme.mode === "light" ? SEARCH_FILTERS : SEARCH_FILTERS_DARK
+            }
             ref={lottieRef}
             autoPlay={false}
             speed={1}
-            style={{ width: width * 0.9, height: width * 0.9 }}
+            style={{ width: width, height: width }}
             loop
           />
         </View>
         <TouchableOpacity
           onPress={handleSearch}
           activeOpacity={0.9}
-          style={styles.search}
+          disabled={isLoading}
+          style={[styles.search, { backgroundColor: parentColor }]}
         >
           <Feather name="search" size={40} color={colors.white} />
         </TouchableOpacity>
@@ -325,8 +354,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancel: {
-    // padding: 8,
     paddingTop: 15,
+    paddingRight: 15,
   },
   content: {
     flex: 1,
@@ -335,7 +364,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#ff9100",
   },
   header: {
     width,
@@ -350,6 +378,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     color: colors.light,
+    maxWidth: "90%",
   },
   modal: {
     flex: 1,
@@ -363,10 +392,11 @@ const styles = StyleSheet.create({
   search: {
     width: width * 0.3,
     height: width * 0.3,
-    backgroundColor: colors.accent,
     justifyContent: "center",
     borderRadius: (width * 0.3) / 2,
     elevation: 3,
+    marginLeft: 4,
+    marginBottom: 2,
     alignItems: "center",
   },
 });
