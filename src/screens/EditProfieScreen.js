@@ -427,6 +427,7 @@ const EditProfileScreen = ({ navigation, route }) => {
   const {
     updateProfile,
     updateAvatar,
+    updateUserData,
     state: { userInfo },
   } = useContext(AuthContext);
   const params = route.params;
@@ -450,6 +451,8 @@ const EditProfileScreen = ({ navigation, route }) => {
     newPass: "",
     confirmPass: "",
   };
+
+  const locatorStatus = pageData?.location?.active ? "off" : "on";
 
   const selectProfileImage = async () => {
     const { results } = await launchGallery("image", true, false, [4, 4]);
@@ -487,6 +490,34 @@ const EditProfileScreen = ({ navigation, route }) => {
       () => navigation.pop(),
       (err) => {
         setErrMsg(err?.data ?? err?.msg);
+        setIsLoading(false);
+      }
+    );
+  };
+
+  const handleLocationSwitch = () => {
+    setIsLoading(true);
+
+    const sendData = {
+      action: "location",
+      actionData: !pageData?.location?.active,
+      instanceID: pageData._id,
+    };
+
+    updateUserData(
+      sendData,
+      (resData) => {
+        setIsLoading(false);
+        setPageData((prev) => ({
+          ...prev,
+          location: {
+            ...prev.location,
+            active: resData.data,
+          },
+        }));
+      },
+      (errData) => {
+        setErrMsg(errData.data ?? errData.msg);
         setIsLoading(false);
       }
     );
@@ -581,8 +612,8 @@ const EditProfileScreen = ({ navigation, route }) => {
                   style={styles.btn}
                 />
                 <Link
-                  name="Turn off my weebo locator"
-                  onPress={() => console.log("turn off")}
+                  name={`Turn ${locatorStatus} my weebo locator`}
+                  onPress={handleLocationSwitch}
                   style={styles.btn}
                 />
               </View>

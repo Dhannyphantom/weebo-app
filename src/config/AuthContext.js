@@ -1,13 +1,12 @@
 import createDataContext from "./createDataContext";
 import authApi from "../api/authApi";
 import fetchApi from "../api/fetchApi";
-import instanceApi from "../api/instanceApi";
 import baseURL from "../api/baseURL";
-import expoNotify from "../api/expoNotification";
+// import expoNotify from "../api/expoNotification";
 import followApi from "../api/followApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
-import axios from "axios";
+
 let socket = io(baseURL.uri);
 
 const authReducer = (state, action) => {

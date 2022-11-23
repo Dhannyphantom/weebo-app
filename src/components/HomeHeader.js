@@ -206,22 +206,22 @@ const HomeHeader = ({ characters }) => {
         </View>
         <View style={styles.headerIcons}>
           <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.buttonContainer}
+            activeOpacity={0.75}
+            style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
             onPress={handleShowSearch}
           >
             <Feather name="search" size={18} color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.buttonContainer}
+            activeOpacity={0.75}
+            style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
             onPress={() => navigation.navigate("Chat")}
           >
             <Feather name="message-circle" size={18} color={colors.chat} />
           </TouchableOpacity>
           <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.buttonContainer}
+            activeOpacity={0.75}
+            style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
             onPress={handlePlusBtn}
           >
             <AntDesign name="plus" size={18} color={colors.primary} />
@@ -234,7 +234,7 @@ const HomeHeader = ({ characters }) => {
             placeholder="Search characters, shows, groups, users"
             showSearch={showSearch}
             setShowSearch={setShowSearch}
-            style={styles.searchBar}
+            style={{ ...styles.searchBar, backgroundColor: theme.lighter }}
           />
         )}
       </View>
@@ -263,10 +263,12 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   buttonContainer: {
-    width: screen.width * 0.09,
-    height: screen.width * 0.09,
-    paddingHorizontal: 9,
+    // width: screen.width * 0.09,
+    // height: screen.width * 0.09,
+    padding: 12,
     marginBottom: 8,
+    borderRadius: 6,
+    marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
   },
