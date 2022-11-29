@@ -194,7 +194,7 @@ const CharacterScreen = ({ route, navigation }) => {
     setShowUpload({ vis: false, data: null });
   };
 
-  const handleFetchCharacter = (type) => {
+  const handleFetchCharacter = (type = "cover") => {
     const isCover = type === "cover";
     const isLoader = type === "load";
 
@@ -659,11 +659,6 @@ const CharacterScreen = ({ route, navigation }) => {
           fetchInstance={handleFetchCharacter}
           setter={() => setChallengeModal({ vis: null, contest: null })}
         />
-        {/* <DropDown
-          lists={listItems}
-          visible={dropDown}
-          setVisible={setDropDown}
-        /> */}
         <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
         <AlertModal
           obj={alertModal}

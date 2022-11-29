@@ -142,7 +142,7 @@ const Challenger = ({
       (_resData) => {
         setAsset(null);
         setLoading(false);
-        // fetchInstance("cover");
+        fetchInstance("cover");
         setter();
       },
       (errData) => {

@@ -235,8 +235,7 @@ const ChallengeScreen = ({ navigation }) => {
                     color={colors.primary}
                   />
                   <AppText style={{ marginLeft: 3 }} bold>
-                    {" "}
-                    WINBOARD{" "}
+                    WINBOARD
                   </AppText>
                 </View>
               )}

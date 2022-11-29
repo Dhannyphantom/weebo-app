@@ -153,11 +153,7 @@ const ChatScreen = ({ navigation }) => {
               activeOpacity={0.88}
               onPress={handlePlusPress}
             >
-              <MaterialCommunityIcons
-                name="plus"
-                color={colors.primary}
-                size={18}
-              />
+              <Feather name="plus" size={18} color={colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -256,10 +252,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   topIcons: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     padding: 10,
-    marginHorizontal: 10,
+    marginRight: 10,
     justifyContent: "center",
     alignItems: "center",
   },

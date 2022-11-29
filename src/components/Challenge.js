@@ -20,7 +20,6 @@ import ChallengeIcon from "./ChallengeIcon";
 import FeedImage from "./FeedImage";
 import Icon from "./Icon";
 import Comments from "./Comments";
-// import PostVideo from "./PostVideo";
 import InfoChallenge from "./InfoChallenge";
 import MediaModal from "./MediaModal";
 
@@ -167,7 +166,7 @@ const Challenge = ({
   };
 
   const handleShowMedia = (mediaObj) => {
-    setDisplayMedia({ vis: true, data: mediaObj });
+    setDisplayMedia({ vis: true, item: mediaObj });
   };
 
   const handleSend = (text) => {
@@ -204,9 +203,7 @@ const Challenge = ({
               <TouchableOpacity
                 style={styles.vidContainer}
                 activeOpacity={0.8}
-                onPress={() =>
-                  handleShowMedia({ feed: { type: "video" }, item: image1 })
-                }
+                onPress={() => handleShowMedia({ ...image1, type: "video" })}
               >
                 <Image
                   source={{ uri: image1.thumb ?? image1?.uri }}
@@ -251,9 +248,7 @@ const Challenge = ({
               <TouchableOpacity
                 style={styles.vidContainer}
                 activeOpacity={0.8}
-                onPress={() =>
-                  handleShowMedia({ feed: { type: "video" }, item: image2 })
-                }
+                onPress={() => handleShowMedia({ ...image2, type: "video" })}
               >
                 <Image
                   source={{ uri: image2.thumb ?? image2?.uri }}

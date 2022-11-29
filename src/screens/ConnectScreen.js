@@ -76,7 +76,7 @@ const Weebs = ({ item, index }) => {
     Animated.timing(opaciter, {
       toValue: 1,
       duration: 1500,
-      delay: index * 2100,
+      delay: index < 10 ? index * 1000 : 0,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -198,7 +198,14 @@ const ConnectScreen = ({ navigation }) => {
 
     fetchNearbyWeebs(
       (res_data) => {
-        setWeebos(res_data);
+        const weeb = res_data[0];
+        const tests = Array(100)
+          .fill(weeb)
+          .map((obj, idx) => ({
+            ...obj,
+            _id: obj._id + idx,
+          }));
+        setWeebos(tests);
         setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
