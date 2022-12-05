@@ -508,6 +508,11 @@ const EditProfileScreen = ({ navigation, route }) => {
       sendData,
       (resData) => {
         setIsLoading(false);
+        setPopper({
+          vis: true,
+          type: "success",
+          msg: "Weebo locator updated!",
+        });
         setPageData((prev) => ({
           ...prev,
           location: {

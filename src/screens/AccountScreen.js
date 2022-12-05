@@ -74,6 +74,7 @@ const InviteWeebs = ({ closeModal }) => {
       <View style={styles.invitesContent}>
         <TouchableOpacity
           onPress={() => handleInvites("link")}
+          activeOpacity={0.85}
           style={styles.invitesBtns}
         >
           <Ionicons name="copy-outline" size={70} color={colors.medium} />
@@ -81,6 +82,7 @@ const InviteWeebs = ({ closeModal }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleInvites("share")}
+          activeOpacity={0.85}
           style={styles.invitesBtns}
         >
           <Ionicons name="share-outline" size={70} color={colors.medium} />

@@ -116,7 +116,9 @@ const Weebs = ({ item, index }) => {
   );
 };
 
-const RenderEmptyWeebs = () => {
+const RenderEmptyWeebs = ({ errMsg }) => {
+  const message =
+    "Turns out there are no nearby weebs YET!!!. You can always check back later";
   return (
     <View
       style={{
@@ -149,8 +151,7 @@ const RenderEmptyWeebs = () => {
             textAlign: "center",
           }}
         >
-          Turns out there are no nearby weebs YET!!!. You can always check back
-          later
+          {errMsg ? errMsg : message}
         </AppText>
       </View>
     </View>
@@ -158,10 +159,11 @@ const RenderEmptyWeebs = () => {
 };
 
 const ConnectScreen = ({ navigation }) => {
-  const [location, loc_data] = useLocation();
+  const [location] = useLocation();
   const [weebos, setWeebos] = useState([]);
   const [modal, setModal] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
+  const [errMsg, setErrMsg] = useState(null);
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
@@ -198,22 +200,22 @@ const ConnectScreen = ({ navigation }) => {
 
     fetchNearbyWeebs(
       (res_data) => {
-        const weeb = res_data[0];
-        const tests = Array(100)
-          .fill(weeb)
-          .map((obj, idx) => ({
-            ...obj,
-            _id: obj._id + idx,
-          }));
-        setWeebos(tests);
+        // const weeb = res_data[0];
+        // const tests = Array(100)
+        //   .fill(weeb)
+        //   .map((obj, idx) => ({
+        //     ...obj,
+        //     _id: obj?._id + idx,
+        //   }));
+        setWeebos(res_data);
         setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
       },
       (err_data) => {
-        console.log(err_data);
         setModal(true);
         setIsLoading(false);
+        setErrMsg(err_data.data ?? err_data.msg);
         lottieRef?.current?.pause();
       }
     );
@@ -324,7 +326,7 @@ const ConnectScreen = ({ navigation }) => {
               data={weebos}
               numColumns={NUM_COLUMNS}
               keyExtractor={(item) => item._id}
-              ListEmptyComponent={RenderEmptyWeebs}
+              ListEmptyComponent={() => <RenderEmptyWeebs errMsg={errMsg} />}
               contentContainerStyle={{
                 flex: 1,
                 paddingTop: 20,
