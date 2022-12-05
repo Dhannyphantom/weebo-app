@@ -142,3 +142,14 @@ export default (time, time2, type) => {
     return convDate;
   }
 };
+
+export const getDateObject = (date) => {
+  const dater = new Date(date);
+  const dateMonth = calender.months[dater.getMonth()].full.toUpperCase();
+  const dateYear = dater.getFullYear();
+
+  return {
+    month: dateMonth,
+    year: dateYear,
+  };
+};

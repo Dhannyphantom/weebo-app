@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AcctContext } from "../config/AcctContext";
@@ -25,6 +26,7 @@ import { filters } from "../constants/data_store";
 import AppButton from "./AppButton";
 import PopDropDown from "./PopDropDown";
 import AppPickerItem from "./AppPickerItem";
+import { getDateObject } from "../constants/getFormatTime";
 
 const { width, height } = Dimensions.get("window");
 
@@ -61,7 +63,7 @@ const FilterItem = ({ item, setModal }) => {
   );
 };
 
-const RenderGenre = ({ data, handleSelect, type, setter }) => {
+const RenderGenres = ({ data, handleSelect, type, setter }) => {
   return (
     <View style={styles.modalContainer}>
       <FlatList
@@ -86,6 +88,56 @@ const RenderGenre = ({ data, handleSelect, type, setter }) => {
   );
 };
 
+const RenderDatePicker = () => {
+  const [date, setDate] = useState({ vis: true, timestamp: new Date() });
+
+  const onDatePicked = (event, selectedDate) => {
+    if (event.type !== "dismissed") {
+      setDate({ vis: false, timestamp: selectedDate });
+    }
+  };
+
+  const theme = useContext(ThemeContext);
+
+  const dater = getDateObject(date.timestamp);
+  const renderDates = Object.values(dater).map((time) => (
+    <View
+      style={[styles.filterDateItem, { backgroundColor: theme.extralight }]}
+    >
+      <AppText size="xxxlarge" bold>
+        {time}
+      </AppText>
+    </View>
+  ));
+
+  return (
+    <View style={styles.filterDateContainer}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => setDate({ ...date, vis: true })}
+        style={styles.filterDate}
+      >
+        {renderDates}
+      </TouchableOpacity>
+      <View style={styles.rowWide}>
+        <AppButton title="From date" bare />
+        <AppButton title="Before date" bare />
+      </View>
+      {date.vis && (
+        <DateTimePicker
+          value={date.timestamp}
+          textColor={colors.primary}
+          display="default"
+          accentColor={colors.primary}
+          maximumDate={new Date()}
+          mode="date"
+          onChange={onDatePicked}
+        />
+      )}
+    </View>
+  );
+};
+
 const RenderInstanceFilter = ({ setter }) => {
   const theme = useContext(ThemeContext);
   const [modal, setModal] = useState({ vis: false, close: false });
@@ -97,13 +149,15 @@ const RenderInstanceFilter = ({ setter }) => {
   const RenderModalComponents = () => {
     if (modal.type === "genre" || modal.type === "sub_genre") {
       return (
-        <RenderGenre
+        <RenderGenres
           data={modal.data}
           type={modal.type}
           setter={() => setModal({ vis: false, close: true })}
           handleSelect={onfilterOptions}
         />
       );
+    } else if (["release_date", "end_date"].includes(modal.type)) {
+      return <RenderDatePicker />;
     }
   };
 
@@ -377,6 +431,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     width,
   },
+  filterDateContainer: {
+    paddingBottom: height * 0.1,
+  },
+  filterDate: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filterDateItem: {
+    padding: 20,
+    margin: 20,
+    borderRadius: 8,
+  },
   filterItem: {
     width: width * 0.3,
     height: width * 0.3,
@@ -391,6 +458,12 @@ const styles = StyleSheet.create({
 
   row: {
     flexDirection: "row",
+  },
+  rowWide: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginTop: 50,
   },
   search: {
     width: width * 0.075,

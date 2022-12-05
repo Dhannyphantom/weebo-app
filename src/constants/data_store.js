@@ -839,10 +839,16 @@ export const filters = [
   {
     id: uuid.v4(),
     name: "Release Date",
+    type: "release_date",
+    data: null,
+    title: "Choose Date",
   },
   {
     id: uuid.v4(),
     name: "End Date",
+    type: "end_date",
+    data: null,
+    title: "Choose Date",
   },
   {
     id: uuid.v4(),
