@@ -14,8 +14,8 @@ export default function useLocation() {
     }
 
     try {
-      let location = await Location.getCurrentPositionAsync();
-      setLocation(location);
+      let new_location = await Location.getCurrentPositionAsync();
+      setLocation(new_location);
       setLoading(false);
     } catch (err) {
       setErrMsg(err?.message);
@@ -30,7 +30,5 @@ export default function useLocation() {
     initialze();
   }, []);
 
-  const data = { error: errMsg, loading };
-
-  return [location, data];
+  return [location, { error: errMsg, loading }];
 }

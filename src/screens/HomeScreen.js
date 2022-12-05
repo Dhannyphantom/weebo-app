@@ -38,11 +38,10 @@ import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
 
-import NativeAds from "../components/NativeAds";
-import * as FacebookAds from "expo-ads-facebook";
+// import NativeAds from "../components/NativeAds";
+// import * as FacebookAds from "expo-ads-facebook";
 
 const { width, height } = Dimensions.get("window");
-const ONLINE_MODE = false;
 const boolsObj = {
   loadMore: true,
   lodadedOnce: false,
@@ -59,7 +58,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({ navigation }) => {
   const {
     getHomeFeeds,
     state: { posts },
@@ -67,7 +66,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const {
     tryLocalSignin,
-    setPushToken,
+    setPushToken: updateUserPushToken,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -181,10 +180,9 @@ const HomeScreen = ({ navigation, route }) => {
 
   const notificationHandler = async () => {
     // MIGHT WANT TO CALL THIS FUNCTION A LOT
-    if (!ONLINE_MODE) return;
     try {
       const token = await registerForPushNotificationsAsync();
-      setPushToken({ token });
+      updateUserPushToken({ token });
     } catch (err) {
       console.log(err);
     }
@@ -265,16 +263,18 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    readyHomeScreen();
-    notificationHandler();
+    async function prepare() {
+      readyHomeScreen();
+      await notificationHandler();
+    }
+
+    prepare();
 
     return () => {
-      if (ONLINE_MODE) {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-        Notifications.removeNotificationSubscription(responseListener.current);
-      }
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
@@ -360,9 +360,14 @@ async function registerForPushNotificationsAsync() {
       console.log("Failed to get push token for push notification!");
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
+    try {
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } catch (err) {
+      console.log("Push notification error: Check internet connection");
+      // YOU'RE PROBABLY OFFLINE.
+    }
   } else {
-    console.log("Must use physical device for Push Notifications");
+    console.log("Please use a physical device for Push Notifications");
   }
 
   if (Platform.OS === "android") {
@@ -374,7 +379,6 @@ async function registerForPushNotificationsAsync() {
     });
   }
 
-  console.log(token);
   return token;
 }
 

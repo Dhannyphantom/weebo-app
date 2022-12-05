@@ -4,12 +4,11 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Modal,
   FlatList,
   RefreshControl,
   ScrollView,
 } from "react-native";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -252,7 +251,7 @@ const ChannelListComp = ({
       {!small && (
         <View style={styles.stats}>
           <AppText style={styles.statsItem}>
-            <AppText bold>{item.posts.length}</AppText> posts{" "}
+            <AppText bold>{item?.posts?.length}</AppText> posts{" "}
           </AppText>
           {subscribe && (
             <View style={{ flex: 0.5 }}>
@@ -477,22 +476,14 @@ const ChannelScreen = () => {
               style={styles.headerBtn}
               onPress={() => setShowSearch(!showSearch)}
             >
-              <Feather
-                name="search"
-                size={width * 0.03}
-                color={colors.primary}
-              />
+              <Feather name="search" size={18} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerBtn}
               activeOpacity={1}
               onPress={handleNewChannel}
             >
-              <MaterialCommunityIcons
-                name="plus"
-                size={width * 0.035}
-                color={colors.primary}
-              />
+              <Feather name="plus" size={18} color={colors.primary} />
             </TouchableOpacity>
           </View>
         )}
@@ -530,7 +521,7 @@ const ChannelScreen = () => {
           </View>
         </>
       )}
-      <Separator h={1} m={0.01} />
+      {/* <Separator h={1} m={0.01} /> */}
       <FlatList
         data={["channel"]}
         showsVerticalScrollIndicator={false}

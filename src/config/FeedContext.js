@@ -162,7 +162,12 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb({ err, msg: "Error sending post to server" });
+    cb &&
+      cb({
+        err,
+        data: err?.response?.data,
+        msg: "Error sending post to server",
+      });
   }
 
   // ======================================

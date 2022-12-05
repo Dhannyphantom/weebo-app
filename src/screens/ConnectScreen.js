@@ -232,7 +232,6 @@ const ConnectScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (location) {
-      // console.log(location);
       // save the user location;
       const api_data = {
         instanceID: userInfo._id,
@@ -246,11 +245,10 @@ const ConnectScreen = ({ navigation }) => {
           },
         },
       };
-
       updateUserData(
         api_data,
         (res_data) => {
-          // console.log(res_data);
+          console.log("location updated");
         },
         (err_data) => {
           console.log(err_data);
