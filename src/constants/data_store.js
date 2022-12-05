@@ -4,6 +4,7 @@ import leviChibi from "../../assets/arts/levi_1.png";
 import luffyChibi from "../../assets/arts/luffy_1.png";
 import togaChibi from "../../assets/arts/toga_1.png";
 import colors from "./colors";
+import uuid from "react-native-uuid";
 
 export const characterRoles = [
   { id: "1", title: "Protagonist / Main Character" },
@@ -817,5 +818,46 @@ export const emailers = [
     id: "6",
     text: "",
     focused: false,
+  },
+];
+
+export const filters = [
+  {
+    id: uuid.v4(),
+    name: "Genre",
+    type: "genre",
+    data: showGenres,
+    title: "Select Genres",
+  },
+  {
+    id: uuid.v4(),
+    name: "Sub Genre",
+    type: "sub_genre",
+    data: subGenres,
+    title: "Select Sub-Genres",
+  },
+  {
+    id: uuid.v4(),
+    name: "Release Date",
+  },
+  {
+    id: uuid.v4(),
+    name: "End Date",
+  },
+  {
+    id: uuid.v4(),
+    name: "Episodes",
+  },
+  {
+    id: uuid.v4(),
+    name: "Characters",
+  },
+  {
+    id: uuid.v4(),
+    name: "Groups",
+  },
+  {
+    id: uuid.v4(),
+    name: "Followers",
   },
 ];

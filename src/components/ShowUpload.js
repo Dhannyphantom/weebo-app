@@ -37,7 +37,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
   const [popData, setPopData] = useState({ vis: false });
   // const [errMsg, setErrMsg] = useState(null);
   const [vidDuration, setVidDuration] = useState(0);
-  const [playVid, setPlayVid] = useState(false);
   const [statusInput, setStatusInput] = useState("");
   const [editOptions, setEditOptions] = useState({
     color: "normal",
@@ -55,7 +54,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         setEditOptions({ ...editOptions, drag: true });
-        setPlayVid(false);
       },
       onPanResponderMove: (evt, gestureState) => {
         dragger.setValue({
@@ -252,7 +250,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
         {/* CAPTION UI */}
         {showStatusView && (
           <Animated.View
-            // onPress={() => setPlayVid(!playVid)}
             style={{
               ...styles.statusView,
               borderColor: editOptions.drag
@@ -308,15 +305,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
           </View>
         ) : (
           <View style={styles.vidContainer}>
-            <PostVideo
-              source={post}
-              disableDoublePress
-              onLoadEnd={handleVidLoad}
-              viewable={false}
-              playFunc={playVid}
-              disableLongPress
-              full
-            />
+            <PostVideo source={post} onLoadEnd={handleVidLoad} />
             <ActivityIndicator
               visible={isLoading}
               type="loader"

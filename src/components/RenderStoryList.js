@@ -8,7 +8,6 @@ import {
   FlatList,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
-import ActivityIndicator from "./ActivityIndicator";
 // import { v4 as nanoid } from "uuid";
 import uuid from "react-native-uuid";
 import { AntDesign } from "@expo/vector-icons";
@@ -118,7 +117,6 @@ export default function RenderStoryList({
               <>
                 <Image
                   source={{ uri: item?.uri }}
-                  // onLoadEnd={() => setMediaLoading(false)}
                   style={{
                     ...styles.image,
                     aspectRatio: item?.width / item?.height,
@@ -128,26 +126,7 @@ export default function RenderStoryList({
             )}
             {item?.type === "video" && (
               <View style={styles.vidContainer}>
-                <PostVideo
-                  source={item}
-                  disableDoublePress
-                  disableLongPress
-                  viewable={false}
-                  // onLoadEnd={() => setMediaLoading(false)}
-                  showTimer={false}
-                  full
-                  style={styles.vidContainer}
-                  contStyle={styles.vidCont}
-                  autoPlayer={false}
-                  playFunc={isKey}
-                />
-                {/* <ActivityIndicator
-                  visible={mediaLoading}
-                  size={0.3}
-                  type="loader"
-                  style={styles.loader}
-                  transparent
-                /> */}
+                <PostVideo source={item} disablePlayback />
               </View>
             )}
           </View>
@@ -295,6 +274,7 @@ const styles = StyleSheet.create({
     maxHeight: height,
   },
   vidContainer: {
+    flex: 1,
     backgroundColor: colors.dark,
   },
   viewersContainer: {

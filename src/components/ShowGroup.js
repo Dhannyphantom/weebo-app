@@ -20,8 +20,129 @@ import SearchBar from "../components/SearchBar";
 import colors from "../constants/colors";
 import AppText from "../components/AppText";
 import ThemeContext from "../config/ThemeContext";
+import AppFadeIn from "./AppFadeIn";
+import { filters } from "../constants/data_store";
+import AppButton from "./AppButton";
+import PopDropDown from "./PopDropDown";
+import AppPickerItem from "./AppPickerItem";
 
 const { width, height } = Dimensions.get("window");
+
+const boolsObj = {
+  isLoading: false,
+  showSearch: false,
+  firstLoad: false,
+  filter: false,
+};
+
+const FilterItem = ({ item, setModal }) => {
+  const theme = useContext(ThemeContext);
+
+  const onOpenModal = () => {
+    setModal({
+      vis: true,
+      close: false,
+      type: item.type,
+      data: item.data,
+      title: item.title,
+    });
+  };
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.95}
+      onPress={onOpenModal}
+      style={[styles.filterItem, { backgroundColor: theme.extralight }]}
+    >
+      <AppText bold size="large">
+        {item.name}
+      </AppText>
+    </TouchableOpacity>
+  );
+};
+
+const RenderGenre = ({ data, handleSelect, type, setter }) => {
+  return (
+    <View style={styles.modalContainer}>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 15 }}
+        renderItem={({ item }) => (
+          <AppPickerItem
+            text={item.title}
+            desc={item.discription}
+            example={item.example}
+            onPress={() => {
+              setter();
+              handleSelect({ type, val: item.title });
+            }}
+          />
+        )}
+        numColumns={3}
+        listKey="dropDown"
+      />
+    </View>
+  );
+};
+
+const RenderInstanceFilter = ({ setter }) => {
+  const theme = useContext(ThemeContext);
+  const [modal, setModal] = useState({ vis: false, close: false });
+
+  const onfilterOptions = (item) => {
+    console.log(item);
+  };
+
+  const RenderModalComponents = () => {
+    if (modal.type === "genre" || modal.type === "sub_genre") {
+      return (
+        <RenderGenre
+          data={modal.data}
+          type={modal.type}
+          setter={() => setModal({ vis: false, close: true })}
+          handleSelect={onfilterOptions}
+        />
+      );
+    }
+  };
+
+  return (
+    <View
+      style={[
+        styles.filterContainer,
+        { backgroundColor: theme.transparentBold },
+      ]}
+    >
+      <FlatList
+        data={filters}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <FilterItem item={item} setModal={setModal} />
+        )}
+      />
+
+      <View style={styles.filterBtns}>
+        <AppButton title="Apply" LIcon="check" bare />
+        <AppButton
+          title="Cancel"
+          onPress={setter}
+          LIcon="cancel"
+          bare
+          bareRed
+        />
+      </View>
+      <PopDropDown
+        setter={() => setModal({ vis: false })}
+        visible={modal.vis}
+        close={modal.close}
+        headerTitle={modal.title}
+        RenderComponent={() => <RenderModalComponents />}
+      />
+    </View>
+  );
+};
 
 const ShowGroup = ({ screen, headerTitle }) => {
   const navigation = useNavigation();
@@ -30,13 +151,14 @@ const ShowGroup = ({ screen, headerTitle }) => {
   const theme = useContext(ThemeContext);
 
   const [screenData, setScreenData] = useState([]);
-  const [showSearch, setShowSearch] = useState(false);
-  const [firstLoad, setFirstLoad] = useState(false);
+
   const [searchText, setSearchText] = useState("");
   const [searchData, setSearchData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [bools, setBools] = useState(boolsObj);
+
+  const { showSearch, firstLoad, filter } = bools;
 
   const searchRef = useRef(null);
 
@@ -62,8 +184,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
       getGroups(
         (data) => {
           setScreenData(data);
-          setIsLoading(false);
-          setFirstLoad(true);
+          setBools({ ...bools, isLoading: false, firstLoad: true });
           if (bool) setRefreshing(false);
         },
         (err) => {
@@ -75,7 +196,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
       getShows(
         "all shows",
         (resData) => {
-          setFirstLoad(true);
+          setBools({ ...bools, firstLoad: true });
           setScreenData(resData);
         },
         (err) => {
@@ -134,13 +255,22 @@ const ShowGroup = ({ screen, headerTitle }) => {
 
   const RenderSearch = () => {
     return (
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => setShowSearch(!showSearch)}
-        style={styles.search}
-      >
-        <Feather name="search" color={colors.primary} size={width * 0.03} />
-      </TouchableOpacity>
+      <View style={styles.row}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setBools({ ...bools, showSearch: !showSearch })}
+          style={styles.search}
+        >
+          <Feather name="search" color={colors.primary} size={18} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setBools({ ...bools, filter: !filter })}
+          style={styles.search}
+        >
+          <Feather name="filter" color={colors.primary} size={18} />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -215,6 +345,15 @@ const ShowGroup = ({ screen, headerTitle }) => {
         }
         renderItem={renderScreenData}
       />
+      <AppFadeIn
+        visible={filter}
+        RenderComponent={() => (
+          <RenderInstanceFilter
+            setter={() => setBools({ ...bools, filter: false })}
+          />
+        )}
+        setter={() => setBools({ ...bools, filter: false })}
+      />
     </Screen>
   );
 };
@@ -225,6 +364,33 @@ const styles = StyleSheet.create({
   activity: {
     width,
     height: height * 0.8,
+  },
+  filterContainer: {
+    width,
+    height: height * 0.97,
+    borderRadius: 20,
+  },
+  filterBtns: {
+    position: "absolute",
+    bottom: 30,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width,
+  },
+  filterItem: {
+    width: width * 0.3,
+    height: width * 0.3,
+    margin: width * 0.015,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    maxHeight: height * 0.75,
+  },
+
+  row: {
+    flexDirection: "row",
   },
   search: {
     width: width * 0.075,

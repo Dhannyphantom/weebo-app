@@ -100,9 +100,11 @@ export default function PostVideo({
   source,
   onDoublePress,
   onFinishedPlaying,
-  style,
   onLongPress,
+  onLoadEnd,
+  disablePlayback = false,
   pos = 0,
+  style,
   loop = false,
   showHearts,
 }) {
@@ -193,6 +195,10 @@ export default function PostVideo({
     }
   };
 
+  const handleLoaded = (AVstatus) => {
+    onLoadEnd && onLoadEnd(AVstatus.playableDurationMillis);
+  };
+
   useEffect(() => {
     if (!bools.onFinishedCalled) {
       const percentageWatched =
@@ -219,6 +225,7 @@ export default function PostVideo({
     <ViewportAwareVideo
       onPress={handleVideoAction}
       activeOpacity={1}
+      disabled={disablePlayback}
       onLongPress={handleLongPress}
       style={[styles.container, style]}
       onViewportEnter={() => handleViewport("enter")}
@@ -231,7 +238,8 @@ export default function PostVideo({
         resizeMode="contain"
         positionMillis={pos}
         posterSource={{ uri: source.thumb }}
-        onLoad={() => setBools({ ...bools, loaded: true })}
+        onLoad={handleLoaded}
+        // onLoad={() => setBools({ ...bools, loaded: true })}
         isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />

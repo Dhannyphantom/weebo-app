@@ -288,7 +288,7 @@ const ChannelListComp = ({
   );
 };
 
-const ChannelScreen = () => {
+const ChannelScreen = ({ route }) => {
   const { getChannels, searchChannels } = useContext(CharContext);
   const {
     state: { userInfo },

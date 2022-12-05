@@ -435,16 +435,7 @@ const PostScreen = ({ route, navigation }) => {
               )}
               {!writer && assetType === "video" && (
                 <View style={{ flex: 1 }}>
-                  {display && (
-                    <PostVideo
-                      source={display}
-                      allowVideoEditing
-                      viewable={false}
-                      disableDoublePress
-                      disableLongPress
-                      dim={{ width: assets.width, height: assets.height }}
-                    />
-                  )}
+                  {display && <PostVideo source={display} />}
                   <AppButton
                     title="Change Video"
                     bare
