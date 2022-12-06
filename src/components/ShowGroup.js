@@ -52,7 +52,7 @@ const FilterItem = ({ item, setModal }) => {
 
   return (
     <TouchableOpacity
-      activeOpacity={0.95}
+      activeOpacity={0.65}
       onPress={onOpenModal}
       style={[styles.filterItem, { backgroundColor: theme.extralight }]}
     >
@@ -76,8 +76,8 @@ const RenderGenres = ({ data, handleSelect, type, setter }) => {
             desc={item.discription}
             example={item.example}
             onPress={() => {
-              setter();
               handleSelect({ type, val: item.title });
+              setter();
             }}
           />
         )}
@@ -88,7 +88,7 @@ const RenderGenres = ({ data, handleSelect, type, setter }) => {
   );
 };
 
-const RenderDatePicker = () => {
+const RenderDatePicker = ({ handleSelect, type, setter }) => {
   const [date, setDate] = useState({ vis: true, timestamp: new Date() });
 
   const onDatePicked = (event, selectedDate) => {
@@ -102,9 +102,10 @@ const RenderDatePicker = () => {
   const dater = getDateObject(date.timestamp);
   const renderDates = Object.values(dater).map((time) => (
     <View
+      key={time}
       style={[styles.filterDateItem, { backgroundColor: theme.extralight }]}
     >
-      <AppText size="xxxlarge" bold>
+      <AppText size="xxlarge" bold>
         {time}
       </AppText>
     </View>
@@ -120,8 +121,25 @@ const RenderDatePicker = () => {
         {renderDates}
       </TouchableOpacity>
       <View style={styles.rowWide}>
-        <AppButton title="From date" bare />
-        <AppButton title="Before date" bare />
+        <AppButton
+          title="Before date"
+          onPress={() => {
+            handleSelect({
+              type,
+              val: { date: date.timestamp, when: "before" },
+            });
+            setter();
+          }}
+          bare
+        />
+        <AppButton
+          title="From date"
+          onPress={() => {
+            handleSelect({ type, val: { date: date.timestamp, when: "from" } });
+            setter();
+          }}
+          bare
+        />
       </View>
       {date.vis && (
         <DateTimePicker
@@ -134,6 +152,37 @@ const RenderDatePicker = () => {
           onChange={onDatePicked}
         />
       )}
+    </View>
+  );
+};
+
+const RenderMinMax = ({ handleSelect, type, setter }) => {
+  return (
+    <View style={styles.filterCount}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          handleSelect({ type, val: "highest" });
+          setter();
+        }}
+        style={[styles.filterCounter, styles.filterMax]}
+      >
+        <AppText style={styles.filterMaxText} bold size="large">
+          Highest
+        </AppText>
+      </TouchableOpacity>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          handleSelect({ type, val: "highest" });
+          setter();
+        }}
+        style={[styles.filterCounter, styles.filterMin]}
+      >
+        <AppText style={styles.filterMinText} bold size="large">
+          Lowest
+        </AppText>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -157,7 +206,21 @@ const RenderInstanceFilter = ({ setter }) => {
         />
       );
     } else if (["release_date", "end_date"].includes(modal.type)) {
-      return <RenderDatePicker />;
+      return (
+        <RenderDatePicker
+          type={modal.type}
+          setter={() => setModal({ vis: false, close: true })}
+          handleSelect={onfilterOptions}
+        />
+      );
+    } else {
+      return (
+        <RenderMinMax
+          type={modal.type}
+          setter={() => setModal({ vis: false, close: true })}
+          handleSelect={onfilterOptions}
+        />
+      );
     }
   };
 
@@ -430,6 +493,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width,
+  },
+  filterCount: {
+    margin: 20,
+    alignItems: "center",
+  },
+  filterCounter: {
+    width: width * 0.35,
+    height: width * 0.35,
+    justifyContent: "center",
+    borderRadius: 5,
+    alignItems: "center",
+    backgroundColor: colors.extraLight,
+    marginBottom: 20,
+  },
+  filterMax: {
+    // backgroundColor: colors.greenLight,
+    borderTopStartRadius: 30,
+    borderTopEndRadius: 30,
+  },
+  filterMaxText: {
+    color: colors.greenDark,
+  },
+  filterMinText: {
+    color: colors.heartDark,
+  },
+  filterMin: {
+    // backgroundColor: colors.heartLight,
+    borderBottomStartRadius: 30,
+    borderBottomEndRadius: 30,
   },
   filterDateContainer: {
     paddingBottom: height * 0.1,

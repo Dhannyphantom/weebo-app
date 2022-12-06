@@ -853,17 +853,29 @@ export const filters = [
   {
     id: uuid.v4(),
     name: "Episodes",
+    type: "episodes",
+    data: null,
+    title: "Select Episodes",
   },
   {
     id: uuid.v4(),
     name: "Characters",
+    type: "characters",
+    data: null,
+    title: "Choose Characters",
   },
   {
     id: uuid.v4(),
     name: "Groups",
+    type: "groups",
+    data: null,
+    title: "Choose Groups",
   },
   {
     id: uuid.v4(),
     name: "Followers",
+    type: "followers",
+    data: null,
+    title: "Choose Followers",
   },
 ];
