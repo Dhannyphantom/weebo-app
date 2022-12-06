@@ -27,6 +27,7 @@ import AppButton from "./AppButton";
 import PopDropDown from "./PopDropDown";
 import AppPickerItem from "./AppPickerItem";
 import { getDateObject } from "../constants/getFormatTime";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -44,9 +45,7 @@ const FilterItem = ({ item, setModal }) => {
     setModal({
       vis: true,
       close: false,
-      type: item.type,
-      data: item.data,
-      title: item.title,
+      ...item,
     });
   };
 
@@ -63,7 +62,7 @@ const FilterItem = ({ item, setModal }) => {
   );
 };
 
-const RenderGenres = ({ data, handleSelect, type, setter }) => {
+const RenderGenres = ({ data, handleSelect, type, name, setter }) => {
   return (
     <View style={styles.modalContainer}>
       <FlatList
@@ -76,7 +75,7 @@ const RenderGenres = ({ data, handleSelect, type, setter }) => {
             desc={item.discription}
             example={item.example}
             onPress={() => {
-              handleSelect({ type, val: item.title });
+              handleSelect({ type, name, val: item.title });
               setter();
             }}
           />
@@ -88,7 +87,7 @@ const RenderGenres = ({ data, handleSelect, type, setter }) => {
   );
 };
 
-const RenderDatePicker = ({ handleSelect, type, setter }) => {
+const RenderDatePicker = ({ handleSelect, type, name, setter }) => {
   const [date, setDate] = useState({ vis: true, timestamp: new Date() });
 
   const onDatePicked = (event, selectedDate) => {
@@ -126,6 +125,7 @@ const RenderDatePicker = ({ handleSelect, type, setter }) => {
           onPress={() => {
             handleSelect({
               type,
+              name,
               val: { date: date.timestamp, when: "before" },
             });
             setter();
@@ -135,7 +135,11 @@ const RenderDatePicker = ({ handleSelect, type, setter }) => {
         <AppButton
           title="From date"
           onPress={() => {
-            handleSelect({ type, val: { date: date.timestamp, when: "from" } });
+            handleSelect({
+              type,
+              name,
+              val: { date: date.timestamp, when: "from" },
+            });
             setter();
           }}
           bare
@@ -156,33 +160,68 @@ const RenderDatePicker = ({ handleSelect, type, setter }) => {
   );
 };
 
-const RenderMinMax = ({ handleSelect, type, setter }) => {
+const RenderMinMax = ({ handleSelect, type, name, appliedFilter, setter }) => {
   return (
     <View style={styles.filterCount}>
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          handleSelect({ type, val: "highest" });
+          handleSelect({ type, name, val: "highest" });
           setter();
         }}
         style={[styles.filterCounter, styles.filterMax]}
       >
         <AppText style={styles.filterMaxText} bold size="large">
-          Highest
+          {appliedFilter && appliedFilter.val === "highest"
+            ? "Remove"
+            : "Highest"}
         </AppText>
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          handleSelect({ type, val: "highest" });
+          handleSelect({ type, name, val: "lowest" });
           setter();
         }}
         style={[styles.filterCounter, styles.filterMin]}
       >
         <AppText style={styles.filterMinText} bold size="large">
-          Lowest
+          {appliedFilter && appliedFilter.val === "lowest"
+            ? "Remove"
+            : "Lowest"}
         </AppText>
       </TouchableOpacity>
+    </View>
+  );
+};
+
+const RenderAppliedFilters = ({ filters = [] }) => {
+  return (
+    <View style={styles.filterApplied}>
+      <AppText size="large" bold>
+        Applied Filters:
+      </AppText>
+      {filters.map((filter) => {
+        let contentValue = "";
+        if (typeof filter.val !== "string") {
+          // dates
+          const date = getDateObject(filter.val.date);
+          contentValue = `${filter.val.when}  ${date.month} ${date.year}`;
+        } else {
+          contentValue = filter.val;
+        }
+
+        return (
+          <View style={styles.filterAppliedItem} key={filter.type}>
+            <AppText bold style={styles.filterAppliedItemProp}>
+              {filter.name}
+            </AppText>
+            <AppText style={styles.filterAppliedItemValue}>
+              {capFirstLetter(contentValue)}
+            </AppText>
+          </View>
+        );
+      })}
     </View>
   );
 };
@@ -190,9 +229,31 @@ const RenderMinMax = ({ handleSelect, type, setter }) => {
 const RenderInstanceFilter = ({ setter }) => {
   const theme = useContext(ThemeContext);
   const [modal, setModal] = useState({ vis: false, close: false });
+  const [appliedFilters, setAppliedFilters] = useState([]);
 
   const onfilterOptions = (item) => {
-    console.log(item);
+    // create, delete, update
+    const checker = appliedFilters.find((filter) => filter.type === item.type);
+    if (checker) {
+      // update or delete
+      setAppliedFilters((prev) =>
+        prev
+          .map((filter) => {
+            if (filter.type == item.type && filter.val === item.val) {
+              return "null";
+            }
+            if (filter.type == item.type) {
+              return item;
+            } else {
+              return filter;
+            }
+          })
+          .filter((filter) => filter != "null")
+      );
+    } else {
+      // create
+      setAppliedFilters([...appliedFilters, item]);
+    }
   };
 
   const RenderModalComponents = () => {
@@ -201,6 +262,7 @@ const RenderInstanceFilter = ({ setter }) => {
         <RenderGenres
           data={modal.data}
           type={modal.type}
+          name={modal.name}
           setter={() => setModal({ vis: false, close: true })}
           handleSelect={onfilterOptions}
         />
@@ -210,6 +272,7 @@ const RenderInstanceFilter = ({ setter }) => {
         <RenderDatePicker
           type={modal.type}
           setter={() => setModal({ vis: false, close: true })}
+          name={modal.name}
           handleSelect={onfilterOptions}
         />
       );
@@ -218,7 +281,11 @@ const RenderInstanceFilter = ({ setter }) => {
         <RenderMinMax
           type={modal.type}
           setter={() => setModal({ vis: false, close: true })}
+          name={modal.name}
           handleSelect={onfilterOptions}
+          appliedFilter={appliedFilters.find(
+            (filter) => filter.type === modal.type
+          )}
         />
       );
     }
@@ -237,6 +304,9 @@ const RenderInstanceFilter = ({ setter }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <FilterItem item={item} setModal={setModal} />
+        )}
+        ListFooterComponent={() => (
+          <RenderAppliedFilters filters={appliedFilters} />
         )}
       />
 
@@ -451,7 +521,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
           <ActivityIndicator
             visible={true}
             type="isEmpty"
-            wTransparent
+            transparent
             text={
               firstLoad
                 ? `No ${screen} data`
@@ -543,6 +613,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+  },
+  filterApplied: {
+    margin: 15,
+  },
+  filterAppliedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  filterAppliedItemProp: {
+    padding: 10,
+    borderRadius: 4,
+    backgroundColor: colors.extraLight,
+  },
+  filterAppliedItemValue: {
+    marginLeft: 10,
   },
   modalContainer: {
     maxHeight: height * 0.75,
