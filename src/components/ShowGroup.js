@@ -62,8 +62,15 @@ const FilterItem = ({ item, setModal }) => {
   );
 };
 
-export const RenderGenres = ({ data, handleSelect, type, name, setter }) => {
-  const [selected, setSelected] = useState([]);
+export const RenderGenres = ({
+  data,
+  handleSelect,
+  selectedArr,
+  type,
+  name,
+  setter,
+}) => {
+  const [selected, setSelected] = useState(selectedArr ? selectedArr : []);
 
   const onSelectGenre = (title) => {
     if (selected.includes(title)) {
@@ -271,46 +278,10 @@ const RenderInstanceFilter = ({ setter }) => {
       setAppliedFilters((prev) =>
         prev
           .map((filter) => {
-            if (["genre", "sub_genre"].includes(item.type)) {
-              if (filter.type != item.type) return filter;
-              const valChecker = filter?.val?.match(new RegExp(",", "gi"));
-
-              // add up to three
-              if (
-                !filter.val.includes(item.val) &&
-                (valChecker == null || valChecker.length < 2)
-              ) {
-                return {
-                  ...filter,
-                  val: filter.val + `, ${item.val}`,
-                };
-              } else if (filter.val.includes(item.val)) {
-                let newVal;
-
-                const oldIndex = filter?.val?.indexOf(item.val);
-                const oldLastIndex = oldIndex + item?.val?.length;
-                if (oldIndex === 0 && !filter?.val?.includes(",")) {
-                  // remove this filter
-                  return "null";
-                }
-
-                if (oldIndex === 0) {
-                  newVal = filter?.val?.slice(oldLastIndex + 2);
-                } else if (oldIndex > 0 && filter.val[oldLastIndex] == ",") {
-                  newVal =
-                    filter?.val?.slice(0, oldIndex) +
-                    filter?.val?.slice(oldLastIndex + 2);
-                } else if (oldIndex > 0 && !filter.val[oldLastIndex]) {
-                  newVal = filter?.val?.slice(0, oldIndex - 2);
-                }
-                return {
-                  ...filter,
-                  val: newVal,
-                };
-              } else {
-                return filter;
-              }
-            } else if (filter.type == item.type && filter.val === item.val) {
+            if (
+              filter.type == item.type &&
+              (filter.val === item.val || !item.val)
+            ) {
               return "null";
             } else if (filter.type == item.type) {
               return item;
@@ -328,10 +299,18 @@ const RenderInstanceFilter = ({ setter }) => {
 
   const RenderModalComponents = () => {
     if (modal.type === "genre" || modal.type === "sub_genre") {
+      let selectedArr = [];
+      const selected = appliedFilters.find(
+        (filter) => filter.type == modal.type
+      );
+      if (selected) {
+        selectedArr = selected?.val?.split(", ");
+      }
       return (
         <RenderGenres
           data={modal.data}
           type={modal.type}
+          selectedArr={selectedArr}
           name={modal.name}
           setter={() => setModal({ vis: false, close: true })}
           handleSelect={onfilterOptions}
