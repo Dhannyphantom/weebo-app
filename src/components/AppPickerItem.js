@@ -6,11 +6,11 @@ import AppText from "./AppText";
 
 const screen = Dimensions.get("window");
 
-const AppPickerItem = ({ text, onPress, desc, example }) => {
+const AppPickerItem = ({ text, onPress, selected = false, desc, example }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      style={styles.container}
+      style={[styles.container, selected ? styles.selected : {}]}
       onPress={onPress}
     >
       <View>
@@ -27,7 +27,8 @@ const AppPickerItem = ({ text, onPress, desc, example }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: screen.width * 0.33,
+    width: screen.width * 0.3,
+    margin: (screen.width * 0.03) / 3,
     padding: 10,
   },
   descText: {
@@ -43,6 +44,11 @@ const styles = StyleSheet.create({
   headerText: {
     textAlign: "center",
     fontSize: 11,
+  },
+  selected: {
+    borderWidth: 2,
+    borderRadius: 8,
+    borderColor: colors.primary,
   },
 });
 export default AppPickerItem;

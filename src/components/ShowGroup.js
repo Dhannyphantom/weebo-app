@@ -62,24 +62,54 @@ const FilterItem = ({ item, setModal }) => {
   );
 };
 
-const RenderGenres = ({ data, handleSelect, type, name, setter }) => {
+export const RenderGenres = ({ data, handleSelect, type, name, setter }) => {
+  const [selected, setSelected] = useState([]);
+
+  const onSelectGenre = (title) => {
+    if (selected.includes(title)) {
+      // remove
+      setSelected((prev) => prev.filter((eachTitle) => eachTitle !== title));
+    } else {
+      if (selected.length > 2) return;
+      // add
+      const selectedSets = new Set([...selected, title]);
+      setSelected([...selectedSets]);
+    }
+  };
+
+  const saveSelectedGenre = () => {
+    // handleSelect({ type, name, val: item.title });
+    handleSelect({ type, name, val: selected.join(", ") });
+    setter();
+  };
+
   return (
     <View style={styles.modalContainer}>
+      <AppButton
+        title="SELECT"
+        onPress={saveSelectedGenre}
+        bare
+        style={{ alignSelf: "center" }}
+      />
       <FlatList
         data={data}
+        extraData={selected}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 15 }}
-        renderItem={({ item }) => (
-          <AppPickerItem
-            text={item.title}
-            desc={item.discription}
-            example={item.example}
-            onPress={() => {
-              handleSelect({ type, name, val: item.title });
-              setter();
-            }}
-          />
-        )}
+        renderItem={({ item }) => {
+          const isSelected = selected.includes(item.title);
+          return (
+            <AppPickerItem
+              text={item.title}
+              desc={item.discription}
+              selected={isSelected}
+              example={item.example}
+              onPress={() => {
+                onSelectGenre(item.title);
+              }}
+            />
+          );
+        }}
         numColumns={3}
         listKey="dropDown"
       />
@@ -88,7 +118,7 @@ const RenderGenres = ({ data, handleSelect, type, name, setter }) => {
 };
 
 const RenderDatePicker = ({ handleSelect, type, name, setter }) => {
-  const [date, setDate] = useState({ vis: true, timestamp: new Date() });
+  const [date, setDate] = useState({ vis: false, timestamp: new Date() });
 
   const onDatePicked = (event, selectedDate) => {
     if (event.type !== "dismissed") {
@@ -201,27 +231,29 @@ const RenderAppliedFilters = ({ filters = [] }) => {
       <AppText size="large" bold>
         Applied Filters:
       </AppText>
-      {filters.map((filter) => {
-        let contentValue = "";
-        if (typeof filter.val !== "string") {
-          // dates
-          const date = getDateObject(filter.val.date);
-          contentValue = `${filter.val.when}  ${date.month} ${date.year}`;
-        } else {
-          contentValue = filter.val;
-        }
+      <View style={{ marginTop: 25 }}>
+        {filters.map((filter) => {
+          let contentValue = "";
+          if (typeof filter.val !== "string") {
+            // dates
+            const date = getDateObject(filter.val.date);
+            contentValue = `${filter.val.when}  ${date.month} ${date.year}`;
+          } else {
+            contentValue = filter.val;
+          }
 
-        return (
-          <View style={styles.filterAppliedItem} key={filter.type}>
-            <AppText bold style={styles.filterAppliedItemProp}>
-              {filter.name}
-            </AppText>
-            <AppText style={styles.filterAppliedItemValue}>
-              {capFirstLetter(contentValue)}
-            </AppText>
-          </View>
-        );
-      })}
+          return (
+            <View style={styles.filterAppliedItem} key={filter.type}>
+              <AppText bold style={styles.filterAppliedItemProp}>
+                {filter.name}
+              </AppText>
+              <AppText style={styles.filterAppliedItemValue}>
+                {capFirstLetter(contentValue)}
+              </AppText>
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 };
@@ -239,10 +271,48 @@ const RenderInstanceFilter = ({ setter }) => {
       setAppliedFilters((prev) =>
         prev
           .map((filter) => {
-            if (filter.type == item.type && filter.val === item.val) {
+            if (["genre", "sub_genre"].includes(item.type)) {
+              if (filter.type != item.type) return filter;
+              const valChecker = filter?.val?.match(new RegExp(",", "gi"));
+
+              // add up to three
+              if (
+                !filter.val.includes(item.val) &&
+                (valChecker == null || valChecker.length < 2)
+              ) {
+                return {
+                  ...filter,
+                  val: filter.val + `, ${item.val}`,
+                };
+              } else if (filter.val.includes(item.val)) {
+                let newVal;
+
+                const oldIndex = filter?.val?.indexOf(item.val);
+                const oldLastIndex = oldIndex + item?.val?.length;
+                if (oldIndex === 0 && !filter?.val?.includes(",")) {
+                  // remove this filter
+                  return "null";
+                }
+
+                if (oldIndex === 0) {
+                  newVal = filter?.val?.slice(oldLastIndex + 2);
+                } else if (oldIndex > 0 && filter.val[oldLastIndex] == ",") {
+                  newVal =
+                    filter?.val?.slice(0, oldIndex) +
+                    filter?.val?.slice(oldLastIndex + 2);
+                } else if (oldIndex > 0 && !filter.val[oldLastIndex]) {
+                  newVal = filter?.val?.slice(0, oldIndex - 2);
+                }
+                return {
+                  ...filter,
+                  val: newVal,
+                };
+              } else {
+                return filter;
+              }
+            } else if (filter.type == item.type && filter.val === item.val) {
               return "null";
-            }
-            if (filter.type == item.type) {
+            } else if (filter.type == item.type) {
               return item;
             } else {
               return filter;
@@ -302,6 +372,7 @@ const RenderInstanceFilter = ({ setter }) => {
         data={filters}
         numColumns={3}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 30 }}
         renderItem={({ item }) => (
           <FilterItem item={item} setModal={setModal} />
         )}
@@ -612,6 +683,7 @@ const styles = StyleSheet.create({
     margin: width * 0.015,
     borderRadius: 8,
     justifyContent: "center",
+    elevation: 1,
     alignItems: "center",
   },
   filterApplied: {
