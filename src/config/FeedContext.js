@@ -4,6 +4,7 @@ import baseURL from "../api/baseURL";
 import fetchApi from "../api/fetchApi";
 import postApi from "../api/postApi";
 import followApi from "../api/followApi";
+import grabApi from "../api/grabApi";
 
 const feedReducer = (state, action) => {
   switch (action.type) {
@@ -116,6 +117,33 @@ const updatePosts = (dispatch) => () => {
   dispatch({ type: "update_posts" });
 };
 
+const filterInstances = (dispatch) => async (data, sc, cb) => {
+  // data = {instance: str, filters = [{type, filter, info}]}
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await grabApi.get(
+      `/filter_instances?instance=${data.instance}&filters=${JSON.stringify(
+        data.filters
+      )}`,
+      {
+        headers: {
+          "x-auth-token": token,
+          "Cache-Control": "no-cache,no-store,must-revalidate",
+          Pragma: "no-cache",
+          Expires: 0,
+        },
+      }
+    );
+    sc && sc(response.data);
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error fetching instance data",
+        data: err?.response?.data,
+      });
+  }
+};
 const getGroups = (dispatch) => async (sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -437,6 +465,7 @@ export const { Provider, Context } = createDataContext(
     getStatuses,
     deletePosts,
     getInstancePosts,
+    filterInstances,
     getMoreReplies,
     statusUploader,
     getHomeFeeds,

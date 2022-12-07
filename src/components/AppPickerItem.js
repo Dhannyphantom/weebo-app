@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: screen.width * 0.3,
-    margin: (screen.width * 0.03) / 3,
+    margin: (screen.width * 0.03) / 4,
     padding: 10,
   },
   descText: {
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   selected: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 8,
     borderColor: colors.primary,
   },

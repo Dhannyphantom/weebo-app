@@ -16,13 +16,15 @@ import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
-const PICW = width * 0.85;
-const PICH = width * 0.65;
+const PICW = width * 0.96;
+const PIC_CHAR_H = height * 0.65;
+const PIC_SHOW_H = width * 0.5;
 
 export const RenderCoverUpload = ({
   show,
   visible = true,
   type,
+  disabled = false,
   onPress,
   coverImage,
 }) => {
@@ -34,10 +36,11 @@ export const RenderCoverUpload = ({
         style={{
           ...styles.coverZone,
           backgroundColor: theme.extralight,
-          width: show ? PICW : PICH,
-          height: show ? PICH : PICW,
+          width: PICW,
+          height: show ? PIC_SHOW_H : PIC_CHAR_H,
         }}
-        activeOpacity={0.8}
+        disabled={disabled}
+        activeOpacity={0.9}
         onPress={onPress} //handleCoverImage
       >
         {!coverImage && (
@@ -61,6 +64,7 @@ export const RenderCoverUpload = ({
 const CoverUpload = ({ show, type = "character", name }) => {
   const { setFieldValue, setFieldError, values, errors } = useFormikContext();
   const [coverImage, setCoverImage] = useState(null);
+  const [disableCover, setDisableCover] = useState(false);
 
   let aspectR;
   if (show) {
@@ -70,6 +74,7 @@ const CoverUpload = ({ show, type = "character", name }) => {
   }
 
   const handleCoverImage = async () => {
+    setDisableCover(true);
     const { results } = await launchGallery("image", true, false, aspectR);
 
     if (results) {
@@ -80,6 +85,7 @@ const CoverUpload = ({ show, type = "character", name }) => {
         uri: results[0].uri,
       });
     }
+    setDisableCover(false);
   };
 
   useEffect(() => {
@@ -94,6 +100,7 @@ const CoverUpload = ({ show, type = "character", name }) => {
         coverImage={coverImage}
         onPress={handleCoverImage}
         show={show}
+        disabled={disableCover}
         type={type}
       />
       {errors[name] && (
@@ -109,8 +116,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   coverZone: {
-    borderRadius: 14,
-    overflow: "hidden",
+    borderRadius: 16,
+    // overflow: "hidden",
   },
   errorText: {
     color: colors.heart,
@@ -125,6 +132,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 16,
+    // borderRadius: 16,
   },
   reloadBtn: {
     height: 50,

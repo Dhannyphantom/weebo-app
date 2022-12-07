@@ -44,7 +44,7 @@ const FilterItem = ({ item, setModal }) => {
   const onOpenModal = () => {
     setModal({
       vis: true,
-      close: false,
+      close: null,
       ...item,
     });
   };
@@ -265,10 +265,12 @@ const RenderAppliedFilters = ({ filters = [] }) => {
   );
 };
 
-const RenderInstanceFilter = ({ setter }) => {
+const RenderInstanceFilter = ({ setter, instance }) => {
   const theme = useContext(ThemeContext);
-  const [modal, setModal] = useState({ vis: false, close: false });
+  const [modal, setModal] = useState({ vis: false, close: null });
   const [appliedFilters, setAppliedFilters] = useState([]);
+
+  const { filterInstances } = useContext(FeedContext);
 
   const onfilterOptions = (item) => {
     // create, delete, update
@@ -298,7 +300,7 @@ const RenderInstanceFilter = ({ setter }) => {
   };
 
   const RenderModalComponents = () => {
-    if (modal.type === "genre" || modal.type === "sub_genre") {
+    if (modal.type === "genres" || modal.type === "subGenres") {
       let selectedArr = [];
       const selected = appliedFilters.find(
         (filter) => filter.type == modal.type
@@ -312,15 +314,15 @@ const RenderInstanceFilter = ({ setter }) => {
           type={modal.type}
           selectedArr={selectedArr}
           name={modal.name}
-          setter={() => setModal({ vis: false, close: true })}
+          setter={() => setModal({ vis: true, close: "close" })}
           handleSelect={onfilterOptions}
         />
       );
-    } else if (["release_date", "end_date"].includes(modal.type)) {
+    } else if (["releaseDate", "endDate"].includes(modal.type)) {
       return (
         <RenderDatePicker
           type={modal.type}
-          setter={() => setModal({ vis: false, close: true })}
+          setter={() => setModal({ vis: true, close: "close" })}
           name={modal.name}
           handleSelect={onfilterOptions}
         />
@@ -329,7 +331,7 @@ const RenderInstanceFilter = ({ setter }) => {
       return (
         <RenderMinMax
           type={modal.type}
-          setter={() => setModal({ vis: false, close: true })}
+          setter={() => setModal({ vis: true, close: "close" })}
           name={modal.name}
           handleSelect={onfilterOptions}
           appliedFilter={appliedFilters.find(
@@ -338,6 +340,29 @@ const RenderInstanceFilter = ({ setter }) => {
         />
       );
     }
+  };
+
+  const fetchAppliedFilters = () => {
+    const sendData = {
+      instance,
+      filters: appliedFilters.map((filter) => {
+        const isString = typeof filter.val === "string";
+        return {
+          type: filter.type,
+          filter: isString ? filter.val : filter?.val?.date,
+          info: isString ? "null" : filter?.val?.when,
+        };
+      }),
+    };
+    filterInstances(
+      sendData,
+      (resData) => {
+        console.log(resData);
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
   };
 
   return (
@@ -361,7 +386,12 @@ const RenderInstanceFilter = ({ setter }) => {
       />
 
       <View style={styles.filterBtns}>
-        <AppButton title="Apply" LIcon="check" bare />
+        <AppButton
+          title="Apply"
+          onPress={fetchAppliedFilters}
+          LIcon="check"
+          bare
+        />
         <AppButton
           title="Cancel"
           onPress={setter}
@@ -373,7 +403,7 @@ const RenderInstanceFilter = ({ setter }) => {
       <PopDropDown
         setter={() => setModal({ vis: false })}
         visible={modal.vis}
-        close={modal.close}
+        closer={() => modal.close}
         headerTitle={modal.title}
         RenderComponent={() => <RenderModalComponents />}
       />
@@ -587,6 +617,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
         RenderComponent={() => (
           <RenderInstanceFilter
             setter={() => setBools({ ...bools, filter: false })}
+            instance={screen}
           />
         )}
         setter={() => setBools({ ...bools, filter: false })}
@@ -606,6 +637,7 @@ const styles = StyleSheet.create({
     width,
     height: height * 0.97,
     borderRadius: 20,
+    marginTop: 25,
   },
   filterBtns: {
     position: "absolute",

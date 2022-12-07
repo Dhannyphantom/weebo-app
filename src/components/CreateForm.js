@@ -109,15 +109,17 @@ const CreateForm = ({
       if (dateTime && !dateTime2 && newMilli >= milli) {
         dateDisplay = "Currently airing";
       } else if (dateTime && dateTime2 && newMilli < milli) {
+        // birthdays
         dateDisplay = `${months[m]} ${d} `;
       } else if (dateTime2 && dateTime && newMilli >= milli) {
         dateDisplay = `${months[tM]} ${tD}`;
       } else if (!dateTime2 && dateTime && newMilli < milli) {
+        // show dates
         dateDisplay = `${months[m]} ${y}`;
       }
       setDate(datePick);
       setMydate(dateDisplay);
-      setFieldValue(name, dateDisplay);
+      setFieldValue(name, datePick);
     }
   };
 
