@@ -265,12 +265,10 @@ const RenderAppliedFilters = ({ filters = [] }) => {
   );
 };
 
-const RenderInstanceFilter = ({ setter, instance }) => {
+const RenderInstanceFilter = ({ setter, updateScreenData }) => {
   const theme = useContext(ThemeContext);
   const [modal, setModal] = useState({ vis: false, close: null });
   const [appliedFilters, setAppliedFilters] = useState([]);
-
-  const { filterInstances } = useContext(FeedContext);
 
   const onfilterOptions = (item) => {
     // create, delete, update
@@ -342,29 +340,6 @@ const RenderInstanceFilter = ({ setter, instance }) => {
     }
   };
 
-  const fetchAppliedFilters = () => {
-    const sendData = {
-      instance,
-      filters: appliedFilters.map((filter) => {
-        const isString = typeof filter.val === "string";
-        return {
-          type: filter.type,
-          filter: isString ? filter.val : filter?.val?.date,
-          info: isString ? "null" : filter?.val?.when,
-        };
-      }),
-    };
-    filterInstances(
-      sendData,
-      (resData) => {
-        console.log(resData);
-      },
-      (errData) => {
-        console.log(errData);
-      }
-    );
-  };
-
   return (
     <View
       style={[
@@ -372,6 +347,9 @@ const RenderInstanceFilter = ({ setter, instance }) => {
         { backgroundColor: theme.transparentBold },
       ]}
     >
+      <AppText size="large" bold style={styles.filterTitle}>
+        Filters
+      </AppText>
       <FlatList
         data={filters}
         numColumns={3}
@@ -388,7 +366,7 @@ const RenderInstanceFilter = ({ setter, instance }) => {
       <View style={styles.filterBtns}>
         <AppButton
           title="Apply"
-          onPress={fetchAppliedFilters}
+          onPress={() => updateScreenData(appliedFilters)}
           LIcon="check"
           bare
         />
@@ -413,7 +391,7 @@ const RenderInstanceFilter = ({ setter, instance }) => {
 
 const ShowGroup = ({ screen, headerTitle }) => {
   const navigation = useNavigation();
-  const { getShows, getGroups } = useContext(FeedContext);
+  const { getShows, filterInstances, getGroups } = useContext(FeedContext);
   const { searchStuffs } = useContext(AcctContext);
   const theme = useContext(ThemeContext);
 
@@ -473,6 +451,32 @@ const ShowGroup = ({ screen, headerTitle }) => {
     }
   };
 
+  const updateScreenData = (filters) => {
+    setBools({ ...bools, filter: false, isLoading: true });
+    const sendData = {
+      instance: screen,
+      filters: filters.map((filter) => {
+        const isString = typeof filter.val === "string";
+        return {
+          type: filter.type,
+          filter: isString ? filter.val : filter?.val?.date,
+          info: isString ? "null" : filter?.val?.when,
+        };
+      }),
+    };
+    filterInstances(
+      sendData,
+      (resData) => {
+        setScreenData(resData);
+        setBools({ ...bools, filter: false, isLoading: false });
+      },
+      (errData) => {
+        console.log(errData);
+        setBools({ ...bools, filter: false, isLoading: false });
+      }
+    );
+  };
+
   const handleShowSearch = () => {
     searchStuffs(
       { term: searchText, type: screen },
@@ -494,9 +498,9 @@ const ShowGroup = ({ screen, headerTitle }) => {
           icon="television"
           image={item?.cover_photo}
           onPress={() => handleImagePress(item)}
-          statLeft={`${item.followers.length} followers`}
+          statLeft={`${item.followers.length ?? item.followers} followers`}
           statMid={item.creator}
-          statRight={`${item.characters.length} character${
+          statRight={`${item.characters.length ?? item.characters} character${
             item.characters.length > 1 ? "s" : ""
           }`}
         />
@@ -617,7 +621,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
         RenderComponent={() => (
           <RenderInstanceFilter
             setter={() => setBools({ ...bools, filter: false })}
-            instance={screen}
+            updateScreenData={updateScreenData}
           />
         )}
         setter={() => setBools({ ...bools, filter: false })}
@@ -712,6 +716,11 @@ const styles = StyleSheet.create({
   },
   filterAppliedItemValue: {
     marginLeft: 10,
+  },
+  filterTitle: {
+    textAlign: "center",
+    marginTop: 15,
+    marginBottom: 20,
   },
   modalContainer: {
     maxHeight: height * 0.75,
