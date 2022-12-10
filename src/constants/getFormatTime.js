@@ -147,9 +147,12 @@ export const getDateObject = (date) => {
   const dater = new Date(date);
   const dateMonth = calender.months[dater.getMonth()].full.toUpperCase();
   const dateYear = dater.getFullYear();
+  const dateDay = dater.getDate();
 
   return {
     month: dateMonth,
     year: dateYear,
+    day: dateDay,
+    isFuture: dater > Date.now(),
   };
 };

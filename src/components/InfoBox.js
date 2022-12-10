@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
+import { getDateObject } from "../constants/getFormatTime";
 import AppText from "./AppText";
 
 const { width } = Dimensions.get("window");
@@ -15,6 +16,11 @@ const InfoBox = ({ item, onPress }) => {
     } else {
       infoValue = item.value.join(" | ");
     }
+  } else if (["release date", "endDate"].includes(item.prop)) {
+    const timestamp = getDateObject(item.value);
+    infoValue = timestamp.isFuture
+      ? "Currently airing"
+      : `${timestamp.month} ${timestamp.year}`;
   } else if (item.value === false) {
     infoValue = "No";
   } else if (item.value === true) {

@@ -31,6 +31,7 @@ const { editValidationSchema, passwordInitials } = yupSchema;
 import { emailers } from "../constants/data_store";
 import Link from "../components/Link";
 import { launchGallery } from "../constants/helpers";
+import AlertModal from "../components/AlertModal";
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,6 +40,15 @@ const emailVerifiedPop = {
   msg: "Email verification successful",
   vis: false,
 };
+
+const getLocatorAlert = (isOn) => ({
+  visible: false,
+  btn: "OK",
+  message: `${isOn ? "Disable" : "Enable"} your locator. Nearby weebs ${
+    isOn ? "may not" : "will"
+  } be able to find you`,
+  type: "locator",
+});
 
 const RenderEmailPop = ({ vis, setPopper }) => {
   const theme = useContext(ThemeContext);
@@ -438,6 +448,9 @@ const EditProfileScreen = ({ navigation, route }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [alert, setAlert] = useState(
+    getLocatorAlert(pageData?.location?.active)
+  );
 
   const formInitials = {
     username: pageData.username,
@@ -526,6 +539,12 @@ const EditProfileScreen = ({ navigation, route }) => {
         setIsLoading(false);
       }
     );
+  };
+
+  const handleScreenAlert = () => {
+    if (alert.type === "locator") {
+      handleLocationSwitch();
+    }
   };
 
   return (
@@ -618,7 +637,12 @@ const EditProfileScreen = ({ navigation, route }) => {
                 />
                 <Link
                   name={`Turn ${locatorStatus} my weebo locator`}
-                  onPress={handleLocationSwitch}
+                  onPress={() =>
+                    setAlert({
+                      ...getLocatorAlert(pageData?.location?.active),
+                      visible: true,
+                    })
+                  }
                   style={styles.btn}
                 />
               </View>
@@ -645,6 +669,11 @@ const EditProfileScreen = ({ navigation, route }) => {
         popData={popper}
         setter={() => setPopper({ ...popper, vis: false })}
         timer={0.5}
+      />
+      <AlertModal
+        obj={alert}
+        setVisible={setAlert}
+        onPress={handleScreenAlert}
       />
     </Screen>
   );
