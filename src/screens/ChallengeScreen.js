@@ -135,6 +135,7 @@ const ChallengeScreen = ({ navigation }) => {
             avatar1={item.challenger.avatar}
             avatar2={item.manager.avatar}
             challengeID={item._id}
+            challengeType="two"
             ownerInfo={item.challengerInfo}
             challengerInfo={item.ownerInfo}
             type={item.type}

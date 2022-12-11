@@ -38,13 +38,13 @@ const Challenge = ({
   type,
   ownerInfo,
   challengerInfo,
+  challengeType,
   score1,
   nav,
   instance,
   clientID,
   challengeID,
   score2,
-  onPress,
   cardProps, //an object for my card styles and props..,
 }) => {
   const navigation = useNavigation();
@@ -162,7 +162,9 @@ const Challenge = ({
   const handleComments = () => {
     setMyComments([]);
     setModalVis(true);
-    getComments(challengeID, "two", handleDone, (err) => setErrMsg(err));
+    getComments(challengeID, challengeType, handleDone, (err) =>
+      setErrMsg(err)
+    );
   };
 
   const handleShowMedia = (mediaObj) => {
@@ -315,6 +317,8 @@ const Challenge = ({
         setModal={setModalVis}
         loaded={loaded}
         onSend={handleSend}
+        setMyComments={setMyComments}
+        commentData={{ instanceType: challengeType, instanceID: challengeID }}
         data={myComments}
         reply={reply}
         setReply={setReply}

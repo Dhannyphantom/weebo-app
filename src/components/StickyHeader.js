@@ -41,18 +41,16 @@ export default function StickyHeader({ scrollY, title = "DANNY" }) {
         ...styles.container,
       }}
     >
-      <View style={styles.content}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => navigation.goBack()}
-          style={styles.icon_container}
-        >
-          <Feather size={22} color={theme.color} name="chevron-left" />
-        </TouchableOpacity>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => navigation.goBack()}
+        style={[styles.icon_container, styles.content]}
+      >
+        <Feather size={22} color={theme.color} name="chevron-left" />
         <AppText size="xlarge" bold style={styles.text}>
           {title}
         </AppText>
-      </View>
+      </TouchableOpacity>
     </Animated.View>
   );
 }
