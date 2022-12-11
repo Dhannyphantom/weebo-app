@@ -11,7 +11,11 @@ const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
 const isiOS = Platform.OS === "ios";
 
 export const capFirstLetter = (str) => {
-  return str[0].toUpperCase() + str.slice(1);
+  if (typeof str === "string" && str.length > 0) {
+    return str[0].toUpperCase() + str.slice(1);
+  } else {
+    return "";
+  }
 };
 
 export const launchGallery = async (

@@ -24,6 +24,8 @@ import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
+const MINIMUM_FOLLOWERS = 2;
+const MINIMUM_FEEDBACK = 3;
 
 export const RenderVerifyInfo = ({
   vName,
@@ -38,7 +40,8 @@ export const RenderVerifyInfo = ({
   const vNegative = vList?.filter((obj) => obj.feedback === "wrong").length;
 
   const totalPercentile =
-    (vFollowers / 2000) * 50 + ((vPostive - vNegative) / 1000) * 50;
+    (vFollowers / MINIMUM_FOLLOWERS) * 40 +
+    ((vPostive - vNegative) / MINIMUM_FEEDBACK) * 60;
 
   return (
     <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>

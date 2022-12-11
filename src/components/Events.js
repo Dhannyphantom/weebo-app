@@ -237,7 +237,7 @@ const Events = ({ closer, instance, instanceID }) => {
         />
         <AppText style={{ textAlign: "center" }}>
           Will require{" "}
-          <AppText style={{ color: colors.primary }}>{cpCalculator}CP</AppText>{" "}
+          <AppText style={{ color: colors.primary }}>{cpCalculator}WP</AppText>{" "}
         </AppText>
         <AppText style={styles.subTitles} bold>
           My Media:
