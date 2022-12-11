@@ -88,14 +88,21 @@ const AlertScreen = ({ navigation }) => {
     };
 
     const handleNavAlerts = () => {
-      if (item.type === "challenge") {
-        //character challenge
-        navigation.navigate("Character", { item: item.character._id });
-      } else {
-        // navigation.navigate("AlertDetail", { item });
+      if (!item.isSystem) {
+        if (["challenge", "lost", "accept"].includes(item.type)) {
+          item.show &&
+            navigation.navigate("Show", {
+              show: { _id: item.show, cover_photo: null },
+            });
+          item.character &&
+            navigation.navigate("Character", {
+              item: item.character?._id ?? item.character,
+            });
+        } else if (item.type === "request") {
+          navigation.navigate("Friends", { friends: userInfo.friends });
+        }
       }
-
-      handleReadNotification(item._id, "read");
+      handleIconPress("read");
     };
 
     const handleIconPress = (type) => {

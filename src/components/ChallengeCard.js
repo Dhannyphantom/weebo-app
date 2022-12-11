@@ -2,8 +2,8 @@ import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Card from "./Card";
 
-const screen = Dimensions.get("window");
-const CARD_WIDTH = screen.width * 0.47;
+const { width, height } = Dimensions.get("window");
+const CARD_WIDTH = width * 0.5;
 
 const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
   if (large) {
@@ -26,7 +26,7 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
     return (
       <View style={styles.container}>
         <Card
-          style={{ ...styles.card, width: series ? 220 : 140 }}
+          style={{ ...styles.card, width: series ? width * 0.5 : 140 }}
           btmStyle={{ ...styles.btmContainer, width: series ? 220 : 140 }}
           iconContainerStyle={styles.iconContainer}
           mIcon={series ? CARD_WIDTH / 5 : CARD_WIDTH / 5.5}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   cardCont: {
     width: CARD_WIDTH,
-    height: screen.height * 0.28,
+    height: height * 0.28,
   },
   btmStyle: {
     paddingTop: 30,

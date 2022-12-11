@@ -29,14 +29,21 @@ const Shows = ({
     (obj) => !obj?.verified
   );
 
-  // if (!verifiedCharacters[0] && !unVerifiedCharacters[0] && show) return null;
+  if (
+    verifiedCharacters &&
+    unVerifiedCharacters &&
+    !verifiedCharacters[0] &&
+    !unVerifiedCharacters[0] &&
+    show
+  )
+    return null;
 
   const RenderFooter = () => {
     if (!unVerifiedCharacters[0]) return null;
     return (
       <View style={styles.footerContainer}>
         <View>
-          <AppText style={{ color: colors.medium, padding: 10 }}>
+          <AppText size="small" style={{ color: colors.medium, padding: 10 }}>
             UNVERIFIED CHARACTERS
           </AppText>
           <View

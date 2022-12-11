@@ -586,7 +586,7 @@ const CharacterScreen = ({ route, navigation }) => {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={handleScreenRefresh}
-              contentContainerStyle={{ paddingBottom: width * 0.035 }}
+              contentContainerStyle={{ paddingBottom: height * 0.05 }}
               overScrollMode="never"
               renderItem={renderPage}
             />

@@ -127,7 +127,7 @@ const AlertBox = ({
         // onSwipeableOpen={onSwipeableOpen}
         renderRightActions={renderRightActions}
       >
-        <TouchableOpacity activeOpacity={0.9}>
+        <TouchableOpacity onPress={onPress} activeOpacity={0.65}>
           <Cards style={{ ...styles.container, ...border }}>
             <Avatar
               avatar={avatar}

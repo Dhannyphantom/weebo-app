@@ -95,6 +95,7 @@ const Challenger = ({
         setter();
       },
       (errData) => {
+        console.log(errData);
         setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }
@@ -146,6 +147,7 @@ const Challenger = ({
         setter();
       },
       (errData) => {
+        console.log(errData);
         setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }

@@ -8,25 +8,25 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
   let scaledSize;
   switch (size) {
     case "normal":
-      scaledSize = 16;
-      break;
-    case "small":
       scaledSize = 14;
       break;
-    case "xsmall":
+    case "small":
       scaledSize = 12;
+      break;
+    case "xsmall":
+      scaledSize = 11;
       break;
     case "xxsmall":
       scaledSize = 9;
       break;
     case "large":
-      scaledSize = 17;
+      scaledSize = 16;
       break;
     case "xlarge":
-      scaledSize = 20;
+      scaledSize = 18;
       break;
     case "xxlarge":
-      scaledSize = 24;
+      scaledSize = 22;
     case "xxxlarge":
       scaledSize = 28;
     default:

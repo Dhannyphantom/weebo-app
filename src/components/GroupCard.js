@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   StyleSheet,
-  ImageBackground,
   Dimensions,
   Image,
   TouchableOpacity,
@@ -10,7 +9,7 @@ import {
 import colors from "../constants/colors";
 import AppText from "./AppText";
 
-const screen = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const GroupCard = ({ item, showName, onPress }) => {
   return (
@@ -43,8 +42,8 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 9,
     marginBottom: 10,
-    width: screen.width * 0.68,
-    height: screen.width * 0.5,
+    width: width * 0.68,
+    height: width * 0.5,
   },
   grpImage: {
     flex: 1,
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "rgba(0,0,0,0.4)",
-    borderRadius: screen.width * 0.0255,
+    borderRadius: width * 0.0255,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
   image: {
     height: "100%",
     width: "100%",
-    borderRadius: screen.width * 0.025,
+    borderRadius: width * 0.025,
   },
 });
 export default GroupCard;

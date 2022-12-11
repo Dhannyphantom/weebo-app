@@ -24,8 +24,8 @@ import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
-const MINIMUM_FOLLOWERS = 2;
-const MINIMUM_FEEDBACK = 3;
+const MINIMUM_FOLLOWERS = 1000;
+const MINIMUM_FEEDBACK = 1000;
 
 export const RenderVerifyInfo = ({
   vName,

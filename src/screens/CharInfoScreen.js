@@ -117,7 +117,7 @@ const CharInfoScreen = ({
             title="Transfer"
             onPress={handleCharacterTransfer}
           />
-        ) : !isMine && !challenged ? (
+        ) : !isMine && !challenged && character?.verified ? (
           <AppButton
             title="Challenge"
             style={styles.btnAction}
