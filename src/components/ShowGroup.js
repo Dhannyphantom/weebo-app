@@ -198,6 +198,7 @@ const RenderDatePicker = ({ handleSelect, type, name, setter }) => {
 };
 
 const RenderMinMax = ({ handleSelect, type, name, appliedFilter, setter }) => {
+  const theme = useContext(ThemeContext);
   return (
     <View style={styles.filterCount}>
       <TouchableOpacity
@@ -206,7 +207,11 @@ const RenderMinMax = ({ handleSelect, type, name, appliedFilter, setter }) => {
           handleSelect({ type, name, val: "highest" });
           setter();
         }}
-        style={[styles.filterCounter, styles.filterMax]}
+        style={[
+          styles.filterCounter,
+          { backgroundColor: theme.extralight },
+          styles.filterMax,
+        ]}
       >
         <AppText style={styles.filterMaxText} bold size="large">
           {appliedFilter && appliedFilter.val === "highest"
@@ -220,7 +225,11 @@ const RenderMinMax = ({ handleSelect, type, name, appliedFilter, setter }) => {
           handleSelect({ type, name, val: "lowest" });
           setter();
         }}
-        style={[styles.filterCounter, styles.filterMin]}
+        style={[
+          styles.filterCounter,
+          { backgroundColor: theme.extralight },
+          styles.filterMin,
+        ]}
       >
         <AppText style={styles.filterMinText} bold size="large">
           {appliedFilter && appliedFilter.val === "lowest"
@@ -233,6 +242,7 @@ const RenderMinMax = ({ handleSelect, type, name, appliedFilter, setter }) => {
 };
 
 const RenderAppliedFilters = ({ filters = [] }) => {
+  const theme = useContext(ThemeContext);
   return (
     <View style={styles.filterApplied}>
       <AppText size="large" bold>
@@ -251,7 +261,13 @@ const RenderAppliedFilters = ({ filters = [] }) => {
 
           return (
             <View style={styles.filterAppliedItem} key={filter.type}>
-              <AppText bold style={styles.filterAppliedItemProp}>
+              <AppText
+                bold
+                style={{
+                  ...styles.filterAppliedItemProp,
+                  backgroundColor: theme.extralight,
+                }}
+              >
                 {filter.name}
               </AppText>
               <AppText style={styles.filterAppliedItemValue}>
@@ -660,7 +676,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 5,
     alignItems: "center",
-    backgroundColor: colors.extraLight,
     marginBottom: 20,
   },
   filterMax: {
@@ -712,7 +727,6 @@ const styles = StyleSheet.create({
   filterAppliedItemProp: {
     padding: 10,
     borderRadius: 4,
-    backgroundColor: colors.extraLight,
   },
   filterAppliedItemValue: {
     marginLeft: 10,

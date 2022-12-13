@@ -120,7 +120,7 @@ const AppModal = ({
           setIsNewCollLoading(false);
         },
         (err) => {
-          setErrMsg(err);
+          setErrMsg(err.data ?? err.msg);
           setIsNewCollLoading(false);
         }
       );
@@ -217,7 +217,6 @@ const AppModal = ({
       setBools({ ...bools, loading: true });
       const { result, error } = downloadMedia(postUris);
       // fix download media await promise
-      console.log(error, result);
       if (error) {
         setPopData({
           vis: true,

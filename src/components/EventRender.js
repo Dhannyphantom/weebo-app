@@ -88,7 +88,7 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
     cb && cb();
   };
 
-  const statLeft = `${challengerNum}/${item.challengersNum} participants`;
+  const statLeft = `${challengerNum} of ${item.challengersNum} weebs`;
   const statRight = getFormatTime(item.eventTime, null, "event");
 
   const isExpired = new Date(item.eventTime) <= Date.now();

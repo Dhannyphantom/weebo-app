@@ -96,7 +96,7 @@ const ShowScreen = ({ route, navigation }) => {
       onPress: () => handleUploadStory(),
       icon: "circle-outline",
       show: isMine,
-      selected: true,
+      selected: false,
     },
     {
       id: "5",
@@ -267,7 +267,7 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleNewCover = async () => {
-    const { results } = await launchGallery("image", true, false, [30, 25]);
+    const { results } = await launchGallery("image", true, false, [5, 3]);
     if (results) {
       setIsCoverLoading(true);
       const dataObj = {
@@ -281,7 +281,7 @@ const ShowScreen = ({ route, navigation }) => {
         dataObj,
         (resData) => {
           const newData = { ...dataState };
-          newData.cover_photo = resData.cover_photo;
+          newData.cover_photo = resData?.updater?.cover_photo;
           setDataState(newData);
           setIsCoverLoading(false);
         },
