@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
-  Modal,
   Dimensions,
+  Animated,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
@@ -24,13 +24,12 @@ import GrowInput from "./GrowInput";
 import ActivityIndicator from "./ActivityIndicator";
 import schemas from "../constants/yupSchema";
 //FILES
-import male from "../../assets/male.jpg";
-import male2 from "../../assets/male2.jpg";
-import female from "../../assets/female.jpg";
-import female2 from "../../assets/female2.jpg";
+import femaleAvatar from "../../assets/arts/girl_1.png";
+import maleAvatar from "../../assets/arts/sasuke_1.png";
 import AppButton from "./AppButton";
 import AppLogo from "./AppLogo";
 import AppFadeIn from "./AppFadeIn";
+import ThemeContext from "../config/ThemeContext";
 
 const { validationSchemaLogin, validationSchemaRegister } = schemas;
 
@@ -213,8 +212,38 @@ const AppForm = ({
   const [gender, setGender] = useState("male");
   const [passModal, setPassModal] = useState(false);
 
+  const maleTranslator = useRef(new Animated.Value(1.3)).current;
+  const femaleTranslator = useRef(new Animated.Value(1)).current;
+
+  const theme = useContext(ThemeContext);
+
   let initialValues, schema;
   const handleGender = (type) => {
+    if (type === "male") {
+      Animated.parallel([
+        Animated.spring(maleTranslator, {
+          toValue: 1.3,
+          useNativeDriver: true,
+          bounciness: 20,
+        }),
+        Animated.spring(femaleTranslator, {
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.spring(maleTranslator, {
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.spring(femaleTranslator, {
+          toValue: 1.3,
+          useNativeDriver: true,
+          bounciness: 20,
+        }),
+      ]).start();
+    }
     setGender(type);
   };
 
@@ -261,30 +290,65 @@ const AppForm = ({
             activeOpacity={1}
             onPress={() => handleGender("male")}
           >
-            <Image
-              source={gender === "male" ? male2 : male}
+            <Animated.View
+              style={[
+                styles.avatarView,
+                { transform: [{ scale: maleTranslator }] },
+              ]}
+            >
+              <Image
+                source={maleAvatar}
+                resizeMethod="scale"
+                resizeMode="contain"
+                style={{
+                  ...styles.avatars,
+                  backgroundColor:
+                    gender === "male" ? colors.accent : theme.extralight,
+                }}
+              />
+            </Animated.View>
+            <AppText
+              bold
               style={{
-                ...styles.avatars,
-                borderColor: gender === "male" ? colors.primary : colors.light,
-                width: gender === "male" ? 68 : 60,
-                height: gender === "male" ? 68 : 60,
+                textAlign: "center",
+                marginTop: gender === "male" ? 15 : 6,
+                color: gender === "male" ? colors.black : colors.light,
               }}
-            />
+            >
+              Male
+            </AppText>
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => handleGender("female")}
           >
-            <Image
-              source={gender === "female" ? female2 : female}
+            <Animated.View
+              style={[
+                styles.avatarView,
+                { transform: [{ scale: femaleTranslator }] },
+              ]}
+            >
+              <Image
+                source={femaleAvatar}
+                resizeMethod="scale"
+                resizeMode="contain"
+                style={{
+                  ...styles.avatars,
+                  backgroundColor:
+                    gender === "female" ? colors.facebook : theme.extralight,
+                }}
+              />
+            </Animated.View>
+            <AppText
+              bold
               style={{
-                ...styles.avatars,
-                borderColor:
-                  gender === "female" ? colors.primary : colors.light,
-                width: gender === "female" ? 68 : 60,
-                height: gender === "female" ? 68 : 60,
+                textAlign: "center",
+                marginTop: gender === "female" ? 15 : 6,
+                color: gender === "female" ? colors.black : colors.light,
               }}
-            />
+            >
+              Female
+            </AppText>
           </TouchableOpacity>
         </View>
       )}
@@ -415,14 +479,20 @@ const AppForm = ({
 };
 const styles = StyleSheet.create({
   avatarCont: {
+    marginTop: 15,
     flexDirection: "row",
     alignItems: "center",
   },
   avatars: {
-    marginHorizontal: 20,
-    marginTop: 15,
-    borderWidth: 3,
+    backgroundColor: colors.primary,
+    width: "100%",
+    height: "100%",
     borderRadius: 200,
+  },
+  avatarView: {
+    marginHorizontal: 20,
+    width: 65,
+    height: 65,
   },
   activity: {
     position: "absolute",

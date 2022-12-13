@@ -19,8 +19,8 @@ import Link from "./Link";
 import ActivityIndicator from "./ActivityIndicator";
 
 //// ----------- FILES
-import malePlaceholder from "../../assets/male.jpg";
-import femalePlaceholder from "../../assets/female.jpg";
+import femalePlaceholder from "../../assets/arts/girl_1.png";
+import malePlaceholder from "../../assets/arts/sasuke_1.png";
 import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
@@ -48,7 +48,7 @@ const AccountBox = ({
   if (info) {
     isMine = userInfo.username === info.username;
     if (info.avatar) {
-      imgUri = { uri: info.avatar };
+      imgUri = { uri: info?.avatar?.uri };
     } else if (!info.avatar && info.gender === "male") {
       imgUri = malePlaceholder;
     } else if (!info.avatar && info.gender === "female") {
@@ -145,8 +145,9 @@ const AccountBox = ({
             <ScrollView>
               <View style={styles.header}>
                 <Image
-                  source={imgUri.uri}
-                  resizeMethod="resize"
+                  source={imgUri}
+                  resizeMethod="scale"
+                  resizeMode={imgUri.uri ? "cover" : "contain"}
                   style={{
                     ...styles.proPic,
                     borderColor: info.avatar ? colors.primary : colors.light,

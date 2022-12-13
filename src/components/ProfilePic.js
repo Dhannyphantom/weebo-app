@@ -4,8 +4,9 @@ import colors from "../constants/colors";
 import { Context as AuthContext } from "../config/AuthContext";
 
 //  ------------ FILES --------------------
-import proMale from "../../assets/male.jpg";
-import proFemale from "../../assets/female.jpg";
+
+import proFemale from "../../assets/arts/girl_1.png";
+import proMale from "../../assets/arts/sasuke_1.png";
 import AccountBox from "./AccountBox";
 import ActivityIndicator from "./ActivityIndicator";
 
@@ -54,6 +55,7 @@ const ProfilePic = ({
           <Image
             source={userInfo.gender === "male" ? proMale : proFemale}
             resizeMethod="resize"
+            resizeMode="contain"
             style={[
               {
                 ...styles.image,

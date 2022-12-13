@@ -122,11 +122,6 @@ const AccountScreen = ({ navigation, route }) => {
     prefixPro = "Complete";
   }
 
-  let placeholder;
-  userInfo.gender === "male"
-    ? (placeholder = require("../../assets/male.jpg"))
-    : (placeholder = require("../../assets/female.jpg"));
-
   const selectProfileImage = async () => {
     const { results } = await launchGallery("image", true, false, [4, 4]);
     if (results) {
