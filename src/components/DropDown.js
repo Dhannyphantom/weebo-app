@@ -76,11 +76,7 @@ const DropDown = ({
         style={styles.itemWrapper}
       >
         <View style={styles.itemContainer}>
-          <Icon
-            name={item.icon}
-            size={18}
-            color={item.selected ? colors.primary : theme.medium}
-          />
+          <Icon name={item.icon} size={18} color={theme.medium} />
           <AppText style={styles.itemTitle} bold>
             {item.name}
           </AppText>

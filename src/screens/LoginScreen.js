@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -29,22 +29,24 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <AppForm
-        headerTitle="Sign in to your Account: "
-        p3
-        a="in"
-        b="up"
-        btnTitle="Sign in"
-        elevation={elevation}
-        setElevation={setElevation}
-        setErrMsg={setErrMsg}
-        loading={loading}
-        setLoading={(bool) => setLoading(bool)}
-        navTo="Register"
-        login
-        errorMessage={errMsg}
-        onPress={handleSignIn}
-      />
+      <ScrollView>
+        <AppForm
+          headerTitle="Sign in to your Account: "
+          p3
+          a="in"
+          b="up"
+          btnTitle="Sign in"
+          elevation={elevation}
+          setElevation={setElevation}
+          setErrMsg={setErrMsg}
+          loading={loading}
+          setLoading={(bool) => setLoading(bool)}
+          navTo="Register"
+          login
+          errorMessage={errMsg}
+          onPress={handleSignIn}
+        />
+      </ScrollView>
     </View>
   );
 };

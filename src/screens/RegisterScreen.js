@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -28,23 +28,25 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <AppForm
-        headerTitle="Sign up for your Account: "
-        p2
-        p1
-        a="up"
-        b="in"
-        btnTitle="Sign Up"
-        elevation={elevation}
-        setElevation={setElevation}
-        setErrMsg={setErrMsg}
-        loading={loading}
-        setLoading={setLoading}
-        navTo="Login"
-        register
-        errorMessage={errMsg}
-        onPress={handleSignIn}
-      />
+      <ScrollView>
+        <AppForm
+          headerTitle="Sign up for your Account: "
+          p2
+          p1
+          a="up"
+          b="in"
+          btnTitle="Sign Up"
+          elevation={elevation}
+          setElevation={setElevation}
+          setErrMsg={setErrMsg}
+          loading={loading}
+          setLoading={setLoading}
+          navTo="Login"
+          register
+          errorMessage={errMsg}
+          onPress={handleSignIn}
+        />
+      </ScrollView>
     </View>
   );
 };

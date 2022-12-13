@@ -20,7 +20,7 @@ import AppHeader from "../components/AppHeader";
 
 const { width } = Dimensions.get("window");
 
-const ChatUserScreen = ({ route, navigation }) => {
+const ChatUserScreen = ({ route }) => {
   const {
     sendMessage,
     getChatMessages,

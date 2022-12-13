@@ -212,7 +212,7 @@ const AppForm = ({
   const [gender, setGender] = useState("male");
   const [passModal, setPassModal] = useState(false);
 
-  const maleTranslator = useRef(new Animated.Value(1.3)).current;
+  const maleTranslator = useRef(new Animated.Value(1.4)).current;
   const femaleTranslator = useRef(new Animated.Value(1)).current;
 
   const theme = useContext(ThemeContext);
@@ -222,7 +222,7 @@ const AppForm = ({
     if (type === "male") {
       Animated.parallel([
         Animated.spring(maleTranslator, {
-          toValue: 1.3,
+          toValue: 1.4,
           useNativeDriver: true,
           bounciness: 20,
         }),
@@ -238,7 +238,7 @@ const AppForm = ({
           useNativeDriver: true,
         }),
         Animated.spring(femaleTranslator, {
-          toValue: 1.3,
+          toValue: 1.4,
           useNativeDriver: true,
           bounciness: 20,
         }),
@@ -311,8 +311,8 @@ const AppForm = ({
               bold
               style={{
                 textAlign: "center",
-                marginTop: gender === "male" ? 15 : 6,
-                color: gender === "male" ? colors.black : colors.light,
+                marginTop: gender === "male" ? 20 : 6,
+                color: gender === "male" ? colors.accent : colors.light,
               }}
             >
               Male
@@ -343,8 +343,8 @@ const AppForm = ({
               bold
               style={{
                 textAlign: "center",
-                marginTop: gender === "female" ? 15 : 6,
-                color: gender === "female" ? colors.black : colors.light,
+                marginTop: gender === "female" ? 20 : 6,
+                color: gender === "female" ? colors.facebook : colors.light,
               }}
             >
               Female
@@ -479,7 +479,7 @@ const AppForm = ({
 };
 const styles = StyleSheet.create({
   avatarCont: {
-    marginTop: 15,
+    marginTop: 35,
     flexDirection: "row",
     alignItems: "center",
   },

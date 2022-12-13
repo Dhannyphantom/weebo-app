@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
@@ -111,7 +111,7 @@ const CharacterScreen = ({ route, navigation }) => {
       id: "2",
       name: "posts",
       onPress: () => handleChangeTab("post"),
-      icon: "image-multiple",
+      icon: "image-multiple-outline",
       show: true,
       selected: true,
     },
@@ -119,7 +119,7 @@ const CharacterScreen = ({ route, navigation }) => {
       id: "23",
       name: "Favorite",
       onPress: () => handleFavPress(),
-      icon: "star",
+      icon: "star-outline",
       selected: cardState.fav,
       show: true,
     },
@@ -127,7 +127,8 @@ const CharacterScreen = ({ route, navigation }) => {
       id: "1",
       name: "challengers",
       onPress: () => handleChangeTab("challenger"),
-      icon: "ninja",
+      icon: "Trophy",
+      iconPack: "AD",
       selected: true,
       show: true,
     },
@@ -135,7 +136,7 @@ const CharacterScreen = ({ route, navigation }) => {
       id: "5q1",
       name: "invites",
       onPress: () => handleInvitePress(),
-      icon: "account-plus",
+      icon: "account-plus-outline",
       selected: character?.verified,
       show: isMine,
     },
@@ -149,6 +150,7 @@ const CharacterScreen = ({ route, navigation }) => {
           instanceID: character?._id,
         }),
       icon: "plus",
+      iconPack: "F",
       show: character?.verified && isMine,
       selected: true,
     },
@@ -156,7 +158,7 @@ const CharacterScreen = ({ route, navigation }) => {
       id: "873",
       name: isMine ? "Lose Character" : follow ? "Unfollow" : "Follow",
       onPress: () => handleFollowPress(),
-      icon: "account-star",
+      icon: "account-remove-outline",
       show: true,
       selected: follow,
     },

@@ -26,6 +26,7 @@ const PopMessage = ({ popData, timer = 2, setter }) => {
         Animated.spring(translator, {
           toValue: MOVE_Y,
           useNativeDriver: true,
+          bounciness: 15,
         }),
         Animated.timing(translator, {
           toValue: 0,

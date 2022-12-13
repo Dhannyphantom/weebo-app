@@ -14,6 +14,7 @@ import PopUpModal from "./PopUpModal";
 import ProfilePic from "./ProfilePic";
 import Comments from "./Comments";
 import AppDetail from "./AppDetail";
+import PopMessage from "./PopMessage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -32,6 +33,7 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
   const [modalVis, setModalVis] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [reply, setReply] = useState({});
+  const [popper, setPopper] = useState({ vis: false });
   const copy = [...scorer];
 
   const finder = scorer.find((obj) => obj.selected === true);
@@ -53,6 +55,13 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
 
   const handleVote = (itemId, type) => {
     setErrMsg(null);
+    if (!userInfo.verified) {
+      return setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Complete and verify your account",
+      });
+    }
     const ind = copy.findIndex((obj) => obj._id == itemId);
     const checkUser = copy[ind].score.includes(userID); // true or false
     const filter = copy[ind].score.filter((id) => id !== userID);
@@ -274,6 +283,11 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
         setVisible={setInfoModal}
         modalHeight={null}
         ContentComponent={InfoComponent}
+      />
+      <PopMessage
+        popData={popper}
+        timer={0.5}
+        setter={() => setPopper({ vis: false })}
       />
       <Separator h={1} m={10} />
     </View>

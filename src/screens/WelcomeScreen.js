@@ -6,6 +6,9 @@ import AppButton from "../components/AppButton";
 import Spacer from "../components/Spacer";
 import colors from "../constants/colors";
 
+// files
+import welcomeImage from "../../assets/welcome.jpg";
+
 const { width, height } = Dimensions.get("window");
 
 const WelcomeScreen = ({ navigation }) => {
@@ -13,7 +16,7 @@ const WelcomeScreen = ({ navigation }) => {
     <View style={{ backgroundColor: colors.dark, flex: 1 }}>
       <StatusBar style="light" translucent />
       <ImageBackground
-        source={require("../../assets/cane10.jpg")}
+        source={welcomeImage}
         style={styles.image}
         blurRadius={width * 0.005}
       >

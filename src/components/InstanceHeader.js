@@ -5,6 +5,7 @@ import { Ionicons, Fontisto } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Context as FeedContext } from "../config/FeedContext";
+import { Context as AuthContext } from "../config/AuthContext";
 
 import AppHeader from "./AppHeader";
 import AppText from "./AppText";
@@ -131,6 +132,9 @@ const InstanceHeader = ({ instanceData }) => {
 
   const safeInset = useSafeAreaInsets();
   const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   let posObj = {};
 
@@ -264,6 +268,13 @@ const InstanceHeader = ({ instanceData }) => {
   };
 
   const handleRightIconPress = () => {
+    if (!userInfo.verified) {
+      return setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Complete and verify your account",
+      });
+    }
     if (handleRightPress) {
       handleRightPress();
       return;

@@ -461,7 +461,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
       <StatusBar style={theme.bar} />
       {page._id ? (
         <>
-          {/* MAKE A HEADER SHOW ANIMATION IN  THIS SCREEN */}
           <Animated.FlatList
             ListHeaderComponent={
               <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
@@ -482,6 +481,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
                 onRefresh={handleScreenRefresh}
               />
             }
+            ListEmptyComponent={ListEmpty}
             keyExtractor={(item, index) => item._id + index}
             renderItem={renderPageLikeSo}
           />

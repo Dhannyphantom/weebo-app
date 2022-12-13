@@ -109,14 +109,14 @@ const HomeScreen = ({ navigation }) => {
     loader && setBools({ ...bools, loader: true });
     getHomeFeeds(
       null,
-      (resData) => {
+      async (resData) => {
         // SETTERS
         setStories(resData.stories);
         setFeeds(resData.feeds);
         setBools({ ...bools, lodadedOnce: true });
         handleHomeScreenGuide("get");
         loader && setBools({ ...bools, loader: false });
-
+        await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
         cb && cb();
       },
       (err) => {
@@ -130,9 +130,16 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const readyHomeScreen = async (cb) => {
+    const feedsStr = await AsyncStorage.getItem("home_feeds");
+    if (feedsStr) {
+      const feedsObj = JSON.parse(feedsStr);
+      setStories(feedsObj.stories);
+      setFeeds(feedsObj.feeds);
+      setBools({ ...bools, loader: false, lodadedOnce: true });
+    }
     await NavigationBar.setButtonStyleAsync(theme.bar);
     await NavigationBar.setBackgroundColorAsync(theme.background);
-    tryLocalSignin();
+    // tryLocalSignin();
     fetchHomeData(cb);
   };
 
@@ -264,7 +271,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     async function prepare() {
-      readyHomeScreen();
+      await readyHomeScreen();
       await notificationHandler();
     }
 

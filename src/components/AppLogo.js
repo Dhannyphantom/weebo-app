@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { StyleSheet, Image, Dimensions, Text, View } from "react-native";
 
-import header from "../../assets/otaku-name.png";
+import header from "../../assets/icon.png";
 import icon from "../../assets/icon_dark.png";
 import ThemeContext from "../config/ThemeContext";
 
