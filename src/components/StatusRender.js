@@ -19,6 +19,8 @@ import DisplayStatus from "./DisplayStatus";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 
+import { Context as FeedContext } from "../config/FeedContext";
+
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
@@ -131,7 +133,15 @@ const CircularGradient = ({ children }) => {
 };
 
 const StatusRender = ({ data, show, setter }) => {
-  const [display, setDisplay] = useState({ vis: false, data: null });
+  const [display, setDisplay] = useState({
+    vis: false,
+    data: null,
+    loading: true,
+  });
+  const [stories, setStories] = useState(data);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { getStatuses } = useContext(FeedContext);
 
   const theme = useContext(ThemeContext);
   const safeInset = useSafeAreaInsets();
@@ -178,7 +188,7 @@ const StatusRender = ({ data, show, setter }) => {
 
   useEffect(() => {
     const statuses = [];
-    data?.forEach((obj, idx) => {
+    stories?.forEach((obj, idx) => {
       obj.posts.forEach((post, idxer) => {
         let counter = obj.posts.length - idxer;
         const lastItem =
@@ -194,16 +204,25 @@ const StatusRender = ({ data, show, setter }) => {
       });
     });
     setDisplay({ vis: false, data: { all: data, posts: statuses } });
-  }, [data, show]);
+  }, [data, stories, show]);
 
   useEffect(() => {
     if (show) {
       Animated.timing(opaciter, {
         toValue: 1,
-        duration: 1000,
         useNativeDriver: true,
       }).start();
     }
+
+    getStatuses(
+      (resData) => {
+        setStories(resData);
+        setIsLoading(false);
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
   }, [show]);
 
   return (
@@ -223,14 +242,13 @@ const StatusRender = ({ data, show, setter }) => {
         >
           <Feather name="x-circle" size={20} color={colors.medium} />
           <AppText size="large" bold style={styles.headerText}>
-            {" "}
-            CLOSE{" "}
+            CLOSE
           </AppText>
         </TouchableOpacity>
         <FlatList
           showsHorizontalScrollIndicator={false}
           // ListFooterComponent={RenderFooter}
-          data={data}
+          data={stories}
           numColumns={2}
           listKey="@statuses"
           ListEmptyComponent={ListEmptyComponent}
@@ -238,6 +256,7 @@ const StatusRender = ({ data, show, setter }) => {
           renderItem={renderStatuses}
         />
         <DisplayStatus modalObj={display} setVisible={setDisplay} />
+        <ActivityIndicator visible={isLoading} style={styles.activity} />
       </Animated.View>
     </Modal>
   );

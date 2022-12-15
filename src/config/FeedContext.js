@@ -410,9 +410,12 @@ const getStatuses = (dispatch) => async (sc, cb) => {
     const res = await fetchApi.get("/statuses", {
       headers: {
         "x-auth-token": token,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
       },
     });
-    dispatch({ type: "get_statuses", payload: res.data });
+    // dispatch({ type: "get_statuses", payload: res.data });
     sc && sc(res.data);
   } catch (err) {
     cb && cb(err);
