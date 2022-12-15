@@ -97,6 +97,7 @@ const Weebs = ({ item, index }) => {
         border={3}
         userID={item._id}
         borderColor={colors.white}
+        gender={item.gender}
         size={90}
         borderRad={45}
         source={item.avatar}

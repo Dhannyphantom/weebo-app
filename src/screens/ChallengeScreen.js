@@ -159,18 +159,29 @@ const ChallengeScreen = ({ navigation }) => {
     type === "list" && setRefreshing(true);
     type === "empty" && setRefreshingEmpty(true);
 
-    getChallenges((resData) => {
-      setChallengeInfo(resData);
-      // console.log(resData);
-    });
-    getAwards((resData) => {
-      setAwardData(resData);
-      type === "list" && setRefreshing(false);
-      type === "empty" && setRefreshingEmpty(false);
-      setTimeout(() => {
-        cb && cb();
-      }, 1500);
-    });
+    getChallenges(
+      (resData) => {
+        setChallengeInfo(resData);
+      },
+      (errData) => {
+        console.log("challenges", errData);
+        setLoadedOnce(true);
+      }
+    );
+    getAwards(
+      (resData) => {
+        setAwardData(resData);
+        type === "list" && setRefreshing(false);
+        type === "empty" && setRefreshingEmpty(false);
+        setTimeout(() => {
+          cb && cb();
+        }, 500);
+      },
+      (errData) => {
+        console.log(errData);
+        setLoadedOnce(true);
+      }
+    );
   };
 
   useEffect(() => {
@@ -198,7 +209,7 @@ const ChallengeScreen = ({ navigation }) => {
       <NativeAds
         adsManager={adsManager}
         onAdLoaded={(ad) => console.log(ad)}
-        onError={(error) => console.warn(error)}
+        onError={(error) => console.log(error)}
       />
       {!challengeInfo[0] && !awardData[0] && loadedOnce && (
         <FlatList

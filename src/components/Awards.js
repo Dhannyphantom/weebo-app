@@ -1,17 +1,13 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import Card from "./Card";
 import FeedHeader from "./FeedHeader";
 import Separator from "./Separator";
 
-const { width } = Dimensions.get("window");
-
 const Awards = ({ data }) => {
   const navigation = useNavigation();
-
-  console.log(data);
 
   return (
     <View style={styles.container}>

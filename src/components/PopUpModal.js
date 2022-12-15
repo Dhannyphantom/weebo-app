@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Drag from "./Drag";
 import ThemeContext from "../config/ThemeContext";
 
-const { height, width } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const INITIAL_HEIGHT = height * 0.4;
 const FULL_HEIGHT = 0;
@@ -104,7 +104,7 @@ const PopUpModal = ({
         onPress={handleCloseModal}
         style={{
           ...styles.modalCont,
-          marginTop: topper,
+          paddingTop: topper,
           opacity: opaciter,
         }}
       >

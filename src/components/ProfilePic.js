@@ -18,6 +18,7 @@ const ProfilePic = ({
   loading,
   disabled,
   userID,
+  gender,
   borderColor,
   borderRad = 12,
 }) => {
@@ -35,6 +36,12 @@ const ProfilePic = ({
     if (disabled) return;
     setPicModal(true);
   };
+  let avatarSource;
+  if (gender) {
+    avatarSource = gender === "male" ? proMale : proFemale;
+  } else {
+    avatarSource = userInfo.gender === "male" ? proMale : proFemale;
+  }
 
   return (
     <>
@@ -53,7 +60,7 @@ const ProfilePic = ({
       >
         {!source ? (
           <Image
-            source={userInfo.gender === "male" ? proMale : proFemale}
+            source={avatarSource}
             resizeMethod="resize"
             resizeMode="contain"
             style={[

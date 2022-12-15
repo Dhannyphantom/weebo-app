@@ -1,80 +1,85 @@
 import React, { useState } from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+// import { AntDesign } from "@expo/vector-icons";
 
 import ProfilePic from "./ProfilePic";
 import AppText from "./AppText";
 import colors from "../constants/colors";
-import ProfilePicMultiple from "./ProfilePicMultiple";
+import PopUpModal from "./PopUpModal";
+// import ProfilePicMultiple from "./ProfilePicMultiple";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const c_types = ["c_single_character", "c_many_characters"];
 
+const RenderAwardInfo = ({ info }) => {
+  // winners, losers
+  if (!info) return null;
+  const {} = info;
+  console.log(info);
+  return (
+    <View>
+      <AppText bold size="large" style={{ textAlign: "center", marginTop: 20 }}>
+        {info.title}
+      </AppText>
+      <AppText>@kenidan</AppText>
+    </View>
+  );
+};
+
 const Awarder = ({ item }) => {
-  const isShow = item.tag === "show";
-  const isCharacter = item.tag === "character";
-  const isGroup = item.tag === "group";
-  // const [showStat, setShowStat] = useState(false);
-  let winner, winnerScore, loserScore, winnerCharacter, awardTitle, imageObj;
+  const [toggle, setToggle] = useState(false);
+  const isCharacter = item.tag.name === "character";
+
+  let imageObj;
 
   if (isCharacter) {
     imageObj = {
-      width: width * 0.4,
-      height: width * 0.7,
+      width: width * 0.5,
+      height: width * 0.6,
     };
-  } else if (isShow || isGroup) {
+  } else {
     imageObj = {
-      width: width * 0.68,
-      minHeight: width * 0.45,
-    };
-  } else if (item.tag === "channel") {
-    imageObj = {
-      width: width * 0.55,
-      height: width * 0.49,
+      width: width * 0.8,
+      height: width * 0.6,
     };
   }
 
-  if (item.c_type === "c_single_character") {
-    winner = item?.winUsers[0]?.user;
-    winnerScore = item?.winUsers[0]?.score;
-    loserScore = item?.loseUsers[0]?.score;
-    winnerCharacter = item?.winCharacters[0]?.character ?? item?.tagGroup;
-    if (isShow) {
-      winnerCharacter = item?.winShows[0]?.show;
-    }
-  } else if (item.c_type === "c_many_characters") {
-    winner = item?.winCharacters[0]?.character?.owner;
-    winnerScore = item?.winCharacters[0]?.score;
-    winnerCharacter = item?.winCharacters[0]?.character;
-  } else if (item.c_type == "c_media") {
-    winner = item?.winUsers[0]?.user;
-    winnerScore = item?.winUsers[0]?.score;
-  }
-
-  awardTitle = item.title;
+  const instance_winner = item.instances.find((obj) => obj.winner);
+  const instance_loser = item.instances.find((obj) => !obj.winner);
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => setToggle(!toggle)}
+      style={[styles.container, imageObj]}
+    >
       <Image
-        source={{
-          uri: winnerCharacter?.cover_photo?.uri ?? winner?.avatar?.uri,
-        }}
-        style={{ ...styles.image, ...imageObj }}
+        source={
+          item.tag[item?.tag?.name]?.cover_photo ??
+          instance_winner?.user?.avatar
+        }
+        style={[styles.image, imageObj]}
       />
       <View style={styles.overlay}>
         {c_types.includes(item.c_type) ? (
           <View style={styles.headerA}>
             <ProfilePic
-              userID={winner._id}
+              userID={instance_winner?.user?._id}
               border={1}
               borderColor={colors.white}
-              source={winner.avatar?.uri}
+              source={instance_winner?.user?.avatar?.uri}
               size={50}
             />
             <View style={{ marginLeft: 5 }}>
               <AppText style={{ color: colors.white }}>
-                @{winner.username}
+                @{instance_winner?.user?.username}
               </AppText>
               <AppText size="large" style={{ color: colors.heart }} bold>
                 WINS
@@ -85,14 +90,14 @@ const Awarder = ({ item }) => {
           <View style={styles.headerB}>
             {/* <ProfilePicMultiple /> */}
             <ProfilePic
-              userID={winner._id}
+              userID={instance_winner?.user?._id}
               border={1}
               borderColor={colors.white}
-              source={winner.avatar?.uri}
+              source={instance_winner?.user?.avatar?.uri}
               size={50}
             />
             <AppText style={{ color: colors.white }}>
-              @{winner.username}
+              @{instance_winner?.user?.username}
             </AppText>
             <AppText size="large" style={styles.winText} bold>
               WINS
@@ -100,39 +105,46 @@ const Awarder = ({ item }) => {
           </View>
         )}
         <View style={styles.body}>
-          {/* <View style={styles.headerA}>
-            <AntDesign name="Trophy" color={colors.white} size={width * 0.03} />
-            <AppText numberOfLines={3} style={styles.title} bold>
-              {awardTitle}
-            </AppText>
-          </View> */}
+          <AppText numberOfLines={3} style={styles.title} bold>
+            {item.title}
+          </AppText>
           <AppText style={{ color: colors.light, marginTop: 8 }} bold>
-            {winnerScore} {loserScore ? `- ${loserScore}` : "votes"}
+            {instance_winner.score} - {instance_loser.score}
           </AppText>
         </View>
         <View style={styles.instanceHeader}>
-          {item.tag === "channel" ? (
+          {item.tag.name === "channel" ? (
             <AppText style={styles.instanceTitle} bold>
-              {item?.tagChannel?.name}
+              {item.tag[item?.tag?.name]?.name}
             </AppText>
           ) : (
             <AppText style={styles.instanceTitle} bold>
-              {winnerCharacter?.name ?? "@" + winner.username}
+              {(item.tag[item.tag?.name].name_j ||
+                item.tag[item.tag?.name].name_e ||
+                item.tag[item.tag?.name].name) ??
+                "@" + instance_winner?.user?.username}
             </AppText>
           )}
 
           <AppText style={{ color: colors.white, textTransform: "capitalize" }}>
-            {item.tag}
+            {item.tag.name}
           </AppText>
         </View>
       </View>
-    </View>
+      <PopUpModal
+        visible={toggle}
+        setVisible={setToggle}
+        ContentComponent={() => <RenderAwardInfo info={item} />}
+      />
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
   body: { flex: 1, alignItems: "center", justifyContent: "center" },
   container: {
     margin: 5,
+    backgroundColor: colors.extraLight,
+    marginTop: 15,
   },
   image: {
     borderRadius: width * 0.02,
@@ -154,7 +166,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.white,
-    width: width * 0.3,
+    width: "80%",
     textTransform: "capitalize",
     textAlign: "center",
     marginLeft: 3,

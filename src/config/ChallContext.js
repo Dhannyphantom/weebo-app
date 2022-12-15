@@ -72,6 +72,7 @@ const startInstanceChallenge = (dispatch) => async (data, sc, cb) => {
   }
   // ========================================================================
 };
+
 const acceptInstanceChallenge = (dispatch) => async (data, sc, cb) => {
   const formData = new FormData();
   if (data.isMedia) {
@@ -128,6 +129,7 @@ const voteOne = (dispatch) => async (data, sc, cb) => {
     cb && cb("Error updating vote!" + err?.response?.data);
   }
 };
+
 const voteTwo = (dispatch) => async (voteId, type, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -163,10 +165,15 @@ const getAwards = (dispatch) => async (sc, cb) => {
     dispatch({ type: "getAwards", payload: response.data });
     sc && sc(response.data);
   } catch (err) {
-    console.log(err);
-    cb && cb("Error getting challenges info!");
+    cb &&
+      cb({
+        err,
+        msg: "Error fetching awards data!",
+        data: err?.response?.data,
+      });
   }
 };
+
 const getChallenges = (dispatch) => async (sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -181,8 +188,12 @@ const getChallenges = (dispatch) => async (sc, cb) => {
     dispatch({ type: "getChallenges", payload: response.data });
     sc && sc(response.data);
   } catch (err) {
-    console.log(err?.response?.data);
-    cb && cb("Error getting challenges info!");
+    cb &&
+      cb({
+        err,
+        msg: "Error fetching challenges info!",
+        data: err?.response?.data,
+      });
   }
 };
 const getMyChallenges = (dispatch) => async (sc, cb) => {
