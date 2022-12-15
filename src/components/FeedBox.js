@@ -6,7 +6,6 @@ import colors from "../constants/colors";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import LoaderImage from "./LoaderImage";
-import Separator from "./Separator";
 import PostVideo from "./PostVideo";
 import MediaModal from "./MediaModal";
 import ThemeContext from "../config/ThemeContext";
@@ -180,6 +179,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     minWidth: width * 0.33,
     textAlign: "center",
+    color: colors.medium,
   },
   bgImage: {
     flex: 1,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   image: { width: "100%", height: "100%", borderRadius: 9 },
   stats: {
     flexDirection: "row",
-    // justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
     paddingTop: 15,
     paddingBottom: 25,
@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     width: (width * 0.95) / 3,
+    maxWidth: (width * 0.95) / 3.2,
     textAlign: "center",
     alignSelf: "center",
   },

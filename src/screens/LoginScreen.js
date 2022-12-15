@@ -29,7 +29,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
         <AppForm
           headerTitle="Sign in to your Account: "
           p3

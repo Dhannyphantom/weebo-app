@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Animated,
+  Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
@@ -252,6 +253,7 @@ const AppForm = ({
       formValues.gender = gender;
     }
     // setPassInput(formValues.email ?? formValues.username);
+    Keyboard.dismiss();
     setElevation(false);
     onPress(formValues);
   };

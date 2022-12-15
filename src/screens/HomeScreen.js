@@ -65,7 +65,6 @@ const HomeScreen = ({ navigation }) => {
   } = useContext(FeedContext);
 
   const {
-    tryLocalSignin,
     setPushToken: updateUserPushToken,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -155,6 +154,7 @@ const HomeScreen = ({ navigation }) => {
         <EventRender
           userID={userInfo._id}
           renderType="single"
+          isFollowing
           eventData={item}
         />
       );

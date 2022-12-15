@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -6,13 +6,23 @@ import colors from "../constants/colors";
 import AppText from "./AppText";
 import Separator from "./Separator";
 import ThemeContext from "../config/ThemeContext";
+import PopMessage from "./PopMessage";
 
 const screen = Dimensions.get("window");
 
 const SelectItem = ({ item, pickItem, check }) => {
+  const [popper, setPopper] = useState({ vis: false });
   const theme = useContext(ThemeContext);
   const index = check.findIndex((obj) => obj.name === item.name);
   const handlePickItem = () => {
+    if (!item.verified) {
+      setPopper({
+        vis: true,
+        msg: "Instance not verified",
+        type: "failed",
+      });
+      return;
+    }
     pickItem(item);
   };
   const iconName = index > -1 ? "check-circle" : "checkbox-blank-circle";
@@ -22,9 +32,14 @@ const SelectItem = ({ item, pickItem, check }) => {
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={handlePickItem}
-        style={[styles.container, { backgroundColor: theme.extralight }]}
+        style={[
+          styles.container,
+          {
+            backgroundColor: theme.extralight,
+          },
+        ]}
       >
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           <AppText style={styles.itemName} bold>
             {item.name}
             {" - "}
@@ -34,17 +49,30 @@ const SelectItem = ({ item, pickItem, check }) => {
           </AppText>
         </View>
         <TouchableOpacity>
-          <MaterialCommunityIcons
-            name={iconName}
-            color={iconColor}
-            size={screen.width * 0.035}
-          />
+          {item.verified ? (
+            <MaterialCommunityIcons
+              name={iconName}
+              color={iconColor}
+              size={screen.width * 0.035}
+            />
+          ) : (
+            <MaterialCommunityIcons
+              name="cancel"
+              color={colors.heartDark}
+              size={screen.width * 0.035}
+            />
+          )}
         </TouchableOpacity>
       </TouchableOpacity>
       <Separator
         style={{ width: screen.width * 0.9, alignSelf: "center" }}
         h={1}
         m={1}
+      />
+      <PopMessage
+        timer={0.3}
+        popData={popper}
+        setter={() => setPopper({ vis: false })}
       />
     </View>
   );

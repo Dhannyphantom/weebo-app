@@ -71,7 +71,7 @@ const HomeHeader = ({ characters }) => {
       setCMode(true);
     } else if (type === "write") {
       setModalVis(false);
-      setCMode(true);
+      setCMode(false);
       navigation.navigate("Post", { write: true, id: null });
     }
   };
@@ -125,7 +125,7 @@ const HomeHeader = ({ characters }) => {
                   item={itemWrite}
                   onPress={() => handleNav("write")}
                   style={{
-                    width: screen.width * 0.38,
+                    width: screen.width * 0.4,
                     height: (screen.width * 0.38) / 2.1,
                     marginHorizontal: 2,
                     marginVertical: 1,
@@ -135,7 +135,7 @@ const HomeHeader = ({ characters }) => {
                   item={itemPost}
                   onPress={() => handleNav("post")}
                   style={{
-                    width: screen.width * 0.38,
+                    width: screen.width * 0.4,
                     height: (screen.width * 0.38) / 2.1,
                     marginVertical: 3,
                     marginHorizontal: 2,

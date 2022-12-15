@@ -9,7 +9,7 @@ import getFormatTime from "../constants/getFormatTime";
 import PopMessage from "./PopMessage";
 import { launchGallery } from "../constants/helpers";
 
-const RenderEvents = ({ item, userID, handleJoinEvent }) => {
+const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
   const [joiner, setJoiner] = useState(false);
   const [joinData, setJoinData] = useState({ vis: false });
   const [popper, setPopper] = useState({ vis: false });
@@ -38,6 +38,13 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
   }
 
   const handleJoin = async (eventId) => {
+    if (!isFollowing) {
+      return setPopper({
+        vis: true,
+        msg: "Please subscribe or follow instance",
+        type: "failed",
+      });
+    }
     try {
       let res;
       if (mediaType == "image") {
@@ -144,7 +151,12 @@ const RenderEvents = ({ item, userID, handleJoinEvent }) => {
   );
 };
 
-const EventRender = ({ eventData, renderType = "multiple", userID }) => {
+const EventRender = ({
+  eventData,
+  isFollowing,
+  renderType = "multiple",
+  userID,
+}) => {
   const { handleJoinEvent } = useContext(AcctContext);
 
   if (renderType === "single") {
@@ -152,6 +164,7 @@ const EventRender = ({ eventData, renderType = "multiple", userID }) => {
       <RenderEvents
         item={eventData}
         userID={userID}
+        isFollowing={isFollowing}
         handleJoinEvent={handleJoinEvent}
       />
     );
@@ -164,6 +177,7 @@ const EventRender = ({ eventData, renderType = "multiple", userID }) => {
           renderItem={({ item }) => (
             <RenderEvents
               item={item}
+              isFollowing={isFollowing}
               userID={userID}
               handleJoinEvent={handleJoinEvent}
             />

@@ -28,7 +28,7 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
         <AppForm
           headerTitle="Sign up for your Account: "
           p2

@@ -437,6 +437,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
       return (
         <EventRender
           eventData={item}
+          isFollowing={isSubscribed}
           userID={userInfo._id}
           renderType="single"
           updateMe={updateMe}

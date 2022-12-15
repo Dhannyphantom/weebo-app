@@ -259,6 +259,7 @@ const ShowScreen = ({ route, navigation }) => {
         isCover && setIsCoverLoading(false);
       },
       (err) => {
+        console.log(err);
         setErrMsg(err.data ?? err.msg);
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);

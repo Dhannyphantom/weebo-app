@@ -32,7 +32,6 @@ const JoinEvents = ({
     const [errMsg, setErrMsg] = useState(null);
 
     const handleJoinAnEvent = () => {
-      // return console.log(joinData);
       setjoinLoading(true);
       setErrMsg(null);
       const isText = joinData?.asset.type === "text";

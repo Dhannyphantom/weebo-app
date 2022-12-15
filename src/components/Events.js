@@ -376,11 +376,11 @@ const styles = StyleSheet.create({
     right: width * 0.07,
   },
   btns: {
+    width,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
     marginTop: 20,
-    marginHorizontal: 60,
   },
   content: {
     flex: 1,
