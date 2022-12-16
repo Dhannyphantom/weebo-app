@@ -204,25 +204,25 @@ const StatusRender = ({ data, show, setter }) => {
       });
     });
     setDisplay({ vis: false, data: { all: data, posts: statuses } });
-  }, [data, stories, show]);
+  }, [data, show]);
 
   useEffect(() => {
     if (show) {
       Animated.timing(opaciter, {
         toValue: 1,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        getStatuses(
+          (resData) => {
+            setStories(resData);
+            setIsLoading(false);
+          },
+          (errData) => {
+            console.log(errData);
+          }
+        );
+      });
     }
-
-    getStatuses(
-      (resData) => {
-        setStories(resData);
-        setIsLoading(false);
-      },
-      (errData) => {
-        console.log(errData);
-      }
-    );
   }, [show]);
 
   return (

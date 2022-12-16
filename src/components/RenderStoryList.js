@@ -117,6 +117,7 @@ export default function RenderStoryList({
               <>
                 <Image
                   source={{ uri: item?.uri }}
+                  resizeMode="cover"
                   style={{
                     ...styles.image,
                     aspectRatio: item?.width / item?.height,
@@ -126,7 +127,12 @@ export default function RenderStoryList({
             )}
             {item?.type === "video" && (
               <View style={styles.vidContainer}>
-                <PostVideo source={item} disablePlayback />
+                <PostVideo
+                  source={item}
+                  autoPlay={isKey}
+                  showPlayIcon={false}
+                  disablePlayback
+                />
               </View>
             )}
           </View>

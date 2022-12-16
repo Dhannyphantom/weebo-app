@@ -106,6 +106,8 @@ export default function PostVideo({
   pos = 0,
   style,
   loop = false,
+  autoPlay = false,
+  showPlayIcon = true,
   showHearts,
 }) {
   const [status, setStatus] = useState({});
@@ -221,6 +223,14 @@ export default function PostVideo({
     }
   }, []);
 
+  useEffect(() => {
+    if (autoPlay === true) {
+      onPlayVideo();
+    } else {
+      video?.current?.stopAsync();
+    }
+  }, [autoPlay]);
+
   return (
     <ViewportAwareVideo
       onPress={handleVideoAction}
@@ -243,7 +253,7 @@ export default function PostVideo({
         isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
-      {!status.isPlaying && (
+      {showPlayIcon && !status.isPlaying && (
         <View style={styles.playIcon}>
           <MaterialCommunityIcons
             name="motion-play"
