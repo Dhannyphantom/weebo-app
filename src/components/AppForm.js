@@ -11,7 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 import AppText from "./AppText";
 import Icon from "./Icon";
@@ -32,24 +32,30 @@ import AppLogo from "./AppLogo";
 import AppFadeIn from "./AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
 
-const { validationSchemaLogin, validationSchemaRegister } = schemas;
+const {
+  validationSchemaLogin,
+  validationSchemaRegister,
+  recoverPassValidation,
+  resetPassValidation,
+  forgotPassResetInitials,
+  forgotPassRecoverInitials,
+} = schemas;
 
-const ForgotPassword = ({ setErrMsg, setPassModal }) => {
+const ForgotPassword = ({ setPassModal }) => {
   const { resetPassword, recoverPassword } = useContext(AuthContext);
 
-  const [passInput, setPassInput] = useState("");
-  const [passCode, setPassCode] = useState("");
-  const [passNew, setPassNew] = useState("");
-  const [passNewConfirm, setPassNewConfirm] = useState("");
   const [passLoading, setPasLoading] = useState(false);
   const [passMsg, setPassMsg] = useState({ error: null, success: null });
 
-  const handleForgotPass = (type) => {
-    // setErrMsg(null);
-    if (type === "recover") {
+  const handleForgotPass = (formValues, extraData) => {
+    console.log("FORM:: ", formValues);
+    console.log("EXTRA:: ", extraData);
+
+    if (!passMsg.success || (extraData && extraData.type === "recover")) {
+      // No token so fetch token
       setPasLoading(true);
       recoverPassword(
-        { email: passInput },
+        { email: formValues.email, type: "password" },
         () => {
           setPassMsg({
             error: null,
@@ -59,7 +65,7 @@ const ForgotPassword = ({ setErrMsg, setPassModal }) => {
         },
         (err) => {
           let msg = "";
-          if (err?.msg?.includes("getaddrinfo")) {
+          if (err?.msg?.includes("getaddrinfo") || err?.includes("EREFUSED")) {
             msg = "No internet connection";
           } else {
             msg = err;
@@ -69,30 +75,12 @@ const ForgotPassword = ({ setErrMsg, setPassModal }) => {
           setPasLoading(false);
         }
       );
-    } else if (type === "reset") {
+    } else {
       setPasLoading(true);
-      if (passNewConfirm.length < 6 || passNew.length < 6) {
-        setPasLoading(false);
-
-        return setPassMsg({
-          ...passMsg,
-          error: "Password should not be less than 6 characters",
-        });
-      }
-
-      if (passNewConfirm !== passNew) {
-        setPasLoading(false);
-        return setPassMsg({ ...passMsg, error: "Passwords do not match" });
-      }
-      if (passInput.length < 2) {
-        setPasLoading(false);
-        return setPassMsg({ ...passMsg, error: "Provide an email" });
-      }
-
       const data = {
-        token: passCode,
-        email: passInput,
-        newPass: passNew,
+        token: formValues.token,
+        email: formValues.email,
+        newPass: formValues.newPass,
       };
       resetPassword(
         data,
@@ -140,44 +128,59 @@ const ForgotPassword = ({ setErrMsg, setPassModal }) => {
           {passMsg.success}
         </AppText>
       )}
-      <AppText style={{ margin: 15 }}>Enter your registered e-mail: </AppText>
-      <GrowInput mLine={false} text={passInput} setText={setPassInput} />
-      {passMsg.success && (
-        <>
-          <AppText style={{ margin: 15 }}>Enter Verification Code: </AppText>
-          <GrowInput
-            keyboardType="number-pad"
-            text={passCode}
-            setText={setPassCode}
-          />
-          <AppText style={{ margin: 15 }}>Enter New Password: </AppText>
-          <GrowInput
-            keyboardType="visible-password"
-            text={passNew}
-            setText={setPassNew}
-          />
-          <AppText style={{ margin: 15 }}>Confirm New Password: </AppText>
-          <GrowInput
-            keyboardType="visible-password"
-            text={passNewConfirm}
-            setText={setPassNewConfirm}
-          />
-        </>
-      )}
-      {passMsg.success && (
-        <AppButton
-          title="Resend code"
-          onPress={() => handleForgotPass("recover")}
-          style={styles.btn}
-          naked
-        />
-      )}
-      <AppButton
-        title={passMsg.success ? "RESET PASSWORD" : "GET TOKEN"}
-        onPress={() => handleForgotPass(passMsg.success ? "reset" : "recover")}
-        style={styles.btn}
-        bare
-      />
+      <Formik
+        initialValues={
+          passMsg.success ? forgotPassResetInitials : forgotPassRecoverInitials
+        }
+        onSubmit={(formValues) => handleForgotPass(formValues)}
+        validationSchema={
+          passMsg.success ? resetPassValidation : recoverPassValidation
+        }
+      >
+        {() => (
+          <>
+            <AppText style={{ margin: 15 }}>
+              Enter your registered e-mail:{" "}
+            </AppText>
+            <GrowInput mLine={false} formik={{ name: "email" }} />
+            {passMsg.success && (
+              <>
+                <AppText style={{ margin: 15 }}>
+                  Enter Verification Code:{" "}
+                </AppText>
+                <GrowInput
+                  keyboardType="number-pad"
+                  formik={{ name: "token" }}
+                />
+                <AppText style={{ margin: 15 }}>Enter New Password: </AppText>
+                <GrowInput
+                  keyboardType="visible-password"
+                  formik={{ name: "newPass" }}
+                />
+                <AppText style={{ margin: 15 }}>Confirm New Password: </AppText>
+                <GrowInput
+                  keyboardType="visible-password"
+                  formik={{ name: "confirmPass" }}
+                />
+              </>
+            )}
+            {passMsg.success && (
+              <SubmitButton
+                extraData={{ type: "recover" }}
+                title="Resend code"
+                style={styles.btn}
+                naked
+              />
+            )}
+            <SubmitButton
+              title={passMsg.success ? "RESET PASSWORD" : "FETCH TOKEN"}
+              style={styles.btn}
+              bare
+            />
+          </>
+        )}
+      </Formik>
+
       <ActivityIndicator
         type="spin"
         visible={passLoading}
@@ -252,7 +255,6 @@ const AppForm = ({
     if (register) {
       formValues.gender = gender;
     }
-    // setPassInput(formValues.email ?? formValues.username);
     Keyboard.dismiss();
     setElevation(false);
     onPress(formValues);
@@ -421,14 +423,15 @@ const AppForm = ({
                       style={{ alignSelf: "center" }}
                       onPress={() => setPassModal(true)}
                       bare
+                      bareRed
                     />
                   )}
                 </View>
               ) : null}
               <View style={{ marginTop: 20 }}>
                 <SubmitButton
-                  loading={loading}
-                  setLoading={(bool) => setLoading(bool)}
+                  // loading={loading}
+                  // setLoading={(bool) => setLoading(bool)}
                   title={btnTitle}
                 />
               </View>

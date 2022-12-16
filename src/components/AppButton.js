@@ -31,31 +31,30 @@ const AppButton = ({
           activeOpacity={0.85}
           onPress={onPress}
         >
-          {loading ? (
-            <View style={styles.loader}>
-              <ActivityIndicator visible={loading} size={0.2} />
-            </View>
-          ) : (
-            <View style={[styles.button, style]}>
-              {LIcon && (
-                <MaterialCommunityIcons
-                  name={LIcon}
-                  size={15}
-                  color={colors.primary}
-                />
-              )}
-              <AppText style={styles.btnText} bold>
-                {title}
-              </AppText>
-              {RIcon && (
-                <MaterialCommunityIcons
-                  name={RIcon}
-                  size={15}
-                  color={colors.primary}
-                />
-              )}
-            </View>
-          )}
+          <View style={[styles.button, style]}>
+            {LIcon && (
+              <MaterialCommunityIcons
+                name={LIcon}
+                size={15}
+                color={colors.primary}
+              />
+            )}
+            <AppText style={styles.btnText} bold>
+              {title}
+            </AppText>
+            {RIcon && (
+              <MaterialCommunityIcons
+                name={RIcon}
+                size={15}
+                color={colors.primary}
+              />
+            )}
+          </View>
+          <ActivityIndicator
+            style={styles.loader}
+            visible={loading}
+            size={0.2}
+          />
         </TouchableOpacity>
       )}
       {sec && (
@@ -203,19 +202,9 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   loader: {
-    width: screen.width * 0.65,
-    backgroundColor: colors.primary,
-    borderRadius: screen.width * 0.03,
-    padding: 10,
-    height: 30,
-    elevation: 3,
-    shadowRadius: 6,
-    shadowColor: "black",
-    shadowOpacity: 0.15,
-    shadowOffset: {
-      width: 0,
-      height: 1.8,
-    },
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
   naked: {
     // padding: 8,

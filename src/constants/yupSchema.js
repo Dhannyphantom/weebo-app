@@ -20,20 +20,25 @@ Yup.addMethod(Yup.string, "oneWord", function () {
   );
 });
 
-// Yup.addMethod(Yup.string, "strengthen", function () {
-//   return this.test(
-//     "strengthen-pass",
-//     `Password should contain an uppercase, lowercase and a number`,
-//     function (value) {
-//       const tests = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-//     }
-//   );
-// });
+Yup.addMethod(Yup.string, "strongPassword", function () {
+  return this.test(
+    "strong-pass",
+    `Password must contain an uppercase, lowercase and a number`,
+    function (value) {
+      const strongRegex = new RegExp(
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
+      );
+      return strongRegex.test(value);
+      // (?=.*[!@#\$%\^&\*])
+    }
+  );
+});
 
 const editValidationSchema = Yup.object().shape({
-  oldPass: Yup.string().min(4).trim().label("Password"),
+  oldPass: Yup.string().min(8).strongPassword().trim().label("Password"),
   newPass: Yup.string()
-    .min(4)
+    .min(8)
+    .strongPassword()
     .trim()
     .lowercase()
     .label("Password")
@@ -46,18 +51,51 @@ const editValidationSchema = Yup.object().shape({
       is: (val) => val && val.length > 3,
       then: Yup.string().required(),
     })
-    .oneOf([Yup.ref("newPass"), null], "New passwords do not match")
+    .oneOf([Yup.ref("newPass"), null], "Passwords do not match")
     .label("Password"),
 });
 
 const validationSchemaLogin = Yup.object().shape({
   username: Yup.string().oneWord().required().label("Email or username").min(4),
-  password: Yup.string().min(4).required().label("Password"),
+  password: Yup.string().min(8).strongPassword().required().label("Password"),
 });
+
+const forgotPassRecoverInitials = {
+  email: "",
+};
+
+const forgotPassResetInitials = {
+  email: "",
+  token: "",
+  newPass: "",
+  confirmPass: "",
+};
+
+const recoverPassValidation = Yup.object().shape({
+  email: Yup.string().email().required().label("Email"),
+});
+
+const resetPassValidation = Yup.object().shape({
+  email: Yup.string().email().trim().required().label("Email"),
+  token: Yup.string().min(6).required().trim().label("Verification code"),
+  newPass: Yup.string()
+    .min(8)
+    .strongPassword()
+    .required()
+    .label("New password"),
+  confirmPass: Yup.string()
+    .when("newPass", {
+      is: (val) => val && val.length > 3,
+      then: Yup.string().required(),
+    })
+    .oneOf([Yup.ref("newPass"), null], "Passwords do not match")
+    .label("Confirm password"),
+});
+
 const validationSchemaRegister = Yup.object().shape({
   username: Yup.string().oneWord().required().min(4).max(15).label("Username"),
   email: Yup.string().required().email().label("Email"),
-  password: Yup.string().min(4).required().label("Password"),
+  password: Yup.string().min(8).strongPassword().required().label("Password"),
   gender: Yup.string()
     .min(4)
     .required()
@@ -237,6 +275,10 @@ export default {
   validationSchemaLogin,
   passwordInitials,
   validationSchemaRegister,
+  forgotPassRecoverInitials,
+  forgotPassResetInitials,
+  recoverPassValidation,
+  resetPassValidation,
   editValidationSchema,
   channelValidation,
   groupValidationSchema,

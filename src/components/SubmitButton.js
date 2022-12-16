@@ -3,7 +3,15 @@ import { useFormikContext } from "formik";
 
 import AppButton from "./AppButton";
 
-const SubmitButton = ({ setLoading, disabled, title, bared, style }) => {
+const SubmitButton = ({
+  setLoading,
+  disabled,
+  title,
+  bared,
+  style,
+  extraData,
+  ...otherProps
+}) => {
   const { handleSubmit } = useFormikContext();
 
   return (
@@ -12,7 +20,8 @@ const SubmitButton = ({ setLoading, disabled, title, bared, style }) => {
       title={title}
       disabled={disabled}
       style={style}
-      onPress={handleSubmit}
+      onPress={(formValue) => handleSubmit(formValue, extraData)}
+      {...otherProps}
     />
   );
 };
