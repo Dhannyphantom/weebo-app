@@ -793,31 +793,37 @@ export const emailers = [
     id: "1",
     text: "",
     focused: true,
+    isBackspace: false,
   },
   {
     id: "2",
     text: "",
     focused: false,
+    isBackspace: false,
   },
   {
     id: "3",
     text: "",
     focused: false,
+    isBackspace: false,
   },
   {
     id: "4",
     text: "",
     focused: false,
+    isBackspace: false,
   },
   {
     id: "5",
     text: "",
     focused: false,
+    isBackspace: false,
   },
   {
     id: "6",
     text: "",
     focused: false,
+    isBackspace: false,
   },
 ];
 

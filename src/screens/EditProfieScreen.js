@@ -128,6 +128,7 @@ const RenderEmailPop = ({ vis, setPopper }) => {
           setIsLoading(false);
         },
         (err) => {
+          console.log(err);
           const myMsg = err.includes("EREFUSED")
             ? "Bad internet connection"
             : err.includes("TIMEOUT")
@@ -140,78 +141,45 @@ const RenderEmailPop = ({ vis, setPopper }) => {
     }
   };
 
-  const onChangeInput = (val, idx) => {
-    if (val === "Backspace") {
-      switch (idx) {
-        case 1:
-          handleAnimation(scalerOne, true);
-          break;
-        case 2:
-          handleAnimation(scalerTwo, true);
-          break;
-        case 3:
-          handleAnimation(scalerThree, true);
-          break;
-        case 4:
-          handleAnimation(scalerFour, true);
-          break;
-        case 5:
-          handleAnimation(scalerFive, true);
-          break;
-        case 6:
-          handleAnimation(scalerSix, true);
-          break;
+  const onChangeInput = (val, idx, isEvent) => {
+    let copier = [...emailVeriValues];
+    const activeIndex = copier.findIndex((obj) => obj.id === idx);
 
-        default:
-          handleAnimation(scalerSix, true);
-          break;
+    if (val !== "Backspace" && val.length > 0) {
+      if (activeIndex > -1) {
+        copier[activeIndex].focused = false;
+        copier[activeIndex].isBackspace = false;
+        copier[activeIndex].text = val;
+
+        if (copier[activeIndex + 1]) {
+          copier[activeIndex + 1].focused = true;
+          copier[activeIndex + 1].isBackspace = false;
+        }
+      }
+    } else {
+      if (isEvent) {
+        copier = copier.map((obj) => {
+          return {
+            ...obj,
+            focused: false,
+          };
+        });
+        // copier[activeIndex].focused = false;
+        copier[activeIndex].text = "";
+
+        if (copier[activeIndex - 1]) {
+          copier[activeIndex - 1].focused = true;
+          copier[activeIndex - 1].isBackspace = true;
+        } else {
+          copier[0].focused = true;
+        }
       }
     }
-    return setEmailVeriValues((prevState) =>
-      val !== "Backspace"
-        ? prevState.map((obj) => {
-            if (obj.focused && obj.id != emailers.length) {
-              return {
-                ...obj,
-                focused: false,
-                text: val,
-              };
-            } else if (obj.focused && obj.id == emailers.length) {
-              return {
-                ...obj,
-                focused: true,
-                text: val,
-              };
-            } else if (obj.id == idx + 1) {
-              return {
-                ...obj,
-                focused: true,
-              };
-            } else {
-              return obj;
-            }
-          })
-        : prevState.map((obj) => {
-            if (obj.focused) {
-              return {
-                ...obj,
-                focused: false,
-                text: "",
-              };
-            } else if (obj.id == idx - 1) {
-              return {
-                ...obj,
-                text: "",
-                focused: true,
-              };
-            } else {
-              return obj;
-            }
-          })
-    );
+
+    setEmailVeriValues(copier);
   };
 
-  const handleAnimation = (refAnim, reverse) => {
+  const handleAnimation = (refAnim, reverse = false) => {
     Animated.spring(refAnim, {
       toValue: reverse ? 0.5 : 1,
       useNativeDriver: true,
@@ -222,27 +190,42 @@ const RenderEmailPop = ({ vis, setPopper }) => {
     switch (isFocused?.id) {
       case "1":
         textInputOne?.current?.focus();
-        handleAnimation(scalerOne);
+        handleAnimation(
+          isFocused.isBackspace ? scalerTwo : scalerOne,
+          isFocused.isBackspace
+        );
         break;
       case "2":
         textInputTwo?.current?.focus();
-        handleAnimation(scalerTwo);
+        handleAnimation(
+          isFocused.isBackspace ? scalerThree : scalerTwo,
+          isFocused.isBackspace
+        );
         break;
       case "3":
         textInputThree?.current?.focus();
-        handleAnimation(scalerThree);
+        handleAnimation(
+          isFocused.isBackspace ? scalerFour : scalerThree,
+          isFocused.isBackspace
+        );
         break;
       case "4":
         textInputFour?.current?.focus();
-        handleAnimation(scalerFour);
+        handleAnimation(
+          isFocused.isBackspace ? scalerFive : scalerFour,
+          isFocused.isBackspace
+        );
         break;
       case "5":
         textInputFive?.current?.focus();
-        handleAnimation(scalerFive);
+        handleAnimation(
+          isFocused.isBackspace ? scalerSix : scalerFive,
+          isFocused.isBackspace
+        );
         break;
       case "6":
         textInputSix?.current?.focus();
-        handleAnimation(scalerSix);
+        handleAnimation(scalerSix, isFocused.isBackspace);
         break;
     }
   }, [emailVeriValues]);
@@ -278,7 +261,6 @@ const RenderEmailPop = ({ vis, setPopper }) => {
               case 0:
                 txtRef = textInputOne;
                 scaler = scalerOne;
-
                 break;
               case 1:
                 txtRef = textInputTwo;
@@ -300,10 +282,6 @@ const RenderEmailPop = ({ vis, setPopper }) => {
               case 5:
                 txtRef = textInputSix;
                 scaler = scalerSix;
-                break;
-
-              default:
-                txtRef = textInputOne;
                 break;
             }
             return (
@@ -329,11 +307,13 @@ const RenderEmailPop = ({ vis, setPopper }) => {
                   clearTextOnFocus
                   // editable={emailItem.focused}
                   onKeyPress={({ nativeEvent: { key: keyValue } }) =>
-                    onChangeInput(keyValue, idx + 1)
+                    onChangeInput(keyValue, emailItem.id, true)
                   }
                   autoFocus={idx === 0}
                   style={[styles.emailPopInput, { color: theme.color }]}
-                  onChangeText={(val) => onChangeInput(val, idx + 1)}
+                  onChangeText={(val) =>
+                    onChangeInput(val, emailItem.id, false)
+                  }
                 />
               </Animated.View>
             );
