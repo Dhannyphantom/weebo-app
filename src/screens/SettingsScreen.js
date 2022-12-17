@@ -186,12 +186,11 @@ const RenderSections = ({ item, section, editSettings }) => {
   });
   const [alert, setAlert] = useState(getAdsAlert(adsManager.count));
   // count,
-
-  console.log(adsManager);
+  const isTheme = item.name.includes("theme");
 
   const handleToggle = async () => {
     // code
-    if (item.name.includes("theme")) {
+    if (isTheme) {
       if (adsManager.count > 0) {
         setAlert(getAdsAlert(adsManager.count, true));
         // EventRegister.emit("changeTheme", !isEnabled);
@@ -223,26 +222,29 @@ const RenderSections = ({ item, section, editSettings }) => {
   };
 
   useEffect(() => {
-    async function prepare() {
-      const adsStorageStr = await AsyncStorage.getItem("ads_watched");
-      if (adsStorageStr) {
-        const adsCount = Number(JSON.parse(adsStorageStr));
-        setAdsManager({
-          ...adsManager,
-          count: adsCount,
-        });
-        if (adsCount > 0) {
+    if (isTheme) {
+      async function prepare() {
+        const adsStorageStr = await AsyncStorage.getItem("ads_watched");
+        if (adsStorageStr) {
+          const adsCount = Number(JSON.parse(adsStorageStr));
+          setAdsManager({
+            ...adsManager,
+            count: adsCount,
+          });
+          if (adsCount > 0) {
+            rewarded.load();
+          }
+        } else {
           rewarded.load();
         }
-      } else {
-        rewarded.load();
       }
-    }
 
-    prepare();
+      prepare();
+    }
   }, []);
 
   useEffect(() => {
+    if (!isTheme) return () => {};
     const unsubscribeLoaded = rewarded.addAdEventListener(
       RewardedAdEventType.LOADED,
       async () => {
@@ -264,13 +266,19 @@ const RenderSections = ({ item, section, editSettings }) => {
     const unsubscribeEarned = rewarded.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
       async (reward) => {
-        const newCount = adsManager.count - 1;
+        const adsStorageStr = await AsyncStorage.getItem("ads_watched");
+        let newCount;
+        if (adsStorageStr) {
+          newCount = Number(JSON.parse(adsStorageStr)) - 1;
+        } else {
+          newCount = adsManager.count - 1;
+        }
         setAdsManager({
           ...adsManager,
           loaded: false,
           count: newCount,
         });
-        await AsyncStorage.setItem("ads_watched", `${newCount - 1}`);
+        await AsyncStorage.setItem("ads_watched", `${newCount}`);
       }
     );
 
