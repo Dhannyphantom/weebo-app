@@ -11,6 +11,11 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventRegister } from "react-native-event-listeners";
+import {
+  RewardedAd,
+  RewardedAdEventType,
+  TestIds,
+} from "react-native-google-mobile-ads";
 
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
@@ -19,7 +24,9 @@ import colors from "../constants/colors";
 import PopDropDown from "../components/PopDropDown";
 import AlertModal from "../components/AlertModal";
 import ThemeContext from "../config/ThemeContext";
-import { settingsData } from "../constants/data_store";
+import { ads_keywords, settingsData } from "../constants/data_store";
+import { ADS_ID } from "./ChallengePointScreen";
+import PopMessage from "../components/PopMessage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,6 +37,19 @@ const alertData = {
   btn: "YES",
   type: "delete_account",
 };
+
+const rewarded = RewardedAd.createForAdRequest(ADS_ID, {
+  requestNonPersonalizedAdsOnly: false,
+  keywords: ads_keywords,
+});
+
+const getAdsAlert = (count, visible = false) => ({
+  visible: visible,
+  title: "Unlock Dark Theme",
+  message: `Watch a few ads and unlock the amazing dark theme \n\n ${count} times left`,
+  btn: "YES",
+  type: "ads_watched",
+});
 
 const SettingDropDown = ({ data, section, handlers }) => {
   const [popData, setPopData] = useState({
@@ -158,16 +178,107 @@ const RenderHeader = ({ section: { title } }) => {
 const RenderSections = ({ item, section, editSettings }) => {
   const theme = useContext(ThemeContext);
   const [isEnabled, setIsEnabled] = useState(item.default);
+  const [popper, setPopper] = useState({ vis: false });
+  const [adsManager, setAdsManager] = useState({
+    count: 3,
+    loaded: false,
+    loadedOnce: false,
+  });
+  const [alert, setAlert] = useState(getAdsAlert(adsManager.count));
+  // count,
 
-  const handleToggle = () => {
-    setIsEnabled((prevBool) => !prevBool);
-    editSettings(section.title, item.name, !isEnabled);
+  console.log(adsManager);
 
+  const handleToggle = async () => {
     // code
     if (item.name.includes("theme")) {
-      EventRegister.emit("changeTheme", !isEnabled);
+      if (adsManager.count > 0) {
+        setAlert(getAdsAlert(adsManager.count, true));
+        // EventRegister.emit("changeTheme", !isEnabled);
+        return;
+      } else {
+        EventRegister.emit("changeTheme", !isEnabled);
+      }
+    }
+
+    setIsEnabled((prevBool) => !prevBool);
+    editSettings(section.title, item.name, !isEnabled);
+  };
+
+  const handleAlert = async () => {
+    if (alert.type === "ads_watched") {
+      if (adsManager.count > 0) {
+        if (adsManager.loaded) {
+          rewarded.show();
+        } else {
+          setPopper({
+            vis: true,
+            type: "failed",
+            msg: "Ad is stll loading...",
+          });
+          rewarded.load();
+        }
+      }
     }
   };
+
+  useEffect(() => {
+    async function prepare() {
+      const adsStorageStr = await AsyncStorage.getItem("ads_watched");
+      if (adsStorageStr) {
+        const adsCount = Number(JSON.parse(adsStorageStr));
+        setAdsManager({
+          ...adsManager,
+          count: adsCount,
+        });
+        if (adsCount > 0) {
+          rewarded.load();
+        }
+      } else {
+        rewarded.load();
+      }
+    }
+
+    prepare();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribeLoaded = rewarded.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      async () => {
+        if (adsManager.loadedOnce) {
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Ad loaded!",
+          });
+        }
+        const adsStorageStr = await AsyncStorage.getItem("ads_watched");
+        let adsCount = 3;
+        if (adsStorageStr) {
+          adsCount = Number(JSON.parse(adsStorageStr));
+        }
+        setAdsManager({ count: adsCount, loaded: true, loadedOnce: true });
+      }
+    );
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      async (reward) => {
+        const newCount = adsManager.count - 1;
+        setAdsManager({
+          ...adsManager,
+          loaded: false,
+          count: newCount,
+        });
+        await AsyncStorage.setItem("ads_watched", `${newCount - 1}`);
+      }
+    );
+
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  }, []);
 
   return (
     <View style={[styles.itemContainer, { backgroundColor: theme.background }]}>
@@ -193,6 +304,8 @@ const RenderSections = ({ item, section, editSettings }) => {
           )}
         </View>
       </View>
+      <AlertModal obj={alert} setVisible={setAlert} onPress={handleAlert} />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };

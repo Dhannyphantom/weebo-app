@@ -19,25 +19,23 @@ import AppButton from "../components/AppButton";
 import colors from "../constants/colors";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
-import { calender } from "../constants/data_store";
+import { ads_keywords, calender } from "../constants/data_store";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
 const ADS_POINT = 5;
 
-const ADS_ID = Platform.select({
+export const ADS_ID = Platform.select({
   ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8881804714",
   android: !__DEV__
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/3217430636",
 });
 
-const keywords = ["anime", "weeb", "otaku", "comics", "manga", "manhwa"];
-
 const rewarded = RewardedAd.createForAdRequest(ADS_ID, {
   requestNonPersonalizedAdsOnly: true,
-  keywords,
+  keywords: ads_keywords,
 });
 
 const CLEAR_ALERT = {

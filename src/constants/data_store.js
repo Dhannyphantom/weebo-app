@@ -879,3 +879,14 @@ export const filters = [
     title: "Sort by Followers",
   },
 ];
+
+export const ads_keywords = [
+  "anime",
+  "weeb",
+  "otaku",
+  "comics",
+  "manga",
+  "manhwa",
+  "toon",
+  "animation",
+];

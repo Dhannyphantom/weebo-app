@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import Card from "./Card";
 
 const { width, height } = Dimensions.get("window");
-const CARD_WIDTH = width * 0.5;
+const CARD_WIDTH = width * 0.48;
 
 const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
   if (large) {
