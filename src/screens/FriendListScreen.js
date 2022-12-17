@@ -136,6 +136,7 @@ const FriendListScreen = ({ route, navigation }) => {
                 <FriendBox
                   data={weebos.requests}
                   callback={fetchWeebs}
+                  type="request"
                   onPress={onFriendPress}
                 />
               </View>

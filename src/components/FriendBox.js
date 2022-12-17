@@ -6,7 +6,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather, AntDesign } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -40,8 +40,6 @@ const FriendBox = ({
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
 
-  // console.log(data);
-
   const RenderMyFriends = ({ item, isMine, isFriends }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [added, setAdded] = useState(isFriends);
@@ -72,8 +70,7 @@ const FriendBox = ({
           }
         );
       } else {
-        // add weeb
-
+        // add or accept weeb
         addWeeb(
           {
             id: userID,
@@ -85,6 +82,7 @@ const FriendBox = ({
             setIsLoading(false);
             setStatus("un-weeb");
             setIsLoading(false);
+            callback && callback();
           },
           (err) => {
             setIsLoading(false);
@@ -191,6 +189,38 @@ const FriendBox = ({
                     )}
                   </>
                 )}
+                {type === "request" && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => handleUnweebing(item._id, false)}
+                      style={styles.requestBtn}
+                    >
+                      <AntDesign
+                        name="check"
+                        size={18}
+                        color={colors.primary}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => handleUnweebing(item._id, true)}
+                      style={styles.requestBtn}
+                    >
+                      <MaterialCommunityIcons
+                        name="cancel"
+                        size={18}
+                        color={colors.heartDark}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
                 {type === "transfer" && (
                   <AppButton
                     title="Transfer"
@@ -270,6 +300,12 @@ const styles = StyleSheet.create({
   rightCont: {
     flexDirection: "row",
     alignItems: "center",
+    height: "100%",
+  },
+  requestBtn: {
+    height: "100%",
+    padding: 15,
+    marginHorizontal: 3,
   },
 });
 export default FriendBox;

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   Animated,
   Dimensions,
@@ -27,8 +27,17 @@ export default function TabList({ items = [], state, onPress }) {
       easing: Easing.elastic(1.3),
       useNativeDriver: true,
     }).start();
-    onPress(tab);
+    tab && onPress(tab);
   };
+
+  useEffect(() => {
+    const tabIndex = items.findIndex(
+      (obj) =>
+        Object.entries(state).filter(([key, val]) => val === true)[0][0] ==
+        obj.tab
+    );
+    handleTabAnimation(null, tabIndex);
+  }, [state]);
 
   return (
     <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
