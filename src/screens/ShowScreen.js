@@ -28,6 +28,7 @@ import InstanceChallenger from "../components/InstanceChallenger";
 
 import { showInfoProps } from "../constants/data_store";
 import { capFirstLetter, launchGallery } from "../constants/helpers";
+import EventRender from "../components/EventRender";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -41,6 +42,7 @@ const hider = [
   "cover_photo",
   "_id",
   "isManga",
+  "event",
   "manager",
   "verified",
   "instance_creator",
@@ -57,6 +59,7 @@ const ShowScreen = ({ route, navigation }) => {
 
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
 
   const [dataState, setDataState] = useState({});
@@ -494,6 +497,23 @@ const ShowScreen = ({ route, navigation }) => {
             keyExtractor={(i, ind) => i + ind}
             renderItem={renderGroups}
           />
+          {/* EVENTS */}
+          {dataState?.event && (
+            <>
+              <Separator />
+              <AppText style={{ marginLeft: 18 }} size="large" bold>
+                EVENT
+              </AppText>
+              <Separator />
+              <EventRender
+                eventData={dataState.event}
+                isFollowing={isFollowed}
+                userID={userInfo._id}
+                renderType="single"
+                updateMe={updateMe}
+              />
+            </>
+          )}
           {dataState.characters && dataState?.characters[0] && (
             <>
               <Separator h={1} />

@@ -174,6 +174,7 @@ const EventRender = ({
         <FlatList
           data={eventData}
           keyExtractor={(item) => item._id}
+          keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => (
             <RenderEvents
               item={item}

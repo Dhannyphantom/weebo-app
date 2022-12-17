@@ -35,6 +35,18 @@ Yup.addMethod(Yup.string, "strongPassword", function () {
 });
 
 const editValidationSchema = Yup.object().shape({
+  username: Yup.string().label("Username"),
+  name: Yup.string().label("First Name"),
+  second_name: Yup.string().label("Last Name"),
+  email: Yup.string().email().label("Email"),
+  gender: Yup.string()
+    .matches(/male|female/i, "Gender should either be a male or female")
+    .label("Gender"),
+  country: Yup.string(),
+  city: Yup.string(),
+});
+
+const changePassValidation = Yup.object().shape({
   oldPass: Yup.string().min(8).strongPassword().trim().label("Password"),
   newPass: Yup.string()
     .min(8)
@@ -278,6 +290,7 @@ export default {
   forgotPassRecoverInitials,
   forgotPassResetInitials,
   recoverPassValidation,
+  changePassValidation,
   resetPassValidation,
   editValidationSchema,
   channelValidation,

@@ -212,6 +212,10 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderRadius: 12,
   },
+  infoText: {
+    textAlign: "center",
+    lineHeight: 28,
+  },
   image: { width: "100%", height: "100%", borderRadius: 9 },
   stats: {
     flexDirection: "row",

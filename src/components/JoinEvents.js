@@ -41,7 +41,11 @@ const JoinEvents = ({
         isMedia: !isText,
       };
       if (isText) {
-        data.challengeInfo = { ...joinData?.asset, info: joinInput };
+        data.challengeInfo = {
+          ...joinData?.asset,
+          eventId: joinData?.eventId,
+          info: joinInput,
+        };
       }
 
       handleJoinEvent(
@@ -54,7 +58,7 @@ const JoinEvents = ({
           });
         },
         (err) => {
-          console.log(err);
+          console.log(err?.response?.data);
           setErrMsg(err.msg);
           setjoinLoading(false);
         }

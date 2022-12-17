@@ -30,6 +30,8 @@ import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
 import { launchGallery } from "../constants/helpers";
+import Separator from "../components/Separator";
+import EventRender from "../components/EventRender";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,6 +47,7 @@ for (let i = 0; i < dayta.length; i++) {
 const CharacterScreen = ({ route, navigation }) => {
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
 
   const { followChar, getTheCharacter, instanceUpdater } =
@@ -54,14 +57,13 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const characterID = route.params.item;
 
-  const [character, setCharacter] = useState([]);
+  const [character, setCharacter] = useState({ id: characterID });
   const [errMsg, setErrMsg] = useState(null);
 
   const charID = character?._id;
   const userID = userInfo._id;
   const ownerID = character?.manager?._id;
-  const followingArr = userInfo.following;
-  const follow = followingArr?.find((obj) => obj._id == charID);
+  const follow = userInfo.following?.find((obj) => obj._id == charID);
   const challConst = character?.challengers?.find(
     (obj) => obj?.user?._id == userID
   );
@@ -212,6 +214,7 @@ const CharacterScreen = ({ route, navigation }) => {
       (err) => {
         isLoader && setIsLoading({ loader: true, err: true });
         isCover && setIsCoverLoading(false);
+        console.log(err, err?.response?.data);
         setErrMsg(
           err.err?.response?.data === "deleted_instance"
             ? "Character has been deleted"
@@ -585,6 +588,7 @@ const CharacterScreen = ({ route, navigation }) => {
             <FlatList
               data={["OTAKU"]}
               keyExtractor={(item, index) => item + index}
+              keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={handleScreenRefresh}
@@ -592,6 +596,22 @@ const CharacterScreen = ({ route, navigation }) => {
               overScrollMode="never"
               renderItem={renderPage}
             />
+            {character?.event && (
+              <>
+                <Separator />
+                <AppText style={{ marginLeft: 18 }} size="large" bold>
+                  EVENT
+                </AppText>
+                <Separator />
+                <EventRender
+                  eventData={character.event}
+                  isFollowing={cardState.selected}
+                  userID={userInfo._id}
+                  renderType="single"
+                  updateMe={updateMe}
+                />
+              </>
+            )}
           </View>
         ) : (
           <View style={{ flex: 1 }}>

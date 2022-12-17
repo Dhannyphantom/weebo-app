@@ -27,7 +27,8 @@ import PopMessage from "../components/PopMessage";
 
 import yupSchema from "../constants/yupSchema";
 import ThemeContext from "../config/ThemeContext";
-const { editValidationSchema, passwordInitials } = yupSchema;
+const { editValidationSchema, passwordInitials, changePassValidation } =
+  yupSchema;
 import { emailers } from "../constants/data_store";
 import Link from "../components/Link";
 import { launchGallery } from "../constants/helpers";
@@ -398,7 +399,7 @@ const ChangePassword = ({ closeModal }) => {
       <Formik
         initialValues={passwordInitials}
         onSubmit={(formValues) => handleFormSubmit(formValues)}
-        validationSchema={editValidationSchema}
+        validationSchema={changePassValidation}
       >
         {() => (
           <View style={{ padding: 10 }}>
