@@ -51,9 +51,7 @@ const CommentBar = (
             style={styles.avatar}
           />
         </View>
-        <View
-          style={[styles.inputBox, { backgroundColor: theme.backgroundLight }]}
-        >
+        <View style={[styles.inputBox, { backgroundColor: theme.extralight }]}>
           <TouchableOpacity activeOpacity={1} style={styles.emoji}>
             <Ionicons name="happy-outline" size={20} color={colors.medium} />
           </TouchableOpacity>

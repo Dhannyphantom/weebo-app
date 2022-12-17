@@ -5,6 +5,7 @@ import ProfilePic from "./ProfilePic";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
 import getTimestamp from "../constants/getTimestamp";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 
@@ -36,7 +37,8 @@ const ChatFile = ({ item, onPress }) => {
             ellipsizeMode="tail"
             style={{ ...styles.msg, flex: 1, maxWidth: "80%", marginLeft: 7 }}
           >
-            {item?.last_message?.message}
+            {item?.last_message?.message ??
+              `Say hi to ${capFirstLetter(item?.user?.username)}`}
           </AppText>
         </View>
       </View>

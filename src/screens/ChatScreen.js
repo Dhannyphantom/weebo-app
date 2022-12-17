@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { Context as AuthContext } from "../config/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -69,7 +69,7 @@ const ChatScreen = ({ navigation }) => {
 
   const handleTheSearch = () => {
     const regExp = new RegExp(searchInput, "gi");
-    const filterArr = chatUsers.filter((obj) => obj.username.match(regExp));
+    const filterArr = chatUsers.filter((obj) => obj?.username?.match(regExp));
     setSearchUsers(filterArr);
   };
 
