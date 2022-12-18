@@ -127,7 +127,12 @@ const PostScreen = ({ route, navigation }) => {
       data,
       () => {
         setIsLoading(false);
-        navigation.goBack();
+        router.toScreen
+          ? navigation.navigate(router.toScreen, {
+              reloadPosts: true,
+              ...router.toScreenData,
+            })
+          : navigation.goBack();
       },
       (err) => {
         setErrMsg(err.data ?? err.msg);

@@ -65,14 +65,23 @@ const HomeHeader = ({ characters }) => {
       if (_error) {
         setErrMsg(_error);
       } else if (results) {
-        navigation.navigate("Post", { assets: results });
+        navigation.navigate("Post", {
+          assets: results,
+          toScreen: "Home",
+          toScreenData: {},
+        });
       }
     } else if (type === "contest") {
       setCMode(true);
     } else if (type === "write") {
       setModalVis(false);
       setCMode(false);
-      navigation.navigate("Post", { write: true, id: null });
+      navigation.navigate("Post", {
+        write: true,
+        toScreen: "Home",
+        toScreenData: {},
+        id: null,
+      });
     }
   };
 

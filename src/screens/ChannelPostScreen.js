@@ -33,6 +33,12 @@ import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
+const boolsObj = {
+  reloadLoader: false,
+  imageLoading: false,
+  loadedOnce: false,
+};
+
 const UpdateDecription = ({ visible, description, handleDescUpdate }) => {
   const theme = useContext(ThemeContext);
 
@@ -62,9 +68,8 @@ const UpdateDecription = ({ visible, description, handleDescUpdate }) => {
 
 const ChannelPostScreen = ({ route, navigation }) => {
   const [page, setPage] = useState({});
-  const [imageLoading, setImageLoading] = useState(false);
   const [openMedia, setOpenMedia] = useState(false);
-  const [loadedOnce, setLoadedOnce] = useState(false);
+  const [bools, setBools] = useState(boolsObj);
   const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
@@ -167,7 +172,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
       instanceShow: "1",
     },
     screenIcon: "tv",
-    coverLoading: imageLoading,
+    coverLoading: bools.imageLoading,
     handleLeftPress: () => handleSub(),
     leftColor: sColor,
     verified: false,
@@ -188,6 +193,8 @@ const ChannelPostScreen = ({ route, navigation }) => {
         navigation.navigate("Post", {
           assets: results,
           type: "channel",
+          toScreen: "ChannelPost",
+          toScreenData: { id: page?._id },
           id: page._id,
           name: page.name,
         });
@@ -196,6 +203,8 @@ const ChannelPostScreen = ({ route, navigation }) => {
       navigation.navigate("Post", {
         name: page.name,
         type: "channel",
+        toScreen: "ChannelPost",
+        toScreenData: { id: page?._id },
         write: true,
         id: page._id,
       });
@@ -206,7 +215,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     const { results } = await launchGallery("image", true, false, [25, 16]);
 
     if (results) {
-      setImageLoading(true);
+      setBools({ ...bools, imageLoading: true });
       const dataObj = {
         action: "cover",
         media: true,
@@ -219,37 +228,37 @@ const ChannelPostScreen = ({ route, navigation }) => {
         (data) => {
           setPage(data);
           setPopModal({ topper: false, modal: false });
-          setImageLoading(false);
+          setBools({ ...bools, imageLoading: false });
         },
         (err) => {
           setErrMsg(err);
           setPopModal({ topper: false, modal: false });
-          setImageLoading(false);
+          setBools({ ...bools, imageLoading: false });
         }
       );
     }
   };
 
   const handleSub = () => {
-    setImageLoading(true);
+    setBools({ ...bools, imageLoading: true });
     const subType = isSubscribed ? "unsub" : "sub";
     subscribeChannel(
       subType,
       page._id,
       (resData) => {
         setPage(resData);
-        setImageLoading(false);
+        setBools({ ...bools, imageLoading: false });
       },
       (err) => {
         console.log(err);
         setErrMsg(err);
-        setImageLoading(false);
+        setBools({ ...bools, imageLoading: false });
       }
     );
   };
 
   const handleDescUpdate = (text) => {
-    setImageLoading(true);
+    setBools({ ...bools, imageLoading: true });
     const dataObj = {
       action: "description",
       media: false,
@@ -260,12 +269,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
       dataObj,
       (data) => {
         setPage(data);
-        setImageLoading(false);
+        setBools({ ...bools, imageLoading: false });
         setPopModal({ topper: false, modal: false });
       },
       (err) => {
         setErrMsg(err);
-        setImageLoading(false);
+        setBools({ ...bools, imageLoading: false });
       }
     );
   };
@@ -292,13 +301,13 @@ const ChannelPostScreen = ({ route, navigation }) => {
       (data) => {
         setPage(data.channelData);
         setPosts(data.posts);
-        setLoadedOnce(true);
+        setBools({ ...bools, loadedOnce: true });
         // console.log(data.posts);
         cb && cb();
       },
       (err) => {
         console.log(err);
-        setLoadedOnce(true);
+        setBools({ ...bools, loadedOnce: true });
       }
     );
   };
@@ -336,11 +345,15 @@ const ChannelPostScreen = ({ route, navigation }) => {
       <View style={{ flex: 1, height: height * 0.35 }}>
         <ActivityIndicator
           type="isEmpty"
-          visible={loadedOnce}
+          visible={bools.loadedOnce}
           text="No recent posts"
           transparent
         />
-        <ActivityIndicator type="spin" visible={!loadedOnce} transparent />
+        <ActivityIndicator
+          type="spin"
+          visible={!bools.loadedOnce}
+          transparent
+        />
       </View>
     );
   };
@@ -426,10 +439,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
     );
   };
 
-  useEffect(() => {
-    handleGetChannel();
-  }, []);
-
   const renderPageLikeSo = ({ item }) => {
     const isEvent = item.hasOwnProperty("challengersNum");
 
@@ -452,6 +461,19 @@ const ChannelPostScreen = ({ route, navigation }) => {
     }
   };
 
+  useEffect(() => {
+    handleGetChannel();
+  }, []);
+
+  useEffect(() => {
+    if (bools.loadedOnce && route.params.reloadPosts) {
+      setBools({ ...bools, reloadLoader: true });
+      handleGetChannel(() => {
+        setBools({ ...bools, reloadLoader: false });
+      });
+    }
+  }, [navigation, route]);
+
   return (
     <View
       style={[
@@ -464,7 +486,15 @@ const ChannelPostScreen = ({ route, navigation }) => {
         <>
           <Animated.FlatList
             ListHeaderComponent={
-              <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
+              <>
+                <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
+                <ActivityIndicator
+                  visible={bools.reloadLoader}
+                  size={0.2}
+                  style={{ width, bottom: 50, height: 25 }}
+                  transparent
+                />
+              </>
             }
             data={posts}
             onScroll={Animated.event(

@@ -22,7 +22,6 @@ import {
 import schemas from "../constants/yupSchema";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
-import ThemeContext from "../config/ThemeContext";
 import TabList from "../components/TabList";
 
 const {
@@ -164,11 +163,14 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
     updateMe({ prop: "points", data: info?.user?.points });
     characterCreated(info.user);
-    navigation.navigate("Character", { item: info?.character?._id });
+    navigation.navigate("Character", {
+      item: info?.character?._id,
+      toScreen: "Home",
+    });
   };
   const navShow = (info) => {
     updateMe({ prop: "points", data: info?.user?.points });
-    navigation.navigate("Show", { show: info.show });
+    navigation.navigate("Show", { show: info.show, toScreen: "Home" });
   };
 
   return (

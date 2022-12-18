@@ -46,6 +46,7 @@ const boolsObj = {
   loadMore: true,
   lodadedOnce: false,
   showSlide: false,
+  reloadLoader: false,
   loader: false,
   showStatus: false,
 };
@@ -58,7 +59,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const {
     getHomeFeeds,
     state: { posts },
@@ -119,10 +120,8 @@ const HomeScreen = ({ navigation }) => {
         cb && cb();
       },
       (err) => {
-        console.log(err?.response?.data);
         setErrMsg("Error fetching feeds");
         loader && setBools({ ...bools, loader: false });
-
         cb && cb();
       }
     );
@@ -264,6 +263,12 @@ const HomeScreen = ({ navigation }) => {
           setter={() => setBools({ ...bools, showStatus: false })}
         />
 
+        <ActivityIndicator
+          visible={bools.reloadLoader}
+          size={0.2}
+          style={{ width, height: 25 }}
+          transparent
+        />
         {showStatus && <Separator h={1} />}
       </View>
     );
@@ -291,6 +296,15 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [posts]);
 
+  useEffect(() => {
+    if (bools.lodadedOnce && route.params.reloadPosts) {
+      setBools({ ...bools, reloadLoader: true });
+      fetchHomeData(() => {
+        setBools({ ...bools, reloadLoader: false });
+      }, false);
+    }
+  }, [navigation, route]);
+
   return (
     <>
       <StatusBar style={theme.bar} />
@@ -301,7 +315,6 @@ const HomeScreen = ({ navigation }) => {
         }}
       >
         <HomeHeader characters={userInfo.charactersOwned} />
-
         {!feeds?.results[0] ? (
           <RenderPageHeader />
         ) : (
