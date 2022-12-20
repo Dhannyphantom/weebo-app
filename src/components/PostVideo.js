@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  Image,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -17,6 +18,7 @@ import colors from "../constants/colors";
 // lottie animations
 import pause_play from "../../assets/animations/play_pause_white.json";
 import heartPop from "../../assets/animations/heartPop.json";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("screen");
 const ViewportAwareVideo = Viewport.Aware(TouchableOpacity);
@@ -96,6 +98,18 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   );
 };
 
+const RenderPoster = ({ source }) => {
+  return (
+    <View style={styles.posterContainer}>
+      <Image
+        source={{ uri: source.thumb }}
+        style={styles.poster}
+        blurRadius={4}
+      />
+    </View>
+  );
+};
+
 export default function PostVideo({
   source,
   onDoublePress,
@@ -132,6 +146,7 @@ export default function PostVideo({
           showHearts: false,
         });
         video?.current?.playAsync();
+        // await video?.current?.presentFullscreenPlayer();
       } catch (e) {
         console.log(e);
       }
@@ -198,6 +213,7 @@ export default function PostVideo({
   };
 
   const handleLoaded = (AVstatus) => {
+    setBools({ ...bools, loaded: true });
     onLoadEnd && onLoadEnd(AVstatus.playableDurationMillis);
   };
 
@@ -213,7 +229,6 @@ export default function PostVideo({
   }, [status]);
 
   useEffect(() => {
-    // video.current.loadAsync(source.uri);
     if (loop) {
       try {
         video?.current?.playAsync();
@@ -226,7 +241,7 @@ export default function PostVideo({
   useEffect(() => {
     if (autoPlay === true) {
       onPlayVideo();
-    } else {
+    } else if (autoPlay === false) {
       video?.current?.stopAsync();
     }
   }, [autoPlay]);
@@ -245,11 +260,13 @@ export default function PostVideo({
         ref={video}
         style={styles.video}
         source={source}
+        onError={() => console.log("Video Error")}
         resizeMode="contain"
+        usePoster
+        // posterSource={{ uri: source.thumb }}
+        PosterComponent={() => <RenderPoster source={source} />}
         positionMillis={pos}
-        posterSource={{ uri: source.thumb }}
         onLoad={handleLoaded}
-        // onLoad={() => setBools({ ...bools, loaded: true })}
         isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
@@ -265,11 +282,24 @@ export default function PostVideo({
       )}
       <RenderLottie vis={bools.showHearts} type="like" loaded={bools.loaded} />
       <RenderLottie vis={status.isPlaying} type="play" loaded={bools.loaded} />
+      {status.isBuffering && (
+        <ActivityIndicator
+          bTransparent
+          style={styles.bufferLoad}
+          visible={status.isBuffering || !status.isLoaded}
+          type="loader"
+        />
+      )}
     </ViewportAwareVideo>
   );
 }
 
 const styles = StyleSheet.create({
+  bufferLoad: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -278,7 +308,7 @@ const styles = StyleSheet.create({
     width: "98%",
     alignSelf: "center",
     height: height * 0.7,
-    borderRadius: 15,
+    borderRadius: 10,
   },
   lottie: {
     position: "absolute",
@@ -298,6 +328,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
+  },
+  poster: {
+    width: "100%",
+    height: "100%",
   },
   video: {
     width: "100%",

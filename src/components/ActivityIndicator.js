@@ -39,7 +39,7 @@ const ActivityIndicator = ({
           : wTransparent
           ? theme.transparent
           : bTransparent
-          ? theme.transparent
+          ? "rgba(0,0,0,0.1)"
           : theme.background,
         justifyContent: type === "page" ? "flex-start" : "center",
         alignItems: type === "page" ? "stretch" : "center",
