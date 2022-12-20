@@ -54,7 +54,7 @@ const boolsObj = {
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
@@ -188,7 +188,7 @@ const HomeScreen = ({ navigation, route }) => {
     // MIGHT WANT TO CALL THIS FUNCTION A LOT
     try {
       const token = await registerForPushNotificationsAsync();
-      updateUserPushToken({ token });
+      updateUserPushToken({ token, state: "registered" });
     } catch (err) {
       console.log(err);
     }
@@ -297,7 +297,7 @@ const HomeScreen = ({ navigation, route }) => {
   }, [posts]);
 
   useEffect(() => {
-    if (bools.lodadedOnce && route.params.reloadPosts) {
+    if (bools.lodadedOnce && route?.params?.reloadPosts) {
       setBools({ ...bools, reloadLoader: true });
       fetchHomeData(() => {
         setBools({ ...bools, reloadLoader: false });
@@ -366,8 +366,16 @@ const HomeScreen = ({ navigation, route }) => {
   );
 };
 
+// I THINK THE NOTIFICAITON SERVICE CODE SHOULD BE MOVED TO REQUEST AUTH SCREEN
+
 async function registerForPushNotificationsAsync() {
   let token;
+  const settings = JSON.parse(await AsyncStorage.getItem("settings"));
+  if (settings) {
+    const shouldNotifyUser = settings.find((obj) => obj.title === "General")
+      .data[2].default;
+    if (!shouldNotifyUser) return;
+  }
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -382,8 +390,9 @@ async function registerForPushNotificationsAsync() {
     }
     try {
       token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log("token_1:: ", token);
     } catch (err) {
-      console.log("Push notification error: Check internet connection");
+      console.log(err);
       // YOU'RE PROBABLY OFFLINE.
     }
   } else {

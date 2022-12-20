@@ -201,13 +201,6 @@ const ConnectScreen = ({ navigation }) => {
 
     fetchNearbyWeebs(
       (res_data) => {
-        // const weeb = res_data[0];
-        // const tests = Array(100)
-        //   .fill(weeb)
-        //   .map((obj, idx) => ({
-        //     ...obj,
-        //     _id: obj?._id + idx,
-        //   }));
         setWeebos(res_data);
         setModal(true);
         setIsLoading(false);
@@ -232,7 +225,12 @@ const ConnectScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (location) {
+    const checkLocTimestamp =
+      Date.now() - userInfo.location.timestamp > 60 * 60 * 24 * 1000;
+    if (
+      (location && !userInfo.location.timestamp) ||
+      (location && checkLocTimestamp)
+    ) {
       // save the user location;
       const api_data = {
         instanceID: userInfo._id,
@@ -242,19 +240,11 @@ const ConnectScreen = ({ navigation }) => {
           value: {
             lat: location.coords.latitude,
             long: location.coords.longitude,
-            active: true,
+            active: userInfo?.location?.active,
           },
         },
       };
-      updateUserData(
-        api_data,
-        (res_data) => {
-          console.log("location updated");
-        },
-        (err_data) => {
-          console.log(err_data);
-        }
-      );
+      updateUserData(api_data);
     }
   }, [location]);
 

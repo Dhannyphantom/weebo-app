@@ -734,7 +734,7 @@ export const settingsData = [
         name: "Language",
         type: "dropdown",
         default: "english",
-        options: ["english", "japanese", "french"],
+        options: ["english", "japanese"],
       },
       {
         id: "3",

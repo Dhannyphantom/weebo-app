@@ -44,6 +44,7 @@ const emailVerifiedPop = {
 
 const getLocatorAlert = (isOn) => ({
   visible: false,
+  title: "Weebo Locator",
   btn: "OK",
   message: `${isOn ? "Disable" : "Enable"} your locator. Nearby weebs ${
     isOn ? "may not" : "will"
@@ -497,6 +498,8 @@ const EditProfileScreen = ({ navigation, route }) => {
       actionData: !pageData?.location?.active,
       instanceID: pageData._id,
     };
+
+    console.log(sendData);
 
     updateUserData(
       sendData,

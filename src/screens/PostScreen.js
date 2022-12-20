@@ -68,10 +68,6 @@ const PostScreen = ({ route, navigation }) => {
   const searchInputRef = useRef(null);
   const mainFlatListRef = useRef(null);
   const textRef = useRef(null);
-  const instanceData = {
-    id: router.id,
-    type: router.type,
-  };
   const tagGroups = tagLists.filter((obj) => obj.type === "group");
   const tagShows = tagLists.filter((obj) => obj.type === "show");
   const tagCharacters = tagLists.filter((obj) => obj.type === "character");
@@ -88,16 +84,21 @@ const PostScreen = ({ route, navigation }) => {
     bg: getBgColor().bg,
     tColor: getBgColor().text,
   };
+
   const data = {
     title: writer ? textObj : text.trim(),
     type: writer ? "text" : assetType,
     post: media,
-    instancePost: router.type ? instanceData : null,
+    instancePost: router.type
+      ? {
+          id: router.id,
+          type: router.type,
+        }
+      : null,
     meta: media, // was flax b4
     tags: tagged,
   };
 
-  //
   let tagTitle;
 
   !tagged[0] && !showTag
@@ -173,8 +174,8 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleRemoveImage = (item) => {
-    setMedia((prev) => prev.filter((uri) => uri !== item.uri));
-    display.uri == item.uri ? setDisplay(media[0]) : null;
+    setMedia((prev) => prev.filter((obj) => obj.uri !== item.uri));
+    display.uri == item.uri && setDisplay(media[0]);
   };
 
   const handleSearchTag = () => {

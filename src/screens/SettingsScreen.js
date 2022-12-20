@@ -16,6 +16,7 @@ import {
   RewardedAdEventType,
   TestIds,
 } from "react-native-google-mobile-ads";
+import * as Device from "expo-device";
 
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
@@ -38,10 +39,13 @@ const alertData = {
   type: "delete_account",
 };
 
-const rewarded = RewardedAd.createForAdRequest(ADS_ID, {
-  requestNonPersonalizedAdsOnly: false,
-  keywords: ads_keywords,
-});
+const rewarded = RewardedAd.createForAdRequest(
+  Device.isDevice ? ADS_ID : TestIds.REWARDED,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: ads_keywords,
+  }
+);
 
 const getAdsAlert = (count, visible = false) => ({
   visible: visible,
@@ -88,6 +92,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
   const RenderDropDowns = () => {
     //
     const handleChooseOption = (item) => {
+      console.log(item);
       setPopData({ ...popData, default: item });
       handlers.editSettings(section.title, "Language", item);
     };
@@ -97,6 +102,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
       return (
         <TouchableOpacity
           onPress={() => handleChooseOption(item)}
+          disabled={item === "japanese"}
           style={styles.dropdown}
         >
           <AppText style={styles.dropdownText}>{item}</AppText>
@@ -106,6 +112,11 @@ const SettingDropDown = ({ data, section, handlers }) => {
               size={width * 0.02}
               color={colors.primary}
             />
+          )}
+          {item === "japanese" && (
+            <AppText style={{ color: colors.heartDark }}>
+              Not available yet
+            </AppText>
           )}
         </TouchableOpacity>
       );
@@ -303,7 +314,7 @@ const RenderSections = ({ item, section, editSettings }) => {
             />
           )}
 
-          {(item.type === "dropdown" || item.type === "action") && (
+          {["dropdown", "action"].includes(item.type) && (
             <SettingDropDown
               data={item}
               section={section}

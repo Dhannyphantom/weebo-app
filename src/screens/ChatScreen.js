@@ -178,7 +178,9 @@ const ChatScreen = ({ navigation }) => {
             {chatUsers.length > 0 ? (
               <FlatList
                 data={searchInput.length < 1 ? chatUsers : searchUsers}
-                keyExtractor={(item) => item?.last_message?._id}
+                keyExtractor={(item) =>
+                  item?.last_message?._id ?? item?.user?._id
+                }
                 overScrollMode="never"
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
