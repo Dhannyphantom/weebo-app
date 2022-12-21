@@ -9,16 +9,13 @@ import {
   View,
   StyleSheet,
   FlatList,
-  Platform,
   Dimensions,
   RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Device from "expo-device";
 import * as NavigationBar from "expo-navigation-bar";
-import * as Notifications from "expo-notifications";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -51,14 +48,6 @@ const boolsObj = {
   showStatus: false,
 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
 const HomeScreen = ({ navigation, route }) => {
   const {
     getHomeFeeds,
@@ -66,7 +55,6 @@ const HomeScreen = ({ navigation, route }) => {
   } = useContext(FeedContext);
 
   const {
-    setPushToken: updateUserPushToken,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -79,8 +67,6 @@ const HomeScreen = ({ navigation, route }) => {
   const { loadMore, lodadedOnce, showSlide, showStatus } = bools;
 
   const actionFlatRef = useRef(null);
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -184,26 +170,6 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  const notificationHandler = async () => {
-    // MIGHT WANT TO CALL THIS FUNCTION A LOT
-    try {
-      const token = await registerForPushNotificationsAsync();
-      updateUserPushToken({ token, state: "registered" });
-    } catch (err) {
-      console.log(err);
-    }
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("recieved", notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("response recieved", response);
-      });
-  };
-
   const RenderLoadMore = () => {
     if (loadMore) {
       return (
@@ -277,17 +243,9 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     async function prepare() {
       await readyHomeScreen();
-      await notificationHandler();
     }
 
     prepare();
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
   }, []);
 
   useEffect(() => {
@@ -296,6 +254,7 @@ const HomeScreen = ({ navigation, route }) => {
     }
   }, [posts]);
 
+  // For auto post reload
   useEffect(() => {
     if (bools.lodadedOnce && route?.params?.reloadPosts) {
       setBools({ ...bools, reloadLoader: true });
@@ -365,62 +324,6 @@ const HomeScreen = ({ navigation, route }) => {
     </>
   );
 };
-
-// I THINK THE NOTIFICAITON SERVICE CODE SHOULD BE MOVED TO REQUEST AUTH SCREEN
-
-async function registerForPushNotificationsAsync() {
-  let token;
-  const settings = JSON.parse(await AsyncStorage.getItem("settings"));
-  if (settings) {
-    const shouldNotifyUser = settings.find((obj) => obj.title === "General")
-      .data[2].default;
-    if (!shouldNotifyUser) return;
-  }
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      console.log("Failed to get push token for push notification!");
-      return;
-    }
-    try {
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log("token_1:: ", token);
-    } catch (err) {
-      console.log(err);
-      // YOU'RE PROBABLY OFFLINE.
-    }
-  } else {
-    console.log("Please use a physical device for Push Notifications");
-  }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return token;
-}
-
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 2 },
-  });
-}
 
 const styles = StyleSheet.create({
   activity: {

@@ -12,7 +12,9 @@ npm-debug.*
 web-build/
 
 src/constants/app.txt
+.easignore
 google-services.json
+GoogleService-Info.plist
 
 # macOS
 .DS_Store
