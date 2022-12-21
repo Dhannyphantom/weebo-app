@@ -40,7 +40,6 @@ export default {
     ios: {
       googleServicesFile: process.env.GOOGLE_SERVICES_PLIST_JSON,
       supportsTablet: true,
-      googleServicesFile: "./GoogleService-Info.plist",
       infoPlist: {
         NSUserTrackingUsageDescription:
           "This identifier will be used to deliver personalized ads to you.",

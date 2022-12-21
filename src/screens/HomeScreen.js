@@ -211,32 +211,42 @@ const HomeScreen = ({ navigation, route }) => {
 
   const RenderPageHeader = () => {
     return (
-      <View>
-        <FlatList
-          data={actionDatas}
-          keyExtractor={(item) => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderActions}
-          overScrollMode="never"
-          ref={actionFlatRef}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-        <StatusRender
-          data={stories}
-          show={showStatus}
-          setter={() => setBools({ ...bools, showStatus: false })}
-        />
+      <>
+        <View>
+          <FlatList
+            data={actionDatas}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={renderActions}
+            overScrollMode="never"
+            ref={actionFlatRef}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+          <StatusRender
+            data={stories}
+            show={showStatus}
+            setter={() => setBools({ ...bools, showStatus: false })}
+          />
 
+          <ActivityIndicator
+            visible={bools.reloadLoader}
+            size={0.2}
+            style={{ width, height: 25 }}
+            transparent
+          />
+
+          {showStatus && <Separator h={1} />}
+        </View>
         <ActivityIndicator
-          visible={bools.reloadLoader}
-          size={0.2}
-          style={{ width, height: 25 }}
+          visible={((feeds && !feeds?.results[0]) || !feeds) && !showStatus}
+          type={lodadedOnce ? "isEmpty" : "spin"}
+          style={styles.pageActiviy}
+          text="No feeds yet, please follow a Weebo Instance"
           transparent
         />
-        {showStatus && <Separator h={1} />}
-      </View>
+      </>
     );
   };
 
@@ -274,6 +284,7 @@ const HomeScreen = ({ navigation, route }) => {
         }}
       >
         <HomeHeader characters={userInfo.charactersOwned} />
+
         {!feeds?.results[0] ? (
           <RenderPageHeader />
         ) : (
@@ -309,13 +320,7 @@ const HomeScreen = ({ navigation, route }) => {
         visible={showSlide}
         goCallBackFunc={() => handleHomeScreenGuide("set")}
       />
-      <ActivityIndicator
-        visible={((feeds && !feeds?.results[0]) || !feeds) && !showStatus}
-        type={lodadedOnce ? "isEmpty" : "spin"}
-        style={styles.pageActiviy}
-        text="No feeds yet, please follow a Weebo Instance"
-        transparent
-      />
+
       <ActivityIndicator
         visible={bools.loader}
         style={styles.activity}
@@ -362,10 +367,8 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   pageActiviy: {
-    position: "absolute",
-    width: "100%",
-    height: "50%",
-    top: height * 0.32,
+    // position: "absolute",
+    width,
   },
 });
 export default HomeScreen;

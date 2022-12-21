@@ -3,7 +3,7 @@ import { View, StyleSheet, Platform, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
 
 const appConfig = require("../../app.json");
 
@@ -16,13 +16,13 @@ import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: true,
+//     shouldSetBadge: false,
+//   }),
+// });
 
 const RequestAuth = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -44,49 +44,48 @@ const RequestAuth = ({ navigation }) => {
 
   const run = () => {
     clearMessage();
-    tryLocalSignin(null, () => {
-      navigation.navigate("Welcome");
-    });
+    tryLocalSignin(
+      async () => {
+        //
+        // await notificationHandler();
+      },
+      () => {
+        navigation.navigate("Welcome");
+      }
+    );
   };
 
-  const notificationHandler = async () => {
-    // MIGHT WANT TO CALL THIS FUNCTION A LOT
-    try {
-      const token = await registerForPushNotificationsAsync();
-      updateUserPushToken({ token, state: "registered" });
-    } catch (err) {
-      console.log(err);
-    }
+  // const notificationHandler = async () => {
+  //   // MIGHT WANT TO CALL THIS FUNCTION A LOT
+  //   try {
+  //     const token = await registerForPushNotificationsAsync();
+  //     console.log("EXPO_TOKEN:: ", token);
+  //     updateUserPushToken({ token, state: "registered" });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("recieved", notification);
-      });
+  //   notificationListener.current =
+  //     Notifications.addNotificationReceivedListener((notification) => {
+  //       console.log("recieved", notification);
+  //     });
 
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("response recieved", response);
-      });
-  };
+  //   responseListener.current =
+  //     Notifications.addNotificationResponseReceivedListener((response) => {
+  //       console.log("response recieved", response);
+  //     });
+  // };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       run();
     });
 
-    async function prepare() {
-      await notificationHandler();
-    }
-
-    if (false) {
-      prepare();
-    }
-
     return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
+      // Notifications.removeNotificationSubscription(
+      //   notificationListener.current
+      // );
+      // Notifications.removeNotificationSubscription(responseListener.current);
       unsubscribe;
     };
   }, []);
@@ -118,65 +117,64 @@ const RequestAuth = ({ navigation }) => {
   return <ActivityIndicator visible={true} />;
 };
 
-async function registerForPushNotificationsAsync() {
-  let token;
-  const settings = JSON.parse(await AsyncStorage.getItem("settings"));
-  if (settings) {
-    const shouldNotifyUser = settings.find((obj) => obj.title === "General")
-      .data[2].default;
-    if (!shouldNotifyUser) return;
-  }
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      console.log("Failed to get push token for push notification!");
-      // DISPLAY AN ALERT OR SOMETHING
-      return;
-    }
-    try {
-      token = (
-        await Notifications.getExpoPushTokenAsync({
-          projectId,
-        })
-      ).data;
-      console.log("token_1:: ", token);
-    } catch (err) {
-      console.log(err);
-      // YOU'RE PROBABLY OFFLINE OR PROJECT NOT BUILT WITH FCM KEYS.
-    }
-  } else {
-    console.log("Please use a physical device for Push Notifications");
-  }
+// async function registerForPushNotificationsAsync() {
+//   let token;
+//   const settings = JSON.parse(await AsyncStorage.getItem("settings"));
+//   if (settings) {
+//     const shouldNotifyUser = settings.find((obj) => obj.title === "General")
+//       .data[2].default;
+//     if (!shouldNotifyUser) return;
+//   }
+//   if (Device.isDevice) {
+//     const { status: existingStatus } =
+//       await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
+//     if (existingStatus !== "granted") {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
+//     if (finalStatus !== "granted") {
+//       console.log("Failed to get push token for push notification!");
+//       // DISPLAY AN ALERT OR SOMETHING
+//       return;
+//     }
+//     try {
+//       token = (
+//         await Notifications.getExpoPushTokenAsync({
+//           projectId,
+//         })
+//       ).data;
+//     } catch (err) {
+//       console.log(err);
+//       // YOU'RE PROBABLY OFFLINE OR PROJECT NOT BUILT WITH FCM KEYS.
+//     }
+//   } else {
+//     console.log("Please use a physical device for Push Notifications");
+//   }
 
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      enableVibrate: true,
-      lightColor: "#FF231F7C",
-    });
-  }
+//   if (Platform.OS === "android") {
+//     Notifications.setNotificationChannelAsync("default", {
+//       name: "default",
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       enableVibrate: true,
+//       lightColor: "#FF231F7C",
+//     });
+//   }
 
-  return token;
-}
+//   return token;
+// }
 
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 2 },
-  });
-}
+// async function schedulePushNotification() {
+//   await Notifications.scheduleNotificationAsync({
+//     content: {
+//       title: "You've got mail! 📬",
+//       body: "Here is the notification body",
+//       data: { data: "goes here" },
+//     },
+//     trigger: { seconds: 2 },
+//   });
+// }
 
 const styles = StyleSheet.create({
   container: {
