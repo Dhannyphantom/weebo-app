@@ -9,11 +9,13 @@ import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 
-const ChatFile = ({ item, onPress }) => {
+const ChatFile = ({ item, setChatAction, onPress }) => {
   const theme = useContext(ThemeContext);
+
   return (
     <TouchableOpacity
       activeOpacity={0.85}
+      onLongPress={() => setChatAction({ vis: true, data: item })}
       onPress={() => onPress(item)}
       style={[styles.container, { backgroundColor: theme.background }]}
     >
@@ -21,6 +23,7 @@ const ChatFile = ({ item, onPress }) => {
         <ProfilePic
           source={item?.user?.avatar}
           size={45}
+          gender={item?.user?.gender}
           userID={item?.user?._id}
         />
         <View style={styles.box2}>

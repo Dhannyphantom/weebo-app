@@ -226,9 +226,9 @@ const ConnectScreen = ({ navigation }) => {
 
   useEffect(() => {
     const checkLocTimestamp =
-      Date.now() - userInfo.location.timestamp > 60 * 60 * 24 * 1000;
+      Date.now() - userInfo?.location?.timestamp > 60 * 60 * 24 * 1000;
     if (
-      (location && !userInfo.location.timestamp) ||
+      (location && !userInfo?.location?.timestamp) ||
       (location && checkLocTimestamp)
     ) {
       // save the user location;

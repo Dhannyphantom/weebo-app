@@ -58,6 +58,8 @@ const ChatRender = ({
     lowerSender = true;
   }
 
+  console.log(sender);
+
   const timer = getTimeFormat(time);
   const showDay = getTimeFormat(time, upperChat?.time);
   const showTimerLeft =
@@ -84,6 +86,7 @@ const ChatRender = ({
             {upperRecipient && (
               <ProfilePic
                 source={sender.avatar}
+                gender={sender.gender}
                 size={45}
                 userID={sender._id}
               />

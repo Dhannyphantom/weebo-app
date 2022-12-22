@@ -30,7 +30,7 @@ const ChatUserScreen = ({ route }) => {
   } = useContext(AuthContext);
 
   const [chats, setChats] = useState([]);
-  // chats = [{message, time, read,sender: {_id, username, avatar}}]
+  // chats = [{message, time, read,sender: {_id, username,gender, avatar}}]
   const [empty, setEmpty] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [chatLoaded, setChatLoaded] = useState(false);

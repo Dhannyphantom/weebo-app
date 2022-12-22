@@ -17,7 +17,11 @@ import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as NavigationBar from "expo-navigation-bar";
 import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
+const Notifications = {
+  removeNotificationSubscription: () => {},
+  setNotificationHandler: () => {},
+};
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -296,7 +300,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     async function prepare() {
       await readyHomeScreen();
-      await notificationHandler();
+      // await notificationHandler();
     }
 
     prepare();

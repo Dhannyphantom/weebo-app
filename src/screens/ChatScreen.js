@@ -10,6 +10,7 @@ import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { Context as AuthContext } from "../config/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from "react-native-uuid";
 
 import SearchBar from "../components/SearchBar";
 
@@ -20,6 +21,7 @@ import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import AppButton from "../components/AppButton";
 import ThemeContext from "../config/ThemeContext";
+import DropDown from "../components/DropDown";
 
 const { width } = Dimensions.get("window");
 
@@ -32,6 +34,7 @@ const ChatScreen = ({ navigation }) => {
 
   const [searchInput, setSearchInput] = useState("");
   const [searchShow, setSearchShow] = useState(false);
+  const [chatAction, setChatAction] = useState({ vis: false, data: null });
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [chatUsers, setChatUsers] = useState([]);
@@ -40,8 +43,38 @@ const ChatScreen = ({ navigation }) => {
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
 
+  const dropLists = [
+    {
+      id: uuid.v4(),
+      name: "Clear Chat",
+      onPress: () => handleChatAction(),
+      show: true,
+      icon: "edit",
+      iconPack: "F",
+    },
+
+    {
+      id: uuid.v4(),
+      name: "Delete chat",
+      onPress: () => handleChatAction(),
+      show: true,
+      icon: "trash",
+      iconPack: "F",
+    },
+  ];
+
+  const handleChatAction = () => {
+    console.log(chatAction.data);
+  };
+
   const renderChatPeople = ({ item }) => {
-    return <ChatFile item={item} onPress={handleChatPress} />;
+    return (
+      <ChatFile
+        item={item}
+        onPress={handleChatPress}
+        setChatAction={setChatAction}
+      />
+    );
   };
 
   const handleChatPress = (item) => {
@@ -209,6 +242,11 @@ const ChatScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
+      <DropDown
+        visible={chatAction.vis}
+        setter={(vis) => setChatAction({ ...chatAction, vis })}
+        lists={dropLists}
+      />
     </Screen>
   );
 };
