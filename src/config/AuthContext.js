@@ -309,6 +309,7 @@ const addWeeb = (dispatch) => async (data, sc, cb) => {
     cb && cb({ err, msg: "Error adding weeb!", data: err?.response?.data });
   }
 };
+
 const requestWeeb = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");

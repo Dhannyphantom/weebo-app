@@ -240,7 +240,7 @@ const ConnectScreen = ({ navigation }) => {
           value: {
             lat: location.coords.latitude,
             long: location.coords.longitude,
-            active: userInfo?.location?.active,
+            active: userInfo?.location?.active ? true : false,
           },
         },
       };

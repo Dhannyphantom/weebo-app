@@ -129,7 +129,6 @@ const RenderEmailPop = ({ vis, setPopper }) => {
           setIsLoading(false);
         },
         (err) => {
-          console.log(err);
           const myMsg = err.includes("EREFUSED")
             ? "Bad internet connection"
             : err.includes("TIMEOUT")
@@ -361,7 +360,6 @@ const ChangePassword = ({ closeModal }) => {
       { ...formValues, type: "password" },
       () => closeModal(),
       (err) => {
-        console.log(err);
         setErrMsg(err?.data ?? err?.msg);
         setLoading(false);
       }
@@ -461,7 +459,6 @@ const EditProfileScreen = ({ navigation, route }) => {
           setImageLoading(false);
         },
         (err) => {
-          console.log("CLIENT", err);
           setImageLoading(false);
         },
         null
@@ -498,8 +495,6 @@ const EditProfileScreen = ({ navigation, route }) => {
       actionData: !pageData?.location?.active,
       instanceID: pageData._id,
     };
-
-    console.log(sendData);
 
     updateUserData(
       sendData,

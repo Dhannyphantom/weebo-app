@@ -50,7 +50,7 @@ const rewarded = RewardedAd.createForAdRequest(
 const getAdsAlert = (count, visible = false) => ({
   visible: visible,
   title: "Unlock Dark Theme",
-  message: `Watch a few ads and unlock the amazing dark theme \n\n ${count} times left`,
+  message: `Watch a few ads and unlock the amazing dark theme \n\n ${count} ads left`,
   btn: "YES",
   type: "ads_watched",
 });
@@ -224,7 +224,7 @@ const RenderSections = ({ item, section, editSettings }) => {
           setPopper({
             vis: true,
             type: "failed",
-            msg: "Ad is stll loading...",
+            msg: "Loading ads...",
           });
           rewarded.load();
         }
