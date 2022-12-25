@@ -8,6 +8,7 @@ const Avatar = ({
   name,
   feederID,
   avatar,
+  gender,
   size = 40,
   borderRad,
   style,
@@ -22,6 +23,7 @@ const Avatar = ({
       <ProfilePic
         borderRad={borderRad}
         source={avatar}
+        gender={gender}
         userID={feederID}
         size={size}
       />

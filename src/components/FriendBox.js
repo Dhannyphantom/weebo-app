@@ -160,6 +160,7 @@ const FriendBox = ({
             borderRad={100}
             name={item.username}
             feederID={item._id}
+            gender={item.gender}
           />
           <View style={styles.rightCont}>
             <MaterialCommunityIcons

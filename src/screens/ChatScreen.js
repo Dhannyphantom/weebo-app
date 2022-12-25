@@ -37,16 +37,28 @@ const ChatScreen = ({ navigation }) => {
   const [chatAction, setChatAction] = useState({ vis: false, data: null });
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [bools, setBools] = useState({
+    selection: false,
+  });
   const [chatUsers, setChatUsers] = useState([]);
   const [searchUsers, setSearchUsers] = useState([]);
 
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
+  const chatSelected = chatUsers.filter((item) => item.selected).length;
 
   const dropLists = [
     {
       id: uuid.v4(),
-      name: "Clear Chat",
+      name: "Select chat",
+      onPress: () => handleChatAction("select"),
+      show: !bools.selection,
+      icon: "circle",
+      iconPack: "F",
+    },
+    {
+      id: uuid.v4(),
+      name: `Clear ${bools.selection ? "selected" : ""} chat`,
       onPress: () => handleChatAction(),
       show: true,
       icon: "edit",
@@ -55,7 +67,7 @@ const ChatScreen = ({ navigation }) => {
 
     {
       id: uuid.v4(),
-      name: "Delete chat",
+      name: `Delete ${bools.selection ? "selected" : ""} chat`,
       onPress: () => handleChatAction(),
       show: true,
       icon: "trash",
@@ -63,8 +75,27 @@ const ChatScreen = ({ navigation }) => {
     },
   ];
 
-  const handleChatAction = () => {
-    console.log(chatAction.data);
+  const handleChatAction = (type, data) => {
+    switch (type) {
+      case "select":
+        setBools({ selection: true });
+        setChatUsers((prev) =>
+          prev.map((chat) => {
+            if (chat?.user?._id == chatAction?.data?.user?._id) {
+              return {
+                ...chat,
+                selected: true,
+              };
+            } else {
+              return chat;
+            }
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
   };
 
   const renderChatPeople = ({ item }) => {
@@ -78,14 +109,29 @@ const ChatScreen = ({ navigation }) => {
   };
 
   const handleChatPress = (item) => {
-    navigation.navigate("ChatUser", {
-      item: {
-        _id: item.user._id,
-        username: item.user.username,
-        avatar: item.user.avatar,
-      },
-    });
-    joinRoom(userInfo._id, item.user._id);
+    if (bools.selection) {
+      setChatUsers((prev) =>
+        prev.map((chat) => {
+          if (chat?.user?._id == item?.user?._id) {
+            return {
+              ...chat,
+              selected: !chat.selected,
+            };
+          } else {
+            return chat;
+          }
+        })
+      );
+    } else {
+      navigation.navigate("ChatUser", {
+        item: {
+          _id: item.user._id,
+          username: item.user.username,
+          avatar: item.user.avatar,
+        },
+      });
+      joinRoom(userInfo._id, item.user._id);
+    }
   };
 
   const handlePlusPress = () => {
@@ -122,9 +168,9 @@ const ChatScreen = ({ navigation }) => {
         query: "",
       },
       async (resData) => {
-        const my_chats = resData.chats.filter((obj) =>
-          obj.hasOwnProperty("user")
-        );
+        const my_chats = resData.chats
+          .filter((obj) => obj.hasOwnProperty("user"))
+          .map((chat) => ({ ...chat, selected: false }));
         setChatUsers(my_chats);
         setLoadedOnce(true);
         await AsyncStorage.setItem("chatUsers", JSON.stringify(my_chats));
@@ -135,6 +181,16 @@ const ChatScreen = ({ navigation }) => {
         type === "refresh" && setRefreshing(false);
       }
     );
+  };
+
+  const stopSelection = () => {
+    setChatUsers((prev) =>
+      prev.map((chat) => ({
+        ...chat,
+        selected: false,
+      }))
+    );
+    setBools({ ...bools, selection: false });
   };
 
   useEffect(() => {
@@ -174,20 +230,50 @@ const ChatScreen = ({ navigation }) => {
             </AppText>
           </TouchableOpacity>
           <View style={styles.actionIcons}>
-            <TouchableOpacity
-              style={styles.topIcons}
-              activeOpacity={0.88}
-              onPress={handleSearchPress}
-            >
-              <Feather name="search" color={colors.primary} size={18} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.topIcons}
-              activeOpacity={0.88}
-              onPress={handlePlusPress}
-            >
-              <Feather name="plus" size={18} color={colors.primary} />
-            </TouchableOpacity>
+            {bools.selection ? (
+              <>
+                <AppText style={{ color: colors.light }} bold>
+                  {" "}
+                  {chatSelected}{" "}
+                </AppText>
+                <AppText style={{ color: colors.light }}>Selected</AppText>
+                <TouchableOpacity
+                  style={styles.topIcons}
+                  activeOpacity={0.88}
+                  onPress={stopSelection}
+                >
+                  <Feather name="x" color={colors.white} size={18} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.topIcons}
+                  activeOpacity={0.88}
+                  onPress={() => setChatAction({ ...chatAction, vis: true })}
+                >
+                  <Feather
+                    name="more-vertical"
+                    color={colors.white}
+                    size={18}
+                  />
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.topIcons}
+                  activeOpacity={0.88}
+                  onPress={handleSearchPress}
+                >
+                  <Feather name="search" color={colors.primary} size={18} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.topIcons}
+                  activeOpacity={0.88}
+                  onPress={handlePlusPress}
+                >
+                  <Feather name="plus" size={18} color={colors.primary} />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
         {searchShow && (

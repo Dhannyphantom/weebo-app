@@ -17,7 +17,13 @@ const ChatFile = ({ item, setChatAction, onPress }) => {
       activeOpacity={0.85}
       onLongPress={() => setChatAction({ vis: true, data: item })}
       onPress={() => onPress(item)}
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.background,
+          borderWidth: item.selected ? 1.5 : 0,
+        },
+      ]}
     >
       <View style={styles.box1}>
         <ProfilePic
@@ -53,6 +59,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginHorizontal: 5,
     width: width * 0.96,
+    borderColor: colors.primary,
     alignSelf: "center",
     padding: 10,
     borderRadius: 8,

@@ -58,8 +58,6 @@ const ChatRender = ({
     lowerSender = true;
   }
 
-  console.log(sender);
-
   const timer = getTimeFormat(time);
   const showDay = getTimeFormat(time, upperChat?.time);
   const showTimerLeft =

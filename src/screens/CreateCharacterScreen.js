@@ -161,7 +161,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
 
   const nav = (info) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
-    updateMe({ prop: "points", data: info?.user?.points });
+    updateMe({ prop: "points", data: info?.points });
     characterCreated(info.user);
     navigation.navigate("Character", {
       item: info?.character?._id,
@@ -169,7 +169,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     });
   };
   const navShow = (info) => {
-    updateMe({ prop: "points", data: info?.user?.points });
+    updateMe({ prop: "points", data: info?.points });
     navigation.navigate("Show", { show: info.show, toScreen: "Home" });
   };
 
@@ -394,10 +394,11 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     createGroup(
                       formValues,
                       (resData) => {
-                        // updateMe({
-                        //   prop: "points",
-                        //   data: resData?.user?.points,
-                        // });
+                        console.log(resData);
+                        updateMe({
+                          prop: "points",
+                          data: resData.points,
+                        });
                         navigation.goBack();
                       },
                       (obj) => actionCallback(obj)
