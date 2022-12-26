@@ -161,7 +161,7 @@ const RenderEmptyWeebs = ({ errMsg }) => {
 
 const ConnectScreen = ({ navigation }) => {
   const [location] = useLocation();
-  const [weebos, setWeebos] = useState([]);
+  const [weebos, setWeebos] = useState({ results: [] });
   const [modal, setModal] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
@@ -185,7 +185,7 @@ const ConnectScreen = ({ navigation }) => {
 
   const parentColor = theme.mode === "light" ? "#ff9100" : theme.background;
 
-  const handleSearch = () => {
+  const handleSearch = (pageNum = 1, limit = 10, cb) => {
     // check if user has updated his profile;
     if (!userInfo?.country && !userInfo?.city) {
       setPopper({
@@ -200,19 +200,36 @@ const ConnectScreen = ({ navigation }) => {
     lottieRef?.current?.resume();
 
     fetchNearbyWeebs(
+      { page: pageNum, limit },
       (res_data) => {
         setWeebos(res_data);
         setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
+        cb && cb();
       },
       (err_data) => {
         setModal(true);
         setIsLoading(false);
         setErrMsg(err_data.data ?? err_data.msg);
         lottieRef?.current?.pause();
+        cb && cb();
       }
     );
+  };
+
+  const handleNextSearches = () => {
+    // TRY TO ANIMATE OUT THE FLATLIST;
+    Animated.timing(opaciter, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start();
+    handleSearch(weebos.next.page, weebos.next.limit, () => {
+      Animated.timing(opaciter, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    });
   };
 
   const handleCloseModal = () => {
@@ -281,7 +298,7 @@ const ConnectScreen = ({ navigation }) => {
           />
         </View>
         <TouchableOpacity
-          onPress={handleSearch}
+          onPress={() => handleSearch(1, 10)}
           activeOpacity={0.9}
           disabled={isLoading}
           style={[styles.search, { backgroundColor: parentColor }]}
@@ -312,7 +329,7 @@ const ConnectScreen = ({ navigation }) => {
         <Animated.View style={{ ...styles.modal, opacity: opaciter }}>
           <View style={styles.content}>
             <FlatList
-              data={weebos}
+              data={weebos.results}
               numColumns={NUM_COLUMNS}
               keyExtractor={(item) => item._id}
               ListEmptyComponent={() => <RenderEmptyWeebs errMsg={errMsg} />}
@@ -325,14 +342,33 @@ const ConnectScreen = ({ navigation }) => {
                 <Weebs item={item} index={index} />
               )}
             />
-            <View style={{ alignItems: "center" }}>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
               <TouchableOpacity
                 style={styles.cancel}
                 activeOpacity={1}
                 onPress={handleCloseModal}
               >
-                <Feather name="x" size={50} color={colors.primary} />
+                <Feather name="x" size={50} color={colors.heartLight} />
               </TouchableOpacity>
+              {weebos.next && (
+                <TouchableOpacity
+                  style={styles.next}
+                  activeOpacity={1}
+                  onPress={handleNextSearches}
+                >
+                  <Feather
+                    name="chevron-right"
+                    size={50}
+                    color={colors.greenLight}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </Animated.View>
@@ -381,6 +417,11 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.65)",
+  },
+  next: {
+    paddingTop: 15,
+    paddingRight: 15,
+    marginLeft: 35,
   },
   page: {
     position: "absolute",

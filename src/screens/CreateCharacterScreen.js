@@ -309,7 +309,6 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                   initialValues={showFormInitials}
                   onSubmit={(formValues) => {
                     setIsLoading(true);
-                    // console.log(formValues);
                     createShow(formValues, navShow, (obj) =>
                       actionCallback(obj)
                     );
@@ -331,11 +330,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     placeholder={changeD ? name : null}
                     name="name_e"
                   />
-                  <CreateFormArray
-                    headerC="other names"
-                    name="other_names"
-                    type1
-                  />
+                  <CreateFormArray headerC="aliases" name="other_names" type1 />
                   <CreateFormArray
                     headerC="movies, spinoffs or manga related"
                     name="spinoffs"
@@ -394,7 +389,6 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     createGroup(
                       formValues,
                       (resData) => {
-                        console.log(resData);
                         updateMe({
                           prop: "points",
                           data: resData.points,

@@ -234,14 +234,18 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const fetchNearbyWeebs = (dispatch) => async (sc, cb) => {
+const fetchNearbyWeebs = (dispatch) => async (data, sc, cb) => {
+  const { page, limit } = data;
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get("/nearby_weebs", {
-      headers: {
-        "x-auth-token": token,
-      },
-    });
+    const res = await fetchApi.get(
+      `/nearby_weebs?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
     sc && sc(res.data);
   } catch (err) {
     cb &&

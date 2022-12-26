@@ -43,10 +43,10 @@ export const launchGallery = async (
     allowsEditing: editing,
     allowsMultipleSelection: multiple,
     aspect,
+    quality: 1,
   });
 
   if (result.canceled) {
-    console.log(type);
     return {
       _error: "Operation cancelled",
       results: null,
@@ -121,7 +121,6 @@ export const downloadMedia = async (media) => {
       }
       return { error: null, result: "success" };
     } catch (err) {
-      console.log(err.message);
       return { error: "Saving media failed", result: null };
     }
   } else {

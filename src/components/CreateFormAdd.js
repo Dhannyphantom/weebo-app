@@ -193,11 +193,7 @@ const CreateFormAdd = ({
     return (
       <TouchableOpacity
         activeOpacity={0.5}
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 6,
-        }}
+        style={styles.tag}
         onPress={() => handleSelectedTag(item.name)}
       >
         {!item.selected ? (
@@ -516,7 +512,9 @@ const CreateFormAdd = ({
                       onPress={() => pickShow(item)}
                     >
                       <Separator m={5} />
-                      <View style={styles.tagTextCont}>
+                      <View
+                        style={[styles.tagTextCont, { paddingVertical: 20 }]}
+                      >
                         <View style={styles.selectIcon}>
                           <FontAwesome5
                             name="dot-circle"
@@ -659,6 +657,13 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontFamily: "sen",
   },
+  tag: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    marginRight: 6,
+    paddingVertical: 20,
+  },
   tags: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -666,10 +671,6 @@ const styles = StyleSheet.create({
   },
   tagTextCont: {
     flexDirection: "row",
-    height: 40,
-    paddingLeft: 10,
-    paddingRight: 20,
-    borderRadius: 10,
     alignItems: "center",
     margin: 5,
   },

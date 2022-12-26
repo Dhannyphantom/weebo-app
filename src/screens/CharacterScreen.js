@@ -214,7 +214,6 @@ const CharacterScreen = ({ route, navigation }) => {
       (err) => {
         isLoader && setIsLoading({ loader: true, err: true });
         isCover && setIsCoverLoading(false);
-        console.log(err, err?.response?.data);
         setErrMsg(
           err.err?.response?.data === "deleted_instance"
             ? "Character has been deleted"
@@ -301,9 +300,6 @@ const CharacterScreen = ({ route, navigation }) => {
           challengers: true,
         });
         break;
-      default:
-        console.log(type);
-        break;
     }
   };
 
@@ -371,15 +367,9 @@ const CharacterScreen = ({ route, navigation }) => {
       instanceID: character._id,
       instance: "character",
     };
-    withdrawChallenge(
-      data,
-      (res) => {
-        handleFetchCharacter("cover");
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    withdrawChallenge(data, (res) => {
+      handleFetchCharacter("cover");
+    });
   };
 
   const handleUploadStaus = async () => {
@@ -461,7 +451,6 @@ const CharacterScreen = ({ route, navigation }) => {
           setOpenMedia(false);
         },
         (err) => {
-          console.log(err?.err?.response?.data);
           setErrMsg(err);
           setIsCoverLoading(false);
         }

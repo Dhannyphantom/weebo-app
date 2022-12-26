@@ -23,9 +23,7 @@ import Awarder from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
-import NativeAds, { FB_ADS_ID } from "../components/NativeAds";
-
-export const adsManager = new FacebookAds.NativeAdsManager(FB_ADS_ID, 3);
+import NativeAds, { fb_adsManager } from "../components/NativeAds";
 
 const { width, height } = Dimensions.get("window");
 
@@ -207,7 +205,7 @@ const ChallengeScreen = ({ navigation }) => {
         )}
       />
       <NativeAds
-        adsManager={adsManager}
+        adsManager={fb_adsManager}
         onAdLoaded={(ad) => console.log(ad)}
         onError={(error) => console.log(error)}
       />

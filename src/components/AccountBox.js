@@ -69,8 +69,7 @@ const AccountBox = ({
       case "request":
         requestWeeb(
           { id: userID, type: "add" },
-          (data) => {
-            console.log(data);
+          (_data) => {
             setStatus("requested");
           },
           (err) => setErrMsg(err)

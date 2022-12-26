@@ -132,8 +132,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               <PostVideo
                 source={item}
                 style={styles.vidComp}
-                // disableTouch
-                // pos={item.pos}
+                autoPlay
                 onFinishedPlaying={handleViewPost}
                 loop
               />

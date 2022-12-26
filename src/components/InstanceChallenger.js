@@ -44,6 +44,7 @@ const Challenger = ({
   data,
   setLoading,
   fetchInstance,
+  parentError,
   asset,
   setAsset,
   setter,
@@ -64,6 +65,7 @@ const Challenger = ({
 
   const handleChallenge = () => {
     setLoading(true);
+    parentError.setErrMsg(null);
     let info_data = null;
     const isMedia = asset.type !== "info";
     if (!isMedia) {
@@ -95,8 +97,7 @@ const Challenger = ({
         setter();
       },
       (errData) => {
-        console.log(errData);
-        setErrMsg(errData?.data ?? errData.msg);
+        parentError.setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }
     );
@@ -147,7 +148,6 @@ const Challenger = ({
         setter();
       },
       (errData) => {
-        console.log(errData);
         setErrMsg(errData?.data ?? errData.msg);
         setLoading(false);
       }
@@ -221,6 +221,9 @@ const Challenger = ({
         A chance to become an Instance Manager
       </AppText>
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+      {parentError?.errMsg && (
+        <AppText style={styles.error}> {parentError?.errMsg} </AppText>
+      )}
       {!isManager ? (
         <View style={styles.links}>
           <View style={styles.row}>
@@ -797,6 +800,7 @@ export default function InstanceChallenger({
   const [actions, setActions] = useState({ modal: "open" });
   const [loading, setLoading] = useState(false);
   const [asset, setAsset] = useState(null);
+  const [errMsg, setErrMsg] = useState(null);
 
   const closeModal = () => {
     return actions.modal;
@@ -816,6 +820,7 @@ export default function InstanceChallenger({
           setAsset={setAsset}
           setLoading={setLoading}
           asset={asset}
+          parentError={{ errMsg, setErrMsg }}
           fetchInstance={fetchInstance}
           data={data}
         />
@@ -859,6 +864,7 @@ const styles = StyleSheet.create({
   error: {
     textAlign: "center",
     color: colors.heart,
+    marginVertical: 8,
   },
   image: {
     height: "100%",

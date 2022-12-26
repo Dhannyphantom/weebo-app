@@ -44,8 +44,8 @@ import ThemeContext from "../config/ThemeContext";
 const appConfig = require("../../app.json");
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
-// import NativeAds from "../components/NativeAds";
 // import * as FacebookAds from "expo-ads-facebook";
+// import NativeAds from "../components/NativeAds";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -431,6 +431,7 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
+
 async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({
     content: {

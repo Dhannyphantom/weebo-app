@@ -38,7 +38,7 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   switch (type) {
     case "like":
       lottieAnimation = heartPop;
-      lottieTime = { show: { x: 45, y: 90 }, hide: { x: 0, y: 40 } };
+      lottieTime = { show: { x: 0, y: 40 }, hide: { x: 45, y: 90 } };
       sizer = 2.2;
       break;
 
@@ -282,7 +282,7 @@ export default function PostVideo({
       )}
       <RenderLottie vis={bools.showHearts} type="like" loaded={bools.loaded} />
       <RenderLottie vis={status.isPlaying} type="play" loaded={bools.loaded} />
-      {status.isBuffering && (
+      {status.isBuffering && !status.isPlaying && (
         <ActivityIndicator
           bTransparent
           style={styles.bufferLoad}
