@@ -19,6 +19,8 @@ import FriendListScreen from "../screens/FriendListScreen";
 import ChannelPostScreen from "../screens/ChannelPostScreen";
 import EventScreen from "../screens/EventScreen";
 import ContestCharacterScreen from "../screens/ContestCharacterScreen";
+import SavedCollectionScreen from "../screens/SavedCollectionScreen";
+import CollectionScreen from "../screens/CollectionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +33,8 @@ const HomeStack = () => {
       <Stack.Screen name="Chat" component={ChatScreen} />
       <Stack.Screen name="Friends" component={FriendListScreen} />
       <Stack.Screen name="Channel" component={ChannelScreen} />
+      <Stack.Screen name="Saved" component={SavedCollectionScreen} />
+      <Stack.Screen name="Collection" component={CollectionScreen} />
       <Stack.Screen name="ChannelPost" component={ChannelPostScreen} />
       <Stack.Screen
         name="CharacterList"

@@ -40,11 +40,9 @@ import Separator from "../components/Separator";
 import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
-
-const appConfig = require("../../app.json");
+import appConfig from "../../app.config";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
-// import * as FacebookAds from "expo-ads-facebook";
 // import NativeAds from "../components/NativeAds";
 
 Notifications.setNotificationHandler({

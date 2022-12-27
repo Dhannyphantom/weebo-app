@@ -38,7 +38,7 @@ const AccountBox = ({
   const [status, setStatus] = useState("no_request");
   const [errMsg, setErrMsg] = useState(null);
 
-  const { requestWeeb, addWeeb } = useContext(AuthContext);
+  const { requestWeeb, joinRoom, addWeeb } = useContext(AuthContext);
 
   const theme = useContext(ThemeContext);
 
@@ -104,6 +104,19 @@ const AccountBox = ({
   const onLink = (screen, params) => {
     onCloseModal();
     navigation.navigate(screen, params);
+  };
+
+  const messageWeeb = () => {
+    joinRoom(userID, info._id);
+    navigation.navigate("ChatUser", {
+      item: {
+        _id: info._id,
+        username: info.username,
+        avatar: info.avatar,
+        gender: info.gender,
+      },
+    });
+    setPicModal(false);
   };
 
   useEffect(() => {
@@ -204,17 +217,27 @@ const AccountBox = ({
               </View>
               <Separator h={1} />
               {status === "weebs" && !isMine ? (
-                <AppButton
-                  icon="close"
-                  title="UNWEEB"
-                  onPress={() => handleAddWeeb("remove")}
-                  bare
-                  style={styles.followBtn}
-                />
+                <View style={styles.btns}>
+                  <AppButton
+                    icon="close"
+                    title="Unweeb"
+                    onPress={() => handleAddWeeb("remove")}
+                    bare
+                    style={styles.followBtn}
+                  />
+                  <AppButton
+                    icon="close"
+                    title="Chat"
+                    LIcon="chat-outline"
+                    onPress={messageWeeb}
+                    bare
+                    style={{ ...styles.followBtn, marginLeft: 20 }}
+                  />
+                </View>
               ) : status === "no_request" && !isMine ? (
                 <AppButton
                   icon="plus"
-                  title="SEND REQUEST"
+                  title="Request"
                   onPress={() => handleAddWeeb("request")}
                   bare
                   style={styles.followBtn}
@@ -222,7 +245,7 @@ const AccountBox = ({
               ) : status === "requested" ? (
                 <AppButton
                   icon="plus"
-                  title="UN-REQUEST"
+                  title="Unrequest"
                   onPress={() => handleAddWeeb("unrequest")}
                   bare
                   style={styles.followBtn}
@@ -230,12 +253,22 @@ const AccountBox = ({
               ) : null}
               <View style={styles.linkCont}>
                 <Link
-                  name={`${pNoun} Collection`}
+                  name={`${pNoun} Posts`}
                   iconName="image-multiple"
                   onPress={() =>
                     onLink("MyPost", {
                       screen: isMine ? "account" : "accountBox",
                       info: { username: info.username, id: info._id, isMine },
+                    })
+                  }
+                />
+                <Link
+                  name={`${pNoun} Collection`}
+                  iconName="image-multiple"
+                  onPress={() =>
+                    onLink("Saved", {
+                      userID: info._id,
+                      username: info.username,
                     })
                   }
                 />
@@ -256,6 +289,11 @@ const AccountBox = ({
   );
 };
 const styles = StyleSheet.create({
+  btns: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   container: {
     flex: 1,
     justifyContent: "center",

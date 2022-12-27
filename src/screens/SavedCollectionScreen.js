@@ -25,6 +25,7 @@ import ActivityIndicator from "../components/ActivityIndicator";
 import AppFadeIn from "../components/AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -99,13 +100,15 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   );
 };
 
-export const CollectionCard = ({ index, onPress, item }) => {
+export const CollectionCard = ({ index, onPress, screenParam, item }) => {
   const navigation = useNavigation();
   let colNum;
   index % 2 == 0 ? (colNum = 1) : (colNum = 2);
 
   const onCardPress = () => {
-    onPress ? onPress(item) : navigation.navigate("Collection", { item });
+    onPress
+      ? onPress(item)
+      : navigation.navigate("Collection", { item, screenParam });
   };
 
   return (
@@ -126,6 +129,8 @@ export const RenderCollections = ({
   collections,
   onPress,
   noPadding = false,
+  isLoading,
+  screenParam,
 }) => {
   return (
     <FlatList
@@ -138,27 +143,35 @@ export const RenderCollections = ({
           type="isEmpty"
           style={styles.activityEmpty}
           text="No collections..."
-          visible={true}
+          visible={!isLoading}
         />
       }
       numColumns={3}
       keyExtractor={(item) => item._id}
       renderItem={({ item, index }) => (
-        <CollectionCard onPress={onPress} item={item} index={index} />
+        <CollectionCard
+          onPress={onPress}
+          screenParam={screenParam}
+          item={item}
+          index={index}
+        />
       )}
     />
   );
 };
 
-const SavedCollectionScreen = () => {
+const SavedCollectionScreen = ({ route }) => {
   const {
     state: { userInfo },
+    getUserData,
   } = useContext(AuthContext);
   const { updateMe } = useContext(AuthContext);
 
-  const [myCollections, setMyCollections] = useState(userInfo.my_collections);
+  const [myCollections, setMyCollections] = useState([]);
   const [modalVis, setModalVis] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const screenParam = route.params;
 
   const createdNewCollection = (collections) => {
     setMyCollections(collections);
@@ -167,13 +180,31 @@ const SavedCollectionScreen = () => {
   };
 
   useEffect(() => {
-    setMyCollections(userInfo.my_collections);
+    if (screenParam.userID) {
+      setIsLoading(true);
+      getUserData(
+        {
+          type: "get_collections",
+          id: screenParam.userID,
+        },
+        (resData) => {
+          setMyCollections(resData.my_collections);
+          setIsLoading(false);
+        }
+      );
+    } else {
+      setMyCollections(userInfo.my_collections);
+    }
   }, [userInfo]);
 
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title="Saved Collection"
+        title={`${
+          screenParam.username
+            ? capFirstLetter(screenParam.username) + "'s"
+            : ""
+        } Saved Collections`}
         RightComponent={() => (
           <TouchableOpacity
             style={styles.newCollBtn}
@@ -191,7 +222,11 @@ const SavedCollectionScreen = () => {
         </AppText>
         &nbsp; collections
       </AppText>
-      <RenderCollections collections={myCollections} />
+      <RenderCollections
+        collections={myCollections}
+        screenParam={screenParam}
+        isLoading={isLoading}
+      />
       <AppFadeIn
         visible={modalVis}
         setVisible={setModalVis}

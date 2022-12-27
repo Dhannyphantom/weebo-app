@@ -185,14 +185,26 @@ const CollectionScreen = ({ route, navigation }) => {
     state: { userInfo },
   } = useContext(AuthContext);
 
-  const pageData = route?.params?.item;
+  const pageData = route.params?.item;
+  const screenParam = route.params?.screenParam;
+
+  const isMine =
+    !screenParam || (screenParam && screenParam.userID == userInfo._id);
 
   const dropLists = [
     {
       id: uuid.v4(),
+      name: "Request Collection",
+      onPress: () => console.log("requesting collection"),
+      show: !isMine,
+      icon: "plus",
+      iconPack: "F",
+    },
+    {
+      id: uuid.v4(),
       name: "Rename Collection",
       onPress: () => setRenameModal(true),
-      show: true,
+      show: isMine,
       icon: "edit",
       iconPack: "F",
     },
@@ -201,7 +213,7 @@ const CollectionScreen = ({ route, navigation }) => {
       id: uuid.v4(),
       name: "Share Collection",
       onPress: () => setShareModal(true),
-      show: true,
+      show: isMine,
       icon: "share",
       iconPack: "F",
     },
@@ -216,7 +228,7 @@ const CollectionScreen = ({ route, navigation }) => {
           type: "delete_collection",
           btn: "Delete",
         }),
-      show: true,
+      show: isMine,
       icon: "trash",
       iconPack: "F",
     },
