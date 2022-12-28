@@ -296,6 +296,23 @@ const getUserData = (dispatch) => async (data, sc, cb) => {
       cb({ err, msg: "Error fetching user info", data: err?.response?.data });
   }
 };
+const collectionRequestHandler = (dispatch) => async (data, sc, cb) => {
+  let ENDPOINT = "/request_collection";
+  delete data.endpoint;
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.post(ENDPOINT, data, {
+      headers: {
+        "x-auth-token": token,
+      },
+      timeout: 15000,
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error updating collection", data: err?.response?.data });
+  }
+};
 
 const addWeeb = (dispatch) => async (data, sc, cb) => {
   // data = {id, type}
@@ -639,6 +656,7 @@ export const { Context, Provider } = createDataContext(
     getMyData,
     readNotification,
     notificationSender,
+    collectionRequestHandler,
     wipeNotifications,
     updateAvatar,
     updateUserData,

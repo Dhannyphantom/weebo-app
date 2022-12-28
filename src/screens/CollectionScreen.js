@@ -175,12 +175,16 @@ const CollectionScreen = ({ route, navigation }) => {
   const [prompt, setPrompt] = useState({ visible: false });
   const [renameModal, setRenameModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
-  const [collection, setCollection] = useState({ media: [] });
+  const [collection, setCollection] = useState({
+    media: [],
+    isRequested: false,
+  });
   const [popper, setPopper] = useState({ vis: false });
 
   const theme = useContext(ThemeContext);
   const {
     updateCollection,
+    collectionRequestHandler,
     getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -191,11 +195,18 @@ const CollectionScreen = ({ route, navigation }) => {
   const isMine =
     !screenParam || (screenParam && screenParam.userID == userInfo._id);
 
+  const handleCollectionRequests = () => {
+    collectionRequestHandler({
+      weeb: screenParam.userID,
+      collectionId: pageData._id,
+    });
+  };
+
   const dropLists = [
     {
       id: uuid.v4(),
       name: "Request Collection",
-      onPress: () => console.log("requesting collection"),
+      onPress: () => handleCollectionRequests(),
       show: !isMine,
       icon: "plus",
       iconPack: "F",
@@ -259,13 +270,16 @@ const CollectionScreen = ({ route, navigation }) => {
   const fetchCollectionPosts = (cb) => {
     getUserData(
       {
-        id: userInfo._id, // could be any user so change this,
+        id: isMine ? userInfo._id : screenParam.userID, // could be any user so change this,
         type: "get_collection_posts",
         query: pageData.name,
       },
       (resData) => {
-        // console.log(resData);
-        setCollection({ name: pageData?.name, media: resData.collections });
+        setCollection({
+          name: pageData?.name,
+          media: resData.collections,
+          isRequested: resData.isRequested,
+        });
         cb && cb();
       },
       (errData) => {
