@@ -156,11 +156,11 @@ const InstanceHeader = ({ instanceData }) => {
           instanceName.slice(0, instanceName?.search(" "))
         )} the first name of a character in ${capFirstLetter(
           instanceShow
-        )} show?`
+        )} show as portrayed in this cover photo?`
       : instance == "show"
       ? `Is ${capFirstLetter(
           instanceName
-        )} the official title of an anime or manga in the Animedom?`
+        )} the official title of an anime or manga in the Animedom as portrayed in this cover photo?`
       : instance === "group"
       ? `Is ${capFirstLetter(
           instanceName
@@ -322,7 +322,7 @@ const InstanceHeader = ({ instanceData }) => {
         onPress={handleUnverifyPress}
       >
         {/* <View style={styles.unverifiedTag} /> */}
-        <AppText>Stats</AppText>
+        <Ionicons name="analytics-outline" color={colors.heartDark} size={20} />
       </TouchableOpacity>
     );
   };
@@ -548,11 +548,12 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   unverifiedTagContainer: {
-    padding: 12,
+    padding: 5,
+    paddingHorizontal: 7,
     marginLeft: 5,
     borderWidth: 2,
     borderColor: colors.heart,
-    opacity: 0.4,
+    opacity: 0.7,
     borderRadius: 60,
   },
   unverifiedTag: {

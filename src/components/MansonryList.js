@@ -136,7 +136,12 @@ const RenderEmptyList = () => {
   );
 };
 
-export default function MansonryList({ media, handleRefresh, data }) {
+export default function MansonryList({
+  media,
+  handleRefresh,
+  ListHeader,
+  data,
+}) {
   // data = {isMine}
   const [refreshing, setRefreshing] = useState(false);
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
@@ -266,6 +271,7 @@ export default function MansonryList({ media, handleRefresh, data }) {
         )}
         refreshing={refreshing}
         ListEmptyComponent={() => <RenderEmptyList />}
+        ListHeaderComponent={<ListHeader />}
         onRefresh={onRefresh}
         onEndReachedThreshold={0.1}
         onEndReached={onEndReached}

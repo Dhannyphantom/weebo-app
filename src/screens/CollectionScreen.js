@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { View, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import uuid from "react-native-uuid";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -19,6 +19,7 @@ import AppButton from "../components/AppButton";
 import FriendBox from "../components/FriendBox";
 import ActivityIndicator from "../components/ActivityIndicator";
 import PopMessage from "../components/PopMessage";
+import colors from "../constants/colors";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -196,19 +197,27 @@ const CollectionScreen = ({ route, navigation }) => {
     !screenParam || (screenParam && screenParam.userID == userInfo._id);
 
   const handleCollectionRequests = () => {
-    collectionRequestHandler({
-      weeb: screenParam.userID,
-      collectionId: pageData._id,
-    });
+    collectionRequestHandler(
+      {
+        weeb: screenParam.userID,
+        collectionId: pageData._id,
+        type: collection.isRequested ? "remove" : "add",
+      },
+      () => {
+        setCollection({ ...collection, isRequested: !collection.isRequested });
+      }
+    );
   };
 
   const dropLists = [
     {
       id: uuid.v4(),
-      name: "Request Collection",
+      name: `${
+        collection.isRequested ? "Remove request" : "Request collection"
+      }`,
       onPress: () => handleCollectionRequests(),
       show: !isMine,
-      icon: "plus",
+      icon: collection.isRequested ? "minus" : "plus",
       iconPack: "F",
     },
     {
@@ -278,6 +287,7 @@ const CollectionScreen = ({ route, navigation }) => {
         setCollection({
           name: pageData?.name,
           media: resData.collections,
+          requests: resData.requests,
           isRequested: resData.isRequested,
         });
         cb && cb();
@@ -286,6 +296,28 @@ const CollectionScreen = ({ route, navigation }) => {
         console.log(errData);
         cb && cb();
       }
+    );
+  };
+
+  const RenderListHeader = () => {
+    return (
+      <>
+        {collection.requests && (
+          <View
+            style={[
+              styles.row,
+              { backgroundColor: theme.backgroundExtralight },
+            ]}
+          >
+            <AntDesign name="star" color={colors.light} size={15} />
+            <AppText style={{ color: colors.black }} bold>
+              {" "}
+              {collection.requests}{" "}
+            </AppText>
+            <AppText>requests</AppText>
+          </View>
+        )}
+      </>
     );
   };
 
@@ -310,6 +342,7 @@ const CollectionScreen = ({ route, navigation }) => {
       <MansonryList
         media={collection?.media}
         handleRefresh={fetchCollectionPosts}
+        ListHeader={RenderListHeader}
         data={{ isMine: true, type: "collection", collectionId: pageData._id }}
       />
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
@@ -365,6 +398,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 20,
     marginBottom: 30,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 15,
+    paddingBottom: 10,
   },
   title: {
     textAlign: "center",

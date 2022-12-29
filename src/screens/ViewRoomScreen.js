@@ -416,7 +416,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       setShowSearch(!showSearch);
     } else {
       setPopModal({ ...popModal, vis: true, characters: true });
-      set;
+      // set;
     }
   };
 

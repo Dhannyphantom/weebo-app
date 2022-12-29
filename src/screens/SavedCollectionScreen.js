@@ -7,7 +7,7 @@ import {
   Modal,
   View,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -120,6 +120,13 @@ export const CollectionCard = ({ index, onPress, screenParam, item }) => {
         <AppText style={styles.collText} bold>
           {item.name}
         </AppText>
+        <View style={styles.row}>
+          <AntDesign name="star" color={colors.light} size={15} />
+          <AppText style={{ color: colors.light }} bold>
+            {" "}
+            {item.requests}{" "}
+          </AppText>
+        </View>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -206,17 +213,21 @@ const SavedCollectionScreen = ({ route }) => {
             : ""
         } Saved Collections`}
         RightComponent={() => (
-          <TouchableOpacity
-            style={styles.newCollBtn}
-            onPress={() => setModalVis(true)}
-          >
-            <Feather name="plus" color={colors.primary} size={20} />
-          </TouchableOpacity>
+          <>
+            {!screenParam.username && (
+              <TouchableOpacity
+                style={styles.newCollBtn}
+                onPress={() => setModalVis(true)}
+              >
+                <Feather name="plus" color={colors.primary} size={20} />
+              </TouchableOpacity>
+            )}
+          </>
         )}
       />
 
       <AppText style={styles.textInfo}>
-        You have &nbsp;
+        Has &nbsp;
         <AppText bold size="large">
           {myCollections.length}
         </AppText>
@@ -308,6 +319,11 @@ const styles = StyleSheet.create({
   newCollBtn: {
     padding: 10,
     paddingRight: 0,
+  },
+  row: {
+    flexDirection: "row",
+    marginTop: 6,
+    alignItems: "center",
   },
 });
 export default SavedCollectionScreen;

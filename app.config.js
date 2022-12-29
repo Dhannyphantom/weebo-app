@@ -1,13 +1,8 @@
 export default {
   expo: {
-    extra: {
-      eas: {
-        projectId: "a6378b43-7106-4c59-a10a-94224fff1c10",
-      },
-    },
-    name: "weebo",
-    slug: "weebo",
-    version: "1.0.0",
+    name: "Weebo",
+    slug: "Weebo",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/icon.png",
     splash: {
@@ -67,6 +62,11 @@ export default {
       ],
       "@react-native-google-signin/google-signin",
     ],
+    extra: {
+      eas: {
+        projectId: "a6378b43-7106-4c59-a10a-94224fff1c10",
+      },
+    },
   },
 
   //
