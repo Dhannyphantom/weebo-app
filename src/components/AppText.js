@@ -23,7 +23,7 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
       scaledSize = 16;
       break;
     case "xlarge":
-      scaledSize = 18;
+      scaledSize = 19;
       break;
     case "xxlarge":
       scaledSize = 22;

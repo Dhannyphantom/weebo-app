@@ -15,7 +15,7 @@ import colors from "../constants/colors";
 const { width } = Dimensions.get("screen");
 const TAB_WIDTH = width * 0.85;
 
-export default function TabList({ items = [], state, onPress }) {
+export default function TabList({ items = [], state, setState, onPress }) {
   // items = [{ tab: "s", name: "Channels" }]
   // state = { s: true, m: false }
   const theme = useContext(ThemeContext);
@@ -27,13 +27,22 @@ export default function TabList({ items = [], state, onPress }) {
       easing: Easing.elastic(1.3),
       useNativeDriver: true,
     }).start();
-    tab && onPress(tab);
+    if (setState && tab) {
+      const finder = Object.entries(state).find(
+        ([_key, val]) => val === true
+      )[0];
+      setState({ ...state, [finder]: false, [tab]: true });
+      return;
+    }
+    // CODE BELOW DEPRECATED
+    // PASS SETSTATE ONLY INSTEAD
+    tab && onPress && onPress(tab);
   };
 
   useEffect(() => {
     const tabIndex = items.findIndex(
       (obj) =>
-        Object.entries(state).filter(([key, val]) => val === true)[0][0] ==
+        Object.entries(state).filter(([_key, val]) => val === true)[0][0] ==
         obj.tab
     );
     handleTabAnimation(null, tabIndex);

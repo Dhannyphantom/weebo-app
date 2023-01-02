@@ -20,6 +20,7 @@ import FriendBox from "../components/FriendBox";
 import ActivityIndicator from "../components/ActivityIndicator";
 import PopMessage from "../components/PopMessage";
 import colors from "../constants/colors";
+import TabList from "../components/TabList";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -179,8 +180,13 @@ const CollectionScreen = ({ route, navigation }) => {
   const [collection, setCollection] = useState({
     media: [],
     isRequested: false,
+    requests: null,
+    weeb_requests: [],
   });
   const [popper, setPopper] = useState({ vis: false });
+  const [tab, setTab] = useState({ posts: true, requests: false });
+  // items = [{ tab: "s", name: "Channels" }]
+  // state = { s: true, m: false }
 
   const theme = useContext(ThemeContext);
   const {
@@ -196,17 +202,41 @@ const CollectionScreen = ({ route, navigation }) => {
   const isMine =
     !screenParam || (screenParam && screenParam.userID == userInfo._id);
 
-  const handleCollectionRequests = () => {
-    collectionRequestHandler(
-      {
-        weeb: screenParam.userID,
-        collectionId: pageData._id,
-        type: collection.isRequested ? "remove" : "add",
-      },
-      () => {
-        setCollection({ ...collection, isRequested: !collection.isRequested });
-      }
-    );
+  const handleCollectionRequests = (type = "request", data) => {
+    switch (type) {
+      case "request":
+        collectionRequestHandler(
+          {
+            weeb: screenParam?.userID,
+            collectionId: pageData._id,
+            type: collection.isRequested ? "remove" : "add",
+          },
+          () => {
+            setCollection({
+              ...collection,
+              isRequested: !collection.isRequested,
+            });
+          }
+        );
+        break;
+      case "react":
+        collectionRequestHandler(
+          {
+            weeb: data.userId,
+            collectionId: pageData._id,
+            type: data.type,
+          },
+          () => {
+            // setCollection({ ...collection,  });
+            fetchCollectionPosts();
+          }
+        );
+
+        break;
+
+      default:
+        break;
+    }
   };
 
   const dropLists = [
@@ -254,6 +284,19 @@ const CollectionScreen = ({ route, navigation }) => {
     },
   ];
 
+  const tabItems = [
+    {
+      tab: "posts",
+      name: "Posts",
+    },
+    {
+      tab: "requests",
+      name: `Requests ${
+        collection.requests > 0 ? `(${collection?.requests})` : ""
+      }`,
+    },
+  ];
+
   const handlePrompt = () => {
     switch (prompt?.type) {
       case "delete_collection":
@@ -276,6 +319,10 @@ const CollectionScreen = ({ route, navigation }) => {
     }
   };
 
+  const handleWeebRequests = (userId, type) => {
+    handleCollectionRequests("react", { userId, type });
+  };
+
   const fetchCollectionPosts = (cb) => {
     getUserData(
       {
@@ -284,12 +331,19 @@ const CollectionScreen = ({ route, navigation }) => {
         query: pageData.name,
       },
       (resData) => {
-        setCollection({
+        const collection_state = {
           name: pageData?.name,
           media: resData.collections,
           requests: resData.requests,
           isRequested: resData.isRequested,
-        });
+        };
+
+        if (isMine) {
+          collection_state.weeb_requests = resData.weeb_requests;
+        }
+
+        setCollection(collection_state);
+
         cb && cb();
       },
       (errData) => {
@@ -300,24 +354,15 @@ const CollectionScreen = ({ route, navigation }) => {
   };
 
   const RenderListHeader = () => {
+    if (!collection.requests || isMine) return null;
     return (
-      <>
-        {collection.requests && (
-          <View
-            style={[
-              styles.row,
-              { backgroundColor: theme.backgroundExtralight },
-            ]}
-          >
-            <AntDesign name="star" color={colors.light} size={15} />
-            <AppText style={{ color: colors.black }} bold>
-              {" "}
-              {collection.requests}{" "}
-            </AppText>
-            <AppText>requests</AppText>
-          </View>
-        )}
-      </>
+      <View
+        style={[styles.row, { backgroundColor: theme.backgroundExtralight }]}
+      >
+        <AntDesign name="star" color={colors.light} size={15} />
+        <AppText> {collection.requests} </AppText>
+        <AppText> requests </AppText>
+      </View>
     );
   };
 
@@ -339,12 +384,26 @@ const CollectionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-      <MansonryList
-        media={collection?.media}
-        handleRefresh={fetchCollectionPosts}
-        ListHeader={RenderListHeader}
-        data={{ isMine: true, type: "collection", collectionId: pageData._id }}
-      />
+      {isMine && <TabList state={tab} setState={setTab} items={tabItems} />}
+      {tab.posts && (
+        <MansonryList
+          media={collection?.media}
+          handleRefresh={fetchCollectionPosts}
+          ListHeader={RenderListHeader}
+          data={{
+            isMine: true,
+            type: "collection",
+            collectionId: pageData._id,
+          }}
+        />
+      )}
+      {tab.requests && (
+        <FriendBox
+          type="request"
+          onPress={handleWeebRequests}
+          data={collection.weeb_requests}
+        />
+      )}
       <DropDown visible={dropMenu} setVisible={setDropMenu} lists={dropLists} />
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
       <AppFadeIn

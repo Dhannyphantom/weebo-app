@@ -204,11 +204,7 @@ const ChallengeScreen = ({ navigation }) => {
           />
         )}
       />
-      <NativeAds
-        adsManager={fb_adsManager}
-        onAdLoaded={(ad) => console.log(ad)}
-        onError={(error) => console.log(error)}
-      />
+
       {!challengeInfo[0] && !awardData[0] && loadedOnce && (
         <FlatList
           data={["OTAKU"]}

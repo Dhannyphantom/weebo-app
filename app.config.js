@@ -1,8 +1,8 @@
 export default {
   expo: {
     name: "Weebo",
-    slug: "Weebo",
-    version: "1.0.1",
+    slug: "weebo",
+    version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     splash: {

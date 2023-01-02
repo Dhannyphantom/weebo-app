@@ -271,7 +271,7 @@ export default function MansonryList({
         )}
         refreshing={refreshing}
         ListEmptyComponent={() => <RenderEmptyList />}
-        ListHeaderComponent={<ListHeader />}
+        ListHeaderComponent={ListHeader && <ListHeader />}
         onRefresh={onRefresh}
         onEndReachedThreshold={0.1}
         onEndReached={onEndReached}

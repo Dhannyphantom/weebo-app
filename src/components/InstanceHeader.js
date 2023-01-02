@@ -55,7 +55,7 @@ export const RenderVerifyInfo = ({
             alignItems: "center",
           }}
         >
-          <AppText size="xxlarge" bold>
+          <AppText size="xlarge" bold>
             {vFollowers}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
@@ -67,7 +67,7 @@ export const RenderVerifyInfo = ({
             alignItems: "center",
           }}
         >
-          <AppText size="xxlarge" bold>
+          <AppText size="xlarge" bold>
             {vPostive}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
@@ -79,7 +79,7 @@ export const RenderVerifyInfo = ({
             alignItems: "center",
           }}
         >
-          <AppText size="xxlarge" bold>
+          <AppText size="xlarge" bold>
             {vNegative}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
@@ -90,7 +90,7 @@ export const RenderVerifyInfo = ({
         <ActivityIndicator visible={false} style={styles.activity} />
       </View>
       <AppText
-        size="xxlarge"
+        size="xlarge"
         style={{ textAlign: "center", color: colors.primary }}
         bold
       >
@@ -153,10 +153,11 @@ const InstanceHeader = ({ instanceData }) => {
   const feedbackQuestion =
     instance === "character"
       ? `Is ${capFirstLetter(
-          instanceName.slice(0, instanceName?.search(" "))
-        )} the first name of a character in ${capFirstLetter(
+          instanceName,
+          true
+        )} the official name of a character in ${capFirstLetter(
           instanceShow
-        )} show as portrayed in this cover photo?`
+        )} anime/manga as portrayed in this cover photo?`
       : instance == "show"
       ? `Is ${capFirstLetter(
           instanceName

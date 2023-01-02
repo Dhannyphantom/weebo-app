@@ -10,11 +10,31 @@ const assetsArr = [];
 const imageFileExts = ["jpg", "png", "gif", "webp", "bmp", "heic"];
 const isiOS = Platform.OS === "ios";
 
-export const capFirstLetter = (str) => {
-  if (typeof str === "string" && str.length > 0) {
-    return str[0].toUpperCase() + str.slice(1);
+export const capFirstLetter = (str, all) => {
+  if (all) {
+    let cappedStr = "";
+    const skippers = [];
+    for (let i = 0; i < str.length; i++) {
+      const letter = str[i];
+      if (i === 0) {
+        cappedStr += letter.toUpperCase();
+      } else if (letter === " ") {
+        cappedStr += " " + str[i + 1].toUpperCase();
+        skippers.push(i + 1);
+      } else {
+        if (skippers.includes(i)) {
+          continue;
+        }
+        cappedStr += letter;
+      }
+    }
+    return cappedStr;
   } else {
-    return "";
+    if (typeof str === "string" && str.length > 0) {
+      return str[0].toUpperCase() + str.slice(1);
+    } else {
+      return "";
+    }
   }
 };
 

@@ -124,7 +124,7 @@ export const CollectionCard = ({ index, onPress, screenParam, item }) => {
           <AntDesign name="star" color={colors.light} size={15} />
           <AppText style={{ color: colors.light }} bold>
             {" "}
-            {item.requests}{" "}
+            {item.requests?.length}
           </AppText>
         </View>
       </LinearGradient>
@@ -187,12 +187,12 @@ const SavedCollectionScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    if (screenParam.userID) {
+    if (screenParam?.userID) {
       setIsLoading(true);
       getUserData(
         {
           type: "get_collections",
-          id: screenParam.userID,
+          id: screenParam?.userID,
         },
         (resData) => {
           setMyCollections(resData.my_collections);
@@ -208,13 +208,13 @@ const SavedCollectionScreen = ({ route }) => {
     <Screen style={styles.container}>
       <AppHeader
         title={`${
-          screenParam.username
-            ? capFirstLetter(screenParam.username) + "'s"
+          screenParam?.username
+            ? capFirstLetter(screenParam?.username) + "'s"
             : ""
         } Saved Collections`}
         RightComponent={() => (
           <>
-            {!screenParam.username && (
+            {!screenParam?.username && (
               <TouchableOpacity
                 style={styles.newCollBtn}
                 onPress={() => setModalVis(true)}
@@ -226,13 +226,15 @@ const SavedCollectionScreen = ({ route }) => {
         )}
       />
 
-      <AppText style={styles.textInfo}>
-        Has &nbsp;
-        <AppText bold size="large">
-          {myCollections.length}
+      {!isLoading && (
+        <AppText style={styles.textInfo}>
+          Has &nbsp;
+          <AppText bold size="large">
+            {myCollections.length}
+          </AppText>
+          &nbsp; collections
         </AppText>
-        &nbsp; collections
-      </AppText>
+      )}
       <RenderCollections
         collections={myCollections}
         screenParam={screenParam}

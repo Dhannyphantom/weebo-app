@@ -151,6 +151,7 @@ const FriendBox = ({
       <TouchableOpacity
         activeOpacity={onPress ? 0.9 : 1}
         onPress={onPress ? () => onPress(item) : null}
+        disabled={type === "request"}
         style={{ ...styles.container, width: width * length }}
       >
         <View style={[styles.friend, { backgroundColor: theme.background }]}>
@@ -163,12 +164,16 @@ const FriendBox = ({
             gender={item.gender}
           />
           <View style={styles.rightCont}>
-            <MaterialCommunityIcons
-              name="account-group"
-              size={15}
-              color={colors.medium}
-            />
-            {item.followers && <AppText> {item.followers.length} </AppText>}
+            {item.followers && (
+              <>
+                <MaterialCommunityIcons
+                  name="account-group"
+                  size={15}
+                  color={colors.medium}
+                />
+                <AppText> {item.followers.length} </AppText>
+              </>
+            )}
             {!isLoading ? (
               <>
                 {type === "weeb" && (
@@ -200,7 +205,11 @@ const FriendBox = ({
                   >
                     <TouchableOpacity
                       activeOpacity={0.9}
-                      onPress={() => handleUnweebing(item._id, false)}
+                      onPress={() =>
+                        onPress
+                          ? onPress(item._id, "accept")
+                          : handleUnweebing(item._id, false)
+                      }
                       style={styles.requestBtn}
                     >
                       <AntDesign
@@ -211,7 +220,11 @@ const FriendBox = ({
                     </TouchableOpacity>
                     <TouchableOpacity
                       activeOpacity={0.9}
-                      onPress={() => handleUnweebing(item._id, true)}
+                      onPress={() =>
+                        onPress
+                          ? onPress(item._id, "decline")
+                          : handleUnweebing(item._id, true)
+                      }
                       style={styles.requestBtn}
                     >
                       <MaterialCommunityIcons
