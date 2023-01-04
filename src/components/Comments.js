@@ -189,8 +189,8 @@ const Comments = ({
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={65}
-        style={{ height: height - inset.top + 2 }}
+        keyboardVerticalOffset={78}
+        style={{ width: "100%", height: height - 60 }}
       >
         {loaded ? (
           <View style={{ flex: 1 }}>

@@ -6,7 +6,14 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  Feather,
+  AntDesign,
+  MaterialCommunityIcons,
+  Entypo,
+  Fontisto,
+} from "@expo/vector-icons";
 
 import Cards from "./Cards";
 import colors from "../constants/colors";
@@ -78,10 +85,11 @@ const CommentBar = (
           style={styles.sendBtn}
           onPress={handleSend}
         >
-          <Ionicons
+          <Feather
             name="send"
-            size={20}
+            size={25}
             color={type === "send" ? colors.primary : colors.heart}
+            fon
           />
         </TouchableOpacity>
       </Cards>
@@ -98,7 +106,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: screen.width,
-    minHeight: 45,
+    minHeight: 60,
     maxHeight: 150,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -132,7 +140,7 @@ const styles = StyleSheet.create({
     flex: 0.11,
     width: 10,
     height: 40,
-    transform: [{ rotate: "-30deg" }],
+    // transform: [{ rotate: "-30deg" }],
     marginLeft: 4,
     marginRight: 8,
     borderTopEndRadius: 12,

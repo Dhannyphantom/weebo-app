@@ -18,7 +18,7 @@ import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 import AppHeader from "../components/AppHeader";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const ChatUserScreen = ({ route }) => {
   const {
@@ -175,8 +175,9 @@ const ChatUserScreen = ({ route }) => {
   }, []);
 
   return (
-    <Screen style={{ ...styles.container, backgroundColor: theme.chat }}>
+    <Screen style={styles.container}>
       <StatusBar style="light" />
+      <View style={[styles.backdrop, { backgroundColor: theme.chat }]} />
       <AppHeader
         title={username}
         titleStyle={{ color: colors.white }}
@@ -236,6 +237,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: height * 0.4,
   },
   comment: {
     flex: 1,

@@ -336,7 +336,7 @@ const AppModal = ({
             <Separator h={1} />
             <View style={styles.box}>
               <GrowInput
-                style={{ width: width * 0.85, marginBottom: 20 }}
+                style={{ width: width * 0.85 }}
                 text={text}
                 ref={growInputRef}
                 setText={setText}
@@ -344,17 +344,19 @@ const AppModal = ({
               />
               {oldText === text || text == "" ? (
                 <AppButton
-                  title="CLOSE"
-                  style={{ alignSelf: "center" }}
+                  title="Cancel"
+                  style={{ alignSelf: "center", marginTop: 15 }}
                   onPress={() => {
                     showContent("edit", true);
                     Keyboard.dismiss();
                   }}
                   bare
+                  bareRed
+                  LIcon="cancel"
                 />
               ) : (
                 <AppButton
-                  style={{ alignSelf: "center" }}
+                  style={{ alignSelf: "center", marginTop: 15 }}
                   title="EDIT"
                   onPress={hanldeEditCaption}
                 />
