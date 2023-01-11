@@ -43,9 +43,9 @@ const CommentBar = (
     setText("");
   };
 
-  const handleEmojiSelect = (emoji) => {
-    setText(text + emoji);
-  };
+  // const handleEmojiSelect = (emoji) => {
+  //   setText(text + emoji);
+  // };
 
   return (
     <>
@@ -54,7 +54,9 @@ const CommentBar = (
           <ProfilePic
             source={avatar}
             size={40}
-            border={1}
+            borderColor={colors.chat}
+            disabled
+            border={2}
             style={styles.avatar}
           />
         </View>
@@ -88,7 +90,7 @@ const CommentBar = (
           <Feather
             name="send"
             size={25}
-            color={type === "send" ? colors.primary : colors.heart}
+            color={type === "send" ? colors.chat : colors.primary}
             fon
           />
         </TouchableOpacity>

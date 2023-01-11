@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Modal, Dimensions, Animated } from "react-native";
 import ThemeContext from "../config/ThemeContext";
+import GrowInput from "./GrowInput";
 import colors from "../constants/colors";
 import AppButton from "./AppButton";
 import AppText from "./AppText";
@@ -10,7 +11,7 @@ const { width, height } = Dimensions.get("window");
 
 const BOX_WIDTH = width * 0.88;
 
-const AlertModal = ({ obj, setVisible, onPress }) => {
+const AlertModal = ({ obj, setVisible, onPress, verifyPrompt }) => {
   // obj has a title, btn,  message, visible
   /*
 const modalShow = {
@@ -21,6 +22,9 @@ const modalShow = {
   type: "signout",
 };
   */
+
+  const [prompt, setPrompt] = useState("");
+
   const translator = useRef(new Animated.Value(height)).current;
   const theme = useContext(ThemeContext);
 
@@ -48,6 +52,7 @@ const modalShow = {
         speed: 5,
         useNativeDriver: true,
       }).start();
+      setPrompt("");
     }
   }, [obj]);
 
@@ -68,18 +73,50 @@ const modalShow = {
             <AppText size="large" style={styles.message}>
               {obj.message}
             </AppText>
-            <View style={{ marginTop: 25 }}>
-              <AppButton
-                title={obj.btn}
-                onPress={() => {
-                  onPress();
-                  onDiscard();
-                }}
-                bare
-                style={{ marginBottom: 5 }}
-              />
-              <AppButton title="DISCARD" onPress={onDiscard} />
-            </View>
+            {verifyPrompt && (
+              <View>
+                <AppText size="large" bold style={styles.prompt}>
+                  {verifyPrompt}
+                </AppText>
+                <GrowInput text={prompt} setText={setPrompt} mLine={false} />
+              </View>
+            )}
+            {verifyPrompt ? (
+              <View style={styles.promptBtns}>
+                {prompt === verifyPrompt && (
+                  <AppButton
+                    title={obj.btn}
+                    onPress={() => {
+                      onPress();
+                      onDiscard();
+                    }}
+                    bare
+                    LIcon="check"
+                    style={{ marginBottom: 5 }}
+                  />
+                )}
+                <AppButton
+                  title="CANCEL"
+                  bare
+                  bareRed
+                  LIcon="cancel"
+                  onPress={onDiscard}
+                />
+              </View>
+            ) : (
+              <View style={{ marginTop: 25 }}>
+                <AppButton
+                  title={obj.btn}
+                  onPress={() => {
+                    onPress();
+                    onDiscard();
+                  }}
+                  bare
+                  style={{ marginBottom: 5 }}
+                />
+                <AppButton title="DISCARD" onPress={onDiscard} />
+              </View>
+            )}
           </View>
         </Animated.View>
       </View>
@@ -108,6 +145,17 @@ const styles = StyleSheet.create({
     width: width * 0.5,
     paddingVertical: 30,
     alignSelf: "center",
+  },
+  prompt: {
+    textAlign: "center",
+    marginBottom: 6,
+    color: colors.primary,
+  },
+  promptBtns: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginTop: 20,
   },
   title: {
     marginTop: 10,

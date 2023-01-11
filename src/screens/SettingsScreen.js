@@ -17,6 +17,7 @@ import {
   TestIds,
 } from "react-native-google-mobile-ads";
 import * as Device from "expo-device";
+import { Context as AuthContext } from "../config/AuthContext";
 
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
@@ -34,7 +35,7 @@ const { width, height } = Dimensions.get("window");
 const alertData = {
   visible: false,
   title: "Delete Account",
-  message: "Oh no! , You really want to delete your account?",
+  message: "Crap!. Type in your username to delete account, but think twice!",
   btn: "YES",
   type: "delete_account",
 };
@@ -62,6 +63,9 @@ const SettingDropDown = ({ data, section, handlers }) => {
     default: data.default,
   });
   const [alertModal, setAlertModal] = useState(alertData);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   const handleAction = () => {
     switch (data.type) {
@@ -92,7 +96,6 @@ const SettingDropDown = ({ data, section, handlers }) => {
   const RenderDropDowns = () => {
     //
     const handleChooseOption = (item) => {
-      console.log(item);
       setPopData({ ...popData, default: item });
       handlers.editSettings(section.title, "Language", item);
     };
@@ -170,6 +173,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
       <AlertModal
         obj={alertModal}
         setVisible={setAlertModal}
+        verifyPrompt={userInfo.username}
         onPress={handleOkAlert}
       />
     </TouchableOpacity>
@@ -216,19 +220,27 @@ const RenderSections = ({ item, section, editSettings }) => {
   };
 
   const handleAlert = async () => {
-    if (alert.type === "ads_watched") {
-      if (adsManager.count > 0) {
-        if (adsManager.loaded) {
-          rewarded.show();
-        } else {
-          setPopper({
-            vis: true,
-            type: "failed",
-            msg: "Loading ads...",
-          });
-          rewarded.load();
+    switch (alert.type) {
+      case "ads_watched":
+        if (adsManager.count > 0) {
+          if (adsManager.loaded) {
+            rewarded.show();
+          } else {
+            setPopper({
+              vis: true,
+              type: "failed",
+              msg: "Loading ads...",
+            });
+            rewarded.load();
+          }
         }
-      }
+        break;
+      case "delete_account":
+        console.log("delete account");
+        break;
+
+      default:
+        break;
     }
   };
 

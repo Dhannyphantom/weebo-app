@@ -15,7 +15,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as NavigationBar from "expo-navigation-bar";
 import * as Device from "expo-device";
 // import * as Notifications from "expo-notifications";
 const Notifications = {
@@ -58,7 +57,7 @@ const boolsObj = {
   loadMore: true,
   lodadedOnce: false,
   showSlide: false,
-  reloadLoader: false,
+  reloadLoader: true,
   loader: false,
   showStatus: false,
 };
@@ -76,7 +75,6 @@ const HomeScreen = ({ navigation, route }) => {
   const theme = useContext(ThemeContext);
 
   const [feeds, setFeeds] = useState(null);
-  const [stories, setStories] = useState([]);
   const [errMsg, setErrMsg] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [bools, setBools] = useState(boolsObj);
@@ -115,10 +113,8 @@ const HomeScreen = ({ navigation, route }) => {
       null,
       async (resData) => {
         // SETTERS
-        setStories(resData.stories);
         setFeeds(resData.feeds);
-        setBools({ ...bools, lodadedOnce: true });
-        handleHomeScreenGuide("get");
+        !bools.lodadedOnce && handleHomeScreenGuide("get");
         loader && setBools({ ...bools, loader: false });
         await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
         cb && cb();
@@ -135,12 +131,10 @@ const HomeScreen = ({ navigation, route }) => {
     const feedsStr = await AsyncStorage.getItem("home_feeds");
     if (feedsStr) {
       const feedsObj = JSON.parse(feedsStr);
-      setStories(feedsObj.stories);
       setFeeds(feedsObj.feeds);
       setBools({ ...bools, loader: false, lodadedOnce: true });
     }
-    await NavigationBar.setButtonStyleAsync(theme.bar);
-    await NavigationBar.setBackgroundColorAsync(theme.background);
+
     // tryLocalSignin();
     fetchHomeData(cb);
   };
@@ -270,13 +264,13 @@ const HomeScreen = ({ navigation, route }) => {
             onRefresh={onRefresh}
           />
           <StatusRender
-            data={stories}
+            data={[]}
             show={showStatus}
             setter={() => setBools({ ...bools, showStatus: false })}
           />
 
           <ActivityIndicator
-            visible={bools.reloadLoader}
+            visible={bools.reloadLoader && !bools.loader}
             size={0.2}
             style={{ width, height: 25 }}
             transparent
@@ -297,7 +291,9 @@ const HomeScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     async function prepare() {
-      await readyHomeScreen();
+      await readyHomeScreen(() => {
+        setBools({ ...bools, lodadedOnce: true, reloadLoader: false });
+      });
       // await notificationHandler();
     }
 
