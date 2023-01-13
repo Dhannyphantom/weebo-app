@@ -346,6 +346,24 @@ const requestWeeb = (dispatch) => async (data, sc, cb) => {
       cb({ err, msg: "Error sending weeb request", data: err?.response?.data });
   }
 };
+const deleteUserAccount = (dispatch) => async (sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.delete("/user", {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error deleting user account",
+        data: err?.response?.data,
+      });
+  }
+};
 
 const instanceTransfer = (dispatch) => async (data, sc, cb) => {
   try {
@@ -665,6 +683,7 @@ export const { Context, Provider } = createDataContext(
     mailVerifier,
     deleteMediaItem,
     sendInvite,
+    deleteUserAccount,
     updateProfile,
     fetchNearbyWeebs,
     resetPassword,

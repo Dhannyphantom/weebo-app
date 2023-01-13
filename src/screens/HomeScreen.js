@@ -83,10 +83,14 @@ const HomeScreen = ({ navigation, route }) => {
   const actionFlatRef = useRef(null);
   const notificationListener = useRef();
   const responseListener = useRef();
+  const showSpinner = ((feeds && !feeds?.results[0]) || !feeds) && !showStatus;
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    readyHomeScreen(() => setRefreshing(false));
+    await readyHomeScreen(() => {
+      setBools({ ...bools, lodadedOnce: true, reloadLoader: false });
+      setRefreshing(false);
+    });
   }, []);
 
   const handleHomeScreenGuide = async (type) => {
@@ -270,7 +274,7 @@ const HomeScreen = ({ navigation, route }) => {
           />
 
           <ActivityIndicator
-            visible={bools.reloadLoader && !bools.loader}
+            visible={bools.reloadLoader && !bools.loader && !showSpinner}
             size={0.2}
             style={{ width, height: 25 }}
             transparent
@@ -279,7 +283,7 @@ const HomeScreen = ({ navigation, route }) => {
           {showStatus && <Separator h={1} />}
         </View>
         <ActivityIndicator
-          visible={((feeds && !feeds?.results[0]) || !feeds) && !showStatus}
+          visible={showSpinner}
           type={lodadedOnce ? "isEmpty" : "spin"}
           style={styles.pageActiviy}
           text="No feeds yet, please follow a Weebo Instance"
@@ -356,7 +360,7 @@ const HomeScreen = ({ navigation, route }) => {
                   />
                 }
                 onEndReached={handleEndReached}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={20}
                 keyExtractor={keyExtractor}
                 renderItem={renderHome}
               />

@@ -65,6 +65,8 @@ const SettingDropDown = ({ data, section, handlers }) => {
   const [alertModal, setAlertModal] = useState(alertData);
   const {
     state: { userInfo },
+    signOut,
+    deleteUserAccount,
   } = useContext(AuthContext);
 
   const handleAction = () => {
@@ -90,7 +92,14 @@ const SettingDropDown = ({ data, section, handlers }) => {
     }
   };
   const handleOkAlert = () => {
-    console.log("Deleted");
+    deleteUserAccount(
+      (resData) => {
+        signOut();
+      },
+      (errData) => {
+        console.log(errData);
+      }
+    );
   };
 
   const RenderDropDowns = () => {
