@@ -550,13 +550,15 @@ const ShowGroup = ({ screen, headerTitle }) => {
         >
           <Feather name="search" color={colors.primary} size={18} />
         </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => setBools({ ...bools, filter: !filter })}
-          style={styles.search}
-        >
-          <Feather name="filter" color={colors.primary} size={18} />
-        </TouchableOpacity>
+        {screen === "show" && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setBools({ ...bools, filter: !filter })}
+            style={styles.search}
+          >
+            <Feather name="filter" color={colors.primary} size={18} />
+          </TouchableOpacity>
+        )}
       </View>
     );
   };

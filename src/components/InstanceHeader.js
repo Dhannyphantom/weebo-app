@@ -388,6 +388,7 @@ const InstanceHeader = ({ instanceData }) => {
             source={owner?.avatar}
             size={130}
             border={4.5}
+            gender={owner?.gender}
             userID={owner?._id}
             borderColor={theme.white}
           />

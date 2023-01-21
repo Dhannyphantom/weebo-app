@@ -137,7 +137,7 @@ const AppModal = ({
               <AppButton
                 title={collBtnText}
                 onPress={handleNewCollection}
-                style={{ alignSelf: "center" }}
+                style={{ alignSelf: "center", marginTop: 15 }}
                 LIcon="plus"
                 bare
               />
@@ -384,7 +384,7 @@ const AppModal = ({
             <View style={{ ...styles.box }}>
               {showText && (
                 <GrowInput
-                  style={{ width: "90%", marginBottom: 15 }}
+                  style={{ width: "90%" }}
                   text={collectionText}
                   mLine={false}
                   ref={growInputRefTwo}

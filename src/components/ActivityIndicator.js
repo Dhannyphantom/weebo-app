@@ -22,6 +22,7 @@ const ActivityIndicator = ({
   style,
   text,
   size = 0.4,
+  absolute,
   bTransparent,
   ComponentRenderer,
   transparent,
@@ -32,19 +33,23 @@ const ActivityIndicator = ({
 
   return (
     <View
-      style={{
-        ...styles.loaderCont,
-        backgroundColor: transparent
-          ? "transparent"
-          : wTransparent
-          ? theme.transparent
-          : bTransparent
-          ? "rgba(0,0,0,0.1)"
-          : theme.background,
-        justifyContent: type === "page" ? "flex-start" : "center",
-        alignItems: type === "page" ? "stretch" : "center",
-        ...style,
-      }}
+      style={[
+        absolute ? styles.absolute : {},
+        {
+          ...styles.loaderCont,
+          backgroundColor: transparent
+            ? "transparent"
+            : wTransparent
+            ? theme.transparent
+            : bTransparent
+            ? "rgba(0,0,0,0.1)"
+            : theme.background,
+          justifyContent: type === "page" ? "flex-start" : "center",
+          alignItems: type === "page" ? "stretch" : "center",
+
+          ...style,
+        },
+      ]}
     >
       {type === "spin" && (
         <View style={styles.bounce}>
@@ -191,6 +196,13 @@ const ActivityIndicator = ({
 };
 
 const styles = StyleSheet.create({
+  absolute: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
   loaderCont: {
     flex: 1,
   },

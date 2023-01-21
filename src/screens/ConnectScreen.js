@@ -24,6 +24,8 @@ import ProfilePic from "../components/ProfilePic";
 import Separator from "../components/Separator";
 import PopMessage from "../components/PopMessage";
 import { capFirstLetter } from "../constants/helpers";
+import AppButton from "../components/AppButton";
+import ActivityIndicator from "../components/ActivityIndicator";
 
 const { width, height } = Dimensions.get("screen");
 const SEARCH_FILTERS = [
@@ -117,9 +119,43 @@ const Weebs = ({ item, index }) => {
   );
 };
 
-const RenderEmptyWeebs = ({ errMsg }) => {
+const RenderEmptyWeebs = ({
+  errMsg,
+  setErrMsg,
+  handleSearch,
+  handleCloseModal,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    state: { userInfo },
+    updateUserData,
+  } = useContext(AuthContext);
+
   const message =
     "Turns out there are no nearby weebs YET!!!. You can always check back later";
+
+  const weeboLocatorSwitch = () => {
+    setIsLoading(true);
+
+    updateUserData(
+      {
+        action: "location",
+        actionData: true,
+        instanceID: userInfo._id,
+      },
+      (_resData) => {
+        setIsLoading(false);
+        handleCloseModal();
+        handleSearch(1, 10);
+      },
+      (errData) => {
+        setErrMsg(errData.data ?? errData.msg);
+        setIsLoading(false);
+      }
+    );
+  };
+
   return (
     <View
       style={{
@@ -143,7 +179,7 @@ const RenderEmptyWeebs = ({ errMsg }) => {
           size="large"
           bold
         >
-          No Weebs found
+          No Weebs Found
         </AppText>
         <Separator h={2} />
         <AppText
@@ -154,6 +190,21 @@ const RenderEmptyWeebs = ({ errMsg }) => {
         >
           {errMsg ? errMsg : message}
         </AppText>
+        {errMsg && errMsg?.includes("weebo locator") && (
+          <AppButton
+            title="Turn On Now"
+            style={{ marginTop: 20 }}
+            onPress={weeboLocatorSwitch}
+          />
+        )}
+        <ActivityIndicator
+          visible={isLoading}
+          wTransparent
+          absolute
+          style={{
+            borderRadius: 12,
+          }}
+        />
       </View>
     </View>
   );
@@ -203,10 +254,10 @@ const ConnectScreen = ({ navigation }) => {
       { page: pageNum, limit },
       (res_data) => {
         setWeebos(res_data);
-        setModal(true);
         setIsLoading(false);
         lottieRef?.current?.pause();
         cb && cb();
+        setModal(true);
       },
       (err_data) => {
         setModal(true);
@@ -272,7 +323,7 @@ const ConnectScreen = ({ navigation }) => {
         useNativeDriver: true,
       }).start();
     }
-  }, [modal]);
+  }, [modal, weebos]);
 
   return (
     <View
@@ -332,7 +383,14 @@ const ConnectScreen = ({ navigation }) => {
               data={weebos.results}
               numColumns={NUM_COLUMNS}
               keyExtractor={(item) => item._id}
-              ListEmptyComponent={() => <RenderEmptyWeebs errMsg={errMsg} />}
+              ListEmptyComponent={() => (
+                <RenderEmptyWeebs
+                  errMsg={errMsg}
+                  setErrMsg={setErrMsg}
+                  handleSearch={handleSearch}
+                  handleCloseModal={handleCloseModal}
+                />
+              )}
               contentContainerStyle={{
                 flex: 1,
                 paddingTop: 20,
