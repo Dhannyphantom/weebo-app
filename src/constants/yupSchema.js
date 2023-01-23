@@ -194,12 +194,12 @@ const showValidationschema = Yup.object().shape({
   spinoffs: Yup.array()
     .of(Yup.string().min(3).lowercase().trim())
     .label("Spinoffs, anime movies or manga related titles"),
-  creator: Yup.string()
+  creators: Yup.string()
     .required()
     .min(3)
     .trim()
     .lowercase()
-    .label("Creator or author"),
+    .label("Creators or writers"),
   releaseDate: Yup.string().required().label("Date released"),
   endDate: Yup.string()
     .required()

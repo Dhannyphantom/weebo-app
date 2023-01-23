@@ -149,7 +149,9 @@ const Shows = ({
                   series={series}
                   id={item._id}
                   show={
-                    !series ? item.show.name_j ?? item.name_e : item.creator
+                    !series
+                      ? item.show.name_j ?? item.name_e
+                      : item?.creators?.join(", ")
                   }
                   followers={item.followers}
                   onPress={() =>

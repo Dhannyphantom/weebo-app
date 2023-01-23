@@ -515,7 +515,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
           image={item?.cover_photo}
           onPress={() => handleImagePress(item)}
           statLeft={`${item.followers.length ?? item.followers} followers`}
-          statMid={item.creator}
+          statMid={item?.creators?.join(", ")}
           statRight={`${item.characters.length ?? item.characters} character${
             item.characters.length > 1 ? "s" : ""
           }`}

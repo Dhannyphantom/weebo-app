@@ -344,7 +344,7 @@ const AccountScreen = ({ navigation, route }) => {
               onPress={() => setInvites(true)}
             />
             <Link
-              name="Settings"
+              name="Settings & More"
               iconName="settings"
               pack="b"
               onPress={() => navigation.navigate("Settings")}

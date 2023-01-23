@@ -91,7 +91,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     name_e: "none",
     other_names: [],
     spinoffs: [],
-    creator: "",
+    creators: "",
     manager: userInfo._id,
     releaseDate: "",
     endDate: "Currently airing",
@@ -336,7 +336,11 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     name="spinoffs"
                     type1
                   />
-                  <CreateForm headerC="creator or author" name="creator" />
+                  <CreateForm
+                    add=" (separate using a comma)"
+                    headerC="creators/writers"
+                    name="creators"
+                  />
                   <CreateForm
                     headerC="release date"
                     name="releaseDate"

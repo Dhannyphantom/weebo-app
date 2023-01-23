@@ -70,6 +70,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const {
     setPushToken: updateUserPushToken,
+    getSocket,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -299,6 +300,7 @@ const HomeScreen = ({ navigation, route }) => {
         setBools({ ...bools, lodadedOnce: true, reloadLoader: false });
       });
       // await notificationHandler();
+      getSocket().emit("login", { userId: userInfo._id });
     }
 
     prepare();
@@ -307,6 +309,7 @@ const HomeScreen = ({ navigation, route }) => {
         notificationListener.current
       );
       Notifications.removeNotificationSubscription(responseListener.current);
+      getSocket().off();
     };
   }, []);
 

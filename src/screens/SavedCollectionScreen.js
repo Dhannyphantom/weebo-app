@@ -143,7 +143,7 @@ export const RenderCollections = ({
     <FlatList
       data={collections}
       contentContainerStyle={{
-        paddingBottom: height * (noPadding ? 0 : 0.11),
+        paddingBottom: height * (noPadding ? 0 : 0.1),
       }}
       ListEmptyComponent={
         <ActivityIndicator

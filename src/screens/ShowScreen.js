@@ -183,7 +183,7 @@ const ShowScreen = ({ route, navigation }) => {
         ? dataState.name_j + "\n" + "(" + dataState.name_e + ")"
         : dataState?.name_j ?? dataState?.name_e
     }`,
-    description: `By ${dataState.creator}`,
+    description: `By ${dataState?.creators?.join(", ")}`,
     cover_photo: dataState?.cover_photo,
     owner: dataState?.manager,
     screenIcon: "ios-tv",
