@@ -68,8 +68,6 @@ export default {
       },
     },
   },
-
-  //
   "react-native-google-mobile-ads": {
     android_app_id: "ca-app-pub-3603875446667492~4709489944",
     ios_app_id: "ca-app-pub-3603875446667492~7241419988",

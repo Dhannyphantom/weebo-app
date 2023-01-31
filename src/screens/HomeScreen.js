@@ -55,8 +55,7 @@ Notifications.setNotificationHandler({
 const { width, height } = Dimensions.get("window");
 const boolsObj = {
   loadMore: true,
-  lodadedOnce: false,
-  showSlide: false,
+  loadedOnce: false,
   reloadLoader: true,
   loader: false,
   showStatus: false,
@@ -79,7 +78,8 @@ const HomeScreen = ({ navigation, route }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [bools, setBools] = useState(boolsObj);
-  const { loadMore, lodadedOnce, showSlide, showStatus } = bools;
+  const [slider, setSlider] = useState(false);
+  const { loadMore, loadedOnce, showStatus } = bools;
 
   const actionFlatRef = useRef(null);
   const notificationListener = useRef();
@@ -89,26 +89,27 @@ const HomeScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await readyHomeScreen(() => {
-      setBools({ ...bools, lodadedOnce: true, reloadLoader: false });
+      setBools({ ...bools, loadedOnce: true, reloadLoader: false });
       setRefreshing(false);
     });
   }, []);
 
   const handleHomeScreenGuide = async (type) => {
     const getGuides = await AsyncStorage.getItem("guides");
+
     if (type === "get") {
       if (getGuides) {
         const guidesData = JSON.parse(getGuides);
-        !guidesData.home && setBools({ ...bools, showSlide: true });
+        !guidesData.home && setSlider(true);
       } else {
-        setBools({ ...bools, showSlide: true });
+        setSlider(true);
       }
     } else if (type === "set") {
       const setGuides = {
         home: true,
       };
       await AsyncStorage.setItem("guides", JSON.stringify(setGuides));
-      setBools({ ...bools, showSlide: false });
+      setSlider(false);
     }
   };
 
@@ -119,7 +120,7 @@ const HomeScreen = ({ navigation, route }) => {
       async (resData) => {
         // SETTERS
         setFeeds(resData.feeds);
-        !bools.lodadedOnce && handleHomeScreenGuide("get");
+        !bools.loadedOnce && handleHomeScreenGuide("get");
         loader && setBools({ ...bools, loader: false });
         await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
         cb && cb();
@@ -137,7 +138,7 @@ const HomeScreen = ({ navigation, route }) => {
     if (feedsStr) {
       const feedsObj = JSON.parse(feedsStr);
       setFeeds(feedsObj.feeds);
-      setBools({ ...bools, loader: false, lodadedOnce: true });
+      setBools({ ...bools, loader: false, loadedOnce: true });
     }
 
     // tryLocalSignin();
@@ -285,7 +286,7 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
         <ActivityIndicator
           visible={showSpinner}
-          type={lodadedOnce ? "isEmpty" : "spin"}
+          type={loadedOnce ? "isEmpty" : "spin"}
           style={styles.pageActiviy}
           text="No feeds yet, please follow a Weebo Instance"
           transparent
@@ -297,7 +298,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     async function prepare() {
       await readyHomeScreen(() => {
-        setBools({ ...bools, lodadedOnce: true, reloadLoader: false });
+        setBools({ ...bools, loadedOnce: true, reloadLoader: false });
       });
       // await notificationHandler();
       getSocket().emit("login", { userId: userInfo._id });
@@ -314,14 +315,14 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    if (lodadedOnce) {
+    if (loadedOnce) {
       fetchHomeData(null, true);
     }
   }, [posts]);
 
   // For auto post reload
   useEffect(() => {
-    if (bools.lodadedOnce && route?.params?.reloadPosts) {
+    if (bools.loadedOnce && route?.params?.reloadPosts) {
       setBools({ ...bools, reloadLoader: true });
       fetchHomeData(() => {
         setBools({ ...bools, reloadLoader: false });
@@ -372,7 +373,7 @@ const HomeScreen = ({ navigation, route }) => {
         )}
       </Screen>
       <AppSlider
-        visible={showSlide}
+        visible={slider}
         goCallBackFunc={() => handleHomeScreenGuide("set")}
       />
 

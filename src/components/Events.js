@@ -123,6 +123,14 @@ const Events = ({ closer, instance, instanceID }) => {
       setErrMsg("Please provide event title");
       setIsLoading(false);
       return;
+    } else if (number < 10) {
+      setErrMsg("Participants should not be less than 10");
+      setIsLoading(false);
+      return;
+    } else if (Number.isNaN(Number(number))) {
+      setErrMsg("Select a valid number of participants");
+      setIsLoading(false);
+      return;
     }
     if (!asset && !type.text) {
       setErrMsg("Please provide event data");
