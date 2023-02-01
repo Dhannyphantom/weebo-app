@@ -10,6 +10,7 @@ import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 import AppModal from "./AppModal";
 import AlertModal from "./AlertModal";
+import { getFeedNumber } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -152,7 +153,7 @@ const FeedFooter = ({
               color={post.liked ? colors.heart : colors.primary}
             />
             <AppText style={styles.counters}>
-              {post.likes < 0 ? "0" : post.likes}
+              {post.likes < 0 ? "0" : getFeedNumber(post.likes)}
             </AppText>
           </TouchableOpacity>
           <TouchableOpacity
@@ -165,7 +166,9 @@ const FeedFooter = ({
               size={20}
               color={colors.primary}
             />
-            <AppText style={styles.counters}>{post.comments}</AppText>
+            <AppText style={styles.counters}>
+              {getFeedNumber(post.comments)}
+            </AppText>
           </TouchableOpacity>
           {isVideo && (
             <View style={styles.iconCont}>

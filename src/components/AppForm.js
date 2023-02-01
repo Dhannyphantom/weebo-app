@@ -447,9 +447,22 @@ const AppForm = ({
           curve
           size={45}
           color={colors.facebook}
+          activeOpacity={0.9}
         />
-        <Icon name="google-plus" curve size={45} color={colors.google} />
-        <Icon name="twitter" curve size={45} color={colors.twitter} />
+        <Icon
+          name="google-plus"
+          activeOpacity={0.9}
+          curve
+          size={45}
+          color={colors.google}
+        />
+        <Icon
+          name="apple"
+          curve
+          activeOpacity={0.9}
+          size={45}
+          color={colors.twitter}
+        />
       </View>
       <TouchableOpacity
         activeOpacity={0.7}

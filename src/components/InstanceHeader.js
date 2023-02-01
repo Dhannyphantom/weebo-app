@@ -21,7 +21,7 @@ import Separator from "./Separator";
 import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
 import ThemeContext from "../config/ThemeContext";
-import { capFirstLetter } from "../constants/helpers";
+import { capFirstLetter, getFeedNumber } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
@@ -378,7 +378,7 @@ const InstanceHeader = ({ instanceData }) => {
 
         <View style={styles.icons}>
           <Icon
-            name="account-star"
+            name="account-star-outline"
             activeOpacity={0.9}
             size={55}
             onPress={() => handleLeftPress && handleLeftPress()}
@@ -404,7 +404,7 @@ const InstanceHeader = ({ instanceData }) => {
             />
           ) : (
             <Icon
-              text={subscribers ? subscribers : null}
+              text={subscribers ? getFeedNumber(subscribers) : null}
               name={feedbackColor && !subscribers ? "account-check" : null}
               size={55}
               color={feedbackColor}

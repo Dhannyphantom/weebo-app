@@ -12,7 +12,6 @@ import Icon from "./Icon";
 import ProfilePic from "./ProfilePic";
 import colors from "../constants/colors";
 import Spacer from "./Spacer";
-import getNumberFormat from "../constants/getNumberFormat";
 
 import { app_constants } from "../constants/data_store";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -20,6 +19,7 @@ import { Context as CharContext } from "../config/CharContext";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
+import { getFeedNumber } from "../constants/helpers";
 const { width } = Dimensions.get("window");
 
 const Card = ({
@@ -58,7 +58,7 @@ const Card = ({
   const charID = id;
   const userID = userInfo._id;
 
-  let cardFollowers = getNumberFormat(cardState.liked);
+  let cardFollowers = getFeedNumber(cardState.liked);
 
   const updateCardState = (bool) => {
     setCardState({

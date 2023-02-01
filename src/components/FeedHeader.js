@@ -7,6 +7,7 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 import Spacer from "./Spacer";
 import Avatar from "./Avatar";
+import getTimestamp from "../constants/getTimestamp";
 
 const { width } = Dimensions.get("screen");
 
@@ -15,7 +16,8 @@ const FeedHeader = ({
   name,
   feederID,
   challenge,
-  followers,
+  feedId,
+  // followers,
   tags,
   show,
   size = 40,
@@ -97,14 +99,12 @@ const FeedHeader = ({
         <View style={styles.right}>
           <Spacer mr={4}>
             <MaterialCommunityIcons
-              name="account-group"
+              name="timelapse"
               color={colors.light}
               size={12}
             />
           </Spacer>
-          <AppText style={styles.text}>
-            {isChannel ? channelSubs : followers}
-          </AppText>
+          <AppText style={styles.text}>{getTimestamp(feedId, "feed")}</AppText>
         </View>
       ) : null}
     </View>

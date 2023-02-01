@@ -88,7 +88,8 @@ const FeedRender = ({ item, user }) => {
         feederID={item.user._id}
         tags={item.tags}
         name={item.user.username}
-        followers={item.user.followers.length}
+        feedId={item._id}
+        // followers={item.user.followers.length}
       />
       <FeedText
         title={item.title}

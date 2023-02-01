@@ -1,3 +1,5 @@
+import { calender } from "./data_store";
+
 export default (id, format, countdown) => {
   //countdow is time in secs
   if (!id) return "";
@@ -87,6 +89,25 @@ export default (id, format, countdown) => {
       };
     }
     return timerValue;
+  } else if (format === "feed") {
+    if (newDate >= 86400 * 2) {
+      convDate = `${
+        calender.months[date.getMonth()].short
+      } ${date.getDate()}, ${date.getFullYear()}`;
+    } else if (newDate >= 86400) {
+      const num = Math.floor(newDate / 86400);
+      convDate = `yesterday`;
+    } else if (newDate >= 3600) {
+      const num = Math.floor(newDate / 3600);
+      convDate = `${num}h`;
+    } else if (newDate >= 60) {
+      const num = Math.floor(newDate / 60);
+      convDate = `${num}m`;
+    } else if (newDate < 60) {
+      convDate = "now";
+    }
+
+    return convDate;
   } else {
     if (newDate >= 604800) {
       const num = Math.floor(newDate / 604800);
