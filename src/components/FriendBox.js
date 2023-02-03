@@ -150,8 +150,8 @@ const FriendBox = ({
     return (
       <TouchableOpacity
         activeOpacity={onPress ? 0.9 : 1}
-        onPress={onPress ? () => onPress(item) : null}
         disabled={type === "request"}
+        onPress={onPress ? () => onPress(item) : null}
         style={{ ...styles.container, width: width * length }}
       >
         <View style={[styles.friend, { backgroundColor: theme.background }]}>
@@ -181,7 +181,7 @@ const FriendBox = ({
                     {status ? (
                       <AppButton
                         title={status}
-                        onPress={() => weebActions()}
+                        onPress={weebActions}
                         naked
                         style={styles.btn}
                       />

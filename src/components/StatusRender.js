@@ -40,14 +40,16 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
       (obj) => obj._id == item._id
     );
 
+    const storyData = {
+      ...display.data,
+      initialScrollIndex,
+      initialScrollIndexHeader,
+      // posts: display.data.posts,
+    };
+
     setDisplay({
       vis: true,
-      data: {
-        ...display.data,
-        initialScrollIndex,
-        initialScrollIndexHeader,
-        posts: [...display.data.posts],
-      },
+      data: storyData,
     });
   };
 
@@ -185,6 +187,8 @@ const StatusRender = ({ data, show, setter }) => {
       />
     );
   };
+
+  // console.log(display?.data?.posts);
 
   useEffect(() => {
     const statuses = [];

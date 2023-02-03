@@ -132,12 +132,13 @@ const FriendListScreen = ({ route, navigation }) => {
             </>
           ) : (
             <>
+              {/* WEEB REQUEST TAB */}
               <View>
                 <FriendBox
                   data={weebos.requests}
                   callback={fetchWeebs}
                   type="request"
-                  onPress={onFriendPress}
+                  // onPress={onFriendPress}
                 />
               </View>
               <ActivityIndicator

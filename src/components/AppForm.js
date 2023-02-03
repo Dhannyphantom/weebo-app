@@ -12,6 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
 const { width } = Dimensions.get("window");
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 
 import AppText from "./AppText";
 import Icon from "./Icon";
@@ -40,6 +44,15 @@ const {
   forgotPassResetInitials,
   forgotPassRecoverInitials,
 } = schemas;
+
+GoogleSignin.configure();
+
+/*
+{
+  androidClientId:
+    "556387937205-n6i2k2jungjc7svmmigdd1j81m8ukgvp.apps.googleusercontent.com",
+}
+*/
 
 const ForgotPassword = ({ setPassModal }) => {
   const { resetPassword, recoverPassword } = useContext(AuthContext);
@@ -260,6 +273,29 @@ const AppForm = ({
     onPress(formValues);
   };
 
+  const googleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      console.log("HAS PLAY SERVICES");
+      await GoogleSignin.addScopes({
+        scopes: ["https://www.googleapis.com/auth/user.gender.read"],
+      });
+      const userInfo = await GoogleSignin.signIn();
+      console.log("USERINFO:: ", userInfo);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        console.log(error);
+        // some other error happened
+      }
+    }
+  };
+
   login
     ? ((initialValues = { username: "", password: "" }),
       (schema = validationSchemaLogin))
@@ -452,6 +488,7 @@ const AppForm = ({
         <Icon
           name="google-plus"
           activeOpacity={0.9}
+          onPress={googleSignIn}
           curve
           size={45}
           color={colors.google}
