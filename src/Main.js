@@ -22,7 +22,7 @@ import ThemeContext from "./config/ThemeContext";
 import colors from "./constants/colors";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
-const Otaku = () => {
+const Main = () => {
   const {
     state: { token },
   } = useContext(AuthContext);
@@ -116,7 +116,7 @@ export default function Providers() {
               <ThemeContext.Provider
                 value={themeMode === true ? theme.dark : theme.light}
               >
-                <Otaku />
+                <Main />
               </ThemeContext.Provider>
             </ChallContext>
           </AuthProvider>

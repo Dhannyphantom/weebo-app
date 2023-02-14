@@ -11,6 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
+import { Fontisto } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 import {
   GoogleSignin,
@@ -201,6 +202,16 @@ const ForgotPassword = ({ setPassModal }) => {
         style={styles.activityPass}
       />
     </View>
+  );
+};
+
+const Oauth = ({ name, onPress, icon }) => {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={styles.auth}>
+      <Fontisto name={icon} size={20} color={colors.google} />
+      {/* <Fontisto name="" size={40} color={colors.google} /> */}
+      <AppText style={styles.authText}>Continue with {name}</AppText>
+    </TouchableOpacity>
   );
 };
 
@@ -477,29 +488,8 @@ const AppForm = ({
       </View>
       <AppText style={{ marginTop: 20 }}> Or sign {a} with</AppText>
       <View style={styles.icons}>
-        <Icon
-          name="facebook"
-          pack="b"
-          curve
-          size={45}
-          color={colors.facebook}
-          activeOpacity={0.9}
-        />
-        <Icon
-          name="google-plus"
-          activeOpacity={0.9}
-          onPress={googleSignIn}
-          curve
-          size={45}
-          color={colors.google}
-        />
-        <Icon
-          name="apple"
-          curve
-          activeOpacity={0.9}
-          size={45}
-          color={colors.twitter}
-        />
+        <Oauth name="Google" icon="google-plus" onPress={googleSignIn} />
+        <Oauth name="Facebook" icon="facebook" onPress={googleSignIn} />
       </View>
       <TouchableOpacity
         activeOpacity={0.7}
@@ -532,7 +522,27 @@ const AppForm = ({
     </Screen>
   );
 };
+
 const styles = StyleSheet.create({
+  auth: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 70,
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    elevation: 1.3,
+    paddingHorizontal: 15,
+    shadowRadius: 6,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 0,
+      height: 1.8,
+    },
+  },
+  authText: {
+    marginLeft: 8,
+  },
   avatarCont: {
     marginTop: 35,
     flexDirection: "row",

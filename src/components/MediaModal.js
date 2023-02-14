@@ -5,7 +5,6 @@ import {
   PanResponder,
   Animated,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";

@@ -1,13 +1,31 @@
+// import {
+//   AdIconView,
+//   MediaView,
+//   AdChoicesView,
+//   TriggerableView,
+// } from "react-native-fbads";
+// class AdComponent extends React.Component {
+//   render() {
+//     return (
+//       <View>
+//         <AdChoicesView style={{ position: "absolute", left: 0, top: 0 }} />
+//         <AdIconView style={{ width: 50, height: 50 }} />
+//         <MediaView style={{ width: 160, height: 90 }} />
+//         <TriggerableView>
+//           <Text>{this.props.nativeAd.description}</Text>
+//         </TriggerableView>
+//       </View>
+//     );
+//   }
+// }
+
+// export default NativeAds(AdComponent);
+
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-// import FaceBookAds from "react-native-fbads";
+import { StyleSheet, View } from "react-native";
 
 export default function NativeAds() {
-  return (
-    <View style={styles.container}>
-      <Text>Hii</Text>
-    </View>
-  );
+  return <View style={styles.container}></View>;
 }
 
 const styles = StyleSheet.create({

@@ -1,0 +1,294 @@
+import React, { useState, useRef } from "react";
+import {
+  View,
+  Text,
+  Animated,
+  PanResponder,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+
+const { width, height } = Dimensions.get("window");
+
+const OverScroll = () => {
+  const [data, setData] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [active, setActive] = useState({ flat: true, scroll: false });
+
+  const scrollPan = useRef(new Animated.Value(0)).current;
+
+  const responder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => {
+        return active.scroll;
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        if (gestureState.dy > 50) {
+          scrollPan.setValue(gestureState.dy - 50);
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        // console.log(gestureState);
+        Animated.spring(scrollPan, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      },
+    })
+  ).current;
+  return (
+    <View style={styles.container}>
+      <Animated.View
+        {...responder.panHandlers}
+        style={{
+          transform: [{ translateY: scrollPan }],
+        }}
+      >
+        <Animated.FlatList
+          data={data}
+          style={{ backgroundColor: "pink" }}
+          // contentContainerStyle={{ flex: 1 }}
+          onScrollBeginDrag={(e) => {
+            // console.log();
+            if (e.nativeEvent.contentOffset.y > 1) {
+              setActive({ flat: true, scroll: false });
+            } else {
+              setActive({ flat: false, scroll: true });
+            }
+          }}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => <Text style={styles.item}> {item} </Text>}
+        />
+      </Animated.View>
+    </View>
+  );
+};
+
+export default OverScroll;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    // alignItems: "center",
+    // justifyContent: "center",
+  },
+  item: {
+    padding: 60,
+    fontSize: 68,
+    color: "red",
+    fontWeight: "700",
+  },
+  overscroll: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 0, 0, 0.2)",
+    zIndex: -1,
+  },
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CHAT GPT SCROLL 
+  const handleScroll = (event) => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const maxHeight = event.nativeEvent.contentSize.height;
+    const viewportHeight = event.nativeEvent.layoutMeasurement.height;
+    if (currentOffset <= 0 || currentOffset + viewportHeight >= maxHeight) {
+      setAllowScroll(false);
+    } else {
+      setAllowScroll(true);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Button, Platform, View } from "react-native";
+import React from "react";
+import { NativeAdsManager } from "react-native-fbads";
+
+const adsManager = new NativeAdsManager("610210346946849_610216636946220", 2);
+
+export default function Tester() {
+  let [isLoaded, setIsLoaded] = React.useState(false);
+  const bannerId = getPlacementId(true);
+  const interstitialId = getPlacementId(false);
+
+  FacebookAds.AdSettings.requestPermissionsAsync().then((permissions) => {
+    let canTrack = permissions.status === "granted";
+    FacebookAds.AdSettings.setAdvertiserTrackingEnabled(canTrack);
+    setIsLoaded(true);
+  });
+
+  function getPlacementId(bannerAd) {
+    let placementId;
+    if (bannerAd) {
+      placementId =
+        Platform.OS === "ios"
+          ? "979736269624954_979737056291542"
+          : "979736269624954_979737399624841";
+    } else {
+      placementId =
+        Platform.OS === "ios"
+          ? "979736269624954_979737219624859"
+          : "979736269624954_979737516291496";
+    }
+
+    if (__DEV__) {
+      return `IMG_16_9_APP_INSTALL#${placementId}`;
+    }
+
+    return placementId;
+  }
+
+  function showInterstitial() {
+    FacebookAds.InterstitialAdManager.showAd(interstitialId)
+      .then((didClick) => console.log(didClick))
+      .catch((error) => console.log(error));
+  }
+
+  function getBannerAd() {
+    if (isLoaded) {
+      return (
+        <FacebookAds.BannerAd
+          placementId={bannerId}
+          type="large"
+          onPress={() => console.log("click")}
+          onError={(error) => console.log(error.nativeEvent)}
+        />
+      );
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Button title="Show Interstitial" onPress={showInterstitial} />
+      </View>
+      <View style={styles.adView}>{getBannerAd()}</View>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  adView: {
+    alignItems: "flex-start",
+    alignSelf: "stretch",
+  },
+});

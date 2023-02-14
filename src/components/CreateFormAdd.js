@@ -673,6 +673,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
+    paddingVertical: 10,
+    paddingRight: 13,
+    borderRadius: 6,
   },
   searchList: {
     flexDirection: "row",

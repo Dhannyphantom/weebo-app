@@ -53,8 +53,8 @@ export default {
           appID: "406752991548934",
           clientToken: "c837b0ef8171ff028b8c0da3b7e9f4d7",
           displayName: "Weebo App",
-          advertiserIDCollectionEnabled: false,
-          autoLogAppEventsEnabled: false,
+          advertiserIDCollectionEnabled: true,
+          autoLogAppEventsEnabled: true,
           isAutoInitEnabled: true,
           iosUserTrackingPermission:
             "This identifier will be used to deliver personalized ads to you.",
