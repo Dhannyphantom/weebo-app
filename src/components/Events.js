@@ -49,9 +49,11 @@ const tabItems = [
 
 const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
 
-const Events = ({ closer, instance, instanceID }) => {
+const Events = ({ closer, instance, instanceID, followersCount }) => {
   const { handleNewEvents } = useContext(AcctContext);
   const { updateMe } = useContext(AuthContext);
+
+  console.log(followersCount);
 
   const [type, setType] = useState(eventTypes);
   const [asset, setAsset] = useState(null);
@@ -113,7 +115,7 @@ const Events = ({ closer, instance, instanceID }) => {
         });
       }
     }
-    if (!res.cancelled) setAsset(res);
+    res && setAsset(res);
   };
 
   const handleStartEvent = () => {
@@ -171,6 +173,9 @@ const Events = ({ closer, instance, instanceID }) => {
             msg: err?.err?.response?.data?.err,
             type: "failed",
           });
+        } else if (err?.err?.response?.data?.includes("enough")) {
+          setErrMsg(err?.err?.response?.data);
+          return;
         }
 
         setErrMsg(err.msg);

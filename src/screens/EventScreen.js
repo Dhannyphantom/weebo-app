@@ -8,7 +8,7 @@ import Screen from "../components/Screen";
 
 const EventScreen = ({ route, navigation }) => {
   const data = route.params;
-  const { instance, instanceID } = data;
+  const { instance, instanceID, followers } = data;
   const closer = () => {
     navigation.pop();
   };
@@ -16,7 +16,12 @@ const EventScreen = ({ route, navigation }) => {
     <Screen style={styles.container}>
       <StatusBar style="dark" />
       <AppHeader title="New Event" />
-      <Events instance={instance} closer={closer} instanceID={instanceID} />
+      <Events
+        instance={instance}
+        closer={closer}
+        followersCount={followers}
+        instanceID={instanceID}
+      />
     </Screen>
   );
 };

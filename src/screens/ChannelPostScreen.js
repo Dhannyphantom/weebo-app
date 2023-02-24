@@ -111,6 +111,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         navigation.navigate("Event", {
           instance: "channel",
           instanceID: page?._id,
+          followers: page?.subscribers?.length,
         }),
       icon: "plus",
       selected: true,

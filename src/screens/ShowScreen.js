@@ -153,7 +153,7 @@ const ShowScreen = ({ route, navigation }) => {
       id: "3",
       name: "New event",
       onPress: () => {
-        if (!checkIsVerified()) return;
+        if (!checkIsVerified("isEvent")) return;
         navigation.navigate("Event", {
           instance: "show",
           instanceID: dataState._id,
@@ -309,7 +309,7 @@ const ShowScreen = ({ route, navigation }) => {
     }
   };
 
-  const checkIsVerified = () => {
+  const checkIsVerified = (type) => {
     if (!dataState?.verified) {
       setPopper({
         vis: true,
@@ -319,6 +319,17 @@ const ShowScreen = ({ route, navigation }) => {
         type: "failed",
       });
       return false;
+    } else {
+      if (type === "isEvent") {
+        if (dataState?.followers?.length < 15) {
+          setPopper({
+            vis: true,
+            msg: `At least 15 followers needed`,
+            type: "failed",
+          });
+        }
+        return false;
+      }
     }
     return true;
   };

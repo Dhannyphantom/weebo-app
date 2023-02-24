@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
@@ -150,6 +150,7 @@ const CharacterScreen = ({ route, navigation }) => {
         navigation.navigate("Event", {
           instance: "character",
           instanceID: character?._id,
+          followers: character?.followers?.length,
         }),
       icon: "plus",
       iconPack: "F",

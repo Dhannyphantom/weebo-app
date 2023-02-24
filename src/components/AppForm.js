@@ -532,6 +532,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     elevation: 1.3,
     paddingHorizontal: 15,
+    maxWidth: width * 0.46,
     shadowRadius: 6,
     shadowColor: "black",
     shadowOpacity: 0.15,
