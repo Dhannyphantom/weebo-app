@@ -11,13 +11,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Context as AuthContext } from "../config/AuthContext";
-import { Context as FeedContext } from "../config/FeedContext";
+// import { Context as AuthContext } from "../config/AuthContext";
+// import { Context as FeedContext } from "../config/FeedContext";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import getTimestamp from "../constants/getTimestamp";
 import RenderStoryList from "./RenderStoryList";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("window");
 const SCROLL_SEPARATOR = height * 0.08;
@@ -128,6 +129,13 @@ const RenderHeaderList = ({ item, date }) => {
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [statuses, setStatuses] = useState({
+    data: [],
+    loading: true,
+    initialScrollIndexHeader: 0,
+    initialScrollIndex: 0,
+  });
   const [scroller, setScroller] = useState(true);
 
   const headerScroll = useRef(null);
@@ -139,10 +147,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     outputRange: [1, 0],
     extrapolate: "clamp",
   });
-
-  const modalData = modalObj?.data?.all;
-  const statuses = modalObj?.data?.posts;
-  const initialScrollIndex = modalObj?.data?.initialScrollIndex;
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -214,7 +218,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         item={item}
         idx={index}
         scroller={{ scroller, setScroller }}
-        storyLength={statuses?.length}
+        storyLength={statuses.data.length}
         handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
         onEnd={{ endList, setEndList }}
@@ -241,6 +245,43 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         toValue: 0,
         useNativeDriver: true,
       }).start();
+      //   FORMAT STATUSES
+      const posts = [];
+      for (let i = 0; i < modalObj.stories.length; i++) {
+        const e = modalObj.stories[i];
+        const modifiedPosts = e.posts.map((post, idxer) => {
+          let counter = e.posts.length - idxer;
+          const lastItem =
+            i == modalObj.stories.length - 1 && idxer == e.posts.length - 1;
+          return {
+            ...post,
+            storyLength: e.posts.length,
+            storyNumber: idxer,
+            lastItem,
+            storyGroupNumber: i + 1,
+            counter,
+          };
+        });
+        posts.push(...modifiedPosts);
+      }
+
+      // GET SCROLL INDEXES
+      const initialScrollIndex = posts?.findIndex(
+        (obj) => obj._id == modalObj.data
+      );
+
+      const initialScrollIndexHeader = modalObj.stories.findIndex(
+        (obj) => obj._id == modalObj.itemId
+      );
+
+      setStatuses({
+        ...statuses,
+        loading: false,
+        data: posts,
+        initialScrollIndex,
+        initialScrollIndexHeader,
+      });
+      setIsLoading(false);
     }
   }, [modalObj]);
 
@@ -261,10 +302,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
           }}
         >
           <FlatList
-            data={statuses}
+            data={statuses.data}
             ref={listScrollRef}
             snapToAlignment="center"
-            initialScrollIndex={initialScrollIndex}
+            initialScrollIndex={statuses.initialScrollIndex}
             showsVerticalScrollIndicator={false}
             snapToInterval={SCROLL_INTERVAL}
             viewabilityConfig={viewabilityConfig}
@@ -290,12 +331,19 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             renderItem={renderModalList}
           />
           <RenderHeader
-            modalData={modalData}
+            modalData={modalObj?.stories}
             headerScroll={headerScroll}
-            initialScrollIndexHeader={modalObj?.data?.initialScrollIndexHeader}
+            initialScrollIndexHeader={statuses.initialScrollIndexHeader}
             date={active.key}
           />
           {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}
+          <ActivityIndicator
+            visible={isLoading}
+            type="loader"
+            absolute
+            size={0.25}
+            transparent
+          />
         </Animated.View>
       </Modal>
     </>

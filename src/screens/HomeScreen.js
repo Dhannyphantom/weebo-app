@@ -270,7 +270,6 @@ const HomeScreen = ({ navigation, route }) => {
             onRefresh={onRefresh}
           />
           <StatusRender
-            data={[]}
             show={showStatus}
             setter={() => setBools({ ...bools, showStatus: false })}
           />

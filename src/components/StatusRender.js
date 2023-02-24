@@ -24,32 +24,19 @@ import { Context as FeedContext } from "../config/FeedContext";
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
+// TODO:: CACHE RESULTS TO ASYNCSTORAGE
+
 const StatusCardItem = ({ item, display, setDisplay, all }) => {
   const [imager, setImager] = useState({});
   const [loading, setLoading] = useState(true);
   const theme = useContext(ThemeContext);
 
-  const handleCardPress = (item, all) => {
-    // TRYING TO GET THE INITITALSCROLLINDEX
-    const pressed = item.posts[0]._id;
-    const initialScrollIndex = display.data.posts.findIndex(
-      (obj) => obj._id == pressed
-    );
-
-    const initialScrollIndexHeader = all.findIndex(
-      (obj) => obj._id == item._id
-    );
-
-    const storyData = {
-      ...display.data,
-      initialScrollIndex,
-      initialScrollIndexHeader,
-      // posts: display.data.posts,
-    };
-
+  const handleCardPress = () => {
     setDisplay({
       vis: true,
-      data: storyData,
+      data: item.posts[0]._id,
+      itemId: item._id,
+      stories: all,
     });
   };
 
@@ -80,7 +67,7 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
     <View style={styles.cardsContainer}>
       <>
         <TouchableOpacity
-          onPress={() => handleCardPress(item, all)}
+          onPress={handleCardPress}
           style={[styles.statusItem, { backgroundColor: theme.extralight }]}
           activeOpacity={1}
         >
@@ -134,13 +121,14 @@ const CircularGradient = ({ children }) => {
   );
 };
 
-const StatusRender = ({ data, show, setter }) => {
+const StatusRender = ({ show, setter }) => {
   const [display, setDisplay] = useState({
     vis: false,
     data: null,
     loading: true,
   });
-  const [stories, setStories] = useState(data);
+
+  const [stories, setStories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const { getStatuses } = useContext(FeedContext);
@@ -181,34 +169,12 @@ const StatusRender = ({ data, show, setter }) => {
     return (
       <StatusCardItem
         item={item}
-        all={data}
+        all={stories}
         display={display}
         setDisplay={setDisplay}
       />
     );
   };
-
-  // console.log(display?.data?.posts);
-
-  useEffect(() => {
-    const statuses = [];
-    stories?.forEach((obj, idx) => {
-      obj.posts.forEach((post, idxer) => {
-        let counter = obj.posts.length - idxer;
-        const lastItem =
-          idx == data.length - 1 && idxer == obj.posts.length - 1;
-        statuses.push({
-          ...post,
-          storyLength: obj.posts.length,
-          storyNumber: idxer,
-          lastItem,
-          storyGroupNumber: idx + 1,
-          counter,
-        });
-      });
-    });
-    setDisplay({ vis: false, data: { all: data, posts: statuses } });
-  }, [data, show]);
 
   useEffect(() => {
     if (show) {
