@@ -133,13 +133,11 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const [statuses, setStatuses] = useState({
     data: [],
     loading: true,
-    initialScrollIndexHeader: 0,
     initialScrollIndex: 0,
   });
   const [scroller, setScroller] = useState(true);
 
   const headerScroll = useRef(null);
-  // const scrollY = useRef(new Animated.Value(0)).current;
   const translator = useRef(new Animated.Value(0)).current;
   const listScrollRef = useRef(null);
   const opaciter = translator.interpolate({
@@ -147,6 +145,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     outputRange: [1, 0],
     extrapolate: "clamp",
   });
+
+  const initialScrollIndexHeader = modalObj?.stories?.findIndex(
+    (obj) => obj._id == modalObj.itemId
+  );
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -270,16 +272,10 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         (obj) => obj._id == modalObj.data
       );
 
-      const initialScrollIndexHeader = modalObj.stories.findIndex(
-        (obj) => obj._id == modalObj.itemId
-      );
-
       setStatuses({
-        ...statuses,
         loading: false,
         data: posts,
         initialScrollIndex,
-        initialScrollIndexHeader,
       });
       setIsLoading(false);
     }
@@ -333,7 +329,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
           <RenderHeader
             modalData={modalObj?.stories}
             headerScroll={headerScroll}
-            initialScrollIndexHeader={statuses.initialScrollIndexHeader}
+            initialScrollIndexHeader={initialScrollIndexHeader}
             date={active.key}
           />
           {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}

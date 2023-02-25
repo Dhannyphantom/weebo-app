@@ -127,7 +127,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     },
     {
       id: "2",
-      name: "Edit Channel",
+      name: "Update Channel",
       onPress: () => setPopModal({ modal: true, topper: false }),
       selected: true,
       icon: "circle-edit-outline",

@@ -20,16 +20,19 @@ import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 
 import { Context as FeedContext } from "../config/FeedContext";
+import { useNavigation } from "@react-navigation/native";
 
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
 // TODO:: CACHE RESULTS TO ASYNCSTORAGE
 
-const StatusCardItem = ({ item, display, setDisplay, all }) => {
+const StatusCardItem = ({ item, setDisplay, all }) => {
   const [imager, setImager] = useState({});
   const [loading, setLoading] = useState(true);
+
   const theme = useContext(ThemeContext);
+  const navigation = useNavigation();
 
   const handleCardPress = () => {
     setDisplay({
@@ -56,6 +59,22 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
     } else {
       setImager(lastPost);
       setLoading(false);
+    }
+  };
+
+  const handleNav = () => {
+    switch (item.instance) {
+      case "character":
+        navigation.navigate("Character", {
+          item: item[item.instance]._id,
+        });
+        break;
+      case "show":
+        navigation.navigate("Show", { show: item[item.instance] });
+        break;
+      case "channel":
+        navigation.navigate("ChannelPost", { id: item[item.instance]._id });
+        break;
     }
   };
 
@@ -88,7 +107,7 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
         </TouchableOpacity>
       </>
       <View style={styles.profile}>
-        <CircularGradient diameter={width * 0.16}>
+        <CircularGradient onPress={handleNav}>
           <Image
             source={{ uri: item[item.instance]?.cover_photo?.uri }}
             resizeMethod="scale"
@@ -108,16 +127,18 @@ const StatusCardItem = ({ item, display, setDisplay, all }) => {
     </View>
   );
 };
-const CircularGradient = ({ children }) => {
+const CircularGradient = ({ children, onPress }) => {
   return (
-    <LinearGradient
-      style={styles.circular}
-      start={[1, 0.5]}
-      end={[0, 0]}
-      colors={gradientColors}
-    >
-      <View style={styles.circularInner}>{children}</View>
-    </LinearGradient>
+    <TouchableOpacity activeOpacity={0.96} onPress={onPress}>
+      <LinearGradient
+        style={styles.circular}
+        start={[1, 0.5]}
+        end={[0, 0]}
+        colors={gradientColors}
+      >
+        <View style={styles.circularInner}>{children}</View>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 };
 
@@ -166,14 +187,7 @@ const StatusRender = ({ show, setter }) => {
   };
 
   const renderStatuses = ({ item }) => {
-    return (
-      <StatusCardItem
-        item={item}
-        all={stories}
-        display={display}
-        setDisplay={setDisplay}
-      />
-    );
+    return <StatusCardItem item={item} all={stories} setDisplay={setDisplay} />;
   };
 
   useEffect(() => {
@@ -201,7 +215,7 @@ const StatusRender = ({ show, setter }) => {
         style={{
           ...styles.container,
           backgroundColor: theme.transparentBold,
-          paddingTop: safeInset.top + 10,
+          paddingTop: safeInset.top,
           opacity: opaciter,
         }}
       >
@@ -210,9 +224,9 @@ const StatusRender = ({ show, setter }) => {
           onPress={handleCloseModal}
           style={styles.header}
         >
-          <Feather name="x-circle" size={20} color={colors.medium} />
+          <Feather name="chevron-left" size={19} color={colors.medium} />
           <AppText size="large" bold style={styles.headerText}>
-            CLOSE
+            STORIES
           </AppText>
         </TouchableOpacity>
         <FlatList
@@ -266,13 +280,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    alignSelf: "center",
-    padding: 12,
-    marginBottom: 5,
+    marginLeft: 10,
+    // padding: 12,
+    marginBottom: 15,
   },
   headerText: {
-    marginLeft: 3,
-    color: colors.primary,
+    marginLeft: 5,
   },
   image: {
     width: width * 0.13,

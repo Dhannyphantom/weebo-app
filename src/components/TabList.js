@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
   },
   box: {
-    paddingVertical: 30,
+    paddingVertical: 22,
     flexDirection: "row",
     flex: 1,
     alignItems: "center",
