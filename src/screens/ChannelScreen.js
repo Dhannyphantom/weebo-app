@@ -288,7 +288,7 @@ const ChannelListComp = ({
   );
 };
 
-const ChannelScreen = ({ route }) => {
+const ChannelScreen = ({ route, navigation }) => {
   const { getChannels, searchChannels } = useContext(CharContext);
   const {
     state: { userInfo },
@@ -304,7 +304,7 @@ const ChannelScreen = ({ route }) => {
   const [modal, setModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
+  const [bools, setBools] = useState({ search: false, isLoading: false });
 
   const checkSubChannels = channels.find((obj) =>
     obj?.subscribers.includes(userInfo._id)
@@ -321,18 +321,18 @@ const ChannelScreen = ({ route }) => {
   };
 
   const handleChannelSearch = (type) => {
-    setSearchLoading(true);
+    setBools({ ...bools, search: true });
     if (type === "search" && searchText.length > 2) {
       setErrMsg(null);
       searchChannels(
         { type: "channel", term: searchText },
         (resData) => {
           setSearchResults(resData);
-          setSearchLoading(false);
+          setBools({ ...bools, search: false });
           !resData[0] && setErrMsg(`${searchText} channel not found`);
         },
         (err) => {
-          setSearchLoading(false);
+          setBools({ ...bools, search: false });
           setErrMsg(err.msg);
         }
       );
@@ -410,7 +410,7 @@ const ChannelScreen = ({ route }) => {
               {loadedOnce ? (
                 <ActivityIndicator
                   type="isEmpty"
-                  visible
+                  visible={!bools.isLoading}
                   text="No channels at the moment"
                 />
               ) : (
@@ -461,6 +461,23 @@ const ChannelScreen = ({ route }) => {
     });
     return () => (isSubscribed = false);
   }, []);
+
+  useEffect(() => {
+    const sub = navigation.addListener("focus", () => {
+      if (route?.params?.reload === true) {
+        setBools({ ...bools, isLoading: true });
+        getChannels((resData) => {
+          setChannels(resData);
+          setBools({ ...bools, isLoading: false });
+        });
+      }
+    });
+
+    return function () {
+      sub;
+    };
+  }, [route, navigation]);
+
   useEffect(() => {
     searchRef?.current?.focus();
   }, [showSearch]);
@@ -497,7 +514,7 @@ const ChannelScreen = ({ route }) => {
             setSearchBar={setSearchText}
             pressCb={() => handleChannelSearch("search")}
             closeCb={() => handleChannelSearch("close")}
-            loading={searchLoading}
+            loading={bools.search}
             ref={searchRef}
             style={styles.searchBar}
           />
@@ -559,6 +576,7 @@ const ChannelScreen = ({ route }) => {
           />
         )}
       />
+      <ActivityIndicator visible={bools.isLoading} absolute wTransparent />
     </Screen>
   );
 };

@@ -430,6 +430,19 @@ const searchChannels = (dispatch) => async (data, sc, cb) => {
     cb && cb({ err, msg: "Error fetching channels" });
   }
 };
+const deleteChannel = (dispatch) => async (channelId, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await channelApi.delete(`/channel?id=${channelId}`, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error deleting channel data" });
+  }
+};
 
 const updateChannel = (dispatch) => async (data, sc, cb) => {
   const formData = new FormData();
@@ -487,6 +500,7 @@ export const { Context, Provider } = createDataContext(
     subscribeChannel,
     searchChannels,
     updateChannel,
+    deleteChannel,
     getAChannel,
   },
   { errMsg: "", data: {}, s_character: [] }

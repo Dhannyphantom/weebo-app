@@ -30,6 +30,7 @@ import Link from "../components/Link";
 import Separator from "../components/Separator";
 import AppButton from "../components/AppButton";
 import { launchGallery } from "../constants/helpers";
+import AlertModal from "../components/AlertModal";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,6 +38,15 @@ const boolsObj = {
   reloadLoader: false,
   imageLoading: false,
   loadedOnce: false,
+};
+
+const deletePrompt = {
+  visible: false,
+  title: "Delete Channel",
+  message:
+    "You will lose all data and subscribers!. Type in channel name to delete?",
+  btn: "DELETE",
+  type: "delete_channel",
 };
 
 const UpdateDecription = ({ visible, description, handleDescUpdate }) => {
@@ -73,13 +83,14 @@ const ChannelPostScreen = ({ route, navigation }) => {
   const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+  const [prompt, setPrompt] = useState(deletePrompt);
   const [popModal, setPopModal] = useState({ topper: false, modal: false });
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [posts, setPosts] = useState([]);
 
   const routeId = route.params.id;
   let isSubscribed, isMine, sColor;
-  const { getAChannel, updateChannel, subscribeChannel } =
+  const { getAChannel, deleteChannel, updateChannel, subscribeChannel } =
     useContext(CharContext);
   const {
     state: { userInfo },
@@ -153,11 +164,13 @@ const ChannelPostScreen = ({ route, navigation }) => {
       id: "3",
       title: "Delete channel",
       icon: "trash-can",
-      onPress: function () {
-        console.log("Delete Channel");
+      onPress: () => {
+        setPopModal({ ...popModal, modal: false });
+        setPrompt({ ...deletePrompt, visible: true });
       },
     },
   ];
+
   const headerObj = {
     _id: page._id,
     name: page.name,
@@ -179,6 +192,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     verified: false,
     subscribers: page?.subscribers?.length,
   };
+
   const handleUploadBtn = async (type) => {
     if (type === "upload") {
       const { _error, results } = await launchGallery("all");
@@ -279,6 +293,30 @@ const ChannelPostScreen = ({ route, navigation }) => {
       }
     );
   };
+
+  const handlePrompts = () => {
+    switch (prompt.type) {
+      case "delete_channel":
+        setBools({ ...bools, imageLoading: true });
+        deleteChannel(
+          page._id,
+          (resData) => {
+            setBools({ ...bools, imageLoading: false });
+            navigation.navigate("Channel", { reload: true });
+          },
+          (errData) => {
+            console.log(errData?.err?.response?.data);
+            setBools({ ...bools, imageLoading: false });
+          }
+        );
+
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const handleUploadStaus = async () => {
     const { results } = await launchGallery("all", false, false, null, 45);
 
@@ -541,6 +579,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
         visible={openMedia}
         RenderComponent={RenderInstanceMedia}
         setVisible={setOpenMedia}
+      />
+      <AlertModal
+        obj={prompt}
+        setVisible={setPrompt}
+        verifyPrompt={page?.name}
+        onPress={handlePrompts}
       />
 
       <PopMessage
