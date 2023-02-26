@@ -47,6 +47,8 @@ const init = {
   description: "",
 };
 
+const POINTS = 150;
+
 const ChannelHeaderComp = ({
   boxState,
   handleBoxChange,
@@ -101,7 +103,12 @@ const HeaderTitle = ({ text, show }) => {
 
 const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
   const theme = useContext(ThemeContext);
+
   const { createChannel } = useContext(CharContext);
+  const {
+    updateMe,
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
@@ -116,6 +123,7 @@ const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
         addNewElement(data);
         setIsLoading(false);
         setModal(false);
+        updateMe(userInfo.points - POINTS, "points");
       },
       (errData) => {
         console.log(errData);
@@ -142,7 +150,7 @@ const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
             onSubmit={handleFormSubmit}
           >
             <AppText style={{ color: theme.medium, textAlign: "center" }} bold>
-              Will require 150CP
+              Will require {POINTS}CP
             </AppText>
             <View style={{ padding: 12 }}>
               <CreateForm
@@ -360,10 +368,6 @@ const ChannelScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleNewChannel = () => {
-    setModal(true);
-  };
-
   const renderChannels = ({ item }) => {
     if (boxState.m && item.manager._id == userInfo._id) {
       return <ChannelListComp addNewElement={addNewElement} item={item} />;
@@ -498,7 +502,7 @@ const ChannelScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={styles.headerBtn}
               activeOpacity={1}
-              onPress={handleNewChannel}
+              onPress={() => setModal(true)}
             >
               <Feather name="plus" size={18} color={colors.primary} />
             </TouchableOpacity>

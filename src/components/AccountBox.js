@@ -27,7 +27,7 @@ const screen = Dimensions.get("window");
 
 const AccountBox = ({
   setPicModal,
-  // addWeeb,
+  callback,
   getUserData,
   tryLocalSignin,
   userID,
@@ -99,6 +99,7 @@ const AccountBox = ({
   const onCloseModal = () => {
     tryLocalSignin();
     setPicModal(false);
+    callback && callback();
   };
 
   const onLink = (screen, params) => {
@@ -117,6 +118,7 @@ const AccountBox = ({
       },
     });
     setPicModal(false);
+    callback && callback();
   };
 
   useEffect(() => {

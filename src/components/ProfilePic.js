@@ -16,6 +16,7 @@ const ProfilePic = ({
   size,
   border,
   loading,
+  callback,
   disabled,
   userID,
   gender,
@@ -113,6 +114,7 @@ const ProfilePic = ({
       >
         <AccountBox
           setPicModal={setPicModal}
+          callback={callback}
           userInfo={userInfo}
           getUserData={getUserData}
           tryLocalSignin={tryLocalSignin}

@@ -237,21 +237,8 @@ const deleteInstance = () => async (data, sc, cb) => {
 };
 
 const instanceUpdater = (dispatch) => async (data, sc, cb) => {
-  let router,
-    requestObj = {};
-  // TODO:: MAKE A SINGLE ROUTE TO UPDATE ALL INSTANCE
-  switch (data.instance) {
-    case "character":
-      router = "updateCharacterInstance";
-      break;
-    case "show":
-      router = "updateShowInstance";
-      break;
-    case "group":
-      router = "updateGroupInstance";
-      break;
-  }
-  //
+  let requestObj = {};
+
   const formData = new FormData();
   formData.append(
     "data",
@@ -275,18 +262,14 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
 
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await instanceApi.put(
-      `${baseURL.uri}/create/${router}`,
-      formData,
-      {
-        headers: {
-          "x-auth-token": token,
-          Accept: "application/json",
-          "Content-Type": contentType,
-        },
-        ...requestObj,
-      }
-    );
+    const res = await instanceApi.put("/updateInstance", formData, {
+      headers: {
+        "x-auth-token": token,
+        Accept: "application/json",
+        "Content-Type": contentType,
+      },
+      ...requestObj,
+    });
     sc && sc(res.data);
   } catch (err) {
     cb &&

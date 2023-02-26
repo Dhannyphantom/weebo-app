@@ -56,7 +56,7 @@ const PROFILE_WIDTH = 150;
 const NUM_COLUMNS = Math.floor(width / 150);
 const LIGHT_COLORS = ["#ff9100", "#ffb74d", "#fff3e0"];
 
-const Weebs = ({ item, index }) => {
+const Weebs = ({ item, handleCloseModal, index }) => {
   const opaciter = useRef(new Animated.Value(0)).current;
   const scaler = opaciter.interpolate({
     inputRange: [0, 1],
@@ -101,6 +101,7 @@ const Weebs = ({ item, index }) => {
         borderColor={colors.white}
         gender={item.gender}
         size={90}
+        callback={handleCloseModal}
         borderRad={45}
         source={item.avatar}
       />
@@ -397,7 +398,11 @@ const ConnectScreen = ({ navigation }) => {
               }}
               style={{ flex: 1 }}
               renderItem={({ item, index }) => (
-                <Weebs item={item} index={index} />
+                <Weebs
+                  item={item}
+                  handleCloseModal={handleCloseModal}
+                  index={index}
+                />
               )}
             />
             <View
