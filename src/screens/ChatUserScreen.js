@@ -182,7 +182,6 @@ const ChatUserScreen = ({ route }) => {
         title={username}
         titleStyle={{ color: colors.white }}
         separator={false}
-        style={{ marginTop: 15 }}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -253,7 +252,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopStartRadius: width * 0.045,
     borderTopEndRadius: width * 0.045,
-    paddingTop: 15,
+    paddingTop: 18,
     elevation: 10,
   },
 });

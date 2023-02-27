@@ -57,6 +57,7 @@ const Challenge = ({
   } = useContext(ChallContext);
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
   /// STATES
   const [scores, setScores] = useState([
@@ -132,7 +133,16 @@ const Challenge = ({
       }
       setScores(copyScores);
     }
-    voteTwo(challengeID, type, (err) => setErrMsg(err));
+    voteTwo(
+      challengeID,
+      type,
+      (resData) => {
+        if (resData.hasVotedBefore === false) {
+          updateMe(resData.points, "points");
+        }
+      },
+      (err) => setErrMsg(err)
+    );
   };
 
   const handleChallengeCardPress = () => {

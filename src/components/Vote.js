@@ -144,7 +144,7 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
                   viewable={false}
                 /> */}
                 <AppText>
-                  Display a video thumb and use MediaModal to play video{" "}
+                  Display a video thumb and use MediaModal to play video
                 </AppText>
               </View>
             )}

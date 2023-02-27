@@ -49,17 +49,6 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     updateMe,
   } = useContext(AuthContext);
 
-  useEffect(() => {
-    navigation.addListener("focus", () => {
-      setIsLoading(false);
-      prepareState();
-      Keyboard.dismiss();
-    });
-    navigation.addListener("blur", () => {
-      Keyboard.dismiss();
-    });
-  }, [navigation]);
-
   const characterFormInitials = {
     name,
     dpName: "",
@@ -161,17 +150,28 @@ const CreateCharacterScreen = ({ route, navigation }) => {
 
   const nav = (info) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
-    updateMe({ prop: "points", data: info?.points });
     characterCreated(info.user);
+    updateMe(info.points, "points");
     navigation.navigate("Character", {
       item: info?.character?._id,
       toScreen: "Home",
     });
   };
   const navShow = (info) => {
-    updateMe({ prop: "points", data: info?.points });
+    updateMe(info.points, "points");
     navigation.navigate("Show", { show: info.show, toScreen: "Home" });
   };
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      setIsLoading(false);
+      prepareState();
+      Keyboard.dismiss();
+    });
+    navigation.addListener("blur", () => {
+      Keyboard.dismiss();
+    });
+  }, [navigation]);
 
   return (
     <Screen>
@@ -393,10 +393,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                     createGroup(
                       formValues,
                       (resData) => {
-                        updateMe({
-                          prop: "points",
-                          data: resData.points,
-                        });
+                        updateMe(resData.points, "points");
                         navigation.goBack();
                       },
                       (obj) => actionCallback(obj)

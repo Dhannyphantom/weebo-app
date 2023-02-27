@@ -52,6 +52,7 @@ const Challenger = ({
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
   const { startInstanceChallenge, acceptInstanceChallenge } =
     useContext(ChallContext);
@@ -90,10 +91,11 @@ const Challenger = ({
 
     startInstanceChallenge(
       sendData,
-      (_resData) => {
+      (resData) => {
         setAsset(null);
         setLoading(false);
         fetchInstance("cover");
+        updateMe(resData.points, "points");
         setter();
       },
       (errData) => {

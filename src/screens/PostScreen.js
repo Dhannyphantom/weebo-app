@@ -206,7 +206,7 @@ const PostScreen = ({ route, navigation }) => {
       id: item._id,
       important: false,
       dpName: item.name ?? item.name_j ?? item.name_e,
-      dpSubName: item.creator ?? item.show.name_j ?? item.show.name_e,
+      dpSubName: item.creator ?? item?.show?.name_j ?? item?.show?.name_e,
     };
     const finder = tagged.find((obj) => obj.id == item._id);
     if (!finder) {

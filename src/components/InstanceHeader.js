@@ -27,6 +27,7 @@ const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
 const MINIMUM_FOLLOWERS = 1000;
 const MINIMUM_FEEDBACK = 1000;
+const FEEDBACK_WP = 2;
 
 export const RenderVerifyInfo = ({
   vName,
@@ -134,6 +135,7 @@ const InstanceHeader = ({ instanceData }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
 
   let posObj = {};
@@ -201,17 +203,21 @@ const InstanceHeader = ({ instanceData }) => {
         userFeedback(
           data,
           () => {
-            if (!finder)
+            if (!finder) {
+              updateMe(userInfo.points + FEEDBACK_WP, "points");
               return setPopper({
                 vis: true,
                 msg: "Feedback sent successfully",
                 type: "success",
               });
+            }
           },
           (err) => {
+            console.log(err.message);
+            console.log(err?.response?.data);
             setPopper({
               vis: true,
-              msg: err?.response?.message,
+              msg: err?.response?.message || "Something went wrong",
               type: "failed",
             });
           }
@@ -307,7 +313,7 @@ const InstanceHeader = ({ instanceData }) => {
           ))}
           {!finder && (
             <AppText style={{ color: colors.medium, marginTop: 20 }}>
-              Earn 2CP by verifying instance
+              Earn {FEEDBACK_WP}CP by verifying instance
             </AppText>
           )}
         </View>

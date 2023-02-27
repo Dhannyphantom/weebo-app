@@ -219,13 +219,9 @@ const ChatScreen = ({ navigation }) => {
             style={styles.chatTextHead}
           >
             <View>
-              <Feather
-                name="chevron-left"
-                size={width * 0.045}
-                color={colors.white}
-              />
+              <Feather name="chevron-left" size={19} color={colors.white} />
             </View>
-            <AppText style={styles.chatText} size="xlarge" bold>
+            <AppText style={styles.chatText} size="large" bold>
               Chats
             </AppText>
           </TouchableOpacity>

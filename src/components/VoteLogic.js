@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Dimensions } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 
 import { Context as ChallContext } from "../config/ChallContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -16,13 +16,12 @@ import Comments from "./Comments";
 import AppDetail from "./AppDetail";
 import PopMessage from "./PopMessage";
 
-const { width, height } = Dimensions.get("window");
-
 const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
   const { voteOne, getComments, replyComments, commentPost } =
     useContext(ChallContext);
   const {
     state: { userInfo },
+    updateMe,
   } = useContext(AuthContext);
   const userID = userInfo._id;
 
@@ -108,7 +107,15 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
     if (type === "events") {
       voteObj.type = "events";
     }
-    voteOne(voteObj, null, (err) => setErrMsg(err));
+    voteOne(
+      voteObj,
+      (resData) => {
+        if (resData.hasVotedBefore === false) {
+          updateMe(resData.points, "points");
+        }
+      },
+      (err) => setErrMsg(err)
+    );
   };
 
   const handleDone = (data) => {

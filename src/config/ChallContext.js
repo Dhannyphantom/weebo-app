@@ -130,7 +130,7 @@ const voteOne = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const voteTwo = (dispatch) => async (voteId, type, cb) => {
+const voteTwo = (dispatch) => async (voteId, type, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await challengeApi.put(
@@ -145,7 +145,7 @@ const voteTwo = (dispatch) => async (voteId, type, cb) => {
         },
       }
     );
-    cb && response.data !== "ok" && cb("Error updating vote!");
+    sc && sc(response.data);
   } catch (err) {
     cb && cb("Error updating vote!");
   }
