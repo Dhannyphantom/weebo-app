@@ -126,6 +126,13 @@ const ShowScreen = ({ route, navigation }) => {
       name: "challenge",
       onPress: () => {
         if (!checkIsVerified()) return;
+        if (!userInfo.verified) {
+          return setPopper({
+            vis: true,
+            type: "failed",
+            msg: "Please verify your account",
+          });
+        }
         setChallengeModal({ vis: true, contest: { mode: "start" } });
       },
       icon: "trophy-outline",

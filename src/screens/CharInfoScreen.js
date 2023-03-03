@@ -1,10 +1,87 @@
-import React from "react";
-import { View, StyleSheet, FlatList, Dimensions } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { Context as AuthContext } from "../config/AuthContext";
 
 import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
+import PopMessage from "../components/PopMessage";
 import colors from "../constants/colors";
+
+const CharList = ({ name, icon, names, show, parentProps }) => {
+  const { character, cardState } = parentProps;
+
+  if (name && !names) {
+    let prop = name.replace(/\s/g, "");
+    return (
+      <View style={styles.charLists}>
+        <MaterialCommunityIcons name={icon} color={colors.primary} size={12} />
+        <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
+          <AppText style={{ textTransform: "uppercase" }} bold>
+            {name} :{" "}
+          </AppText>
+          {show && (
+            <AppText style={styles.infoText}>
+              {character[prop].name_j || character[prop].name_e}
+            </AppText>
+          )}
+          {!show && (
+            <AppText style={styles.infoText}> {character[prop]} </AppText>
+          )}
+        </AppText>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.charLists}>
+      <MaterialCommunityIcons name={icon} color={colors.primary} size={12} />
+      <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
+        <AppText style={{ textTransform: "uppercase" }} bold>
+          {" "}
+          {names} :{" "}
+        </AppText>
+        <AppText style={styles.infoText}>
+          {" "}
+          {names == "followers" ? cardState.liked : cardState.favNum}
+        </AppText>
+      </AppText>
+    </View>
+  );
+};
+
+const CharFlat = ({ name, icon, id, parentProps }) => {
+  const { character } = parentProps;
+  let prop = name.replace(/\s/g, "");
+  if (character[prop].length <= 0) return null;
+  return (
+    <FlatList
+      data={character[prop]}
+      keyExtractor={(item) => item}
+      ListHeaderComponent={
+        <View style={styles.charLists}>
+          <MaterialCommunityIcons
+            name={icon}
+            color={colors.primary}
+            size={12}
+          />
+          <AppText style={{ textTransform: "uppercase", marginLeft: 6 }} bold>
+            {" "}
+            {name} :{" "}
+          </AppText>
+        </View>
+      }
+      renderItem={({ item }) => (
+        <>
+          <AppText style={{ textTransform: "capitalize", marginLeft: 30 }}>
+            {item}
+          </AppText>
+        </>
+      )}
+      listKey={id}
+    />
+  );
+};
 
 const CharInfoScreen = ({
   isMine,
@@ -15,100 +92,107 @@ const CharInfoScreen = ({
   cardState,
   setChallengeModal,
 }) => {
-  const CharList = ({ name, icon, names, show }) => {
-    if (name && !names) {
-      let prop = name.replace(/\s/g, "");
-      return (
-        <View style={styles.charLists}>
-          <MaterialCommunityIcons
-            name={icon}
-            color={colors.primary}
-            size={12}
-          />
-          <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
-            <AppText style={{ textTransform: "uppercase" }} bold>
-              {name} :{" "}
-            </AppText>
-            {show && (
-              <AppText style={styles.infoText}>
-                {character[prop].name_j || character[prop].name_e}
-              </AppText>
-            )}
-            {!show && (
-              <AppText style={styles.infoText}> {character[prop]} </AppText>
-            )}
-          </AppText>
-        </View>
-      );
-    }
-    return (
-      <View style={styles.charLists}>
-        <MaterialCommunityIcons name={icon} color={colors.primary} size={12} />
-        <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
-          <AppText style={{ textTransform: "uppercase" }} bold>
-            {" "}
-            {names} :{" "}
-          </AppText>
-          <AppText style={styles.infoText}>
-            {" "}
-            {names == "followers" ? cardState.liked : cardState.favNum}
-          </AppText>
-        </AppText>
-      </View>
-    );
-  };
+  const [popper, setPopper] = useState({ vis: false });
 
-  const CharFlat = ({ name, icon, id }) => {
-    let prop = name.replace(/\s/g, "");
-    if (character[prop].length <= 0) return null;
-    return (
-      <FlatList
-        data={character[prop]}
-        keyExtractor={(item) => item}
-        ListHeaderComponent={
-          <View style={styles.charLists}>
-            <MaterialCommunityIcons
-              name={icon}
-              color={colors.primary}
-              size={12}
-            />
-            <AppText style={{ textTransform: "uppercase", marginLeft: 6 }} bold>
-              {" "}
-              {name} :{" "}
-            </AppText>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <>
-            <AppText style={{ textTransform: "capitalize", marginLeft: 30 }}>
-              {item}
-            </AppText>
-          </>
-        )}
-        listKey={id}
-      />
-    );
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const initializeChallenge = () => {
+    if (!userInfo.verified) {
+      return setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Please verify your account",
+      });
+    }
+    setChallengeModal({ vis: true, contest: { mode: "start" } });
   };
 
   return (
     <View style={styles.info}>
       <View style={styles.charInfo}>
-        <CharList name="show" show icon="television" />
-        <CharList name="role" icon="face-agent" />
-        <CharList names="followers" icon="account-group" />
-        <CharList names="favorites" icon="star" />
-        <CharList name="type" icon="baby-face" />
-        <CharList name="birthday" icon="gift" />
-        <CharList name="gender" icon="gender-male-female" />
-        <CharList name="height" icon="human-male-height" />
-        <CharList name="rival" icon="target-account" />
-        <CharList name="father" icon="human-male" />
-        <CharList name="mother" icon="human-female" />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="show"
+          show
+          icon="television"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="role"
+          icon="face-agent"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          names="followers"
+          icon="account-group"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          names="favorites"
+          icon="star"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="type"
+          icon="baby-face"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="birthday"
+          icon="gift"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="gender"
+          icon="gender-male-female"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="height"
+          icon="human-male-height"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="rival"
+          icon="target-account"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="father"
+          icon="human-male"
+        />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="mother"
+          icon="human-female"
+        />
       </View>
-      <CharFlat name="voice Actor" icon="headset" id="voiceActor" />
-      <CharFlat name="brothers" icon="human-male-boy" id="a" />
-      <CharFlat name="sisters" icon="human-female-girl" id="b" />
-      <CharFlat name="groups" icon="account-multiple" id="c" />
+      <CharFlat
+        parentProps={{ character }}
+        name="voice Actor"
+        icon="headset"
+        id="voiceActor"
+      />
+      <CharFlat
+        parentProps={{ character }}
+        name="brothers"
+        icon="human-male-boy"
+        id="a"
+      />
+      <CharFlat
+        parentProps={{ character }}
+        name="sisters"
+        icon="human-female-girl"
+        id="b"
+      />
+      <CharFlat
+        parentProps={{ character }}
+        name="groups"
+        icon="account-multiple"
+        id="c"
+      />
 
       <View style={styles.btnCont}>
         {isMine && !challenged && character?.verified ? (
@@ -121,9 +205,7 @@ const CharInfoScreen = ({
           <AppButton
             title="Challenge"
             style={styles.btnAction}
-            onPress={() =>
-              setChallengeModal({ vis: true, contest: { mode: "start" } })
-            }
+            onPress={initializeChallenge}
           />
         ) : !isMine && challenged ? (
           <AppButton
@@ -134,6 +216,11 @@ const CharInfoScreen = ({
           />
         ) : null}
       </View>
+      <PopMessage
+        popData={popper}
+        setter={() => setPopper({ vis: false })}
+        timer={0.2}
+      />
     </View>
   );
 };

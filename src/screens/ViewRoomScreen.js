@@ -173,6 +173,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
       isProfile: { vis: false, data: null },
       onPress: () => {
         if (checkIsVerified()) {
+          if (!userInfo.verified) {
+            return setPopper({
+              vis: true,
+              type: "failed",
+              msg: "Please verify your account",
+            });
+          }
           setChallengeModal({ vis: true });
           onCloseModal();
         }
@@ -410,12 +417,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const handleCharacterInvites = () => {
-    // setPopper({ vis: true, msg: "Invite sent", type: "success" });
-    // return;
     if (isManager) {
       setShowSearch(!showSearch);
     } else {
       setPopModal({ ...popModal, vis: true, characters: true });
+      console.log("This was clicked!");
       // set;
     }
   };
@@ -846,7 +852,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
           <ActivityIndicator
             visible
             type="isEmpty"
-            text="No characters in this group"
+            text={`No characters in this group yet \n Verify this group by clicking on the verify button`}
           />
         </View>
       )}

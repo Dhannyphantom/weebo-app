@@ -607,7 +607,14 @@ const updateCollection = (dispatch) => async (data, sc, cb) => {
 
 // THIS WILL UPDATE THE USER STATE
 const updateMe = (dispatch) => (data, prop) => {
-  dispatch({ type: "update_me", payload: { data, prop } });
+  if (typeof data === "object") {
+    dispatch({
+      type: "update_me",
+      payload: { data: data.data, prop: data.prop },
+    });
+  } else {
+    dispatch({ type: "update_me", payload: { data, prop } });
+  }
 };
 
 const clearMessage = (dispatch) => () => {

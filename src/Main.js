@@ -14,6 +14,7 @@ import { Provider as CharProvider } from "./config/CharContext";
 import { Provider as AccountProvider } from "./config/AcctContext";
 import { Provider as FeedProvider } from "./config/FeedContext";
 import { Provider as ChallContext } from "./config/ChallContext";
+import { Provider as ReduxProvider } from "react-redux";
 import theme from "./constants/theme";
 
 import AuthNavigator from "./navigation/AuthNavigator";
@@ -21,6 +22,7 @@ import HomeNavigator from "./navigation/HomeNavigator";
 import ThemeContext from "./config/ThemeContext";
 import colors from "./constants/colors";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
+import { store } from "./config/store";
 
 const Main = () => {
   const {
@@ -108,20 +110,22 @@ export default function Providers() {
   }, []);
 
   return (
-    <FeedProvider>
-      <AccountProvider>
-        <CharProvider>
-          <AuthProvider>
-            <ChallContext>
-              <ThemeContext.Provider
-                value={themeMode === true ? theme.dark : theme.light}
-              >
-                <Main />
-              </ThemeContext.Provider>
-            </ChallContext>
-          </AuthProvider>
-        </CharProvider>
-      </AccountProvider>
-    </FeedProvider>
+    <ReduxProvider store={store}>
+      <FeedProvider>
+        <AccountProvider>
+          <CharProvider>
+            <AuthProvider>
+              <ChallContext>
+                <ThemeContext.Provider
+                  value={themeMode === true ? theme.dark : theme.light}
+                >
+                  <Main />
+                </ThemeContext.Provider>
+              </ChallContext>
+            </AuthProvider>
+          </CharProvider>
+        </AccountProvider>
+      </FeedProvider>
+    </ReduxProvider>
   );
 }
