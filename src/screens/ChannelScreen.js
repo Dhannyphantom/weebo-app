@@ -32,6 +32,7 @@ import ThemeContext from "../config/ThemeContext";
 import TabList from "../components/TabList";
 import AppFadeIn from "../components/AppFadeIn";
 import { useNavigation } from "@react-navigation/native";
+import getTimestamp from "../constants/getTimestamp";
 
 const { width, height } = Dimensions.get("window");
 
@@ -259,7 +260,7 @@ const ChannelListComp = ({
       {!small && (
         <View style={styles.stats}>
           <AppText style={styles.statsItem}>
-            <AppText bold>{item?.posts?.length}</AppText> posts{" "}
+            Created <AppText bold> {getTimestamp(item._id, "feed")}</AppText>
           </AppText>
           {subscribe && (
             <View style={{ flex: 0.5 }}>

@@ -7,6 +7,7 @@ import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
 import FriendBox from "../components/FriendBox";
+import ActivityIndicator from "../components/ActivityIndicator";
 
 const FollowersScreen = ({ navigation, route }) => {
   const {
@@ -14,8 +15,9 @@ const FollowersScreen = ({ navigation, route }) => {
     getUserData,
   } = useContext(AuthContext);
 
-  const [headerTitle, setHeaderTitle] = useState("Followers");
   const [myFollowers, setMyFollowers] = useState([]);
+  const [errMsg, setErrMsg] = useState(null);
+  const [bools, setBools] = useState({ isLoading: true });
 
   const params = route.params;
 
@@ -23,21 +25,24 @@ const FollowersScreen = ({ navigation, route }) => {
     switch (params.type) {
       case "isMine":
         setMyFollowers(userInfo.followers);
+        setBools({ ...bools, isLoading: false });
         break;
       case "otherFollowers":
         getUserData(
-          params.id,
-          "get_followers",
+          { id: params.id, type: "get_followers" },
           (resData) => {
             setMyFollowers(resData.followers);
+            setBools({ ...bools, isLoading: false });
           },
           (err) => {
-            console.log(err);
+            setErrMsg(err.data);
+            setBools({ ...bools, isLoading: false });
           }
         );
         break;
       default:
-        setMyFollowers(userInfo.followers);
+        // setMyFollowers(userInfo.followers);
+        console.log("Provide a params type");
         break;
     }
   }, [navigation]);
@@ -45,8 +50,16 @@ const FollowersScreen = ({ navigation, route }) => {
   return (
     <Screen style={styles.container}>
       {/* PUT A SEARCH IN THE APPHEADER */}
-      <AppHeader title={headerTitle} />
+      <AppHeader title="Followers" />
       <FriendBox data={myFollowers} />
+      <ActivityIndicator visible={bools.isLoading} absolute transparent />
+      <ActivityIndicator
+        visible={Boolean(errMsg)}
+        type="isEmpty"
+        text={errMsg}
+        absolute
+        transparent
+      />
     </Screen>
   );
 };

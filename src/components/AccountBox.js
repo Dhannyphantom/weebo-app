@@ -211,7 +211,7 @@ const AccountBox = ({
                   count={info.followers.length}
                   onPress={() =>
                     onLink("Followers", {
-                      type: "otherFollowers",
+                      type: isMine ? "isMine" : "otherFollowers",
                       id: info._id,
                     })
                   }

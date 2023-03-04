@@ -205,12 +205,23 @@ const ForgotPassword = ({ setPassModal }) => {
   );
 };
 
-const Oauth = ({ name, onPress, icon }) => {
+const Oauth = ({ name, onPress, icon, color = colors.google }) => {
+  const theme = useContext(ThemeContext);
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={styles.auth}>
-      <Fontisto name={icon} size={20} color={colors.google} />
-      {/* <Fontisto name="" size={40} color={colors.google} /> */}
-      <AppText style={styles.authText}>Continue with {name}</AppText>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.9}
+      style={[
+        styles.auth,
+        {
+          backgroundColor: theme.white,
+        },
+      ]}
+    >
+      <Fontisto name={icon} size={25} color={color} />
+      <AppText size="xsmall" style={styles.authText}>
+        Continue with {name}
+      </AppText>
     </TouchableOpacity>
   );
 };
@@ -228,7 +239,6 @@ const AppForm = ({
   setElevation,
   p2,
   loading,
-  setLoading,
   p3,
   a,
   b,
@@ -489,7 +499,12 @@ const AppForm = ({
       <AppText style={{ marginTop: 20 }}> Or sign {a} with</AppText>
       <View style={styles.icons}>
         <Oauth name="Google" icon="google-plus" onPress={googleSignIn} />
-        <Oauth name="Facebook" icon="facebook" onPress={googleSignIn} />
+        <Oauth
+          name="Facebook"
+          icon="facebook"
+          onPress={googleSignIn}
+          color={colors.facebook}
+        />
       </View>
       <TouchableOpacity
         activeOpacity={0.7}
