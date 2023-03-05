@@ -8,9 +8,9 @@ import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("screen");
 
 export default function FormCountryPicker({ style }) {
-  const [selected, setSelected] = useState("+234");
-
   const { setFieldValue, values } = useFormikContext();
+
+  const [selected, setSelected] = useState(values["contactCode"]);
 
   const theme = useContext(ThemeContext);
 
@@ -22,28 +22,34 @@ export default function FormCountryPicker({ style }) {
   return (
     <View style={[styles.container, style]}>
       <AppText style={styles.title} bold>
-        Your country and contact info
+        Your country and contact info:
       </AppText>
       <View style={{ marginLeft: 15, width: width * 0.8 }}>
         <CountryDropdown
           selected={selected}
-          phone={values["contact"]}
+          phone={String(values["contact"])}
           setPhone={(phoneCode) => setFieldValue("contact", phoneCode)}
           setCountryDetails={handleSelect}
           setSelected={setSelected}
           dropdownStyles={{
             ...styles.dropdownStyles,
             backgroundColor: theme.extralight,
+            borderColor: "#ddd",
             marginBottom: 15,
           }}
-          dropdownTextStyles={{ color: theme.color, fontFamily: "sen" }}
+          dropdownTextStyles={{
+            color: theme.color,
+            fontFamily: "sen",
+          }}
           countryCodeContainerStyles={{
             backgroundColor: theme.extralight,
+            borderColor: "#ddd",
           }}
           countryCodeTextStyles={{ color: theme.color, fontFamily: "sen" }}
           phoneStyles={{
             height: 55,
             backgroundColor: theme.extralight,
+            borderColor: "#ddd",
             color: theme.color,
             fontFamily: "sen",
           }}

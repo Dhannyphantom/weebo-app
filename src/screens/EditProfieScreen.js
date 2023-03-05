@@ -442,8 +442,8 @@ const EditProfileScreen = ({ navigation, route }) => {
     gender: pageData.gender,
     country: pageData.country ? pageData.country : "",
     city: pageData.city ? pageData.city : "",
-    contact: "",
-    contactCode: "+234",
+    contact: pageData?.contact?.number ?? "",
+    contactCode: pageData?.contact?.contactCode ?? "+234",
     oldPass: "",
     newPass: "",
     confirmPass: "",
@@ -480,8 +480,6 @@ const EditProfileScreen = ({ navigation, route }) => {
   };
 
   const handleFormSubmit = (formValues) => {
-    console.log(formValues);
-    return;
     setIsLoading(true);
     updateProfile(
       formValues,

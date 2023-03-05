@@ -343,7 +343,9 @@ const styles = StyleSheet.create({
     minHeight: 55,
     maxHeight: 100,
     justifyContent: "center",
+    borderWidth: 1,
     borderRadius: 8,
+    borderColor: "#ddd",
     overflow: "hidden",
   },
   inputGrow: {

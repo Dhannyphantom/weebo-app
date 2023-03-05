@@ -625,6 +625,8 @@ const styles = StyleSheet.create({
     minHeight: 55,
     maxHeight: 100,
     flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#ddd",
     marginLeft: 14,
     justifyContent: "center",
     borderRadius: 9,

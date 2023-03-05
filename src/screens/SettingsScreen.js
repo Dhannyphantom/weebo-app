@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     width: width * 0.95,
     justifyContent: "center",
     borderWidth: 0.8,
-    borderColor: colors.primary,
+    borderColor: "#ddd",
     elevation: 1.8,
     borderRadius: width * 0.025,
     marginVertical: width * 0.01,
