@@ -43,6 +43,8 @@ const editValidationSchema = Yup.object().shape({
     .matches(/male|female/i, "Gender should either be a male or female")
     .label("Gender"),
   country: Yup.string(),
+  contact: Yup.string().min(6).optional(),
+  contactCode: Yup.string().min(2).optional(),
   city: Yup.string(),
 });
 

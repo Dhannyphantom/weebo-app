@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   TextInput,
+  FlatList,
 } from "react-native";
 import { Formik } from "formik";
 
@@ -33,6 +34,7 @@ import { emailers } from "../constants/data_store";
 import Link from "../components/Link";
 import { launchGallery } from "../constants/helpers";
 import AlertModal from "../components/AlertModal";
+import FormCountryPicker from "../components/FormCountryPicker";
 
 const { width, height } = Dimensions.get("window");
 
@@ -297,7 +299,7 @@ const RenderEmailPop = ({ vis, setPopper }) => {
               >
                 <TextInput
                   value={emailItem.text}
-                  keyboardType="number-pad"
+                  keyboardType={"phone-pad"}
                   maxLength={1}
                   ref={txtRef}
                   allowFontScaling={false}
@@ -440,6 +442,8 @@ const EditProfileScreen = ({ navigation, route }) => {
     gender: pageData.gender,
     country: pageData.country ? pageData.country : "",
     city: pageData.city ? pageData.city : "",
+    contact: "",
+    contactCode: "+234",
     oldPass: "",
     newPass: "",
     confirmPass: "",
@@ -476,6 +480,8 @@ const EditProfileScreen = ({ navigation, route }) => {
   };
 
   const handleFormSubmit = (formValues) => {
+    console.log(formValues);
+    return;
     setIsLoading(true);
     updateProfile(
       formValues,
@@ -529,53 +535,59 @@ const EditProfileScreen = ({ navigation, route }) => {
   return (
     <Screen style={styles.container}>
       <AppHeader title="Edit Profile" />
-      <ScrollView
+      <FlatList
+        data={["PROFILE SCREEN"]}
         keyboardShouldPersistTaps="handled"
         overScrollMode="never"
         contentContainerStyle={{ paddingBottom: height * 0.14 }}
-      >
-        <TouchableOpacity
-          onPress={selectProfileImage}
-          activeOpacity={0.9}
-          style={styles.profilePic}
-        >
-          <ProfilePic
-            source={pageData.avatar}
-            size={width * 0.4}
-            loading={imageLoading}
-            border={2}
-            disabled
-          />
-        </TouchableOpacity>
-
-        <Formik
-          initialValues={formInitials}
-          onSubmit={(formValues) => handleFormSubmit(formValues)}
-          validationSchema={editValidationSchema}
-        >
-          {() => (
-            <View style={styles.form}>
-              <CreateForm headerZ="username" placeholder={pageData.username} />
-              <CreateForm headerZ="email" placeholder={pageData.email} />
-              <CreateForm headerZ="gender" placeholder={pageData.gender} />
-
-              <CreateForm
-                headerZ="first name"
-                name="name"
-                mutable={
-                  formInitials.name.length > 1 ? formInitials.name : "name"
-                }
+        keyExtractor={(item) => item}
+        renderItem={() => (
+          <>
+            <TouchableOpacity
+              onPress={selectProfileImage}
+              activeOpacity={0.9}
+              style={styles.profilePic}
+            >
+              <ProfilePic
+                source={pageData.avatar}
+                size={width * 0.4}
+                loading={imageLoading}
+                border={2}
+                disabled
               />
-              <CreateForm
-                headerZ="last name"
-                name="second_name"
-                mutable={
-                  formInitials.second_name.length > 1
-                    ? formInitials.second_name
-                    : "last name"
-                }
-              />
-              <CreateForm
+            </TouchableOpacity>
+
+            <Formik
+              initialValues={formInitials}
+              onSubmit={(formValues) => handleFormSubmit(formValues)}
+              validationSchema={editValidationSchema}
+            >
+              {() => (
+                <View style={styles.form}>
+                  <CreateForm
+                    headerZ="username"
+                    placeholder={pageData.username}
+                  />
+                  <CreateForm headerZ="email" placeholder={pageData.email} />
+                  <CreateForm headerZ="gender" placeholder={pageData.gender} />
+
+                  <CreateForm
+                    headerZ="first name"
+                    name="name"
+                    mutable={
+                      formInitials.name.length > 1 ? formInitials.name : "name"
+                    }
+                  />
+                  <CreateForm
+                    headerZ="last name"
+                    name="second_name"
+                    mutable={
+                      formInitials.second_name.length > 1
+                        ? formInitials.second_name
+                        : "last name"
+                    }
+                  />
+                  {/* <CreateForm
                 headerZ="country"
                 name="country"
                 mutable={
@@ -583,52 +595,58 @@ const EditProfileScreen = ({ navigation, route }) => {
                     ? formInitials.country
                     : "country"
                 }
-              />
-              <CreateForm
-                headerZ="city/town"
-                name="city"
-                mutable={
-                  formInitials.city.length > 1 ? formInitials.city : "city"
-                }
-              />
-              {errMsg && <AppText style={styles.errText}> {errMsg} </AppText>}
-              <SubmitButton
-                bared
-                disabled={isLoading}
-                title="Update Profile"
-                style={styles.submitBtn}
-              />
-              <AppText bold size="large" style={styles.action}>
-                Profile Actions
-              </AppText>
-              <View style={styles.btnContainer}>
-                {!pageData.verified && params.isProfileCompleted && (
-                  <Link
-                    name="Verify Email"
-                    onPress={() => setEmailPop(true)}
-                    style={styles.btn}
+              /> */}
+                  <FormCountryPicker />
+                  <CreateForm
+                    headerZ="city/town"
+                    name="city"
+                    mutable={
+                      formInitials.city.length > 1 ? formInitials.city : "city"
+                    }
                   />
-                )}
-                <Link
-                  name="Change Password"
-                  onPress={() => setToggle(!toggle)}
-                  style={styles.btn}
-                />
-                <Link
-                  name={`Turn ${locatorStatus} my weebo locator`}
-                  onPress={() =>
-                    setAlert({
-                      ...getLocatorAlert(pageData?.location?.active),
-                      visible: true,
-                    })
-                  }
-                  style={styles.btn}
-                />
-              </View>
-            </View>
-          )}
-        </Formik>
-      </ScrollView>
+                  {errMsg && (
+                    <AppText style={styles.errText}> {errMsg} </AppText>
+                  )}
+                  <SubmitButton
+                    bared
+                    disabled={isLoading}
+                    title="Update Profile"
+                    style={styles.submitBtn}
+                  />
+                  <AppText bold size="large" style={styles.action}>
+                    Profile Actions
+                  </AppText>
+                  <View style={styles.btnContainer}>
+                    {!pageData.verified && params.isProfileCompleted && (
+                      <Link
+                        name="Verify Email"
+                        onPress={() => setEmailPop(true)}
+                        style={styles.btn}
+                      />
+                    )}
+                    <Link
+                      name="Change Password"
+                      onPress={() => setToggle(!toggle)}
+                      style={styles.btn}
+                    />
+                    <Link
+                      name={`Turn ${locatorStatus} my weebo locator`}
+                      onPress={() =>
+                        setAlert({
+                          ...getLocatorAlert(pageData?.location?.active),
+                          visible: true,
+                        })
+                      }
+                      style={styles.btn}
+                    />
+                  </View>
+                </View>
+              )}
+            </Formik>
+          </>
+        )}
+      />
+
       <View style={styles.activity}>
         <ActivityIndicator type="spin" visible={isLoading} wTransparent />
       </View>
