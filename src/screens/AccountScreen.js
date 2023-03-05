@@ -179,7 +179,8 @@ const AccountScreen = ({ navigation, route }) => {
             source={account[0]?.avatar}
             loading={imageLoading}
             size={width * 0.32}
-            border={2}
+            border={5}
+            borderColor="#ddd"
             disabled
           />
           <View style={styles.editIcon}>

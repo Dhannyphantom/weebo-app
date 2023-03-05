@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: width * 0.95,
     justifyContent: "center",
-    borderWidth: 0.8,
+    borderWidth: 3,
     borderColor: "#ddd",
     elevation: 1.8,
     borderRadius: width * 0.025,

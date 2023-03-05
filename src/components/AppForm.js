@@ -262,7 +262,7 @@ const AppForm = ({
         Animated.spring(maleTranslator, {
           toValue: 1.4,
           useNativeDriver: true,
-          bounciness: 20,
+          bounciness: 25,
         }),
         Animated.spring(femaleTranslator, {
           toValue: 1,
@@ -278,7 +278,7 @@ const AppForm = ({
         Animated.spring(femaleTranslator, {
           toValue: 1.4,
           useNativeDriver: true,
-          bounciness: 20,
+          bounciness: 25,
         }),
       ]).start();
     }

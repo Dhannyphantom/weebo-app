@@ -35,6 +35,7 @@ import Link from "../components/Link";
 import { launchGallery } from "../constants/helpers";
 import AlertModal from "../components/AlertModal";
 import FormCountryPicker from "../components/FormCountryPicker";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,11 +55,13 @@ const getLocatorAlert = (isOn) => ({
   type: "locator",
 });
 
-const RenderEmailPop = ({ vis, setPopper }) => {
+const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
   const theme = useContext(ThemeContext);
+  const navigation = useNavigation();
   const {
     recoverPassword,
     mailVerifier,
+    updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
 
@@ -107,11 +110,20 @@ const RenderEmailPop = ({ vis, setPopper }) => {
 
       mailVerifier(
         sendData,
-        () => {
+        (resData) => {
+          setPopper({
+            ...emailVerifiedPop,
+            vis: true,
+            cb: () => {
+              updateMe("points", resData.points);
+              updateMe("verified", true);
+              setEmailPop(false);
+              navigation.goBack();
+            },
+          });
+          // setPageData({ ...pageData, verified: true });
           setIsLoading(false);
-          setPopper({ ...emailVerifiedPop, vis: true });
-          setPageData({ ...pageData, verified: true });
-          setEmailPop(false);
+          console.log("DonE");
         },
         (err) => {
           setPopper({ vis: true, msg: err, type: "failed" });
@@ -550,7 +562,8 @@ const EditProfileScreen = ({ navigation, route }) => {
                 source={pageData.avatar}
                 size={width * 0.4}
                 loading={imageLoading}
-                border={2}
+                border={5}
+                borderColor="#ddd"
                 disabled
               />
             </TouchableOpacity>
@@ -585,15 +598,6 @@ const EditProfileScreen = ({ navigation, route }) => {
                         : "last name"
                     }
                   />
-                  {/* <CreateForm
-                headerZ="country"
-                name="country"
-                mutable={
-                  formInitials.country.length > 1
-                    ? formInitials.country
-                    : "country"
-                }
-              /> */}
                   <FormCountryPicker />
                   <CreateForm
                     headerZ="city/town"
@@ -652,7 +656,12 @@ const EditProfileScreen = ({ navigation, route }) => {
         visible={emailPop}
         setVisible={setEmailPop}
         RenderComponent={() => (
-          <RenderEmailPop setPopper={setPopper} vis={emailPop} />
+          <RenderEmailPop
+            setPageData={setPageData}
+            setEmailPop={setEmailPop}
+            setPopper={setPopper}
+            vis={emailPop}
+          />
         )}
       />
       <AppFadeIn
@@ -683,12 +692,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btnContainer: {
-    borderWidth: 1,
-    borderColor: colors.primary,
+    borderWidth: 3,
+    borderColor: "#ddd",
     borderRadius: 20,
     padding: 10,
+    paddingBottom: 20,
     marginRight: 20,
-    marginTop: 20,
+    marginVertical: 25,
   },
   btn: {},
   container: {

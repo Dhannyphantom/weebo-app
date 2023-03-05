@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 15,
+    fontFamily: "sen",
   },
   icon: {
     marginLeft: 15,

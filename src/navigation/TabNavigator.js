@@ -136,9 +136,9 @@ const TabIcon = ({ focused, color, size = 35, item }) => {
       <ProfilePic
         source={userInfo.avatar}
         size={size}
-        border={1.1}
+        border={2}
         borderRad={size / 2}
-        borderColor={focused ? colors.primary : theme.backgroundLight}
+        borderColor={focused ? "#ddd" : theme.backgroundLight}
         disabled
       />
     );

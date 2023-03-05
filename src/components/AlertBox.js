@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -19,6 +19,7 @@ import Cards from "./Cards";
 
 //files
 import appLogo from "../../assets/icon_dark.png";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,12 +37,15 @@ const AlertBox = ({
   noAt = false,
 }) => {
   const swipeRef = useRef(null);
+  const theme = useContext(ThemeContext);
 
   let username = user && user.username;
   let avatar = user && user.avatar;
   let _id = user && user._id;
   let border, owner, ownerImage, nameStyles, atSymbol;
-  active ? (border = { borderColor: colors.primary, borderWidth: 0.8 }) : null;
+  active
+    ? (border = { borderColor: colors.primary, borderWidth: 2 })
+    : (border = { borderColor: "#ddd", borderWidth: 2 });
   if (!character && !user) {
     owner = username = "WEEBO";
     atSymbol = noAt = true;
@@ -70,7 +74,7 @@ const AlertBox = ({
         style={{ ...styles.rightBgCont, transform: [{ translateX: trans }] }}
       >
         {!isLoading && (
-          <View style={styles.rightBg}>
+          <View style={[styles.rightBg, { backgroundColor: theme.extralight }]}>
             <TouchableOpacity
               activeOpacity={0.6}
               style={styles.rightIconCont}
@@ -80,7 +84,7 @@ const AlertBox = ({
                 name="cancel"
                 style={styles.rightIcons}
                 size={24}
-                color={colors.white}
+                color={colors.primary}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -92,7 +96,7 @@ const AlertBox = ({
                 name="trash-2"
                 style={styles.rightIcons}
                 size={24}
-                color={colors.white}
+                color={colors.primary}
               />
             </TouchableOpacity>
             {active && (
@@ -105,7 +109,7 @@ const AlertBox = ({
                   name="check"
                   style={styles.rightIcons}
                   size={24}
-                  color={colors.white}
+                  color={colors.primary}
                 />
               </TouchableOpacity>
             )}
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    width: width * 0.92,
+    width: width * 0.95,
     padding: 12,
     alignSelf: "center",
     minHeight: 70,
@@ -180,7 +184,7 @@ const styles = StyleSheet.create({
   rightBg: {
     justifyContent: "flex-end",
     flexDirection: "row",
-    backgroundColor: colors.primary,
+    backgroundColor: "#ddd",
     alignItems: "center",
     borderTopEndRadius: 8,
     borderBottomEndRadius: 8,

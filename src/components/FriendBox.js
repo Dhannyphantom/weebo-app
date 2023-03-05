@@ -304,6 +304,8 @@ const styles = StyleSheet.create({
       height: 1.8,
     },
     borderRadius: 100,
+    borderWidth: 1.8,
+    borderColor: "#ddd",
     padding: 10,
     overflow: "hidden",
     flexDirection: "row",
