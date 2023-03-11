@@ -8,6 +8,8 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import Clipboard from "@react-native-community/clipboard";
+import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import AppText from "../components/AppText";
@@ -20,7 +22,6 @@ import colors from "../constants/colors";
 import Points from "../components/Points";
 import Separator from "../components/Separator";
 import AlertModal from "../components/AlertModal";
-import { StatusBar } from "expo-status-bar";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "../components/AppFadeIn";
 import PopMessage from "../components/PopMessage";
@@ -50,14 +51,16 @@ const InviteWeebs = ({ closeModal }) => {
     switch (type) {
       case "link":
         // USE EXPO CLIPBOARD PACKAGE
+        try {
+          Clipboard.setString("Hi");
+        } catch (err) {
+          console.log("Nope");
+        }
         closeModal("copied");
         break;
       case "share":
         await Share.share({ message });
         closeModal();
-        break;
-
-      default:
         break;
     }
   };
@@ -159,7 +162,7 @@ const AccountScreen = ({ navigation, route }) => {
       case "copied":
         setPopper({
           vis: true,
-          msg: "Invite link copied to clipboard successfully",
+          msg: "Invite link copied to clipboard!",
           type: "success",
         });
         setInvites(false);

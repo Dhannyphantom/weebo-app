@@ -92,7 +92,7 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
             </TouchableOpacity>
           )}
         </View>
-        <View style={styles.commentReplySec}>
+        <View>
           <FlatList
             data={item.replies}
             keyExtractor={(item) => item._id}
@@ -102,7 +102,8 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
           {item.moreReplies && (
             <View style={styles.showMore}>
               <AppButton
-                title="Show more"
+                title="more"
+                LIcon="chevron-down"
                 onPress={() => handleShowMore(item)}
                 naked
               />

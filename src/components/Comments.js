@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,6 @@ import {
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -24,6 +23,208 @@ import PopUpModal from "./PopUpModal";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
+
+const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
+  const { getCommentReplies, replyComments } = useContext(FeedContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const [bools, setBools] = useState({ loading: true });
+  const [replyData, setReplyData] = useState({ comment: [], page: {} });
+  const [errMsg, setErrMsg] = useState(null);
+
+  const handleDummyUpdate = (text) => {
+    const replyObj = {
+      _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+      user: {
+        _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+        username: userInfo.username,
+        avatar: userInfo.avatar,
+      },
+      pending: true,
+      replyId: data.commentId,
+      reply: text,
+    };
+
+    const copier = [...replyData.comment[0].replies];
+
+    setReplyData({
+      ...replyData,
+      comment: [{ ...replyData.comment[0], replies: [...copier, replyObj] }],
+    });
+  };
+
+  const handleSend = (text, cb) => {
+    handleDummyUpdate(text);
+    replyComments(
+      data.instanceID,
+      data.type,
+      data.commentId,
+      text,
+      (resData) => {
+        fetchReplies();
+        cb && cb();
+      },
+      (err) => {
+        setErrMsg(err.msg);
+      }
+    );
+  };
+
+  const fetchReplies = () => {
+    getCommentReplies(
+      data,
+      (resData) => {
+        setReplyData(resData);
+        setBools({ ...bools, loading: false });
+      },
+      (errData) => console.log(errData)
+    );
+  };
+
+  useEffect(() => {
+    fetchReplies();
+  }, []);
+
+  return (
+    <CommentComponent
+      handleShowMore={null}
+      title="REPLIES"
+      hasLoaded={!bools.loading}
+      commentData={replyData.comment}
+      downCompProps={{
+        reply,
+        setReply,
+        error,
+        avatar,
+        loaded: !bools.loading,
+        handleSend,
+      }}
+    />
+  );
+};
+
+const DownComponent = ({
+  reply,
+  setReply,
+  error,
+  avatar,
+  loaded,
+  handleSend,
+}) => {
+  const theme = useContext(ThemeContext);
+  const textInputRef = useRef(null);
+
+  return (
+    <View style={{ maxHeight: 150 }}>
+      {reply._id && (
+        <View
+          style={{
+            ...styles.commentReplyBox,
+            backgroundColor: theme.extralight,
+          }}
+        >
+          <AppText>Replying @{reply.user.username}</AppText>
+          <TouchableOpacity
+            style={styles.commentClose}
+            onPress={() => setReply({})}
+          >
+            <MaterialCommunityIcons
+              name="close-circle"
+              size={15}
+              color={colors.medium}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+      {error && (
+        <View
+          style={{
+            ...styles.commentReplyBox,
+            backgroundColor: theme.extralight,
+          }}
+        >
+          <AppText style={styles.errorText}> {error} </AppText>
+        </View>
+      )}
+
+      <CommentBar
+        onSend={handleSend}
+        type={reply._id ? "reply" : "send"}
+        loaded={loaded}
+        ref={textInputRef}
+        avatar={avatar}
+      />
+    </View>
+  );
+};
+
+const CommentComponent = ({
+  title,
+  hasLoaded,
+  commentData,
+  handleShowMore,
+  downCompProps = {},
+}) => {
+  const textInputRef = useRef(null);
+
+  const renderComments = ({ item }) => {
+    return (
+      <CommentDetails
+        item={item}
+        setReply={downCompProps.setReply}
+        handleShowMore={handleShowMore}
+        callFocus={() => textInputRef?.current?.focus()}
+      />
+    );
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={78}
+      style={{ width: "100%", height: height - 60 }}
+    >
+      {hasLoaded ? (
+        <View style={{ flex: 1 }}>
+          <AppText bold size="large" style={styles.modalTitle}>
+            {title}
+          </AppText>
+          <Separator h={1} />
+          <FlatList
+            data={commentData}
+            // ref={flatRef}
+            keyExtractor={(item) => item._id}
+            overScrollMode="never"
+            // onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
+            ListEmptyComponent={RenderEmptyComments}
+            contentContainerStyle={{ paddingBottom: 10 }}
+            keyboardShouldPersistTaps="handled"
+            renderItem={renderComments}
+          />
+        </View>
+      ) : (
+        <View style={styles.loader}>
+          <ActivityIndicator visible={true} size={2} type="comment" />
+        </View>
+      )}
+      <DownComponent {...downCompProps} />
+    </KeyboardAvoidingView>
+  );
+};
+
+const RenderEmptyComments = () => {
+  return (
+    <View style={{ width, height: height * 0.8, backgroundColor: "blue" }}>
+      <ActivityIndicator
+        visible
+        type="emptyComment"
+        text="No comments, Send one right now"
+      />
+    </View>
+  );
+};
 
 const Comments = ({
   modalVis,
@@ -44,18 +245,20 @@ const Comments = ({
   } = useContext(AuthContext);
   const { commentPost, replyComments } = useContext(FeedContext);
   const [reply, setReply] = useState({});
-
-  const theme = useContext(ThemeContext);
-  const textInputRef = useRef(null);
-  const flatRef = useRef(null);
-  const inset = useSafeAreaInsets();
-
-  const handleSetReply = () => {
-    textInputRef?.current?.focus();
-  };
+  const [bools, setBools] = useState({
+    replies: false,
+    replyObj: { page: 1, limit: 15 },
+  });
 
   const handleShowMore = (item) => {
-    console.log(item);
+    setBools({
+      ...bools,
+      replies: true,
+      replyObj: {
+        ...bools.replyObj,
+        commentId: item._id,
+      },
+    });
   };
 
   const handleSentComment = (type, data, cb) => {
@@ -162,120 +365,52 @@ const Comments = ({
     setModal(false);
   };
 
-  const renderComments = ({ item }) => {
-    return (
-      <CommentDetails
-        item={item}
-        setReply={setReply}
-        handleShowMore={handleShowMore}
-        callFocus={handleSetReply}
-      />
-    );
-  };
-
-  const RenderEmptyComments = () => {
-    return (
-      <View style={{ width, height: height * 0.8, backgroundColor: "blue" }}>
-        <ActivityIndicator
-          visible
-          type="emptyComment"
-          text="No comments, Send one right now"
-        />
-      </View>
-    );
-  };
-
-  const CommentComponent = () => {
-    return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={78}
-        style={{ width: "100%", height: height - 60 }}
-      >
-        {loaded ? (
-          <View style={{ flex: 1 }}>
-            <AppText
-              bold
-              size="large"
-              style={{ alignSelf: "center", marginTop: 10 }}
-            >
-              COMMENTS
-            </AppText>
-            <Separator h={1} />
-            <FlatList
-              data={comments}
-              ref={flatRef}
-              keyExtractor={(item) => item._id}
-              overScrollMode="never"
-              onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
-              ListEmptyComponent={RenderEmptyComments}
-              contentContainerStyle={{ paddingBottom: 10 }}
-              keyboardShouldPersistTaps="handled"
-              renderItem={renderComments}
-            />
-          </View>
-        ) : (
-          <View style={styles.loader}>
-            <ActivityIndicator visible={true} size={2} type="comment" />
-          </View>
-        )}
-        <DownComponent />
-      </KeyboardAvoidingView>
-    );
-  };
-
-  const DownComponent = () => {
-    return (
-      <View style={{ maxHeight: 150 }}>
-        {reply._id && (
-          <View
-            style={{
-              ...styles.commentReplyBox,
-              backgroundColor: theme.extralight,
-            }}
-          >
-            <AppText>Replying @{reply.user.username}</AppText>
-            <TouchableOpacity
-              style={styles.commentClose}
-              onPress={() => setReply({})}
-            >
-              <MaterialCommunityIcons
-                name="close-circle"
-                size={15}
-                color={colors.medium}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
-        {error && (
-          <View
-            style={{
-              ...styles.commentReplyBox,
-              backgroundColor: theme.extralight,
-            }}
-          >
-            <AppText style={styles.errorText}> {error} </AppText>
-          </View>
-        )}
-
-        <CommentBar
-          onSend={handleSend}
-          type={reply._id ? "reply" : "send"}
-          loaded={loaded}
-          ref={textInputRef}
-          avatar={avatar}
-        />
-      </View>
-    );
-  };
-
   return (
-    <PopUpModal
-      visible={modalVis}
-      setter={() => handleCloseComments()}
-      full
-      ContentComponent={CommentComponent}
-    />
+    <>
+      <PopUpModal
+        visible={modalVis}
+        setter={() => handleCloseComments()}
+        full
+        ContentComponent={() => (
+          <CommentComponent
+            handleShowMore={handleShowMore}
+            title="COMMENTS"
+            hasLoaded={loaded}
+            commentData={comments}
+            downCompProps={{
+              reply,
+              setReply,
+              error,
+              avatar,
+              loaded,
+              handleSend,
+            }}
+          />
+        )}
+      />
+
+      <PopUpModal
+        visible={bools.replies}
+        setter={() => setBools({ ...bools, replies: false })}
+        full
+        ContentComponent={() => (
+          <MoreReplies
+            data={{
+              ...bools.replyObj,
+              instanceID: commentData.instanceID,
+              type: commentData.instanceType,
+            }}
+            // Don't actually need this. I think
+            reply={reply}
+            setReply={setReply}
+            //
+            avatar={avatar}
+            error={error}
+            handleSend={handleSend}
+          />
+        )}
+      />
+    </>
   );
 };
 
@@ -319,6 +454,7 @@ const styles = StyleSheet.create({
   modalBgTwo: {
     flex: 1,
   },
+  modalTitle: { alignSelf: "center", marginTop: 10 },
   loader: {
     width: "100%",
     height: "100%",

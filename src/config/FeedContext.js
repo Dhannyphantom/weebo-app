@@ -422,6 +422,26 @@ const getStatuses = (dispatch) => async (sc, cb) => {
   }
 };
 
+const getCommentReplies = (dispatch) => async (data, sc, cb) => {
+  const routeStr = `instanceID=${data.instanceID}&type=${data.type}&commentId=${data.commentId}&page=${data.page}&limit=${data.limit}`;
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get(`/getReplies?${routeStr}`, {
+      headers: {
+        "x-auth-token": token,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
+      },
+    });
+    // dispatch({ type: "get_statuses", payload: res.data });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error fetching reply data", data: err?.response?.data });
+  }
+};
+
 // GETS HOME DATA [posts, statuses, shows, userInfo]
 const getHomeFeeds = (dispatch) => async (query, sc, cb) => {
   const uri = query
@@ -474,6 +494,7 @@ export const { Provider, Context } = createDataContext(
     getHomeFeeds,
     editPostCaption,
     commentPost,
+    getCommentReplies,
     viewPostVideo,
     followInstance,
     replyComments,
