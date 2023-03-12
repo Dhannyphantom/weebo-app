@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -30,7 +30,7 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
     state: { userInfo },
   } = useContext(AuthContext);
 
-  const [bools, setBools] = useState({ loading: true });
+  const [bools, setBools] = useState({ loading: true, loadMore: false });
   const [replyData, setReplyData] = useState({ comment: [], page: {} });
   const [errMsg, setErrMsg] = useState(null);
 
@@ -47,11 +47,11 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
       reply: text,
     };
 
-    const copier = [...replyData.comment[0].replies];
+    const copier = [...replyData?.comment[0]?.replies];
 
     setReplyData({
       ...replyData,
-      comment: [{ ...replyData.comment[0], replies: [...copier, replyObj] }],
+      comment: [{ ...replyData?.comment[0], replies: [replyObj, ...copier] }],
     });
   };
 
@@ -63,8 +63,7 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
       data.commentId,
       text,
       (resData) => {
-        fetchReplies();
-        cb && cb();
+        fetchReplies(() => cb && cb());
       },
       (err) => {
         setErrMsg(err.msg);
@@ -72,12 +71,35 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
     );
   };
 
-  const fetchReplies = () => {
+  const fetchReplies = (cb, extraData) => {
+    let sendObj = data;
+    if (extraData) {
+      sendObj = {
+        ...data,
+        ...extraData,
+      };
+      setBools({ ...bools, loadMore: true });
+    }
     getCommentReplies(
-      data,
+      sendObj,
       (resData) => {
-        setReplyData(resData);
-        setBools({ ...bools, loading: false });
+        if (extraData) {
+          setReplyData({
+            ...resData,
+            comment: [
+              {
+                ...resData.comment[0],
+                replies: replyData?.comment[0]?.replies?.concat(
+                  resData.comment[0].replies
+                ),
+              },
+            ],
+          });
+        } else {
+          setReplyData(resData);
+        }
+        setBools({ ...bools, loading: false, loadMore: false });
+        cb && cb();
       },
       (errData) => console.log(errData)
     );
@@ -93,6 +115,12 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
       title="REPLIES"
       hasLoaded={!bools.loading}
       commentData={replyData.comment}
+      moreContent={{
+        vis: Boolean(replyData?.page?.next),
+        type: "replies",
+        loadMoreContent: () => fetchReplies(null, replyData?.page?.next),
+        loading: bools.loadMore,
+      }}
       downCompProps={{
         reply,
         setReply,
@@ -112,6 +140,7 @@ const DownComponent = ({
   avatar,
   loaded,
   handleSend,
+  flatRef,
 }) => {
   const theme = useContext(ThemeContext);
   const textInputRef = useRef(null);
@@ -150,7 +179,12 @@ const DownComponent = ({
       )}
 
       <CommentBar
-        onSend={handleSend}
+        onSend={(...args) => {
+          handleSend(...args, () => {
+            flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
+          });
+          flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
+        }}
         type={reply._id ? "reply" : "send"}
         loaded={loaded}
         ref={textInputRef}
@@ -163,11 +197,13 @@ const DownComponent = ({
 const CommentComponent = ({
   title,
   hasLoaded,
+  moreContent = {},
   commentData,
   handleShowMore,
   downCompProps = {},
 }) => {
   const textInputRef = useRef(null);
+  const flatRef = useRef(null);
 
   const renderComments = ({ item }) => {
     return (
@@ -194,11 +230,20 @@ const CommentComponent = ({
           <Separator h={1} />
           <FlatList
             data={commentData}
-            // ref={flatRef}
+            ref={flatRef}
             keyExtractor={(item) => item._id}
             overScrollMode="never"
-            // onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
             ListEmptyComponent={RenderEmptyComments}
+            ListFooterComponent={() => {
+              if (moreContent.vis)
+                return (
+                  <LoadMoreContent
+                    onPress={moreContent.loadMoreContent}
+                    loading={moreContent.loading}
+                    type={moreContent.type}
+                  />
+                );
+            }}
             contentContainerStyle={{ paddingBottom: 10 }}
             keyboardShouldPersistTaps="handled"
             renderItem={renderComments}
@@ -209,7 +254,7 @@ const CommentComponent = ({
           <ActivityIndicator visible={true} size={2} type="comment" />
         </View>
       )}
-      <DownComponent {...downCompProps} />
+      <DownComponent flatRef={flatRef} {...downCompProps} />
     </KeyboardAvoidingView>
   );
 };
@@ -223,6 +268,29 @@ const RenderEmptyComments = () => {
         text="No comments, Send one right now"
       />
     </View>
+  );
+};
+
+const LoadMoreContent = ({ type = "replies", onPress, loading }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <TouchableOpacity
+      style={[styles.loadMore, { backgroundColor: theme.extralight }]}
+      activeOpacity={0.94}
+      onPress={onPress}
+      disabled={loading}
+    >
+      {!loading ? (
+        <>
+          <AppText style={styles.loadMoreText}>more {type}</AppText>
+          <Feather name="chevron-down" size={18} color={colors.medium} />
+        </>
+      ) : (
+        <View style={styles.loadMore}>
+          <ActivityIndicator visible transparent absolute size={0.25} />
+        </View>
+      )}
+    </TouchableOpacity>
   );
 };
 
@@ -273,7 +341,7 @@ const Comments = ({
         copier[finder] = data;
         setMyComments(copier);
       } else {
-        setMyComments([...comments, data]);
+        setMyComments([data, ...comments]);
       }
     } else if (type === "reply") {
       const copier = [...comments];
@@ -288,7 +356,7 @@ const Comments = ({
       }
       setMyComments(copier);
     } else if (type === "dummyComment") {
-      setMyComments([...comments, data]);
+      setMyComments([data, ...comments]);
     } else if (type === "dummyReply") {
       const copier = [...comments];
       const finder = copier.findIndex((obj) => obj._id == data.replyId);
@@ -458,6 +526,20 @@ const styles = StyleSheet.create({
   loader: {
     width: "100%",
     height: "100%",
+  },
+  loadMore: {
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  loadMoreText: {
+    textAlign: "center",
+    marginRight: 6,
+    textTransform: "capitalize",
   },
 });
 export default Comments;

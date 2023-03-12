@@ -6,14 +6,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import {
-  Ionicons,
-  Feather,
-  AntDesign,
-  MaterialCommunityIcons,
-  Entypo,
-  Fontisto,
-} from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 
 import Cards from "./Cards";
 import colors from "../constants/colors";
@@ -102,7 +95,6 @@ const CommentBar = (
 const forwardedRef = forwardRef(CommentBar);
 
 const styles = StyleSheet.create({
-  avatar: {},
   avatarCont: {
     marginRight: 10,
   },
