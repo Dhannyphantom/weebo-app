@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import FeedFooter from "./FeedFooter";
 import FeedHeader from "./FeedHeader";
 import FeedText from "./FeedText";
@@ -14,6 +14,7 @@ import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
+import LoaderImage from "./LoaderImage";
 const { width } = Dimensions.get("window");
 
 const FeedRender = ({ item, user }) => {
@@ -28,10 +29,11 @@ const FeedRender = ({ item, user }) => {
 
   const [post, setPost] = useState({
     likes: item.likes.length,
-    comments: item.comments.length,
+    comments: item.commentCount ?? 0,
     views: item.views.length,
     viewed: false,
     liked: false,
+    video: false,
     active: 1,
     loading: false,
   });
@@ -63,15 +65,6 @@ const FeedRender = ({ item, user }) => {
   };
 
   useEffect(() => {
-    let itemCommentCount = 0;
-    for (let i = 0; i < item.comments.length; i++) {
-      const e = item.comments[i];
-      itemCommentCount++;
-      for (let i = 0; i < e.replies.length; i++) {
-        itemCommentCount++;
-      }
-    }
-    setPost({ ...post, comments: itemCommentCount });
     if (item.views.includes(user)) {
       setPost({ ...post, viewed: true });
     }
@@ -113,17 +106,24 @@ const FeedRender = ({ item, user }) => {
           />
         ) : item.type === "video" ? (
           <View style={{ flex: 1 }}>
-            {/* DISPLAY A THUMB AND ONLY SHOW VIDEO WHEN IT'S PLAYING */}
-            <PostVideo
-              source={item?.posts[0]}
-              // feed={item}
-              onDoublePress={handleLike}
-              showHearts
-              style={{ width: width * 0.95 }}
-              onFinishedPlaying={handleViewPost}
-              onLongPress={handleShowMedia}
-              // post={post}
-            />
+            {post.video ? (
+              <PostVideo
+                source={item?.posts[0]}
+                onDoublePress={handleLike}
+                autoPlay
+                showHearts
+                style={{ width: width * 0.95 }}
+                onFinishedPlaying={handleViewPost}
+                onLongPress={handleShowMedia}
+              />
+            ) : (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => setPost({ ...post, video: true })}
+              >
+                <LoaderImage image={item?.posts[0]} isVideoImage />
+              </TouchableOpacity>
+            )}
           </View>
         ) : item.type === "text" ? null : null}
         {item.type !== "text" && isMultiple && (
@@ -161,7 +161,6 @@ const FeedRender = ({ item, user }) => {
         post={post}
         setPost={setPost}
       />
-      {/* <Separator h={1} /> */}
       <MediaModal
         modalObject={displayMedia}
         setVisible={setDisplayMedia}

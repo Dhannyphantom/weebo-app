@@ -98,13 +98,14 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   );
 };
 
-const RenderPoster = ({ source }) => {
+export const RenderMediaIcon = () => {
   return (
-    <View style={styles.posterContainer}>
-      <Image
-        source={{ uri: source.thumb }}
-        style={styles.poster}
-        blurRadius={4}
+    <View style={styles.playIcon}>
+      <MaterialCommunityIcons
+        name="motion-play"
+        size={40}
+        style={{ margin: 10 }}
+        color={colors.white}
       />
     </View>
   );
@@ -270,16 +271,7 @@ export default function PostVideo({
         isLooping={loop}
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
-      {showPlayIcon && !status.isPlaying && (
-        <View style={styles.playIcon}>
-          <MaterialCommunityIcons
-            name="motion-play"
-            size={40}
-            style={{ margin: 10 }}
-            color={colors.white}
-          />
-        </View>
-      )}
+      {showPlayIcon && !status.isPlaying && <RenderMediaIcon />}
       <RenderLottie vis={bools.showHearts} type="like" loaded={bools.loaded} />
       <RenderLottie vis={status.isPlaying} type="play" loaded={bools.loaded} />
       {status.isBuffering && !status.isPlaying && (

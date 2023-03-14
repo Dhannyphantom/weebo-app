@@ -43,6 +43,7 @@ import appConfig from "../../app.config";
 import BannerAds from "../components/BannerAds";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
+const ADS_INTERVAL = 10;
 // import NativeAds from "../components/NativeAds";
 
 Notifications.setNotificationHandler({
@@ -117,7 +118,7 @@ const HomeScreen = ({ navigation, route }) => {
   const fetchHomeData = (cb, loader) => {
     loader && setBools({ ...bools, loader: true });
     getHomeFeeds(
-      null,
+      { page: 1, limit: 15 },
       async (resData) => {
         // SETTERS
         setFeeds(resData.feeds);
@@ -152,7 +153,7 @@ const HomeScreen = ({ navigation, route }) => {
     if (item.instanceType === "show") {
       return <Shows data={item} show />;
     } else if (item.instanceType === "post") {
-      if (index % 4 === 0) {
+      if (index % ADS_INTERVAL === 0) {
         return (
           <>
             <BannerAds />

@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import ThemeContext from "../config/ThemeContext";
-import colors from "../constants/colors";
 
 import ActivityIndicator from "./ActivityIndicator";
-
-const { width, height } = Dimensions.get("window");
+import { RenderMediaIcon } from "./PostVideo";
 
 const LoaderImage = ({
   image,
@@ -57,6 +55,7 @@ const LoaderImage = ({
             blurRadius={isVideoImage ? 5 : 12}
             resizeMode="cover"
           />
+          {isVideoImage && <RenderMediaIcon />}
 
           {!isVideoImage && (
             <Image

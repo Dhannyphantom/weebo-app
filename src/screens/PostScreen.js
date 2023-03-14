@@ -270,7 +270,7 @@ const PostScreen = ({ route, navigation }) => {
       <View
         style={{
           ...styles.listTag,
-          backgroundColor: item.important ? colors.primary : theme.extralight,
+          backgroundColor: item.important ? colors.unChange : theme.extralight,
         }}
       >
         <TouchableOpacity

@@ -125,18 +125,18 @@ const FeedFooter = ({
     setAction(false);
   };
 
-  useEffect(() => {
-    // COUNT COMMENTS AND REPLIES
-    let itemCommentCount = 0;
-    for (let i = 0; i < myComments.length; i++) {
-      const e = myComments[i];
-      for (let j = 0; j < e.replies.length; j++) {
-        itemCommentCount++;
-      }
-    }
-    itemCommentCount += myComments.length;
-    setPost({ ...post, comments: itemCommentCount });
-  }, [myComments]);
+  // useEffect(() => {
+  //   // COUNT COMMENTS AND REPLIES
+  //   let itemCommentCount = 0;
+  //   for (let i = 0; i < myComments.length; i++) {
+  //     const e = myComments[i];
+  //     for (let j = 0; j < e.replies.length; j++) {
+  //       itemCommentCount++;
+  //     }
+  //   }
+  //   itemCommentCount += myComments.length;
+  //   setPost({ ...post, comments: itemCommentCount });
+  // }, [myComments]);
 
   return (
     <>

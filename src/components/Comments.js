@@ -317,6 +317,10 @@ const Comments = ({
     replies: false,
     replyObj: { page: 1, limit: 15 },
   });
+  const [commentActions, setCommentActions] = useState({
+    loadMore: false,
+    page: {},
+  });
 
   const handleShowMore = (item) => {
     setBools({
@@ -445,6 +449,12 @@ const Comments = ({
             title="COMMENTS"
             hasLoaded={loaded}
             commentData={comments}
+            moreContent={{
+              vis: Boolean(commentActions?.page?.next),
+              type: "comments",
+              loadMoreContent: () => console.log("Halo"),
+              loading: commentActions.loadMore,
+            }}
             downCompProps={{
               reply,
               setReply,
