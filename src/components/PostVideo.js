@@ -258,13 +258,13 @@ export default function PostVideo({
     >
       <Video
         ref={video}
-        style={styles.video}
         source={source}
+        style={styles.video}
         onError={() => console.log("Video Error")}
         resizeMode="contain"
-        usePoster
+        // usePoster
         // posterSource={{ uri: source.thumb }}
-        PosterComponent={() => <RenderPoster source={source} />}
+        // PosterComponent={() => <RenderPoster source={source} />}
         positionMillis={pos}
         onLoad={handleLoaded}
         isLooping={loop}

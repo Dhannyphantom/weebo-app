@@ -11,14 +11,15 @@ import getTimeStamp from "../constants/getTimestamp";
 import getFormatTime from "../constants/getFormatTime";
 import ThemeContext from "../config/ThemeContext";
 
-const handleReplies = (item) => {
-  console.log(item);
-};
-
-const renderReplies = ({ item }) => {
+const RenderReplies = ({ item }) => {
   const date = item.timer
     ? getFormatTime(item.timer, null, "format").short
     : getTimeStamp(item._id);
+
+  const handleReplies = () => {
+    console.log(item);
+  };
+
   return (
     <View>
       <Separator h={0.8} />
@@ -40,7 +41,7 @@ const renderReplies = ({ item }) => {
             <AppText style={styles.commentDate}> {date} </AppText>
           )}
           {!item.pending && (
-            <TouchableOpacity onPress={() => handleReplies(item)}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleReplies}>
               <AppText style={styles.commentReply}>Reply</AppText>
             </TouchableOpacity>
           )}
@@ -97,7 +98,7 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
             data={item.replies}
             keyExtractor={(item) => item._id}
             listKey={({ i }) => i.toString()}
-            renderItem={renderReplies}
+            renderItem={({ item }) => <RenderReplies item={item} />}
           />
           {item.moreReplies && (
             <View style={styles.showMore}>

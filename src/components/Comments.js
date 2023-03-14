@@ -276,7 +276,7 @@ const LoadMoreContent = ({ type = "replies", onPress, loading }) => {
   return (
     <TouchableOpacity
       style={[styles.loadMore, { backgroundColor: theme.extralight }]}
-      activeOpacity={0.94}
+      activeOpacity={0.54}
       onPress={onPress}
       disabled={loading}
     >

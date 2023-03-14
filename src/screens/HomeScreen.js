@@ -40,6 +40,7 @@ import AppSlider from "../components/AppSlider";
 import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
 import appConfig from "../../app.config";
+import BannerAds from "../components/BannerAds";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
 // import NativeAds from "../components/NativeAds";
@@ -145,13 +146,22 @@ const HomeScreen = ({ navigation, route }) => {
     fetchHomeData(cb);
   };
 
-  const renderHome = ({ item }) => {
+  const renderHome = ({ item, index }) => {
     // if (!feeds) return null;
 
     if (item.instanceType === "show") {
       return <Shows data={item} show />;
     } else if (item.instanceType === "post") {
-      return <FeedRender item={item} user={userInfo._id} />;
+      if (index % 4 === 0) {
+        return (
+          <>
+            <BannerAds />
+            <FeedRender item={item} user={userInfo._id} />
+          </>
+        );
+      } else {
+        return <FeedRender item={item} user={userInfo._id} />;
+      }
     } else if (item.instanceType === "challenge") {
       return (
         <EventRender

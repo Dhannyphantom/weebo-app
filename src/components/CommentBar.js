@@ -47,7 +47,7 @@ const CommentBar = (
           <ProfilePic
             source={avatar}
             size={40}
-            borderColor={colors.chat}
+            borderColor="#ddd"
             disabled
             border={2}
             style={styles.avatar}

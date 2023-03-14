@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
+import BannerAds from "./BannerAds";
 
 import FeedRender from "./FeedRender";
 
@@ -10,10 +11,22 @@ const Feed = ({ HeaderComp, ListEmpty, style, sticker, data, user }) => {
     setMyData(data);
   }, [data]);
 
-  const renderFeed = ({ item }) => {
-    return <FeedRender style={style} item={item} user={user} />;
+  const renderFeed = ({ item, index }) => {
+    return null;
+    console.log(index);
+    if (index % 3 === 0) {
+      return (
+        <>
+          <BannerAds />
+          <FeedRender style={style} index={index} item={item} user={user} />
+        </>
+      );
+    } else {
+      return <FeedRender style={style} index={index} item={item} user={user} />;
+    }
   };
   const keyExtractor = (item) => item._id;
+
   return (
     <FlatList
       data={myData}
