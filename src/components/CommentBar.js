@@ -22,6 +22,9 @@ const CommentBar = (
     avatar,
     onFocus,
     placeholder = "Type your comments...",
+    commentText,
+    parentState = false,
+    setCommentText,
     type,
   },
   ref
@@ -31,14 +34,11 @@ const CommentBar = (
   const theme = useContext(ThemeContext);
 
   const handleSend = () => {
-    if (text.length < 1) return;
-    onSend(text);
-    setText("");
+    if (!parentState && text.length < 1) return;
+    if (parentState && commentText.length < 1) return;
+    onSend(parentState ? commentText : text);
+    parentState ? setCommentText("") : setText("");
   };
-
-  // const handleEmojiSelect = (emoji) => {
-  //   setText(text + emoji);
-  // };
 
   return (
     <>
@@ -66,8 +66,10 @@ const CommentBar = (
             multiline
             placeholderTextColor={colors.medium}
             maxLength={500}
-            onChangeText={(textVal) => setText(textVal)}
-            value={text}
+            onChangeText={(textVal) =>
+              parentState ? setCommentText(textVal) : setText(textVal)
+            }
+            value={parentState ? commentText : text}
             onContentSizeChange={({ nativeEvent }) =>
               setHeight(nativeEvent.contentSize.height)
             }

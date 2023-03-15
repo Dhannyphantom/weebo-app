@@ -75,17 +75,20 @@ const getInstancePosts = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const getComments = (dispatch) => async (instanceID, type, sc, cb) => {
+const getComments = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/comments/${instanceID}/${type}`, {
-      headers: {
-        "x-auth-token": token,
-        "Cache-Control": "no-cache,no-store,must-revalidate",
-        Pragma: "no-cache",
-        Expires: 0,
-      },
-    });
+    const res = await fetchApi.get(
+      `/comments/${data.instanceID}/${data.type}?page=${data.page}&limit=${data.limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+          "Cache-Control": "no-cache,no-store,must-revalidate",
+          Pragma: "no-cache",
+          Expires: 0,
+        },
+      }
+    );
     sc(res.data);
   } catch (err) {
     cb && cb({ err, msg: "Error collecting comments" });
@@ -495,10 +498,10 @@ export const { Provider, Context } = createDataContext(
     editPostCaption,
     commentPost,
     getCommentReplies,
+    getComments,
     viewPostVideo,
     followInstance,
     replyComments,
-    getComments,
     addNewCollection,
     updateInstance,
     viewStatus,

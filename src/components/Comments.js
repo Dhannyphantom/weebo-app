@@ -137,6 +137,8 @@ const DownComponent = ({
   reply,
   setReply,
   error,
+  commentText,
+  setCommentText,
   avatar,
   loaded,
   handleSend,
@@ -179,8 +181,8 @@ const DownComponent = ({
       )}
 
       <CommentBar
-        onSend={(...args) => {
-          handleSend(...args, () => {
+        onSend={(text) => {
+          handleSend(text, { reply, setReply }, () => {
             flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
           });
           flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
@@ -188,6 +190,9 @@ const DownComponent = ({
         type={reply._id ? "reply" : "send"}
         loaded={loaded}
         ref={textInputRef}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        parentState
         avatar={avatar}
       />
     </View>
@@ -202,6 +207,9 @@ const CommentComponent = ({
   handleShowMore,
   downCompProps = {},
 }) => {
+  const [commentText, setCommentText] = useState("");
+  const [reply, setReply] = useState({});
+
   const textInputRef = useRef(null);
   const flatRef = useRef(null);
 
@@ -209,9 +217,12 @@ const CommentComponent = ({
     return (
       <CommentDetails
         item={item}
-        setReply={downCompProps.setReply}
+        setReply={setReply}
+        reply={reply}
         handleShowMore={handleShowMore}
         callFocus={() => textInputRef?.current?.focus()}
+        comment={commentText}
+        setComment={setCommentText}
       />
     );
   };
@@ -238,7 +249,7 @@ const CommentComponent = ({
               if (moreContent.vis)
                 return (
                   <LoadMoreContent
-                    onPress={moreContent.loadMoreContent}
+                    onPress={() => moreContent.loadMoreContent(flatRef)}
                     loading={moreContent.loading}
                     type={moreContent.type}
                   />
@@ -254,7 +265,14 @@ const CommentComponent = ({
           <ActivityIndicator visible={true} size={2} type="comment" />
         </View>
       )}
-      <DownComponent flatRef={flatRef} {...downCompProps} />
+      <DownComponent
+        flatRef={flatRef}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        {...downCompProps}
+        reply={reply}
+        setReply={setReply}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -311,15 +329,12 @@ const Comments = ({
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { commentPost, replyComments } = useContext(FeedContext);
-  const [reply, setReply] = useState({});
+  const { commentPost, getComments, replyComments } = useContext(FeedContext);
+  // const [reply, setReply] = useState({});
   const [bools, setBools] = useState({
     replies: false,
     replyObj: { page: 1, limit: 15 },
-  });
-  const [commentActions, setCommentActions] = useState({
     loadMore: false,
-    page: {},
   });
 
   const handleShowMore = (item) => {
@@ -371,8 +386,10 @@ const Comments = ({
     cb && cb();
   };
 
-  const handleSend = (text, cb) => {
-    if (text == "" || text === null || !text) return;
+  const handleSend = (text, replyObj, cb) => {
+    if (!Boolean(text)) return console.log("No text input");
+
+    const { reply, setReply } = replyObj;
 
     if (reply._id) {
       handleSentComment(
@@ -390,10 +407,20 @@ const Comments = ({
         },
         cb
       );
+
+      let commentId = reply._id;
+
+      if (reply.mention) {
+        const findComment = comments?.results.find((comment) =>
+          comment.replies?.some((obj) => obj._id == reply._id)
+        );
+        commentId = findComment._id;
+      }
+
       replyComments(
         commentData.instanceID,
         commentData.instanceType,
-        reply._id,
+        commentId,
         text,
         (resData) => {
           handleSentComment("reply", { ...resData, replyId: reply._id });
@@ -437,6 +464,30 @@ const Comments = ({
     setModal(false);
   };
 
+  const loadMoreContent = (ref) => {
+    setBools({ ...bools, loadMore: true });
+    getComments(
+      {
+        type: commentData.instanceType,
+        instanceID: commentData.instanceID,
+        page: comments?.next?.page,
+        limit: comments?.current?.limit,
+      },
+      (resData) => {
+        setMyComments({
+          ...resData,
+          results: comments?.results?.concat(resData?.results),
+        });
+        setBools({ ...bools, loadMore: false });
+        ref && ref?.current?.scrollToEnd();
+      },
+      (errData) => {
+        console.log(errData?.err?.response?.data);
+        setBools({ ...bools, loadMore: false });
+      }
+    );
+  };
+
   return (
     <>
       <PopUpModal
@@ -448,16 +499,14 @@ const Comments = ({
             handleShowMore={handleShowMore}
             title="COMMENTS"
             hasLoaded={loaded}
-            commentData={comments}
+            commentData={comments?.results ?? comments}
             moreContent={{
-              vis: Boolean(commentActions?.page?.next),
+              vis: Boolean(comments?.next),
               type: "comments",
-              loadMoreContent: () => console.log("Halo"),
-              loading: commentActions.loadMore,
+              loadMoreContent,
+              loading: bools.loadMore,
             }}
             downCompProps={{
-              reply,
-              setReply,
               error,
               avatar,
               loaded,
@@ -478,10 +527,6 @@ const Comments = ({
               instanceID: commentData.instanceID,
               type: commentData.instanceType,
             }}
-            // Don't actually need this. I think
-            reply={reply}
-            setReply={setReply}
-            //
             avatar={avatar}
             error={error}
             handleSend={handleSend}

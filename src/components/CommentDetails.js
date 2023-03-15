@@ -11,13 +11,26 @@ import getTimeStamp from "../constants/getTimestamp";
 import getFormatTime from "../constants/getFormatTime";
 import ThemeContext from "../config/ThemeContext";
 
-const RenderReplies = ({ item }) => {
+const RenderReplies = ({
+  item,
+  comment,
+  reply,
+  setReply,
+  setComment,
+  callFocus,
+}) => {
   const date = item.timer
     ? getFormatTime(item.timer, null, "format").short
     : getTimeStamp(item._id);
 
   const handleReplies = () => {
-    console.log(item);
+    if (reply.mention) {
+      setComment(comment.replace(reply.mention, item?.user?.username));
+    } else {
+      setComment(`@${item?.user?.username} \n ${comment}`);
+    }
+    setReply({ ...item, mention: { _id: "1", user: item?.user?.username } });
+    callFocus && callFocus();
   };
 
   return (
@@ -51,7 +64,15 @@ const RenderReplies = ({ item }) => {
   );
 };
 
-const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
+const CommentDetails = ({
+  item,
+  setReply,
+  reply,
+  comment,
+  setComment,
+  handleShowMore,
+  callFocus,
+}) => {
   const date = item.timer
     ? getFormatTime(item.timer, null, "format").short
     : getTimeStamp(item._id);
@@ -98,7 +119,16 @@ const CommentDetails = ({ item, setReply, handleShowMore, callFocus }) => {
             data={item.replies}
             keyExtractor={(item) => item._id}
             listKey={({ i }) => i.toString()}
-            renderItem={({ item }) => <RenderReplies item={item} />}
+            renderItem={({ item }) => (
+              <RenderReplies
+                item={item}
+                comment={comment}
+                setReply={setReply}
+                setComment={setComment}
+                reply={reply}
+                callFocus={callFocus}
+              />
+            )}
           />
           {item.moreReplies && (
             <View style={styles.showMore}>

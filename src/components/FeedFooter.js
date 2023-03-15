@@ -12,7 +12,8 @@ import AppModal from "./AppModal";
 import AlertModal from "./AlertModal";
 import { getFeedNumber } from "../constants/helpers";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
+const COMMENT_COUNT = 2;
 
 const FeedFooter = ({
   activeSlide,
@@ -30,14 +31,8 @@ const FeedFooter = ({
   id,
   user,
 }) => {
-  const {
-    // commentPost,
-    // replyComments,
-    getComments,
-    updatePosts,
-    editPostCaption,
-    deletePosts,
-  } = useContext(FeedContext);
+  const { getComments, updatePosts, editPostCaption, deletePosts } =
+    useContext(FeedContext);
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -66,9 +61,18 @@ const FeedFooter = ({
   const handleComment = () => {
     //comment icon press logic
     setModalVis(true);
-    getComments(id, "post", handleDone, (dErr) => {
-      console.log(dErr.err?.message);
-    });
+    getComments(
+      {
+        type: "post",
+        instanceID: id,
+        page: 1,
+        limit: COMMENT_COUNT,
+      },
+      handleDone,
+      (dErr) => {
+        console.log(dErr.err?.message);
+      }
+    );
   };
 
   const handleOption = () => {
@@ -124,19 +128,6 @@ const FeedFooter = ({
     }
     setAction(false);
   };
-
-  // useEffect(() => {
-  //   // COUNT COMMENTS AND REPLIES
-  //   let itemCommentCount = 0;
-  //   for (let i = 0; i < myComments.length; i++) {
-  //     const e = myComments[i];
-  //     for (let j = 0; j < e.replies.length; j++) {
-  //       itemCommentCount++;
-  //     }
-  //   }
-  //   itemCommentCount += myComments.length;
-  //   setPost({ ...post, comments: itemCommentCount });
-  // }, [myComments]);
 
   return (
     <>
