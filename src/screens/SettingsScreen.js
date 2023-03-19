@@ -357,6 +357,7 @@ const SettingsScreen = () => {
     const getSettings = await AsyncStorage.getItem("settings");
     if (getSettings) {
       setSettings(JSON.parse(getSettings));
+      // UNCOMMENT LINE BELOW TO REFRESH SETTINGS
       // await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
     } else {
       setSettings(settingsData);

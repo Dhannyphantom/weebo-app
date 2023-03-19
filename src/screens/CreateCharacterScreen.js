@@ -152,14 +152,14 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
     characterCreated(info.user);
     updateMe(info.points, "points");
-    navigation.navigate("Character", {
+    navigation.replace("Character", {
       item: info?.character?._id,
       toScreen: "Home",
     });
   };
   const navShow = (info) => {
     updateMe(info.points, "points");
-    navigation.navigate("Show", { show: info.show, toScreen: "Home" });
+    navigation.replace("Show", { show: info.show, toScreen: "Home" });
   };
 
   useEffect(() => {
@@ -218,16 +218,17 @@ const CreateCharacterScreen = ({ route, navigation }) => {
                         placeholder={name}
                       />
                       <CreateFormArray
-                        headerA="nick names"
-                        name="other_names"
-                        type1
-                      />
-                      <CreateFormArray
                         headerA="show or manga series"
                         name="show"
                         list="shows"
                         handleChange={handleCardState}
                       />
+                      <CreateFormArray
+                        headerA="nick names"
+                        name="other_names"
+                        type1
+                      />
+
                       <CreateFormArray
                         headerA="group or organizations"
                         name="groups"
@@ -303,7 +304,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
-            renderItem={({ item }) => (
+            renderItem={() => (
               <View style={{ marginTop: 10 }}>
                 <CreateFormik
                   initialValues={showFormInitials}

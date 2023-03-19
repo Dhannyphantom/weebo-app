@@ -772,17 +772,10 @@ export const settingsData = [
 
       {
         id: "2",
-        name: "User agreement & App policy",
+        name: "Terms, Conditions & App policy",
         type: "action",
         default: "null",
         options: "account",
-      },
-      {
-        id: "3",
-        name: "How to use",
-        type: "action",
-        default: "null",
-        options: "book",
       },
     ],
   },

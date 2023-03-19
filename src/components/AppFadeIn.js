@@ -2,7 +2,14 @@ import React, { useContext, useEffect, useRef } from "react";
 import { StyleSheet, Modal, Animated, TouchableOpacity } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 
-const AppFadeIn = ({ visible, RenderComponent, setter, setVisible }) => {
+const AppFadeIn = ({
+  visible,
+  disableCloseModal,
+  closeModal,
+  RenderComponent,
+  setter,
+  setVisible,
+}) => {
   if (!visible) return null;
 
   const scaler = useRef(new Animated.Value(0.75)).current;
@@ -17,6 +24,12 @@ const AppFadeIn = ({ visible, RenderComponent, setter, setVisible }) => {
       setVisible && setVisible(false);
     });
   };
+
+  useEffect(() => {
+    if (closeModal?.close) {
+      handleCloseModal();
+    }
+  }, [closeModal]);
 
   useEffect(() => {
     if (visible) {
@@ -38,6 +51,7 @@ const AppFadeIn = ({ visible, RenderComponent, setter, setVisible }) => {
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleCloseModal}
+        disabled={disableCloseModal}
         style={styles.container}
       >
         <Animated.View

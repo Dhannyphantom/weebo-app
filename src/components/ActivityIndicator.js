@@ -16,6 +16,8 @@ import testAnim from "../../assets/animations/searching_animation.json";
 
 const { width, height } = Dimensions.get("window");
 
+// types = ["spin", "loader", "comment", "isEmpty|empty", "emptyComment", "search"]
+
 const ActivityIndicator = ({
   visible = false,
   type = "spin",

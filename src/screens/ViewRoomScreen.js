@@ -8,6 +8,8 @@ import {
   Animated,
   Image,
   TouchableOpacity,
+  Text,
+  ImageBackground,
 } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
@@ -100,6 +102,136 @@ const RenderChallengers = ({ name, id, setChallengeModal, isManager }) => {
   );
 };
 
+const RenderBackDrops = ({ item, index, scrollX }) => {
+  const spacers = ["right-spacer", "left-spacer"];
+  if (spacers.includes(item._id)) return null;
+
+  const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
+
+  const translateX = scrollX.interpolate({
+    inputRange,
+    outputRange: [-width, 0],
+  });
+
+  return (
+    <MaskedView
+      style={{ position: "absolute" }}
+      maskElement={
+        <AnimatedSvg
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+          style={
+            {
+              // transform: [{ translateX }],
+            }
+          }
+        >
+          <Rect x="0" y="0" width={width} height={height} fill="red" />
+        </AnimatedSvg>
+      }
+    >
+      <Animated.View
+        removeClippedSubviews={true}
+        style={{
+          position: "absolute",
+          transform: [{ translateX }],
+          height,
+          overflow: "hidden",
+        }}
+      >
+        <Image
+          source={{ uri: item?.room_cover?.uri }}
+          style={{
+            width,
+            height: BACKDROP_HEIGHT,
+          }}
+          resizeMode="cover"
+        />
+      </Animated.View>
+    </MaskedView>
+  );
+};
+
+const BackDrop = ({ myCharacters, scrollX }) => {
+  const theme = useContext(ThemeContext);
+
+  const gradientColor =
+    theme.mode === "light"
+      ? ["transparent", "rgba(255,255,255,0.2)", "white"]
+      : ["transparent", theme.transparent, theme.transparentBolder];
+
+  return (
+    <View
+      style={{
+        position: "absolute",
+        width,
+        height: BACKDROP_HEIGHT,
+      }}
+    >
+      <MaskedView
+        style={{ position: "absolute" }}
+        maskElement={
+          <AnimatedSvg
+            width={width}
+            height={BACKDROP_HEIGHT}
+            viewBox={`0 0 ${width} ${BACKDROP_HEIGHT}`}
+            style={
+              {
+                // transform: [{ translateX }],
+                // position: "absolute",
+              }
+            }
+          >
+            <Rect
+              x="0"
+              y="0"
+              width={width}
+              height={BACKDROP_HEIGHT}
+              fill="#00FF00"
+            />
+          </AnimatedSvg>
+        }
+      >
+        {myCharacters?.map((item, index) => {
+          return (
+            <Image
+              key={index.toString()}
+              source={item?.room_cover?.uri}
+              resizeMode="cover"
+              style={{
+                width,
+                height: 200,
+              }}
+            />
+          );
+        })}
+      </MaskedView>
+      {/* <FlatList
+        data={myCharacters}
+        removeClippedSubviews={false}
+        contentContainerStyle={{
+          width,
+          height: BACKDROP_HEIGHT,
+        }}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item, index }) => (
+          <RenderBackDrops item={item} index={index} scrollX={scrollX} />
+        )}
+      /> */}
+      <LinearGradient
+        colors={gradientColor}
+        style={{
+          width,
+          height: BACKDROP_HEIGHT,
+          position: "absolute",
+          bottom: 0,
+        }}
+      />
+    </View>
+  );
+};
+
 const ViewRoomScreen = ({ navigation, route }) => {
   const { roomCharacters, getCharacters, instanceUpdater, sendInvite } =
     useContext(CharContext);
@@ -143,11 +275,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
   if (pageData.type === "group") {
     showInviteIcon = true;
   }
-
-  const gradientColor =
-    theme.mode === "light"
-      ? ["transparent", "rgba(255,255,255,0.2)", "white"]
-      : ["transparent", theme.transparent, theme.transparentBolder];
 
   const floatData = [
     {
@@ -606,89 +733,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
     );
   };
 
-  const renderBackDrops = ({ item, index }, scrollX) => {
-    const spacers = ["right-spacer", "left-spacer"];
-    if (spacers.includes(item._id)) return null;
-
-    const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
-
-    const translateX = scrollX.interpolate({
-      inputRange,
-      outputRange: [-width, 0],
-    });
-
-    return (
-      <MaskedView
-        style={{ position: "absolute" }}
-        maskElement={
-          <AnimatedSvg
-            width={width}
-            height={height}
-            viewBox={`0 0 ${width} ${height}`}
-            style={{
-              transform: [{ translateX }],
-            }}
-          >
-            <Rect x="0" y="0" width={width} height={height} fill="red" />
-          </AnimatedSvg>
-        }
-      >
-        <Animated.View
-          removeClippedSubviews={true}
-          style={{
-            position: "absolute",
-            transform: [{ translateX }],
-            height,
-            overflow: "hidden",
-          }}
-        >
-          <Image
-            source={{ uri: item?.room_cover?.uri }}
-            style={{
-              width,
-              height: BACKDROP_HEIGHT,
-              resizeMode: "cover",
-            }}
-          />
-        </Animated.View>
-      </MaskedView>
-    );
-  };
-
-  const BackDrop = ({ myCharacters, scrollX }) => {
-    return (
-      <View
-        style={{
-          position: "absolute",
-          width,
-          height: BACKDROP_HEIGHT,
-        }}
-      >
-        <FlatList
-          data={myCharacters}
-          removeClippedSubviews={false}
-          contentContainerStyle={{
-            width,
-            height: BACKDROP_HEIGHT,
-          }}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item, index }) =>
-            renderBackDrops({ item, index }, scrollX)
-          }
-        />
-        <LinearGradient
-          colors={gradientColor}
-          style={{
-            width,
-            height: BACKDROP_HEIGHT,
-            position: "absolute",
-            bottom: 0,
-          }}
-        />
-      </View>
-    );
-  };
-
   const RenderPageFooter = () => {
     if (!pageData?.verified) return null;
     return (
@@ -844,7 +888,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
         }}
         renderItem={renderCharacters}
       />
-      <RenderPageFooter />
+      {/* <RenderPageFooter /> */}
       <ActivityIndicator visible={isLoading} style={styles.activity} />
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>

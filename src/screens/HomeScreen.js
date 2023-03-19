@@ -361,6 +361,7 @@ const HomeScreen = ({ navigation, route }) => {
                 extraData={feeds}
                 ListHeaderComponent={RenderPageHeader}
                 keyboardShouldPersistTaps="handled"
+                renderToHardwareTextureAndroid
                 ListFooterComponent={RenderLoadMore}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: height * 0.1 }}

@@ -9,7 +9,7 @@ const Separator = ({ h = 2, m, style }) => {
       style={{
         ...styles.container,
         height: h,
-        backgroundColor: theme.backgroundLight,
+        backgroundColor: theme.backgroundLight ?? "#ddd",
         marginVertical: m ? m : 10,
         ...style,
       }}
