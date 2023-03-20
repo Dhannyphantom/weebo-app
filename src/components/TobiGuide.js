@@ -14,10 +14,11 @@ import AppFadeIn from "./AppFadeIn";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 
-import chibi from "../../assets/arts/luffy_1.png";
+import chibi from "../../assets/arts/levi_1.png";
 
 const { width, height } = Dimensions.get("screen");
 const MODAL_WIDTH = width * 0.9;
+const ITEM_SIZE = width * 1.2;
 
 const stateObj = [
   {
@@ -34,10 +35,16 @@ const stateObj = [
   },
 ];
 
-const RowGuide = ({ icon, translator, text }) => {
+const RowGuide = ({ icon, translator, scaler, text }) => {
   return (
     <Animated.View
-      style={[styles.row, { transform: [{ translateX: translator }] }]}
+      style={[
+        styles.row,
+        {
+          transform: [{ translateX: translator }, { scale: scaler }],
+          opacity: scaler,
+        },
+      ]}
     >
       <MaterialCommunityIcons
         name={icon}
@@ -49,23 +56,62 @@ const RowGuide = ({ icon, translator, text }) => {
   );
 };
 
-const RenderGuide = () => {
+const RenderGuide = ({ closer, setVisible }) => {
   const theme = useContext(ThemeContext);
 
   const [indexer, setIndexer] = useState(1);
 
   const translator = useRef(new Animated.Value(0)).current;
+  const scaler = useRef(new Animated.Value(0.3)).current;
+  const scalerCurrent = useRef(new Animated.Value(1)).current;
 
-  const handleNextGuide = () => {
-    if (indexer < stateObj.length) {
-      console.log(indexer, stateObj.length);
-      Animated.spring(translator, {
-        toValue: -width * 0.8 * indexer,
-        useNativeDriver: true,
-      }).start(() => {
-        setIndexer((prev) => prev + 1);
+  const handleNextGuide = (type) => {
+    if (type === "next" && indexer < stateObj.length) {
+      Animated.parallel([
+        Animated.spring(translator, {
+          toValue: -ITEM_SIZE * indexer,
+          bounciness: 10,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaler, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scalerCurrent, {
+          toValue: 0,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setIndexer(indexer + 1);
+        scaler.setValue(0.3);
+        scalerCurrent.setValue(1);
       });
-    } else {
+    } else if (type === "prev" && indexer > 1) {
+      Animated.parallel([
+        Animated.spring(translator, {
+          toValue: -ITEM_SIZE * (indexer - 2),
+          bounciness: 10,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaler, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scalerCurrent, {
+          toValue: 0,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setIndexer(indexer - 1);
+        scaler.setValue(0.3);
+        scalerCurrent.setValue(1);
+      });
+    } else if (type === "next" && indexer >= stateObj.length) {
+      closer && closer({ close: true });
     }
   };
 
@@ -83,35 +129,63 @@ const RenderGuide = () => {
           icon={stateObj[0].icon}
           text={stateObj[0].text}
           translator={translator}
+          scaler={indexer === 1 ? scalerCurrent : scaler}
         />
         <RowGuide
           translator={translator}
           icon={stateObj[1].icon}
           text={stateObj[1].text}
+          scaler={indexer === 2 ? scalerCurrent : scaler}
         />
         <RowGuide
           icon={stateObj[2].icon}
           text={stateObj[2].text}
           translator={translator}
+          scaler={indexer === 3 ? scalerCurrent : scaler}
         />
       </View>
-      <TouchableOpacity
-        style={styles.nextBtn}
-        activeOpacity={1}
-        onPress={handleNextGuide}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          alignSelf: "center",
+        }}
       >
-        <Ionicons name="chevron-forward" size={30} color="#fff" />
-      </TouchableOpacity>
+        {indexer > 1 && (
+          <TouchableOpacity
+            style={styles.nextBtn}
+            activeOpacity={1}
+            onPress={() => handleNextGuide("prev")}
+          >
+            <Ionicons name="chevron-back" size={30} color={colors.primary} />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={styles.nextBtn}
+          activeOpacity={1}
+          onPress={() => handleNextGuide("next")}
+        >
+          <Ionicons
+            name={indexer < stateObj.length ? "chevron-forward" : "close"}
+            size={30}
+            color={colors.primary}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 export default function TobiGuide({ visible, setVisible }) {
+  const [closeModal, setCloseModal] = useState({ close: false });
   return (
     <AppFadeIn
-      RenderComponent={RenderGuide}
+      RenderComponent={() => (
+        <RenderGuide closer={setCloseModal} setVisible={setVisible} />
+      )}
       visible={visible}
-      //   disableCloseModal
+      disableCloseModal
+      closeModal={closeModal}
       setVisible={setVisible}
     />
   );
@@ -156,17 +230,20 @@ const styles = StyleSheet.create({
   },
   nextBtn: {
     alignSelf: "center",
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
+    borderWidth: 3,
+    borderColor: colors.primary,
     borderRadius: (40 + 15) / 2,
     paddingHorizontal: 20,
     paddingVertical: 8,
     marginTop: 30,
+    marginHorizontal: 15,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 20,
-    width: width * 0.8,
+    width: ITEM_SIZE,
   },
   title: {
     textAlign: "center",
