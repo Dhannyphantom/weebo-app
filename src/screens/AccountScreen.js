@@ -136,7 +136,7 @@ const AccountScreen = ({ navigation, route }) => {
           setImageLoading(false);
         },
         (err) => {
-          console.log(err);
+          console.log(err?.err?.message);
           console.log(err.err?.response?.data);
           setImageLoading(false);
         },

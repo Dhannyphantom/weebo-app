@@ -214,7 +214,6 @@ const updateAvatar = (dispatch) => async (data, sc, cb, prog) => {
     sc && sc(data);
   } catch (err) {
     cb && cb({ err, msg: "Error updating your profile avatar" });
-    console.log(err?.response?.data);
   }
 };
 
