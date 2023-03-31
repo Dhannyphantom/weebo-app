@@ -9,6 +9,7 @@ import proFemale from "../../assets/arts/girl_1.png";
 import proMale from "../../assets/arts/sasuke_1.png";
 import AccountBox from "./AccountBox";
 import ActivityIndicator from "./ActivityIndicator";
+import MediaModal from "./MediaModal";
 
 const ProfilePic = ({
   source,
@@ -18,12 +19,14 @@ const ProfilePic = ({
   loading,
   callback,
   disabled,
+  displayPic,
   userID,
   gender,
   borderColor,
   borderRad = 12,
 }) => {
   const [picModal, setPicModal] = useState(false);
+  const [display, setDisplay] = useState({ vis: false });
   const {
     getUserData,
     tryLocalSignin,
@@ -35,6 +38,10 @@ const ProfilePic = ({
 
   const handlePicPress = () => {
     if (disabled) return;
+    if (displayPic) {
+      setDisplay({ vis: true, item: source });
+      return;
+    }
     setPicModal(true);
   };
   let avatarSource;
@@ -122,6 +129,7 @@ const ProfilePic = ({
           userID={userID}
         />
       </Modal>
+      <MediaModal modalObject={display} setVisible={setDisplay} />
     </>
   );
 };

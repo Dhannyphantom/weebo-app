@@ -22,6 +22,7 @@ import ActivityIndicator from "./ActivityIndicator";
 import femalePlaceholder from "../../assets/arts/girl_1.png";
 import malePlaceholder from "../../assets/arts/sasuke_1.png";
 import ThemeContext from "../config/ThemeContext";
+import MediaModal from "./MediaModal";
 
 const screen = Dimensions.get("window");
 
@@ -37,6 +38,7 @@ const AccountBox = ({
   const [profileData, setProfileData] = useState([]);
   const [status, setStatus] = useState("no_request");
   const [errMsg, setErrMsg] = useState(null);
+  const [displayPic, setDisplayPic] = useState({ vis: false });
 
   const { requestWeeb, joinRoom, addWeeb } = useContext(AuthContext);
 
@@ -48,7 +50,7 @@ const AccountBox = ({
   if (info) {
     isMine = userInfo.username === info.username;
     if (info.avatar) {
-      imgUri = { uri: info?.avatar?.uri };
+      imgUri = info.avatar;
     } else if (!info.avatar && info.gender === "male") {
       imgUri = malePlaceholder;
     } else if (!info.avatar && info.gender === "female") {
@@ -121,6 +123,10 @@ const AccountBox = ({
     callback && callback();
   };
 
+  const displayImage = () => {
+    setDisplayPic({ vis: true, item: imgUri });
+  };
+
   useEffect(() => {
     getUserData(
       {
@@ -158,16 +164,22 @@ const AccountBox = ({
           {profileData.length > 0 ? (
             <ScrollView>
               <View style={styles.header}>
-                <Image
-                  source={imgUri}
-                  resizeMethod="scale"
-                  resizeMode={imgUri.uri ? "cover" : "contain"}
-                  style={{
-                    ...styles.proPic,
-                    borderColor: info.avatar ? colors.primary : colors.light,
-                    borderWidth: info.avatar ? 3 : 2,
-                  }}
-                />
+                <TouchableOpacity
+                  disabled={!info?.avatar}
+                  activeOpacity={1}
+                  onPress={displayImage}
+                >
+                  <Image
+                    source={imgUri}
+                    resizeMethod="scale"
+                    resizeMode={imgUri.uri ? "cover" : "contain"}
+                    style={{
+                      ...styles.proPic,
+                      borderColor: info.avatar ? colors.primary : colors.light,
+                      borderWidth: info.avatar ? 3 : 2,
+                    }}
+                  />
+                </TouchableOpacity>
                 <AppText style={styles.userText} size="xlarge" bold>
                   @{info.username}
                 </AppText>
@@ -287,6 +299,7 @@ const AccountBox = ({
           )}
         </TouchableOpacity>
       </TouchableOpacity>
+      <MediaModal modalObject={displayPic} setVisible={setDisplayPic} />
     </TouchableOpacity>
   );
 };
