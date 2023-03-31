@@ -16,7 +16,7 @@ import { launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
-const PICW = width * 0.96;
+const PICW = width * 0.9;
 const PIC_CHAR_H = height * 0.65;
 const PIC_SHOW_H = width * 0.5;
 

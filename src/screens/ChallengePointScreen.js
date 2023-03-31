@@ -197,11 +197,8 @@ const ChallengePointScreen = ({ navigation }) => {
             {points}WP
           </AppText>
           <Separator h={1} m={12} />
-          <AppText>
-            FROM:{" "}
-            <AppText style={{ textTransform: "capitalize" }} bold>
-              {from}
-            </AppText>{" "}
+          <AppText style={styles.from} bold>
+            {from}
           </AppText>
         </View>
       </View>
@@ -466,6 +463,11 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.03,
     alignItems: "center",
     justifyContent: "space-evenly",
+  },
+  from: {
+    textTransform: "capitalize",
+    maxWidth: "85%",
+    textAlign: "center",
   },
   headerRight: {
     flexDirection: "row",

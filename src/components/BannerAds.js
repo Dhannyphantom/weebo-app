@@ -68,7 +68,7 @@ export default function BannerAds() {
         {
           backgroundColor: theme.white,
           borderWidth: actions.loadFail ? 3 : 0,
-          borderColor: colors.heartDark,
+          borderColor: "#ddd",
         },
       ]}
     >

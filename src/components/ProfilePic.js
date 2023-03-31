@@ -72,9 +72,9 @@ const ProfilePic = ({
               style,
             ]}
           />
-        ) : source && source.length > 50 ? (
+        ) : source && source?.uri?.length > 50 ? (
           <Image
-            source={{ uri: source }}
+            source={source}
             resizeMethod="resize"
             style={[
               {

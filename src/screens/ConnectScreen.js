@@ -100,7 +100,7 @@ const Weebs = ({ item, handleCloseModal, index }) => {
         userID={item._id}
         borderColor={colors.white}
         gender={item.gender}
-        size={90}
+        size={width * 0.22}
         callback={handleCloseModal}
         borderRad={45}
         source={item.avatar}
@@ -368,6 +368,7 @@ const ConnectScreen = ({ navigation }) => {
               Connect with your fellow weeb whose nearby
             </AppText>
           </View>
+
           <TouchableOpacity
             style={styles.cancel}
             activeOpacity={1}
