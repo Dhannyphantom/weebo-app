@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -15,6 +15,7 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 
 import chibi from "../../assets/arts/levi_1.png";
+import AppButton from "./AppButton";
 
 const { width, height } = Dimensions.get("screen");
 const MODAL_WIDTH = width * 0.9;
@@ -51,21 +52,25 @@ const RowGuide = ({ icon, translator, scaler, text }) => {
         size={width * 0.15}
         color={colors.primary}
       />
-      <AppText style={styles.guideText}>{text}</AppText>
+      <AppText size="large" style={styles.guideText}>
+        {text}
+      </AppText>
     </Animated.View>
   );
 };
 
-const RenderGuide = ({ closer, setVisible }) => {
+const RenderGuide = ({ visObj, setVisObj }) => {
   const theme = useContext(ThemeContext);
 
   const [indexer, setIndexer] = useState(1);
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
   const translator = useRef(new Animated.Value(0)).current;
   const scaler = useRef(new Animated.Value(0.3)).current;
   const scalerCurrent = useRef(new Animated.Value(1)).current;
 
   const handleNextGuide = (type) => {
+    setBtnDisabled(true);
     if (type === "next" && indexer < stateObj.length) {
       Animated.parallel([
         Animated.spring(translator, {
@@ -87,6 +92,7 @@ const RenderGuide = ({ closer, setVisible }) => {
         setIndexer(indexer + 1);
         scaler.setValue(0.3);
         scalerCurrent.setValue(1);
+        setBtnDisabled(false);
       });
     } else if (type === "prev" && indexer > 1) {
       Animated.parallel([
@@ -109,9 +115,11 @@ const RenderGuide = ({ closer, setVisible }) => {
         setIndexer(indexer - 1);
         scaler.setValue(0.3);
         scalerCurrent.setValue(1);
+        setBtnDisabled(false);
       });
     } else if (type === "next" && indexer >= stateObj.length) {
-      closer && closer({ close: true });
+      setVisObj({ ...visObj, close: true });
+      setBtnDisabled(false);
     }
   };
 
@@ -120,7 +128,7 @@ const RenderGuide = ({ closer, setVisible }) => {
       <View style={styles.chibi}>
         <Image resizeMode="contain" source={chibi} style={styles.chibiImage} />
       </View>
-      <AppText style={styles.title} bold size="large">
+      <AppText style={styles.title} bold>
         Instance Actions
       </AppText>
 
@@ -151,42 +159,35 @@ const RenderGuide = ({ closer, setVisible }) => {
           alignSelf: "center",
         }}
       >
-        {indexer > 1 && (
-          <TouchableOpacity
-            style={styles.nextBtn}
-            activeOpacity={1}
-            onPress={() => handleNextGuide("prev")}
-          >
-            <Ionicons name="chevron-back" size={30} color={colors.primary} />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          style={styles.nextBtn}
-          activeOpacity={1}
+        <AppButton
+          bare
+          disabled={btnDisabled}
+          onPress={() => handleNextGuide("prev")}
+          LIcon="chevron-back"
+          LIconPack="I"
+        />
+        <AppButton
+          disabled={btnDisabled}
+          bare
+          RIcon={indexer < stateObj.length ? "chevron-forward" : "close"}
+          RIconPack="I"
+          style={{ marginLeft: 40 }}
           onPress={() => handleNextGuide("next")}
-        >
-          <Ionicons
-            name={indexer < stateObj.length ? "chevron-forward" : "close"}
-            size={30}
-            color={colors.primary}
-          />
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );
 };
 
-export default function TobiGuide({ visible, setVisible }) {
-  const [closeModal, setCloseModal] = useState({ close: false });
+export default function TobiGuide({ data, setData }) {
+  // console.log(data);
   return (
     <AppFadeIn
-      RenderComponent={() => (
-        <RenderGuide closer={setCloseModal} setVisible={setVisible} />
-      )}
-      visible={visible}
+      RenderComponent={() => <RenderGuide visObj={data} setVisObj={setData} />}
+      visible={data?.vis}
       disableCloseModal
-      closeModal={closeModal}
-      setVisible={setVisible}
+      closeModal={data}
+      setter={() => setData({ close: false, vis: false })}
     />
   );
 }
@@ -227,17 +228,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     maxWidth: "70%",
     textAlign: "center",
-  },
-  nextBtn: {
-    alignSelf: "center",
-    // backgroundColor: colors.primary,
-    borderWidth: 3,
-    borderColor: colors.primary,
-    borderRadius: (40 + 15) / 2,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    marginTop: 30,
-    marginHorizontal: 15,
   },
   row: {
     flexDirection: "row",

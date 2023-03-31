@@ -1,6 +1,12 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Animated,
+} from "react-native";
+import { MaterialCommunityIcons, Feather, Ionicons } from "@expo/vector-icons";
 
 import AppText from "./AppText";
 import colors from "../constants/colors";
@@ -12,6 +18,8 @@ const AppButton = ({
   sec,
   loading,
   RIcon,
+  RIconPack = "MCI",
+  LIconPack = "MCI",
   LIcon,
   style,
   title,
@@ -23,140 +31,183 @@ const AppButton = ({
   onPress,
 }) => {
   const noDefault = !sec && !bare && !naked && !bareRed;
+  const scaler = useRef(new Animated.Value(1)).current;
+
+  const handleAnimation = (type) => {
+    switch (type) {
+      case "in":
+        Animated.timing(scaler, {
+          toValue: 1.1,
+          duration: 80,
+          useNativeDriver: true,
+        }).start();
+
+        break;
+      case "out":
+        Animated.spring(scaler, {
+          toValue: 1,
+          bounciness: 60,
+          useNativeDriver: true,
+        }).start();
+
+        break;
+    }
+  };
+
+  let LIconComp = MaterialCommunityIcons;
+  let RIconComp = MaterialCommunityIcons;
+
+  switch (LIconPack) {
+    case "F":
+      LIconComp = Feather;
+      break;
+
+    case "I":
+      LIconComp = Ionicons;
+      break;
+
+    default:
+      LIconComp = MaterialCommunityIcons;
+      break;
+  }
+  switch (RIconPack) {
+    case "F":
+      RIconComp = Feather;
+      break;
+
+    case "I":
+      RIconComp = Ionicons;
+      break;
+
+    default:
+      RIconComp = MaterialCommunityIcons;
+      break;
+  }
+
   return (
     <>
-      {noDefault && (
-        <TouchableOpacity
-          disabled={disabled}
-          activeOpacity={0.85}
-          onPress={onPress}
-        >
-          <View style={[styles.button, style]}>
-            {LIcon && (
-              <MaterialCommunityIcons
-                name={LIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-            <AppText style={styles.btnText} bold>
-              {title}
-            </AppText>
-            {RIcon && (
-              <MaterialCommunityIcons
-                name={RIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-          </View>
-          <ActivityIndicator
-            style={styles.loader}
-            visible={loading}
-            size={0.2}
-          />
-        </TouchableOpacity>
-      )}
-      {sec && (
-        <TouchableOpacity
-          disabled={disabled}
-          activeOpacity={0.7}
-          onPress={onPress}
-        >
-          <View style={[styles.accent, style]}>
-            {LIcon && (
-              <MaterialCommunityIcons
-                name={LIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-            <AppText style={styles.btnText} bold>
-              {" "}
-              {title}{" "}
-            </AppText>
-            {RIcon && (
-              <MaterialCommunityIcons
-                name={RIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-      )}
-      {bare && (
-        <TouchableOpacity
-          activeOpacity={bareWhite ? 0.85 : 0.4}
-          onPress={onPress}
-          disabled={disabled}
-        >
-          <View
-            style={[
-              styles.bare,
-              {
-                backgroundColor: bareWhite ? "white" : "transparent",
-                borderWidth: bareWhite ? 0 : 1,
-                borderColor: bareRed ? colors.heart : colors.primary,
-              },
-              style,
-            ]}
+      <Animated.View
+        style={{
+          transform: [{ scale: scaler }],
+        }}
+      >
+        {noDefault && (
+          <TouchableOpacity
+            disabled={disabled}
+            activeOpacity={0.85}
+            onPressIn={() => handleAnimation("in")}
+            onPressOut={() => handleAnimation("out")}
+            onPress={onPress}
           >
-            {LIcon && (
-              <MaterialCommunityIcons
-                name={LIcon}
-                size={15}
-                color={bareRed ? colors.heart : colors.primary}
-              />
-            )}
-            <AppText
-              style={{
-                ...styles.bareText,
-                color: bareRed ? colors.heart : colors.primary,
-              }}
-              bold
+            <View style={[styles.button, style]}>
+              {LIcon && (
+                <LIconComp name={LIcon} size={15} color={colors.primary} />
+              )}
+              <AppText style={styles.btnText} bold>
+                {title}
+              </AppText>
+              {RIcon && (
+                <RIconComp name={RIcon} size={15} color={colors.primary} />
+              )}
+            </View>
+            <ActivityIndicator
+              style={styles.loader}
+              visible={loading}
+              size={0.2}
+            />
+          </TouchableOpacity>
+        )}
+        {sec && (
+          <TouchableOpacity
+            disabled={disabled}
+            activeOpacity={0.7}
+            onPressIn={() => handleAnimation("in")}
+            onPressOut={() => handleAnimation("out")}
+            onPress={onPress}
+          >
+            <View style={[styles.accent, style]}>
+              {LIcon && (
+                <LIconComp name={LIcon} size={15} color={colors.primary} />
+              )}
+              <AppText style={styles.btnText} bold>
+                {" "}
+                {title}{" "}
+              </AppText>
+              {RIcon && (
+                <RIconComp name={RIcon} size={15} color={colors.primary} />
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+        {bare && (
+          <TouchableOpacity
+            activeOpacity={bareWhite ? 0.85 : 0.4}
+            onPressIn={() => handleAnimation("in")}
+            onPressOut={() => handleAnimation("out")}
+            onPress={onPress}
+            disabled={disabled}
+          >
+            <View
+              style={[
+                styles.bare,
+                {
+                  backgroundColor: bareWhite ? "white" : "transparent",
+                  borderWidth: bareWhite ? 0 : 1,
+                  borderColor: bareRed ? colors.heart : colors.primary,
+                },
+                style,
+              ]}
             >
-              {" "}
-              {title}{" "}
-            </AppText>
-            {RIcon && (
-              <MaterialCommunityIcons
-                name={RIcon}
-                size={15}
-                color={bareRed ? colors.heart : colors.primary}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-      )}
-      {naked && (
-        <TouchableOpacity
-          disabled={disabled}
-          activeOpacity={0.4}
-          onPress={onPress}
-        >
-          <View style={[styles.naked, style]}>
-            {LIcon && (
-              <MaterialCommunityIcons
-                name={LIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-            <AppText style={styles.nakedText} bold>
-              {" "}
-              {title}{" "}
-            </AppText>
-            {RIcon && (
-              <MaterialCommunityIcons
-                name={RIcon}
-                size={15}
-                color={colors.primary}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-      )}
+              {LIcon && (
+                <LIconComp
+                  name={LIcon}
+                  size={15}
+                  color={bareRed ? colors.heart : colors.primary}
+                />
+              )}
+              <AppText
+                style={{
+                  ...styles.bareText,
+                  color: bareRed ? colors.heart : colors.primary,
+                }}
+                bold
+              >
+                {" "}
+                {title}{" "}
+              </AppText>
+              {RIcon && (
+                <RIconComp
+                  name={RIcon}
+                  size={15}
+                  color={bareRed ? colors.heart : colors.primary}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+        {naked && (
+          <TouchableOpacity
+            disabled={disabled}
+            activeOpacity={0.4}
+            onPressIn={() => handleAnimation("in")}
+            onPressOut={() => handleAnimation("out")}
+            onPress={onPress}
+          >
+            <View style={[styles.naked, style]}>
+              {LIcon && (
+                <LIconComp name={LIcon} size={15} color={colors.primary} />
+              )}
+              <AppText style={styles.nakedText} bold>
+                {" "}
+                {title}{" "}
+              </AppText>
+              {RIcon && (
+                <RIconComp name={RIcon} size={15} color={colors.primary} />
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+      </Animated.View>
     </>
   );
 };
