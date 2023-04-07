@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, Image, Dimensions, Text, View } from "react-native";
 
 import header from "../../assets/icon.png";
-import icon from "../../assets/icon_dark.png";
+import icon from "../../assets/icon.png";
 import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");

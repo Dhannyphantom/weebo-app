@@ -18,7 +18,7 @@ import Avatar from "./Avatar";
 import Cards from "./Cards";
 
 //files
-import appLogo from "../../assets/icon_dark.png";
+import appLogo from "../../assets/icon.png";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");

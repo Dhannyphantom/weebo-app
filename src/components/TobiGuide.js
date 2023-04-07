@@ -21,21 +21,6 @@ const { width, height } = Dimensions.get("screen");
 const MODAL_WIDTH = width * 0.9;
 const ITEM_SIZE = width * 1.2;
 
-const stateObj = [
-  {
-    icon: "account-check",
-    text: "Earn 2WP by clicking this icon to VERIFY this instance",
-  },
-  {
-    icon: "trophy",
-    text: "Challenge instances with cool images, video or correction",
-  },
-  {
-    icon: "settings-helper",
-    text: "Explore different settings now to engage more",
-  },
-];
-
 const RowGuide = ({ icon, translator, scaler, text }) => {
   return (
     <Animated.View
@@ -47,11 +32,7 @@ const RowGuide = ({ icon, translator, scaler, text }) => {
         },
       ]}
     >
-      <MaterialCommunityIcons
-        name={icon}
-        size={width * 0.15}
-        color={colors.primary}
-      />
+      <MaterialCommunityIcons name={icon} size={width * 0.15} color={"#ddd"} />
       <AppText size="large" style={styles.guideText}>
         {text}
       </AppText>
@@ -59,7 +40,7 @@ const RowGuide = ({ icon, translator, scaler, text }) => {
   );
 };
 
-const RenderGuide = ({ visObj, setVisObj }) => {
+const RenderGuide = ({ visObj, stateObj, setVisObj }) => {
   const theme = useContext(ThemeContext);
 
   const [indexer, setIndexer] = useState(1);
@@ -120,70 +101,74 @@ const RenderGuide = ({ visObj, setVisObj }) => {
     } else if (type === "next" && indexer >= stateObj.length) {
       setVisObj({ ...visObj, close: true });
       setBtnDisabled(false);
+    } else {
+      setBtnDisabled(false);
     }
   };
 
   return (
     <View style={[styles.guide, { backgroundColor: "#fff" }]}>
-      <View style={styles.chibi}>
-        <Image resizeMode="contain" source={chibi} style={styles.chibiImage} />
+      <View style={styles.chibiContainer}>
+        <View style={styles.chibi}>
+          <Image
+            resizeMode="contain"
+            source={chibi}
+            style={styles.chibiImage}
+          />
+        </View>
+        <AppText style={styles.title} size="xlarge" bold>
+          Instance Actions
+        </AppText>
       </View>
-      <AppText style={styles.title} bold>
-        Instance Actions
-      </AppText>
-
-      <View style={styles.guideSection}>
-        <RowGuide
-          icon={stateObj[0].icon}
-          text={stateObj[0].text}
-          translator={translator}
-          scaler={indexer === 1 ? scalerCurrent : scaler}
-        />
-        <RowGuide
-          translator={translator}
-          icon={stateObj[1].icon}
-          text={stateObj[1].text}
-          scaler={indexer === 2 ? scalerCurrent : scaler}
-        />
-        <RowGuide
-          icon={stateObj[2].icon}
-          text={stateObj[2].text}
-          translator={translator}
-          scaler={indexer === 3 ? scalerCurrent : scaler}
-        />
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          alignSelf: "center",
-        }}
-      >
-        <AppButton
-          bare
-          disabled={btnDisabled}
-          onPress={() => handleNextGuide("prev")}
-          LIcon="chevron-back"
-          LIconPack="I"
-        />
-        <AppButton
-          disabled={btnDisabled}
-          bare
-          RIcon={indexer < stateObj.length ? "chevron-forward" : "close"}
-          RIconPack="I"
-          style={{ marginLeft: 40 }}
-          onPress={() => handleNextGuide("next")}
-        />
+      <View style={{ flex: 1, justifyContent: "space-between" }}>
+        <View style={styles.guideSection}>
+          {stateObj.map((guide, index) => {
+            return (
+              <RowGuide
+                icon={guide.icon}
+                key={guide.text}
+                text={guide.text}
+                translator={translator}
+                scaler={indexer === index + 1 ? scalerCurrent : scaler}
+              />
+            );
+          })}
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            alignSelf: "center",
+          }}
+        >
+          <AppButton
+            bare
+            disabled={btnDisabled}
+            onPress={() => handleNextGuide("prev")}
+            LIcon="chevron-back"
+            LIconPack="I"
+          />
+          <AppButton
+            disabled={btnDisabled}
+            bare
+            RIcon={indexer < stateObj.length ? "chevron-forward" : "close"}
+            RIconPack="I"
+            style={{ marginLeft: 40 }}
+            onPress={() => handleNextGuide("next")}
+          />
+        </View>
       </View>
     </View>
   );
 };
 
-export default function TobiGuide({ data, setData }) {
+export default function TobiGuide({ data, setData, stateObj }) {
   // console.log(data);
   return (
     <AppFadeIn
-      RenderComponent={() => <RenderGuide visObj={data} setVisObj={setData} />}
+      RenderComponent={() => (
+        <RenderGuide stateObj={stateObj} visObj={data} setVisObj={setData} />
+      )}
       visible={data?.vis}
       disableCloseModal
       closeModal={data}
@@ -199,11 +184,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   chibi: {
-    position: "absolute",
     borderWidth: 5,
     borderColor: "#ddd",
-    top: -55,
-    left: MODAL_WIDTH / 2 - 50,
     backgroundColor: "#fff",
     borderRadius: 50,
   },
@@ -212,6 +194,13 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
   },
+  chibiContainer: {
+    position: "absolute",
+    top: -55,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
   guide: {
     borderWidth: 6,
     borderColor: "#ddd",
@@ -219,10 +208,12 @@ const styles = StyleSheet.create({
     maxHeight: height * 0.95,
     borderRadius: 25,
     padding: 30,
+    minHeight: height * 0.45,
   },
   guideSection: {
     marginTop: 35,
     flexDirection: "row",
+    flex: 0.8,
   },
   guideText: {
     marginLeft: 12,
@@ -237,6 +228,6 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    marginTop: 32,
+    marginTop: 25,
   },
 });

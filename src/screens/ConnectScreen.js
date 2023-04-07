@@ -128,6 +128,7 @@ const RenderEmptyWeebs = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
     updateUserData,
@@ -169,8 +170,8 @@ const RenderEmptyWeebs = ({
         style={{
           width: width * 0.7,
           padding: 20,
-          backgroundColor: colors.white,
           borderRadius: 10,
+          backgroundColor: theme.background,
         }}
       >
         <AppText

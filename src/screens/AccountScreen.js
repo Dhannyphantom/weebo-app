@@ -31,7 +31,7 @@ const { width, height } = Dimensions.get("window");
 const modalShow = {
   visible: true,
   title: "Sign Out",
-  message: "Are sure you want to miss out all the fun?",
+  message: "Are you sure?",
   btn: "YES",
   type: "signout",
 };

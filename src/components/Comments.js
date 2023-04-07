@@ -183,9 +183,9 @@ const DownComponent = ({
       <CommentBar
         onSend={(text) => {
           handleSend(text, { reply, setReply }, () => {
-            flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
+            // flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
           });
-          flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
+          // flatRef?.current?.scrollToIndex({ index: 0, viewPosition: 0 });
         }}
         type={reply._id ? "reply" : "send"}
         loaded={loaded}
@@ -206,12 +206,13 @@ const CommentComponent = ({
   commentData,
   handleShowMore,
   downCompProps = {},
+  flatRef,
 }) => {
   const [commentText, setCommentText] = useState("");
   const [reply, setReply] = useState({});
 
   const textInputRef = useRef(null);
-  const flatRef = useRef(null);
+  // const flatRef = useRef(null);
 
   const renderComments = ({ item }) => {
     return (
@@ -329,6 +330,9 @@ const Comments = ({
   const {
     state: { userInfo },
   } = useContext(AuthContext);
+
+  const flatRef = useRef(null);
+
   const { commentPost, getComments, replyComments } = useContext(FeedContext);
   // const [reply, setReply] = useState({});
   const [bools, setBools] = useState({
@@ -351,19 +355,19 @@ const Comments = ({
   const handleSentComment = (type, data, cb) => {
     if (type === "comment") {
       // check if there is a dummy
-      const copier = [...comments];
+      const copier = [...comments.results];
       const finder = copier.findIndex(
-        (obj) => obj.pending == true && obj.comment == data.comment
+        (obj) => obj.pending === true && obj.comment === data.comment
       );
       if (finder >= 0) {
         // there is a dummy, therefore replace
         copier[finder] = data;
-        setMyComments(copier);
+        setMyComments({ ...comments, results: copier });
       } else {
-        setMyComments([data, ...comments]);
+        setMyComments({ ...comments, results: [...comments.results, data] });
       }
     } else if (type === "reply") {
-      const copier = [...comments];
+      const copier = [...comments.results];
       const finder = copier.find((obj) => obj._id == data.replyId);
       const finderIndex = finder.replies.findIndex(
         (obj) => obj.pending == true && obj.reply == data.reply
@@ -373,23 +377,28 @@ const Comments = ({
       } else {
         copier[finder].replies.push(data);
       }
-      setMyComments(copier);
+      setMyComments({ ...comments, results: copier });
     } else if (type === "dummyComment") {
-      setMyComments([data, ...comments]);
+      setMyComments({ ...comments, results: [...comments.results, data] });
     } else if (type === "dummyReply") {
-      const copier = [...comments];
+      const copier = [...comments.results];
       const finder = copier.findIndex((obj) => obj._id == data.replyId);
       copier[finder].replies.push(data);
-      setMyComments(copier);
+      setMyComments({ ...comments, results: copier });
     }
     setPost && setPost({ ...post, comments: post.comments + 1 });
     cb && cb();
   };
 
-  const handleSend = (text, replyObj, cb) => {
-    if (!Boolean(text)) return console.log("No text input");
+  const handleSend = (
+    text,
+    replyObj = { reply: {}, setReply: () => null },
+    cb
+  ) => {
+    if (!Boolean(text)) return;
 
     const { reply, setReply } = replyObj;
+    flatRef?.current?.scrollToEnd();
 
     if (reply._id) {
       handleSentComment(
@@ -424,11 +433,12 @@ const Comments = ({
         text,
         (resData) => {
           handleSentComment("reply", { ...resData, replyId: reply._id });
+          flatRef?.current?.scrollToEnd();
+
           cb && cb();
         },
         (err) => {
           setErrMsg(err.msg);
-          console.log(err.err?.response?.data);
         }
       );
       setReply({});
@@ -436,9 +446,9 @@ const Comments = ({
       handleSentComment(
         "dummyComment",
         {
-          _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+          _id: userInfo.avatar?._id,
           user: {
-            _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+            _id: userInfo.avatar?._id,
             username: userInfo.username,
             avatar: userInfo.avatar,
           },
@@ -452,7 +462,10 @@ const Comments = ({
         commentData.instanceID,
         commentData.instanceType,
         text,
-        (resData) => handleSentComment("comment", resData),
+        (resData) => {
+          handleSentComment("comment", resData);
+          flatRef?.current?.scrollToEnd();
+        },
         (err) => setErrMsg(err)
       );
     }
@@ -482,7 +495,6 @@ const Comments = ({
         ref && ref?.current?.scrollToEnd();
       },
       (errData) => {
-        console.log(errData?.err?.response?.data);
         setBools({ ...bools, loadMore: false });
       }
     );
@@ -500,6 +512,7 @@ const Comments = ({
             title="COMMENTS"
             hasLoaded={loaded}
             commentData={comments?.results ?? comments}
+            flatRef={flatRef}
             moreContent={{
               vis: Boolean(comments?.next),
               type: "comments",

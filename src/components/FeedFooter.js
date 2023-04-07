@@ -13,7 +13,7 @@ import AlertModal from "./AlertModal";
 import { getFeedNumber } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
-const COMMENT_COUNT = 2;
+const COMMENT_COUNT = 15;
 
 const FeedFooter = ({
   activeSlide,
