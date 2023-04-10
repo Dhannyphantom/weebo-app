@@ -6,7 +6,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import colors from "../constants/colors";
@@ -226,7 +226,7 @@ const HomeHeader = ({ characters }) => {
             style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
             onPress={() => navigation.navigate("Chat")}
           >
-            <Feather name="message-circle" size={18} color={colors.chat} />
+            <Ionicons name="chatbubbles" size={18} color={colors.chat} />
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
@@ -272,8 +272,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   buttonContainer: {
-    // width: screen.width * 0.09,
-    // height: screen.width * 0.09,
     padding: 12,
     marginBottom: 8,
     borderRadius: 6,

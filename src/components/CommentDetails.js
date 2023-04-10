@@ -48,7 +48,7 @@ const RenderReplies = ({
           <Entypo name="dot-single" size={12} color={colors.medium} />
           {item.pending ? (
             <View>
-              <AppText>Sending...</AppText>
+              <AppText>Pending...</AppText>
             </View>
           ) : (
             <AppText style={styles.commentDate}> {date} </AppText>
@@ -98,7 +98,7 @@ const CommentDetails = ({
           <Entypo name="dot-single" size={12} color={colors.medium} />
           {item.pending ? (
             <View>
-              <AppText>Sending...</AppText>
+              <AppText>Pending...</AppText>
             </View>
           ) : (
             <AppText style={styles.commentDate}> {date} </AppText>

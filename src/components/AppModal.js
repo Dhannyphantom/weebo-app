@@ -10,6 +10,8 @@ import {
   Easing,
   Keyboard,
 } from "react-native";
+import uuid from "react-native-uuid";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -25,8 +27,134 @@ import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
 import { CollectionCard } from "../screens/SavedCollectionScreen";
 import { downloadMedia } from "../constants/helpers";
+import AppFadeIn from "./AppFadeIn";
 
 const { height, width } = Dimensions.get("window");
+
+const RenderReportItem = ({ item }) => {
+  return (
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={item.onPress}
+      style={styles.reportItem}
+    >
+      <MaterialCommunityIcons
+        name={item.icon}
+        color="#ddd"
+        size={width * 0.1}
+      />
+      <AppText> {item.title} </AppText>
+    </TouchableOpacity>
+  );
+};
+
+const RenderPostReports = ({ state, postId }) => {
+  const theme = useContext(ThemeContext);
+  const [text, setText] = useState("");
+  const [bools, setBools] = useState({ showInput: false, loading: false });
+  const [popper, setPopper] = useState({ vis: false });
+
+  const { postReport } = useContext(FeedContext);
+
+  const post_reposts = [
+    {
+      id: uuid.v4(),
+      title: "Not anime related",
+      onPress: () => handleReportPost({ data: "not_related", type: "default" }),
+      icon: "cancel",
+    },
+    {
+      id: uuid.v4(),
+      title: "Inappropriate content",
+      onPress: () =>
+        handleReportPost({ data: "inappropriate", type: "default" }),
+      icon: "account-cancel-outline",
+    },
+    {
+      id: uuid.v4(),
+      title: "Missing content",
+      onPress: () => handleReportPost({ data: "missing", type: "default" }),
+      icon: "folder-information-outline",
+    },
+    {
+      id: uuid.v4(),
+      title: "Others",
+      onPress: () => setBools({ ...bools, showInput: true }),
+      icon: "information-outline",
+    },
+  ];
+
+  const handleReportPost = (complaints) => {
+    setBools({ ...bools, loading: true });
+    postReport(
+      { ...complaints, postId },
+      (resData) => {
+        setPopper({
+          vis: true,
+          msg: resData,
+          type: "success",
+          cb: () => state.setBools({ ...state.bools, report: false }),
+        });
+        setBools({ ...bools, loading: false });
+      },
+      (errData) => {
+        console.log(errData);
+        setPopper({
+          vis: true,
+          msg: errData.msg,
+          type: "failed",
+        });
+        setBools({ ...bools, loading: false });
+      }
+    );
+  };
+
+  return (
+    <View style={[styles.report, { backgroundColor: theme.background }]}>
+      <AppText bold style={styles.reportTitle} size="large">
+        Report Post
+      </AppText>
+
+      {bools.showInput && (
+        <View>
+          <GrowInput
+            text={text}
+            setText={setText}
+            placeholder="Enter complaints..."
+          />
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <AppButton
+              onPress={() => handleReportPost({ data: text, type: "others" })}
+              title="Report"
+              bare
+              style={styles.reportBtn}
+            />
+            <AppButton
+              title="Cancel"
+              onPress={() => setBools({ ...bools, showInput: false })}
+              bare
+              bareRed
+              style={styles.reportBtn}
+            />
+          </View>
+        </View>
+      )}
+
+      <FlatList
+        data={post_reposts}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        renderItem={RenderReportItem}
+      />
+      <PopMessage
+        popData={popper}
+        timer={0.6}
+        setter={() => setPopper({ vis: false })}
+      />
+      <ActivityIndicator visible={bools.loading} wTransparent absolute />
+    </View>
+  );
+};
 
 const AppModal = ({
   action,
@@ -58,7 +186,7 @@ const AppModal = ({
   const [showText, setShowText] = useState(false);
   const [popData, setPopData] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
-  const [bools, setBools] = useState({ loading: false });
+  const [bools, setBools] = useState({ loading: false, report: false });
 
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
@@ -231,6 +359,8 @@ const AppModal = ({
         });
       }
       setBools({ ...bools, loading: false });
+    } else if (str === "report") {
+      setBools({ ...bools, report: true });
     } else if (close) {
       if (str === "delete") return onPress(str);
       Animated.parallel([
@@ -449,6 +579,11 @@ const AppModal = ({
                   onPress={() => showContent("delete", true)}
                 />
               )}
+              <Link
+                name="Report Post"
+                iconName="information-outline"
+                onPress={() => showContent("report")}
+              />
             </View>
           </TouchableOpacity>
           <ActivityIndicator
@@ -459,6 +594,13 @@ const AppModal = ({
         </Animated.View>
       </TouchableOpacity>
       <PopMessage popData={popData} setter={() => setPopData({ vis: false })} />
+      <AppFadeIn
+        visible={bools.report}
+        setter={() => setBools({ ...bools, report: false })}
+        RenderComponent={() => (
+          <RenderPostReports state={{ bools, setBools }} postId={pId} />
+        )}
+      />
     </Modal>
   );
 };
@@ -542,5 +684,29 @@ const styles = StyleSheet.create({
   links: {
     justifyContent: "space-evenly",
   },
+  report: {
+    width: width * 0.95,
+    padding: 20,
+    borderRadius: 20,
+  },
+  reportTitle: {
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  reportItem: {
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    width: width * 0.4,
+    margin: 6,
+    marginVertical: 20,
+    marginBottom: 15,
+  },
+  reportBtn: {
+    alignSelf: "center",
+    marginTop: 15,
+    marginHorizontal: 6,
+  },
 });
+
 export default AppModal;

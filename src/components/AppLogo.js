@@ -18,7 +18,7 @@ const AppLogo = ({ style, type = "header" }) => {
     logoSource = header;
   } else if (type === "icon") {
     logoDefaultStyle = {
-      width: width * 0.22,
+      width: width * 0.25,
       height: width * 0.22,
     };
     logoSource = icon;
@@ -32,12 +32,13 @@ const AppLogo = ({ style, type = "header" }) => {
     );
   }
 
-  return <Image source={logoSource} style={[logoDefaultStyle, style]} />;
+  return (
+    <Image source={logoSource} style={[styles.logo, logoDefaultStyle, style]} />
+  );
 };
 const styles = StyleSheet.create({
   logo: {
-    width: width * 0.15,
-    height: width * 0.11,
+    borderRadius: 15,
   },
   logoText: {
     fontFamily: "fonter",

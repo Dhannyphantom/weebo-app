@@ -5,7 +5,7 @@ import CountryDropdown from "react-native-dropdown-country-picker";
 import AppText from "./AppText";
 import ThemeContext from "../config/ThemeContext";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 export default function FormCountryPicker({ style }) {
   const { setFieldValue, values } = useFormikContext();

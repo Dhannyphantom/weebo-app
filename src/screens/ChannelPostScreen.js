@@ -31,6 +31,8 @@ import Separator from "../components/Separator";
 import AppButton from "../components/AppButton";
 import { launchGallery } from "../constants/helpers";
 import AlertModal from "../components/AlertModal";
+import { ADS_INTERVAL } from "../constants/data_store";
+import BannerAds from "../components/BannerAds";
 
 const { width, height } = Dimensions.get("window");
 
@@ -478,21 +480,29 @@ const ChannelPostScreen = ({ route, navigation }) => {
     );
   };
 
-  const renderPageLikeSo = ({ item }) => {
+  const renderPageLikeSo = ({ item, index }) => {
     const isEvent = item.hasOwnProperty("challengersNum");
 
-    if (isEvent) {
+    if (index % ADS_INTERVAL === 0) {
       return (
-        <EventRender
-          eventData={item}
-          isFollowing={isSubscribed}
-          userID={userInfo._id}
-          renderType="single"
-          updateMe={updateMe}
-        />
+        <>
+          {isEvent ? (
+            <>
+              <EventRender />
+              <BannerAds />
+            </>
+          ) : (
+            <View style={{ bottom: 45 }}>
+              <BannerAds />
+              <FeedRender item={item} user={userInfo._id} />
+            </View>
+          )}
+        </>
       );
     } else {
-      return (
+      return isEvent ? (
+        <EventRender />
+      ) : (
         <View style={{ bottom: 45 }}>
           <FeedRender item={item} user={userInfo._id} />
         </View>

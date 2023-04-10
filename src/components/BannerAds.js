@@ -10,7 +10,6 @@ import {
 } from "react-native-google-mobile-ads";
 
 import AppText from "./AppText";
-import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("screen");
@@ -40,7 +39,7 @@ export default function BannerAds() {
     loadedOnce: false,
   });
 
-  let bannerHeight = Math.max(200, height * 0.2);
+  let bannerHeight = Math.max(160, height * 0.15);
 
   if (actions.bannerSize === BannerAdSize.MEDIUM_RECTANGLE) {
     bannerHeight = height * 0.35;
@@ -73,9 +72,13 @@ export default function BannerAds() {
       ]}
     >
       <View style={styles.header}>
-        <MaterialCommunityIcons name="advertisements" size={25} />
         <AppText> &bull; </AppText>
-        <AppText bold>Content</AppText>
+        <MaterialCommunityIcons
+          color={theme.color}
+          name="advertisements"
+          size={25}
+        />
+        <AppText> &bull; </AppText>
       </View>
       <View style={[styles.banner, { height: bannerHeight }]}>
         <ActivityIndicator

@@ -889,3 +889,5 @@ export const ads_keywords = [
   "toon",
   "animation",
 ];
+
+export const ADS_INTERVAL = 10;

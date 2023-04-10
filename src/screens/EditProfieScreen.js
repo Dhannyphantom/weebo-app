@@ -452,7 +452,7 @@ const EditProfileScreen = ({ navigation, route }) => {
     second_name: pageData.second_name ? pageData.second_name : "",
     email: pageData.email,
     gender: pageData.gender,
-    country: pageData.country ? pageData.country : "",
+    country: pageData.country ?? "nigeria",
     city: pageData.city ? pageData.city : "",
     contact: pageData?.contact?.number ?? "",
     contactCode: pageData?.contact?.contactCode ?? "+234",

@@ -481,6 +481,24 @@ const viewStatus = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const postReport = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await postApi.post("report", data, {
+      headers: {
+        "x-auth-token": token,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error sending post report", data: err?.response?.data });
+  }
+};
+
 export const { Provider, Context } = createDataContext(
   feedReducer,
   {
@@ -495,6 +513,7 @@ export const { Provider, Context } = createDataContext(
     getMoreReplies,
     statusUploader,
     getHomeFeeds,
+    postReport,
     editPostCaption,
     commentPost,
     getCommentReplies,

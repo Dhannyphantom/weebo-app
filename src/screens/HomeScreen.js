@@ -28,7 +28,7 @@ import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "../components/ActivityIndicator";
 import HomeHeader from "../components/HomeHeader";
 import Shows from "../components/Shows";
-import { actionDatas } from "../constants/data_store";
+import { actionDatas, ADS_INTERVAL } from "../constants/data_store";
 import ActionMenu from "../components/ActionMenu";
 import Screen from "../components/Screen";
 import EventRender from "../components/EventRender";
@@ -43,7 +43,7 @@ import appConfig from "../../app.config";
 import BannerAds from "../components/BannerAds";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
-const ADS_INTERVAL = 10;
+
 // import NativeAds from "../components/NativeAds";
 
 Notifications.setNotificationHandler({

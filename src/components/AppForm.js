@@ -19,7 +19,6 @@ import {
 } from "@react-native-google-signin/google-signin";
 
 import AppText from "./AppText";
-import Icon from "./Icon";
 import Spacer from "./Spacer";
 import colors from "../constants/colors";
 import FormField from "./FormField";
