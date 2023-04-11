@@ -3,4 +3,5 @@ import baseURL from "./baseURL";
 
 export default axios.create({
   baseURL: `${baseURL.uri}/channel`,
+  timeout: 10_000,
 });

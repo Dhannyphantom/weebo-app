@@ -39,7 +39,7 @@ const AppHeader = ({
               size="large"
               style={{
                 ...styles.title,
-                color: theme.color,
+                color: colors.primary,
                 ...titleStyle,
               }}
               bold
