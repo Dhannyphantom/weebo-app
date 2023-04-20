@@ -28,7 +28,7 @@ import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "../components/ActivityIndicator";
 import HomeHeader from "../components/HomeHeader";
 import Shows from "../components/Shows";
-import { actionDatas, ADS_INTERVAL } from "../constants/data_store";
+import { actionDatas, ADS_INTERVAL, homeGuide } from "../constants/data_store";
 import ActionMenu from "../components/ActionMenu";
 import Screen from "../components/Screen";
 import EventRender from "../components/EventRender";
@@ -41,6 +41,7 @@ import FeedRender from "../components/FeedRender";
 import ThemeContext from "../config/ThemeContext";
 import appConfig from "../../app.config";
 import BannerAds from "../components/BannerAds";
+import TobiGuide from "../components/TobiGuide";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
 
@@ -81,6 +82,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [bools, setBools] = useState(boolsObj);
   const [slider, setSlider] = useState(false);
+  const [guide, setGuide] = useState({ vis: false, close: false });
   const { loadMore, loadedOnce, showStatus } = bools;
 
   const actionFlatRef = useRef(null);
@@ -98,6 +100,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const handleHomeScreenGuide = async (type) => {
     const getGuides = await AsyncStorage.getItem("guides");
+    const tobiGuides = await AsyncStorage.getItem("tobi_guides");
 
     if (type === "get") {
       if (getGuides) {
@@ -106,12 +109,34 @@ const HomeScreen = ({ navigation, route }) => {
       } else {
         setSlider(true);
       }
+
+      // for TOBI guide;
+      if (getGuides && JSON.parse(getGuides).home) {
+        if (tobiGuides) {
+          // tobiGUides = ["home_guide"]
+          const tobiGuidesArr = JSON.parse(tobiGuides);
+          const finder = tobiGuidesArr.includes("home_guide");
+
+          if (!finder) {
+            setGuide({ ...guide, vis: true });
+          }
+        } else {
+          // no tobi guide data at all
+          const homeGuideArr = ["home_guide"];
+          await AsyncStorage.setItem(
+            "tobi_guides",
+            JSON.stringify(homeGuideArr)
+          );
+          setGuide({ ...guide, vis: true });
+        }
+      }
     } else if (type === "set") {
       const setGuides = {
         home: true,
       };
       await AsyncStorage.setItem("guides", JSON.stringify(setGuides));
       setSlider(false);
+      handleHomeScreenGuide("get");
     }
   };
 
@@ -122,7 +147,7 @@ const HomeScreen = ({ navigation, route }) => {
       async (resData) => {
         // SETTERS
         setFeeds(resData.feeds);
-        !bools.loadedOnce && handleHomeScreenGuide("get");
+        // !bools.loadedOnce && handleHomeScreenGuide("get");
         loader && setBools({ ...bools, loader: false });
         await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
         cb && cb();
@@ -136,13 +161,13 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const readyHomeScreen = async (cb) => {
+    !bools.loadedOnce && handleHomeScreenGuide("get");
     const feedsStr = await AsyncStorage.getItem("home_feeds");
     if (feedsStr) {
       const feedsObj = JSON.parse(feedsStr);
       setFeeds(feedsObj.feeds);
       setBools({ ...bools, loader: false, loadedOnce: true });
     }
-
     // tryLocalSignin();
     fetchHomeData(cb);
   };
@@ -392,6 +417,13 @@ const HomeScreen = ({ navigation, route }) => {
         visible={bools.loader}
         style={styles.activity}
         wTransparent
+      />
+
+      <TobiGuide
+        data={guide}
+        title="Post Actions"
+        setData={setGuide}
+        stateObj={homeGuide}
       />
     </>
   );

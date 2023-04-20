@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Modal, Animated } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Dimensions, Animated } from "react-native";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 
@@ -15,9 +15,13 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
   const circleStyles = {
     ...styles.circle,
     backgroundColor:
-      popData.type === "success" ? colors.unChange : colors.heart,
+      popData.type === "success" ? colors.greenLight : colors.heart,
 
     transform: [{ translateY: translator }],
+    opacity: translator.interpolate({
+      inputRange: [0, MOVE_Y],
+      outputRange: [0, 1],
+    }),
   };
 
   useEffect(() => {
@@ -42,21 +46,19 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
   }, [popData]);
 
   return (
-    <Modal visible={popData.vis} transparent statusBarTranslucent>
-      <View style={styles.container}>
-        <Animated.View style={circleStyles}>
-          <AppText
-            style={{
-              ...styles.text,
-              color: popData.type === "success" ? colors.black : colors.white,
-            }}
-            bold
-          >
-            {popData.msg}
-          </AppText>
-        </Animated.View>
-      </View>
-    </Modal>
+    <View style={styles.container}>
+      <Animated.View style={circleStyles}>
+        <AppText
+          style={{
+            ...styles.text,
+            color: popData.type === "success" ? colors.black : colors.white,
+          }}
+          bold
+        >
+          {popData.msg}
+        </AppText>
+      </Animated.View>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -65,7 +67,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    // bottom: 0,
+    zIndex: 100,
   },
   circle: {
     width: width * 0.8,

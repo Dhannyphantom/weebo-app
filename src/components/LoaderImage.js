@@ -7,6 +7,7 @@ import { RenderMediaIcon } from "./PostVideo";
 
 const LoaderImage = ({
   image,
+  style,
   imageStyle,
   isVideoImage,
   full,
@@ -15,7 +16,7 @@ const LoaderImage = ({
   noAspect,
   ...otherProps
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isVideoImage ? false : true);
   const [loadedOnce, setLoadedOnce] = useState(false);
   const theme = useContext(ThemeContext);
 
@@ -24,86 +25,66 @@ const LoaderImage = ({
     setLoadedOnce(true);
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-  }, []);
-
-  useEffect(() => {
-    if (isVideoImage) {
-      setIsLoading(false);
-    }
-  }, [isVideoImage]);
-
   return (
-    <>
-      {image ? (
-        <View
-          style={{
-            ...styles.container,
-            backgroundColor: theme.extralight,
-            borderRadius: full ? 1 : 12,
-            aspectRatio: noAspect ? null : image.width / image.height,
-          }}
-        >
-          <Image
-            source={{ uri: image.thumb }}
-            {...otherProps}
-            style={{
-              ...styles.image,
-              borderRadius: full ? 1 : 12,
-            }}
-            blurRadius={isVideoImage ? 5 : 12}
-            resizeMode="cover"
-          />
-          {isVideoImage && <RenderMediaIcon />}
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: theme.extralight,
+        borderRadius: full ? 1 : 12,
+        aspectRatio: noAspect ? null : image.width / image.height,
+        ...style,
+      }}
+    >
+      <Image
+        source={{ uri: image.thumb }}
+        {...otherProps}
+        style={{
+          ...styles.image,
+          borderRadius: full ? 1 : 12,
+          ...imageStyle,
+        }}
+        blurRadius={isVideoImage ? 5 : 12}
+        resizeMode="cover"
+      />
 
-          {!isVideoImage && (
-            <Image
-              source={{ uri: image.uri }}
-              {...otherProps}
-              style={{
-                ...styles.image,
-                ...styles.imageOverlay,
-                borderRadius: full ? 1 : 12,
-              }}
-              onLoadEnd={handleLoadEnd}
-              resizeMode="cover"
-              resizeMethod="resize"
-            />
-          )}
-          <ActivityIndicator
-            visible={isLoading}
-            size={0.26}
-            type="loader"
-            style={{
-              ...styles.activity,
-              borderRadius: full ? 1 : 12,
-            }}
-            transparent
-          />
-          <ActivityIndicator
-            visible={loading}
-            type="spin"
-            style={{
-              ...styles.activity,
-              borderRadius: full ? 1 : 12,
-            }}
-            wTransparent
-          />
-        </View>
-      ) : (
-        <ActivityIndicator
-          visible={isLoading}
-          size={0.26}
-          type="spin"
+      {isVideoImage && <RenderMediaIcon />}
+
+      {!isVideoImage && (
+        <Image
+          source={{ uri: image.uri }}
+          {...otherProps}
           style={{
-            ...styles.activity,
+            ...styles.image,
+            ...styles.imageOverlay,
             borderRadius: full ? 1 : 12,
+            ...imageStyle,
           }}
-          transparent
+          onLoadEnd={handleLoadEnd}
+          resizeMode="cover"
+          resizeMethod="resize"
         />
       )}
-    </>
+
+      <ActivityIndicator
+        visible={isLoading}
+        size={0.26}
+        type="loader"
+        style={{
+          ...styles.activity,
+          borderRadius: full ? 1 : 12,
+        }}
+        transparent
+      />
+      <ActivityIndicator
+        visible={loading}
+        type="spin"
+        style={{
+          ...styles.activity,
+          borderRadius: full ? 1 : 12,
+        }}
+        wTransparent
+      />
+    </View>
   );
 };
 

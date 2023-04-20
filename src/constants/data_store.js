@@ -891,3 +891,16 @@ export const ads_keywords = [
 ];
 
 export const ADS_INTERVAL = 10;
+
+export const homeGuide = [
+  {
+    id: uuid.v4(),
+    icon: "heart-multiple-outline",
+    text: "Double click on a post to like the post",
+  },
+  {
+    id: uuid.v4(),
+    icon: "play",
+    text: "Press and hold on a video post to display fullscreen",
+  },
+];

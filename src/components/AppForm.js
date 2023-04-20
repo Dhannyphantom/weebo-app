@@ -45,14 +45,15 @@ const {
   forgotPassRecoverInitials,
 } = schemas;
 
-GoogleSignin.configure();
-
-/*
-{
+GoogleSignin.configure({
+  webClientId:
+    "556387937205-u0dqikikimj4oivrplmvrupcv49klgci.apps.googleusercontent.com",
   androidClientId:
-    "556387937205-n6i2k2jungjc7svmmigdd1j81m8ukgvp.apps.googleusercontent.com",
-}
-*/
+    "556387937205-egppvnvnskbmkt36bau7sukvho1j2tpn.apps.googleusercontent.com",
+
+  offlineAccess: false,
+  scopes: ["https://www.googleapis.com/auth/user.gender.read"],
+});
 
 const ForgotPassword = ({ setPassModal }) => {
   const { resetPassword, recoverPassword } = useContext(AuthContext);
@@ -297,18 +298,18 @@ const AppForm = ({
     try {
       await GoogleSignin.hasPlayServices();
       console.log("HAS PLAY SERVICES");
-      await GoogleSignin.addScopes({
-        scopes: ["https://www.googleapis.com/auth/user.gender.read"],
-      });
       const userInfo = await GoogleSignin.signIn();
       console.log("USERINFO:: ", userInfo);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
+        console.log("sign in cancelled");
       } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log("sign in still in progress");
         // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         // play services not available or outdated
+        console.log("play services not available");
       } else {
         console.log(error);
         // some other error happened
@@ -333,7 +334,6 @@ const AppForm = ({
     <Screen style={styles.container}>
       <View style={styles.info}>
         <AppLogo type="icon" />
-        {/* <AppText style={{ marginTop: 16 }}>Welcome to the Community! </AppText> */}
         <AppText style={styles.title}>
           Connect and have fun with your fellow weebs
         </AppText>
@@ -501,7 +501,7 @@ const AppForm = ({
         <Oauth
           name="Facebook"
           icon="facebook"
-          onPress={googleSignIn}
+          onPress={null}
           color={colors.facebook}
         />
       </View>

@@ -17,7 +17,8 @@ export default {
     transparent: "rgba(255,255,255, 0.3)",
     transparentBold: "rgba(255,255,255, 0.93)",
     transparentBolder: "rgba(255,255,255, 0.93)",
-    unchange: "#fff3e0",
+    unchange: "rgba(0,255,255, 0.15)",
+    // unchange: "#fff3e0",
     // unchange: "#e3d8f0",
   },
   dark: {

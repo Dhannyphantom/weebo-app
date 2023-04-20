@@ -1,18 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Dimensions,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { MaterialCommunityIcons, Feather, Ionicons } from "@expo/vector-icons";
+import React, { useContext, useRef, useState } from "react";
+import { Animated, Dimensions, Image, StyleSheet, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "./AppFadeIn";
 import AppText from "./AppText";
-import colors from "../constants/colors";
 
 import chibi from "../../assets/arts/levi_1.png";
 import AppButton from "./AppButton";
@@ -40,7 +32,7 @@ const RowGuide = ({ icon, translator, scaler, text }) => {
   );
 };
 
-const RenderGuide = ({ visObj, stateObj, setVisObj }) => {
+const RenderGuide = ({ visObj, stateObj, title, setter, setVisObj }) => {
   const theme = useContext(ThemeContext);
 
   const [indexer, setIndexer] = useState(1);
@@ -99,7 +91,8 @@ const RenderGuide = ({ visObj, stateObj, setVisObj }) => {
         setBtnDisabled(false);
       });
     } else if (type === "next" && indexer >= stateObj.length) {
-      setVisObj({ ...visObj, close: true });
+      setVisObj && setVisObj({ ...visObj, close: true });
+      setter && setter();
       setBtnDisabled(false);
     } else {
       setBtnDisabled(false);
@@ -117,7 +110,7 @@ const RenderGuide = ({ visObj, stateObj, setVisObj }) => {
           />
         </View>
         <AppText style={styles.title} size="xlarge" bold>
-          Instance Actions
+          {title}
         </AppText>
       </View>
       <View style={{ flex: 1, justifyContent: "space-between" }}>
@@ -162,17 +155,25 @@ const RenderGuide = ({ visObj, stateObj, setVisObj }) => {
   );
 };
 
-export default function TobiGuide({ data, setData, stateObj }) {
+export default function TobiGuide({ data, setData, setter, ...otherProps }) {
   // console.log(data);
   return (
     <AppFadeIn
       RenderComponent={() => (
-        <RenderGuide stateObj={stateObj} visObj={data} setVisObj={setData} />
+        <RenderGuide
+          visObj={data}
+          setVisObj={setData}
+          setter={setter}
+          {...otherProps}
+        />
       )}
       visible={data?.vis}
       disableCloseModal
       closeModal={data}
-      setter={() => setData({ close: false, vis: false })}
+      setter={() => {
+        setData && setData({ close: false, vis: false });
+        setter && setter();
+      }}
     />
   );
 }

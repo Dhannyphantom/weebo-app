@@ -238,7 +238,7 @@ const RenderSections = ({ item, section, editSettings }) => {
             setPopper({
               vis: true,
               type: "failed",
-              msg: "Loading ads...",
+              msg: "Loading ads... Try again",
             });
             rewarded.load();
           }
@@ -321,32 +321,36 @@ const RenderSections = ({ item, section, editSettings }) => {
   }, []);
 
   return (
-    <View style={[styles.itemContainer, { backgroundColor: theme.background }]}>
-      <View style={styles.eachItem}>
-        <AppText> {item.name} </AppText>
-        <View>
-          {item.type === "toggle" && (
-            <Switch
-              trackColor={{ false: colors.unChange, true: colors.light }}
-              thumbColor={isEnabled ? colors.primary : colors.light}
-              ios_backgroundColor={colors.google}
-              onValueChange={handleToggle}
-              value={isEnabled}
-            />
-          )}
+    <>
+      <View
+        style={[styles.itemContainer, { backgroundColor: theme.background }]}
+      >
+        <View style={styles.eachItem}>
+          <AppText> {item.name} </AppText>
+          <View>
+            {item.type === "toggle" && (
+              <Switch
+                trackColor={{ false: colors.unChange, true: colors.light }}
+                thumbColor={isEnabled ? colors.primary : colors.light}
+                ios_backgroundColor={colors.google}
+                onValueChange={handleToggle}
+                value={isEnabled}
+              />
+            )}
 
-          {["dropdown", "action"].includes(item.type) && (
-            <SettingDropDown
-              data={item}
-              section={section}
-              handlers={{ editSettings }}
-            />
-          )}
+            {["dropdown", "action"].includes(item.type) && (
+              <SettingDropDown
+                data={item}
+                section={section}
+                handlers={{ editSettings }}
+              />
+            )}
+          </View>
         </View>
+        <AlertModal obj={alert} setVisible={setAlert} onPress={handleAlert} />
       </View>
-      <AlertModal obj={alert} setVisible={setAlert} onPress={handleAlert} />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
-    </View>
+    </>
   );
 };
 

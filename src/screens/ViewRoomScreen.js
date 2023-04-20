@@ -153,7 +153,7 @@ const RenderBackDrops = ({ item, index, scrollX }) => {
   );
 };
 
-const BackDrop = ({ myCharacters, scrollX }) => {
+export const RenderLinearGradient = ({ modalHeight }) => {
   const theme = useContext(ThemeContext);
 
   const gradientColor =
@@ -161,6 +161,20 @@ const BackDrop = ({ myCharacters, scrollX }) => {
       ? ["transparent", "rgba(255,255,255,0.2)", "white"]
       : ["transparent", theme.transparent, theme.transparentBolder];
 
+  return (
+    <LinearGradient
+      colors={gradientColor}
+      style={{
+        width,
+        height: modalHeight,
+        position: "absolute",
+        bottom: 0,
+      }}
+    />
+  );
+};
+
+const BackDrop = ({ myCharacters, scrollX }) => {
   return (
     <View
       style={{
@@ -219,15 +233,7 @@ const BackDrop = ({ myCharacters, scrollX }) => {
           <RenderBackDrops item={item} index={index} scrollX={scrollX} />
         )}
       /> */}
-      <LinearGradient
-        colors={gradientColor}
-        style={{
-          width,
-          height: BACKDROP_HEIGHT,
-          position: "absolute",
-          bottom: 0,
-        }}
-      />
+      <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
     </View>
   );
 };

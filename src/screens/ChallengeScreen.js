@@ -108,6 +108,7 @@ const ChallengeScreen = ({ navigation }) => {
       }
 
       return (
+        // JUST SEND THE ITEM OBJECT TO THE COMPONENT
         <View>
           <Challenge
             image1={item?.challengerMedia}
@@ -125,7 +126,12 @@ const ChallengeScreen = ({ navigation }) => {
             nav={nav}
             score2={item.ownerScore}
             countdown={item.expiresAt}
-            instance={{ show: isShow, character: isCharacter, group: isGroup }}
+            instance={{
+              show: isShow,
+              character: isCharacter,
+              group: isGroup,
+              type: isCharacter ? "character" : isShow ? "show" : "group",
+            }}
             name1={item?.challenger?.username}
             name1ID={item?.challenger?._id}
             name2={item?.manager?.username}
