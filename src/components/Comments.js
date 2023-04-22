@@ -263,7 +263,12 @@ const CommentComponent = ({
         </View>
       ) : (
         <View style={styles.loader}>
-          <ActivityIndicator visible={true} size={2} type="comment" />
+          <ActivityIndicator
+            visible={true}
+            size={2}
+            style={{ marginTop: 100 }}
+            type="comment"
+          />
         </View>
       )}
       <DownComponent
@@ -496,6 +501,7 @@ const Comments = ({
       },
       (errData) => {
         setBools({ ...bools, loadMore: false });
+        console.log(errData);
       }
     );
   };
@@ -593,7 +599,7 @@ const styles = StyleSheet.create({
   modalTitle: { alignSelf: "center", marginTop: 10 },
   loader: {
     width: "100%",
-    height: "100%",
+    height: "96%",
   },
   loadMore: {
     paddingVertical: 12,

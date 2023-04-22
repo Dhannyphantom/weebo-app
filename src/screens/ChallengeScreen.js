@@ -82,16 +82,18 @@ const ChallengeScreen = ({ navigation }) => {
       const isShow = item.show ? true : false;
       const isGroup = item.group ? true : false;
 
-      let coverImage, name, title, id, followers, nav;
+      let coverImage, name, title, id, followers, nav, fullName;
       if (isCharacter) {
         name = item?.character?.dpName;
         coverImage = item?.character?.cover_photo;
         nav = "Character";
         title = item?.character?.show?.name_j || item.character?.show?.name_e;
         id = item?.character?._id;
+        fullName = item?.character?.name;
         followers = item?.character?.followers;
       } else if (isShow) {
         name = item?.show?.name_j ?? item?.show?.name_e;
+        fullName = item?.show?.name_j ?? item?.show?.name_e;
         nav = "Show";
         id = item?.show?._id;
         coverImage = item?.show?.cover_photo;
@@ -99,6 +101,7 @@ const ChallengeScreen = ({ navigation }) => {
         followers = item?.show?.followers;
       } else if (isGroup) {
         name = item?.group?.name;
+        fullName = item?.group?.name;
         nav = "Room";
         id = item?.group?._id;
         coverImage = item?.group?.cover_photo;
@@ -118,6 +121,7 @@ const ChallengeScreen = ({ navigation }) => {
               image: coverImage,
               owner: item.manager,
               show: title,
+              fullName,
               name,
               followers,
               avatar: item?.manager?.avatar,
@@ -168,7 +172,6 @@ const ChallengeScreen = ({ navigation }) => {
         setChallengeInfo(resData);
       },
       (errData) => {
-        console.log("challenges", errData);
         setLoadedOnce(true);
       }
     );
@@ -182,7 +185,6 @@ const ChallengeScreen = ({ navigation }) => {
         }, 500);
       },
       (errData) => {
-        console.log(errData);
         setLoadedOnce(true);
       }
     );

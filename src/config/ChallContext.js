@@ -230,22 +230,22 @@ const withdrawChallenge = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const getComments = (dispatch) => async (instanceID, type, sc, cb) => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/comments/${instanceID}/${type}`, {
-      headers: {
-        "x-auth-token": token,
-        "Cache-Control": "no-cache,no-store,must-revalidate",
-        Pragma: "no-cache",
-        Expires: 0,
-      },
-    });
-    sc(res.data);
-  } catch (err) {
-    cb && cb({ err, msg: "Error collecting comments" });
-  }
-};
+// const getComments = (dispatch) => async (instanceID, type, sc, cb) => {
+//   try {
+//     const token = await AsyncStorage.getItem("token");
+//     const res = await fetchApi.get(`/comments/${instanceID}/${type}`, {
+//       headers: {
+//         "x-auth-token": token,
+//         "Cache-Control": "no-cache,no-store,must-revalidate",
+//         Pragma: "no-cache",
+//         Expires: 0,
+//       },
+//     });
+//     sc(res.data);
+//   } catch (err) {
+//     cb && cb({ err, msg: "Error collecting comments" });
+//   }
+// };
 
 // TODO:: SEND IMAGES ALSO IN COMMENTS
 const commentPost = (dispatch) => async (id, type, comment, sc, cb) => {
@@ -304,7 +304,7 @@ export const { Context, Provider } = createDataContext(
     getMyChallenges,
     getChallenges,
     getAwards,
-    getComments,
+    // getComments,
     commentPost,
     replyComments,
     voteOne,

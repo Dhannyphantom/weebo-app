@@ -16,6 +16,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Avatar from "./Avatar";
 import { Context as ChallContext } from "../config/ChallContext";
 import { Context as AuthContext } from "../config/AuthContext";
+import { Context as FeedContext } from "../config/FeedContext";
+
 import getFormatTime from "../constants/getFormatTime";
 import ChallengeCard from "./ChallengeCard";
 import Icon from "./Icon";
@@ -30,6 +32,8 @@ import PopUpModal from "./PopUpModal";
 import { RenderLinearGradient } from "../screens/ViewRoomScreen";
 
 const { width, height } = Dimensions.get("window");
+
+const COMMENTS_LENGTH = 20;
 
 const RenderFeed = ({ avatar, avatarID, name, type, media, info }) => {
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
@@ -92,16 +96,93 @@ const RenderFeed = ({ avatar, avatarID, name, type, media, info }) => {
   );
 };
 
-const RenderModal = ({ data, instance }) => {
-  console.log(data);
+const RenderModalItem = ({ title, data, onPress, subTitle }) => {
+  const theme = useContext(ThemeContext);
+
+  return (
+    <TouchableOpacity
+      activeOpacity={1}
+      disabled={!onPress}
+      onPress={onPress}
+      style={[styles.modalItem, { backgroundColor: theme.extralight }]}
+    >
+      <View>
+        <AppText size="large" bold>
+          {title}
+        </AppText>
+        {subTitle && <AppText> {subTitle} </AppText>}
+      </View>
+      <AppText size="large" bold>
+        {data}
+      </AppText>
+    </TouchableOpacity>
+  );
+};
+
+const RenderModal = ({
+  data,
+  countdown,
+  setMyComments,
+  challengeData,
+  setLoaded,
+  setModalVis,
+  instance,
+}) => {
+  const { getComments } = useContext(FeedContext);
+
+  const handleComments = () => {
+    setMyComments([]);
+    setModalVis(true);
+    getComments(
+      {
+        type: challengeData.challengeType,
+        instanceID: challengeData.challengeID,
+        page: 1,
+        limit: COMMENTS_LENGTH,
+      },
+      (resData) => {
+        setMyComments(resData);
+        setLoaded(true);
+      },
+      (err) => console.log(err)
+    );
+  };
+
   return (
     <ScrollView>
       <View>
         <Image source={data.image} style={styles.modalImage} />
         <RenderLinearGradient modalHeight={height * 0.5} />
       </View>
-      <View>
-        <AppText>Hello</AppText>
+      <View style={{ marginTop: 10 }}>
+        <AppText bold size="large" style={styles.modalText}>
+          {data?.fullName}
+        </AppText>
+        <AppText style={{ ...styles.modalText, marginVertical: 5 }}>
+          {data.show}
+        </AppText>
+        <AppText
+          style={{
+            ...styles.modalText,
+            color: colors.primary,
+          }}
+        >
+          {instance} Challenge
+        </AppText>
+      </View>
+      <View style={{ marginTop: 15 }}>
+        <RenderModalItem title="Comments" onPress={handleComments} data={50} />
+        <RenderModalItem
+          title="Time Left"
+          data={getFormatTime(countdown, null, "format").short}
+        />
+
+        <RenderModalItem
+          title="Challenger"
+          subTitle="@dhannyphantom"
+          data="6"
+        />
+        <RenderModalItem title="Manager" subTitle="@kira" data="9" />
       </View>
     </ScrollView>
   );
@@ -133,7 +214,6 @@ const Challenge = ({
   const {
     state: { cComments },
     voteTwo,
-    getComments,
     replyComments,
     commentPost,
   } = useContext(ChallContext);
@@ -150,7 +230,10 @@ const Challenge = ({
     { scoreTwo: score2 },
   ]);
   const [errMsg, setErrMsg] = useState(null);
-  const [myComments, setMyComments] = useState([]);
+  const [myComments, setMyComments] = useState({
+    current: { limit: 15, page: 1 },
+    results: [],
+  });
   const [modalVis, setModalVis] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [reply, setReply] = useState({});
@@ -235,19 +318,6 @@ const Challenge = ({
     });
   };
 
-  const handleDone = (data) => {
-    setMyComments(data);
-    setLoaded(true);
-  };
-
-  const handleComments = () => {
-    setMyComments([]);
-    setModalVis(true);
-    getComments(challengeID, challengeType, handleDone, (err) =>
-      setErrMsg(err)
-    );
-  };
-
   const handleSend = (text) => {
     if (reply._id) {
       replyComments(id, "two", reply._id, text, null, (err) => setErrMsg(err));
@@ -285,25 +355,13 @@ const Challenge = ({
           type={type}
         />
         <View style={styles.versusContainer}>
+          <Text style={styles.versusText}>V</Text>
           <Text
             style={{
-              fontFamily: "fonter",
-              fontSize: 80,
-              width: 45,
-              color: colors.primary,
-            }}
-          >
-            V
-          </Text>
-          <Text
-            style={{
-              fontFamily: "fonter",
-              fontSize: 80,
+              ...styles.versusText,
               position: "absolute",
               top: 25,
-              color: colors.primary,
               left: 20,
-              width: 45,
             }}
           >
             S
@@ -349,7 +407,15 @@ const Challenge = ({
 
       <PopUpModal
         ContentComponent={() => (
-          <RenderModal data={cardProps} instance={instance.type} />
+          <RenderModal
+            data={cardProps}
+            countdown={countdown}
+            setModalVis={setModalVis}
+            setLoaded={setLoaded}
+            setMyComments={setMyComments}
+            challengeData={{ challengeID, challengeType }}
+            instance={instance.type}
+          />
         )}
         visible={bools.modal}
         setter={() => setBools({ ...bools, modal: false })}
@@ -358,7 +424,7 @@ const Challenge = ({
 
       <Comments
         modalVis={modalVis}
-        // error={errMsg}
+        error={errMsg}
         setErrMsg={setErrMsg}
         setModal={setModalVis}
         loaded={loaded}
@@ -369,6 +435,10 @@ const Challenge = ({
         reply={reply}
         setReply={setReply}
         avatar={userInfo.avatar}
+        setLoaded={setLoaded}
+
+        // setPost={setPost}
+        // post={post}
       />
     </View>
   );
@@ -422,6 +492,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  modalItem: {
+    width: width * 0.88,
+    borderRadius: 10,
+    elevation: 1,
+    alignSelf: "center",
+    marginBottom: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    paddingVertical: 25,
+    paddingRight: 20,
+    // paddingRight: 20,
+  },
+  modalText: { textAlign: "center", textTransform: "capitalize" },
   modalImage: {
     width,
     height: height * 0.5,
@@ -457,6 +542,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: (height * 0.3) / 2 - 25,
     left: width / 2 - 25,
+  },
+  versusText: {
+    fontFamily: "fonter",
+    fontSize: 80,
+    width: 45,
+    color: colors.primary,
   },
 });
 export default Challenge;
