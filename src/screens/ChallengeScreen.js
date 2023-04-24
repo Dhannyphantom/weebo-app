@@ -92,12 +92,13 @@ const ChallengeScreen = ({ navigation }) => {
         fullName = item?.character?.name;
         followers = item?.character?.followers;
       } else if (isShow) {
+        // console.log("showW", item.);
         name = item?.show?.name_j ?? item?.show?.name_e;
         fullName = item?.show?.name_j ?? item?.show?.name_e;
         nav = "Show";
         id = item?.show?._id;
         coverImage = item?.show?.cover_photo;
-        title = item.show.creator;
+        title = item.show.creators?.join(", ");
         followers = item?.show?.followers;
       } else if (isGroup) {
         name = item?.group?.name;

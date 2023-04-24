@@ -213,6 +213,24 @@ const getMyChallenges = (dispatch) => async (sc, cb) => {
   }
 };
 
+const fetchStats = (dispatch) => async (data, sc, cb) => {
+  const token = await AsyncStorage.getItem("token");
+
+  try {
+    const res = await fetchApi.get(
+      `/challenge_comment_stats?challengeId=${data.challengeId}&type=${data.type}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error fetching stats", data: err?.response?.data });
+  }
+};
+
 const withdrawChallenge = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -230,24 +248,6 @@ const withdrawChallenge = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-// const getComments = (dispatch) => async (instanceID, type, sc, cb) => {
-//   try {
-//     const token = await AsyncStorage.getItem("token");
-//     const res = await fetchApi.get(`/comments/${instanceID}/${type}`, {
-//       headers: {
-//         "x-auth-token": token,
-//         "Cache-Control": "no-cache,no-store,must-revalidate",
-//         Pragma: "no-cache",
-//         Expires: 0,
-//       },
-//     });
-//     sc(res.data);
-//   } catch (err) {
-//     cb && cb({ err, msg: "Error collecting comments" });
-//   }
-// };
-
-// TODO:: SEND IMAGES ALSO IN COMMENTS
 const commentPost = (dispatch) => async (id, type, comment, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -304,7 +304,7 @@ export const { Context, Provider } = createDataContext(
     getMyChallenges,
     getChallenges,
     getAwards,
-    // getComments,
+    fetchStats,
     commentPost,
     replyComments,
     voteOne,

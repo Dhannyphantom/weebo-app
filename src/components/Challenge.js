@@ -30,6 +30,7 @@ import AppText from "./AppText";
 import { getFeedNumber } from "../constants/helpers";
 import PopUpModal from "./PopUpModal";
 import { RenderLinearGradient } from "../screens/ViewRoomScreen";
+// import Drag from "./Drag";
 
 const { width, height } = Dimensions.get("window");
 
@@ -60,6 +61,7 @@ const RenderFeed = ({ avatar, avatarID, name, type, media, info }) => {
         {type === "image" && (
           <TouchableOpacity
             activeOpacity={0.92}
+            style={{ height: height * 0.3 }}
             onPress={() => handleShowMedia(media)}
           >
             <LoaderImage style={styles.imageStyle} noAspect image={media} />
@@ -123,6 +125,7 @@ const RenderModal = ({
   data,
   countdown,
   setMyComments,
+  stats,
   challengeData,
   setLoaded,
   setModalVis,
@@ -171,7 +174,11 @@ const RenderModal = ({
         </AppText>
       </View>
       <View style={{ marginTop: 15 }}>
-        <RenderModalItem title="Comments" onPress={handleComments} data={50} />
+        <RenderModalItem
+          title="Comments"
+          onPress={handleComments}
+          data={stats?.commentCount >= 0 ? stats?.commentCount : "..."}
+        />
         <RenderModalItem
           title="Time Left"
           data={getFormatTime(countdown, null, "format").short}
@@ -180,9 +187,17 @@ const RenderModal = ({
         <RenderModalItem
           title="Challenger"
           subTitle="@dhannyphantom"
-          data="6"
+          data={
+            stats?.challengerScore >= 0
+              ? stats.challengerScore?.toString()
+              : "..."
+          }
         />
-        <RenderModalItem title="Manager" subTitle="@kira" data="9" />
+        <RenderModalItem
+          title="Manager"
+          subTitle="@kira"
+          data={stats?.ownerScore >= 0 ? stats?.ownerScore : "..."}
+        />
       </View>
     </ScrollView>
   );
@@ -215,6 +230,7 @@ const Challenge = ({
     state: { cComments },
     voteTwo,
     replyComments,
+    fetchStats,
     commentPost,
   } = useContext(ChallContext);
   const {
@@ -238,6 +254,7 @@ const Challenge = ({
   const [loaded, setLoaded] = useState(false);
   const [reply, setReply] = useState({});
   const [bools, setBools] = useState({ modal: false });
+  const [stats, setStats] = useState({});
 
   const copyScores = [...scores];
 
@@ -299,7 +316,7 @@ const Challenge = ({
     );
   };
 
-  const handleChallengeCardPress = () => {
+  const navigateToInstance = () => {
     navigation.navigate(nav, {
       show: {
         _id: cardProps.id,
@@ -325,6 +342,20 @@ const Challenge = ({
     } else {
       commentPost(challengeID, "two", text, null, (err) => setErrMsg(err));
     }
+  };
+
+  const openChallengeModal = () => {
+    setBools({ ...bools, modal: true });
+
+    fetchStats(
+      { challengeId: challengeID, type: challengeType },
+      (resData) => {
+        setStats(resData);
+      },
+      (errData) => {
+        setErrMsg(errData?.data ?? errData?.msg);
+      }
+    );
   };
 
   useEffect(() => {
@@ -370,7 +401,7 @@ const Challenge = ({
       </View>
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => setBools({ ...bools, modal: true })}
+        onPress={openChallengeModal}
         style={[styles.info, { backgroundColor: theme.extralight }]}
       >
         <TouchableOpacity
@@ -387,7 +418,7 @@ const Challenge = ({
         </TouchableOpacity>
         <View>
           <AppText style={styles.formatText} bold>
-            {cardProps?.show ?? cardProps?.character ?? cardProps?.group}
+            {cardProps?.fullName}
           </AppText>
           <AppText style={styles.formatText}>{instance.type}</AppText>
         </View>
@@ -412,6 +443,7 @@ const Challenge = ({
             countdown={countdown}
             setModalVis={setModalVis}
             setLoaded={setLoaded}
+            stats={stats}
             setMyComments={setMyComments}
             challengeData={{ challengeID, challengeType }}
             instance={instance.type}
@@ -456,8 +488,7 @@ const styles = StyleSheet.create({
   },
   feedcontainer: {
     justifyContent: "center",
-    // flex: 1,
-    height: height * 0.3,
+    // minHeight: height * 0.3,
     padding: 10,
   },
   challengebox: {
@@ -511,7 +542,9 @@ const styles = StyleSheet.create({
     width,
     height: height * 0.5,
   },
-  profile: {},
+  profile: {
+    flex: 1,
+  },
   scoreContainer: {
     width: 50,
     height: 50,
@@ -520,12 +553,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mediaContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
   },
   vidImage: {
     width: "100%",
-    height: (width / 2.5) * 2,
+    height: "100%",
     borderRadius: 12,
   },
   vidIcon: {
@@ -534,9 +568,11 @@ const styles = StyleSheet.create({
     left: 5,
   },
   vidContainer: {
+    flex: 1,
     borderRadius: 12,
     backgroundColor: "black",
     width: width / 2.15,
+    height: (width / 2.5) * 2,
   },
   versusContainer: {
     position: "absolute",
