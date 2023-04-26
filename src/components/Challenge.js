@@ -282,9 +282,7 @@ const Challenge = ({
           (id) => id != clientID
         );
         cScore.push(clientID);
-        // change vote
       }
-      setScores(copyScores);
     } else if (type === "owner") {
       if (finderC == undefined && finderO == undefined) {
         // fresh vote
@@ -301,9 +299,9 @@ const Challenge = ({
           (id) => id != clientID
         );
       }
-      setScores(copyScores);
     }
 
+    setScores(copyScores);
     voteTwo(
       challengeID,
       type,
