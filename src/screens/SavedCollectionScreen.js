@@ -211,7 +211,7 @@ const SavedCollectionScreen = ({ route }) => {
           screenParam?.username
             ? capFirstLetter(screenParam?.username) + "'s"
             : ""
-        } Saved Collections`}
+        } Collections`}
         RightComponent={() => (
           <>
             {!screenParam?.username && (
@@ -319,8 +319,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   newCollBtn: {
-    padding: 10,
-    paddingRight: 0,
+    // padding: 10,
+    // paddingRight: 0,
+    padding: 15,
   },
   row: {
     flexDirection: "row",

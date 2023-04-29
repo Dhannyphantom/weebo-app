@@ -72,13 +72,13 @@ export default function BannerAds() {
       ]}
     >
       <View style={styles.header}>
-        <AppText> &bull; </AppText>
+        <AppText style={{ color: "#aaa" }}> &bull; </AppText>
         <MaterialCommunityIcons
-          color={theme.color}
+          color={"#aaa"}
           name="advertisements"
           size={25}
         />
-        <AppText> &bull; </AppText>
+        <AppText style={{ color: "#aaa" }}> &bull; </AppText>
       </View>
       <View style={[styles.banner, { height: bannerHeight }]}>
         <ActivityIndicator

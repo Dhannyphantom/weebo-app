@@ -22,7 +22,6 @@ const RenderAwardInfo = ({ info }) => {
   // winners, losers
   if (!info) return null;
   const {} = info;
-  console.log(info);
   return (
     <View>
       <AppText bold size="large" style={{ textAlign: "center", marginTop: 20 }}>

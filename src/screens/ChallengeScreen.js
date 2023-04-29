@@ -92,7 +92,6 @@ const ChallengeScreen = ({ navigation }) => {
         fullName = item?.character?.name;
         followers = item?.character?.followers;
       } else if (isShow) {
-        // console.log("showW", item.);
         name = item?.show?.name_j ?? item?.show?.name_e;
         fullName = item?.show?.name_j ?? item?.show?.name_e;
         nav = "Show";

@@ -338,7 +338,7 @@ const AccountScreen = ({ navigation, route }) => {
               }
             />
             <Link
-              name="Saved Collection"
+              name="My Collections"
               iconName="star"
               onPress={() => navigation.navigate("Saved")}
             />

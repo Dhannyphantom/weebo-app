@@ -373,7 +373,7 @@ const CollectionScreen = ({ route, navigation }) => {
   return (
     <Screen style={styles.container}>
       <AppHeader
-        title={`${collection?.name ?? pageData.name} Collections`}
+        title={`${collection?.name ?? pageData.name} Collection`}
         RightComponent={() => (
           <TouchableOpacity
             activeOpacity={0.8}
