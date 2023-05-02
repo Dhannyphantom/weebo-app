@@ -109,8 +109,6 @@ const Challenger = ({
     setLoading(true);
     const isMedia = asset.type !== "info_accept" && asset.type !== "info";
 
-    // console.log(type, asset.type.replace("_accept", ""));
-
     // VALIDATION
     if (type !== asset.type.replace("_accept", "")) {
       setPopper({
@@ -404,7 +402,11 @@ const InfoProps = ({ item, state }) => {
   const theme = useContext(ThemeContext);
 
   const [selected, setSelected] = useState(item.selected);
-  const [info, setInfo] = useState(String(item.value));
+  const [info, setInfo] = useState(
+    item.key === "birthday"
+      ? getFormatTime(item.value, null, "month_day").date
+      : String(item.value)
+  );
 
   const [modal, setModal] = useState(false); // will be modified for datetime picker also
 
@@ -461,9 +463,6 @@ const InfoProps = ({ item, state }) => {
   };
 
   const addCharacters = (val) => {
-    // existing characters
-    // console.log(val);
-    // return;
     if (val.startsWith("remove_")) {
       // remove str
       setInfo((prev) => {

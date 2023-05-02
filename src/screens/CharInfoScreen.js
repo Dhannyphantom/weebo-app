@@ -8,6 +8,7 @@ import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import PopMessage from "../components/PopMessage";
 import colors from "../constants/colors";
+import getFormatTime from "../constants/getFormatTime";
 
 const CharList = ({ name, icon, names, show, parentProps }) => {
   const { character, cardState } = parentProps;
@@ -27,7 +28,12 @@ const CharList = ({ name, icon, names, show, parentProps }) => {
             </AppText>
           )}
           {!show && (
-            <AppText style={styles.infoText}> {character[prop]} </AppText>
+            <AppText style={styles.infoText}>
+              {name === "birthday"
+                ? getFormatTime(new Date(character[prop]), null, "month_day")
+                    .date
+                : character[prop]}
+            </AppText>
           )}
         </AppText>
       </View>

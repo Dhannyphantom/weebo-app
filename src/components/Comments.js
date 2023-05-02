@@ -11,6 +11,7 @@ import {
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import uuid from "react-native-uuid";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -36,9 +37,9 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
 
   const handleDummyUpdate = (text) => {
     const replyObj = {
-      _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+      _id: uuid.v4(),
       user: {
-        _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+        _id: uuid.v4(),
         username: userInfo.username,
         avatar: userInfo.avatar,
       },
@@ -215,6 +216,7 @@ const CommentComponent = ({
   // const flatRef = useRef(null);
 
   const renderComments = ({ item }) => {
+    // console.log(item._id);
     return (
       <CommentDetails
         item={item}
@@ -409,9 +411,9 @@ const Comments = ({
       handleSentComment(
         "dummyReply",
         {
-          _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+          _id: uuid.v4(),
           user: {
-            _id: Math.floor(Math.random() * Math.pow(10, 6)).toString(),
+            _id: uuid.v4(),
             username: userInfo.username,
             avatar: userInfo.avatar,
           },
@@ -451,9 +453,9 @@ const Comments = ({
       handleSentComment(
         "dummyComment",
         {
-          _id: userInfo.avatar?._id,
+          _id: uuid.v4(),
           user: {
-            _id: userInfo.avatar?._id,
+            _id: uuid.v4(),
             username: userInfo.username,
             avatar: userInfo.avatar,
           },

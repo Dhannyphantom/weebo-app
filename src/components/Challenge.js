@@ -19,8 +19,6 @@ import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
 
 import getFormatTime from "../constants/getFormatTime";
-import ChallengeCard from "./ChallengeCard";
-import Icon from "./Icon";
 import Comments from "./Comments";
 import InfoChallenge from "./InfoChallenge";
 import MediaModal from "./MediaModal";
@@ -30,13 +28,20 @@ import AppText from "./AppText";
 import { getFeedNumber } from "../constants/helpers";
 import PopUpModal from "./PopUpModal";
 import { RenderLinearGradient } from "../screens/ViewRoomScreen";
-// import Drag from "./Drag";
 
 const { width, height } = Dimensions.get("window");
 
 const COMMENTS_LENGTH = 20;
 
-const RenderFeed = ({ avatar, avatarID, name, type, media, info }) => {
+const RenderFeed = ({
+  avatar,
+  avatarID,
+  name,
+  type,
+  media,
+  info,
+  infoColor = "a",
+}) => {
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
 
   const theme = useContext(ThemeContext);
@@ -87,11 +92,7 @@ const RenderFeed = ({ avatar, avatarID, name, type, media, info }) => {
             </View>
           </TouchableOpacity>
         )}
-        {type === "info" && (
-          <View>
-            <InfoChallenge data={info} color="a" />
-          </View>
-        )}
+        {type === "info" && <InfoChallenge data={info} color={infoColor} />}
       </View>
       <MediaModal modalObject={displayMedia} setVisible={setDisplayMedia} />
     </View>
@@ -379,11 +380,12 @@ const Challenge = ({
           avatar={avatar2}
           avatarID={name2ID}
           info={ownerInfo}
+          infoColor="b"
           media={image1}
           name={name2}
           type={type}
         />
-        <View style={styles.versusContainer}>
+        {/* <View style={styles.versusContainer}>
           <Text style={styles.versusText}>V</Text>
           <Text
             style={{
@@ -395,7 +397,7 @@ const Challenge = ({
           >
             S
           </Text>
-        </View>
+        </View> */}
       </View>
       <TouchableOpacity
         activeOpacity={0.9}
@@ -466,9 +468,6 @@ const Challenge = ({
         setReply={setReply}
         avatar={userInfo.avatar}
         setLoaded={setLoaded}
-
-        // setPost={setPost}
-        // post={post}
       />
     </View>
   );
@@ -486,7 +485,6 @@ const styles = StyleSheet.create({
   },
   feedcontainer: {
     justifyContent: "center",
-    // minHeight: height * 0.3,
     padding: 10,
   },
   challengebox: {

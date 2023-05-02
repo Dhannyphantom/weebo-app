@@ -5,21 +5,53 @@ import {
   PanResponder,
   Animated,
   Dimensions,
+  View,
+  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
+import uuid from "react-native-uuid";
 
 import { Context as FeedContext } from "../config/FeedContext";
 
 import PostVideo from "./PostVideo";
 import AppText from "./AppText";
-import InfoChallenge from "./InfoChallenge";
 import FeedImage from "./FeedImage";
+import ThemeContext from "../config/ThemeContext";
 
 const barheight = Constants.statusBarHeight;
 
 const useHeight = barheight > 25 ? barheight + height * 0.0005 : barheight + 1;
 const { width, height } = Dimensions.get("window");
+
+const RenderInfo = ({ data, size, color }) => {
+  const theme = useContext(ThemeContext);
+
+  const infoText = data.map((info, idx) => {
+    return (
+      <AppText key={uuid.v4()}>
+        <AppText style={{ ...styles.title, color: theme.medium }} bold>
+          {info.title}
+        </AppText>{" "}
+        {"\n"}
+        <AppText style={styles.value}>{info.value ?? ""}</AppText>
+        {"\n\n"}
+      </AppText>
+    );
+  });
+
+  return (
+    <View style={[styles.infoContainer, { backgroundColor: theme.extralight }]}>
+      <AppText
+        numberOfLines={size === "small" ? 12 : null}
+        ellipsizeMode="tail"
+        style={styles.mainText}
+      >
+        {infoText}
+      </AppText>
+    </View>
+  );
+};
 
 const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   // modalObject = {vis: bool, item: obj}
@@ -154,11 +186,14 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               </AppText>
             </Animated.View>
           ) : assetType === "info" ? (
-            <InfoChallenge
-              data={item.infoData}
-              color={item.color}
-              size="full"
-            />
+            <Animated.View
+              {...mediaMoverResponder.panHandlers}
+              style={{
+                transform: [{ translateY: mediaTranslator }],
+              }}
+            >
+              <RenderInfo data={item.infoData} color={item.color} size="full" />
+            </Animated.View>
           ) : null}
         </Animated.View>
       </Modal>
@@ -208,6 +243,28 @@ const styles = StyleSheet.create({
   vidComp: {
     width,
     height,
+  },
+  title: {
+    textTransform: "capitalize",
+  },
+  value: {
+    textTransform: "capitalize",
+    width: "90%",
+    alignSelf: "center",
+  },
+  infoContainer: {
+    // flex: 1,
+    borderRadius: width * 0.022,
+    height: height * 0.9,
+    width: width * 0.96,
+    elevation: 2,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  mainText: {
+    textAlign: "center",
   },
 });
 export default MediaModal;

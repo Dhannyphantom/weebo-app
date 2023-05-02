@@ -58,7 +58,7 @@ const CreateCharacterScreen = ({ route, navigation }) => {
     type: characterTypes[0].title,
     gender: "male",
     height: "123cm",
-    birthday: "June 25",
+    birthday: new Date(),
     voiceActor: [],
     father: "none",
     mother: "none",
