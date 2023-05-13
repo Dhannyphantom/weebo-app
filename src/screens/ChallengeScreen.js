@@ -6,7 +6,7 @@ import {
   Dimensions,
   RefreshControl,
 } from "react-native";
-import * as FacebookAds from "expo-ads-facebook";
+// import * as FacebookAds from "expo-ads-facebook";
 
 import { AntDesign } from "@expo/vector-icons";
 
@@ -23,7 +23,7 @@ import Awarder from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
-import NativeAds, { fb_adsManager } from "../components/NativeAds";
+// import NativeAds, { fb_adsManager } from "../components/NativeAds";
 
 const { width, height } = Dimensions.get("window");
 

@@ -61,7 +61,7 @@ const HomeHeader = ({ characters }) => {
   const handleNav = async (type) => {
     if (type === "post") {
       setModalVis(false);
-      const { _error, results } = await launchGallery("all");
+      const { _error, results } = await launchGallery("all", true);
       if (_error) {
         setErrMsg(_error);
       } else if (results) {

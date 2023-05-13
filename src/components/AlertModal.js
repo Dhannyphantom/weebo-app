@@ -14,7 +14,7 @@ const BOX_WIDTH = width * 0.88;
 const AlertModal = ({ obj, setVisible, onPress, verifyPrompt }) => {
   // obj has a title, btn,  message, visible
   /*
-const modalShow = {
+const obj = {
   visible: true,
   title: "Sign Out",
   message: "Are sure you want to miss out all the fun?",

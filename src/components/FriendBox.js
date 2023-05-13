@@ -6,7 +6,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { MaterialCommunityIcons, Feather, AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -16,8 +16,17 @@ import AppText from "./AppText";
 import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
+import AlertModal from "./AlertModal";
 
 const { width } = Dimensions.get("window");
+const transferPrompt = (user, itemId) => ({
+  visible: true,
+  message: `Are you sure you want to transfer instance to ${user ?? ""}`,
+  btn: "PROCEED",
+  title: "Transfer Instance",
+  type: "transfer",
+  data: itemId,
+});
 
 const FriendBox = ({
   data,
@@ -31,6 +40,8 @@ const FriendBox = ({
   length = 0.95,
 }) => {
   const [errMsg, setErrMsg] = useState(null);
+  const [prompt, setPrompt] = useState({ visible: false });
+  const [bools, setBools] = useState({ loading: false });
   const {
     addWeeb,
     instanceTransfer,
@@ -91,29 +102,6 @@ const FriendBox = ({
           }
         );
       }
-    };
-
-    const handleInstanceTransfer = (itemId) => {
-      setIsLoading(true);
-      const actionObj = {
-        to: itemId,
-        ...typeObj,
-      };
-      instanceTransfer(
-        actionObj,
-        (resData) => {
-          updateThisInstance("manager", resData.curr_manager);
-          typeObj.instance === "character" &&
-            updateMe(resData.prev_manager, "charactersOwned");
-          instanceLogic.setVisible && instanceLogic.setVisible(false);
-          instanceLogic.setter && instanceLogic.setter();
-          setIsLoading(false);
-        },
-        (err) => {
-          setIsLoading(false);
-          instanceLogic.setErrMsg(err);
-        }
-      );
     };
 
     const weebActions = () => {
@@ -238,7 +226,9 @@ const FriendBox = ({
                 {type === "transfer" && (
                   <AppButton
                     title="Transfer"
-                    onPress={() => handleInstanceTransfer(item._id)}
+                    onPress={() =>
+                      setPrompt(transferPrompt(item.username, item._id))
+                    }
                     naked
                     style={styles.btn}
                   />
@@ -263,6 +253,30 @@ const FriendBox = ({
     );
   };
 
+  const handleInstanceTransfer = (itemId) => {
+    setBools({ ...bools, loading: true });
+    const actionObj = {
+      to: itemId,
+      ...typeObj,
+    };
+
+    instanceTransfer(
+      actionObj,
+      (resData) => {
+        updateThisInstance("manager", resData.curr_manager);
+        typeObj.instance === "character" &&
+          updateMe(resData.prev_manager, "charactersOwned");
+        instanceLogic.setVisible && instanceLogic.setVisible(false);
+        instanceLogic.setter && instanceLogic.setter();
+        setBools({ ...bools, loading: true });
+      },
+      (err) => {
+        setBools({ ...bools, loading: true });
+        instanceLogic.setErrMsg(err);
+      }
+    );
+  };
+
   const renderFriends = ({ item }) => {
     let isFriends = friended;
 
@@ -276,14 +290,34 @@ const FriendBox = ({
       <RenderMyFriends item={item} isMine={isMine} isFriends={isFriends} />
     );
   };
+
+  const handlePrompts = () => {
+    switch (prompt.type) {
+      case "transfer":
+        handleInstanceTransfer(prompt.data);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(item) => item._id}
-      showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-      renderItem={renderFriends}
-    />
+    <>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        renderItem={renderFriends}
+      />
+      <ActivityIndicator
+        type="spin"
+        visible={bools.loading}
+        absolute
+        transparent
+      />
+      <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompts} />
+    </>
   );
 };
 const styles = StyleSheet.create({
