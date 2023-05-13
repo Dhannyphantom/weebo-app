@@ -51,6 +51,8 @@ const ProfilePic = ({
     avatarSource = userInfo.gender === "male" ? proMale : proFemale;
   }
 
+  // console.log("Image source:: ", source);
+
   return (
     <>
       <TouchableOpacity
@@ -79,29 +81,18 @@ const ProfilePic = ({
               style,
             ]}
           />
-        ) : source && source?.uri?.length > 50 ? (
-          <Image
-            source={source}
-            resizeMethod="resize"
-            style={[
-              {
-                ...styles.image,
-                // borderRadius: borderRad,
-              },
-              style,
-            ]}
-          />
         ) : (
           <Image
             source={source}
+            resizeMethod="resize"
+            style={[styles.image, style]}
+          />
+        )}
+        {source && source.thumb && (
+          <Image
+            source={{ uri: source.thumb }}
             resizeMethod="scale"
-            style={[
-              {
-                ...styles.image,
-                // borderRadius: borderRad + 1,
-              },
-              style,
-            ]}
+            style={[styles.thumb, style]}
           />
         )}
         <ActivityIndicator
@@ -144,9 +135,18 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
   modalComp: {
     flex: 1,
+  },
+  thumb: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+    height: "100%",
+    width: "105%",
   },
 });
 

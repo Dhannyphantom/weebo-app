@@ -132,7 +132,16 @@ const AccountScreen = ({ navigation, route }) => {
       updateAvatar(
         results[0],
         (res) => {
-          setAccount([{ ...account[0], avatar: results[0].uri }]);
+          setAccount([
+            {
+              ...account[0],
+              avatar: {
+                uri: results[0].uri,
+                height: results[0].height,
+                width: results[0].width,
+              },
+            },
+          ]);
           setImageLoading(false);
         },
         (err) => {
@@ -184,7 +193,7 @@ const AccountScreen = ({ navigation, route }) => {
             size={width * 0.32}
             border={5}
             borderColor="#ddd"
-            disabled
+            displayPic
           />
           <View style={styles.editIcon}>
             <TouchableOpacity
