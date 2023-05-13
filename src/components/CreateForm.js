@@ -18,6 +18,7 @@ import AppButton from "./AppButton";
 import AppPickerItem from "./AppPickerItem";
 import ThemeContext from "../config/ThemeContext";
 import { calender } from "../constants/data_store";
+import PopDropDown from "./PopDropDown";
 
 const screen = Dimensions.get("window");
 
@@ -54,6 +55,7 @@ const CreateForm = ({
   );
   const [height, setHeight] = useState("");
   const [myDate, setMydate] = useState("Currently airing");
+  const [modalStatus, setModalStatus] = useState("open");
 
   const { handleChange, errors, setFieldTouched, setFieldValue, touched } =
     useFormikContext();
@@ -269,30 +271,18 @@ const CreateForm = ({
         <AppText style={{ color: "red" }}> {errors[name]} </AppText>
       )}
       {dropdownA && (
-        <Modal
-          style={styles.modalComp}
-          transparent
+        <PopDropDown
           visible={dropDown}
-          statusBarTranslucent
-          animationType="slide"
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setDropDown(false)}
-            style={styles.modalWrapper}
-          >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={[
-                styles.modalContainer,
-                { backgroundColor: theme.background },
-              ]}
-            >
+          setter={() => setDropDown(false)}
+          closer={() => modalStatus}
+          closeCallback={setModalStatus}
+          RenderComponent={() => (
+            <>
               <AppButton
                 title="Close"
                 style={styles.modalBtn}
                 bare
-                onPress={() => setDropDown(false)}
+                onPress={() => setModalStatus("close")}
               />
               <FlatList
                 data={dropdownA}
@@ -304,17 +294,18 @@ const CreateForm = ({
                     desc={item.description}
                     example={item.example}
                     onPress={() => {
+                      setModalStatus("close");
+                      // return console.log("Help");
                       onSelectItem(item);
-                      setDropDown(false);
                       setFieldValue(name, item.title);
                     }}
                   />
                 )}
                 numColumns={numColumns}
               />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </Modal>
+            </>
+          )}
+        />
       )}
     </View>
   );

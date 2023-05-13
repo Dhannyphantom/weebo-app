@@ -292,3 +292,140 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{dropdownA && (
+        <Modal
+          style={styles.modalComp}
+          transparent
+          visible={dropDown}
+          statusBarTranslucent
+          animationType="none"
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setDropDown(false)}
+            style={styles.modalWrapper}
+          >
+            <TouchableOpacity
+              activeOpacity={1}
+              style={[
+                styles.modalContainer,
+                { backgroundColor: theme.background },
+              ]}
+            >
+              <AppButton
+                title="Close"
+                style={styles.modalBtn}
+                bare
+                onPress={() => setDropDown(false)}
+              />
+              <FlatList
+                data={dropdownA}
+                keyExtractor={(item) => item.id}
+                listKey="selectDrop"
+                renderItem={({ item }) => (
+                  <AppPickerItem
+                    text={item.title}
+                    desc={item.description}
+                    example={item.example}
+                    onPress={() => {
+                      onSelectItem(item);
+                      setDropDown(false);
+                      setFieldValue(name, item.title);
+                    }}
+                  />
+                )}
+                numColumns={numColumns}
+              />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+      )}

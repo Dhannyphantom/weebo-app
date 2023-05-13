@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CharacterScreen from "../screens/CharacterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ChatScreen from "../screens/ChatScreen";
-import CreateCharacterScreen from "../screens/CreateCharacterScreen";
+import CreateInstanceScreen from "../screens/CreateInstanceScreen";
 import ShowScreen from "../screens/ShowScreen";
 import PostScreen from "../screens/PostScreen";
 import ImageGallery from "../components/ImageGallery";
@@ -50,7 +50,7 @@ const HomeStack = () => {
       <Stack.Screen name="Post" component={PostScreen} />
       <Stack.Screen name="Contest" component={ContestCharacterScreen} />
       <Stack.Screen name="Gallery" component={ImageGallery} />
-      <Stack.Screen name="CreateCharacter" component={CreateCharacterScreen} />
+      <Stack.Screen name="CreateInstance" component={CreateInstanceScreen} />
     </Stack.Navigator>
   );
 };

@@ -107,7 +107,7 @@ const Search = ({
         params: { msg: "Please complete your profle" },
       });
     }
-    navigation.navigate("CreateCharacter", { name: searchBar });
+    navigation.navigate("CreateInstance", { name: searchBar });
   };
 
   const renderGroups = ({ item }) => {

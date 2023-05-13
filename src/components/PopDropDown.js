@@ -18,8 +18,9 @@ const { width, height } = Dimensions.get("window");
 const PopDropDown = ({
   visible = false,
   setter,
-  close = false,
   closer = null,
+  closeCallback,
+  extraCallback,
   disableCloseTouch = false,
   RenderComponent,
   TopperComponent,
@@ -38,6 +39,8 @@ const PopDropDown = ({
       useNativeDriver: true,
     }).start(() => {
       setter && setter();
+      closeCallback && closeCallback("open");
+      extraCallback && extraCallback();
     });
   };
 
@@ -57,7 +60,7 @@ const PopDropDown = ({
         handleCloseModal();
       }
     }
-  }, [close, closer]);
+  }, [closer]);
 
   return (
     <Modal visible={visible} transparent statusBarTranslucent>
@@ -115,6 +118,7 @@ const styles = StyleSheet.create({
     borderTopStartRadius: width * 0.04,
     borderTopEndRadius: width * 0.04,
     backgroundColor: colors.white,
+    maxHeight: height * 0.98,
   },
   headerTitle: {
     textAlign: "center",

@@ -35,7 +35,7 @@ const CHARACTER_WP = 150;
 const GROUP_WP = 100;
 const SHOW_WP = 200;
 
-const CreateCharacterScreen = ({ route, navigation }) => {
+const CreateInstanceScreen = ({ route, navigation }) => {
   const [name, setName] = useState(route.params.name.trim());
   const [isLoading, setIsLoading] = useState(false);
   const [errText, setErrText] = useState(null);
@@ -93,7 +93,6 @@ const CreateCharacterScreen = ({ route, navigation }) => {
       height: 0,
     },
   };
-
   const groupInitials = {
     name,
     show: "",
@@ -497,4 +496,4 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-export default CreateCharacterScreen;
+export default CreateInstanceScreen;
