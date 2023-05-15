@@ -28,6 +28,7 @@ import ThemeContext from "../config/ThemeContext";
 import { CollectionCard } from "../screens/SavedCollectionScreen";
 import { downloadMedia } from "../constants/helpers";
 import AppFadeIn from "./AppFadeIn";
+import { useNavigation } from "@react-navigation/native";
 
 const { height, width } = Dimensions.get("window");
 
@@ -156,6 +157,76 @@ const RenderPostReports = ({ state, postId }) => {
   );
 };
 
+const RenderTags = ({ tags, translator, handleCloseModal }) => {
+  const theme = useContext(ThemeContext);
+
+  const navigation = useNavigation();
+  const opaciter = translator.interpolate({
+    inputRange: [0, height / 2],
+    outputRange: [1, 0],
+  });
+
+  const navigateToTagInstance = (tag) => {
+    switch (tag.name) {
+      case "character":
+        navigation.navigate("Character", { item: tag[tag.name]._id });
+        break;
+      case "show":
+        // return console.log(tag);
+        navigation.navigate("Show", { show: { _id: tag[tag.name]._id } });
+        break;
+      case "channel":
+        // return console.log(tag);
+        navigation.navigate("ChannelPost", { id: tag[tag.name]._id });
+        break;
+
+      default:
+        break;
+    }
+    handleCloseModal();
+  };
+
+  const renderTagItems = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={[styles.tagContainer, { backgroundColor: theme.extralight }]}
+        onPress={() => navigateToTagInstance(item)}
+        key={uuid.v4()}
+        activeOpacity={0.85}
+      >
+        <MaterialCommunityIcons color={colors.primary} name="circle-double" />
+        <AppText bold size="large" style={styles.tagName}>
+          {item[item.name].name_j ||
+            item[item.name].name_e ||
+            item[item.name].name ||
+            item[item.name].dpName}
+        </AppText>
+        <AppText> &bull; </AppText>
+        <AppText> {item.name} </AppText>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <Animated.View style={{ opacity: opaciter }}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={handleCloseModal}
+        style={styles.close}
+      >
+        <MaterialCommunityIcons
+          name="close"
+          size={30}
+          color={colors.heartDark}
+        />
+      </TouchableOpacity>
+      <View style={[styles.tags, { backgroundColor: theme.background }]}>
+        {tags.map((item) => renderTagItems({ item }))}
+      </View>
+    </Animated.View>
+  );
+};
+
 const AppModal = ({
   action,
   pId,
@@ -164,6 +235,7 @@ const AppModal = ({
   isMine,
   isVideo,
   isText,
+  tags,
   setError,
   editPostCaption,
   postUris,
@@ -526,6 +598,11 @@ const AppModal = ({
             </View>
           </TouchableOpacity>
         </Animated.View>
+        <RenderTags
+          tags={tags}
+          handleCloseModal={handleCloseModal}
+          translator={translator}
+        />
         <Animated.View style={{ transform: [{ translateY: translator }] }}>
           <TouchableOpacity
             style={[styles.content, { backgroundColor: theme.background }]}
@@ -625,6 +702,15 @@ const styles = StyleSheet.create({
   box: {
     flex: 1,
   },
+  close: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    borderRadius: 100,
+  },
   collBox: {
     height: width * 0.27,
     width: width * 0.3,
@@ -706,6 +792,30 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 15,
     marginHorizontal: 6,
+  },
+  tags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: width * 0.97,
+    padding: 10,
+    marginVertical: 12,
+    borderRadius: 12,
+    alignSelf: "center",
+    maxHeight: height * 0.5,
+    paddingBottom: 0,
+  },
+  tagContainer: {
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    marginBottom: 10,
+    padding: 10,
+    marginRight: 6,
+    borderRadius: 8,
+  },
+  tagName: {
+    textTransform: "capitalize",
+    marginLeft: 7,
   },
 });
 

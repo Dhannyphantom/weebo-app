@@ -159,6 +159,7 @@ const FeedRender = ({ item, user }) => {
         activeSlide={activeSlide}
         postUris={item.posts}
         post={post}
+        tags={item.tags}
         setPost={setPost}
       />
       <MediaModal

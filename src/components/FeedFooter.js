@@ -21,6 +21,7 @@ const FeedFooter = ({
   setPost,
   postUser,
   handleLike,
+  tags,
   errMsg,
   postUris,
   type,
@@ -176,10 +177,10 @@ const FeedFooter = ({
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={handleOption}
-            style={{ ...styles.iconCont, borderRadius: 100 }}
+            style={{ ...styles.iconCont, margin: 0 }}
           >
             <MaterialCommunityIcons
-              name="dots-horizontal"
+              name="dots-hexagon"
               size={28}
               color={colors.medium}
             />
@@ -210,6 +211,7 @@ const FeedFooter = ({
           setError={setErrMsg}
           isMine={isMine}
           postUris={postUris}
+          tags={tags}
           isVideo={isVideo}
           isText={isText}
           updatePosts={updatePosts}
@@ -251,13 +253,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   iconCont: {
-    marginHorizontal: 2,
-    // backgroundColor: colors.extraLight,
-    borderRadius: 9,
     flexDirection: "row",
-    padding: width * 0.01,
     justifyContent: "center",
     alignItems: "center",
+    margin: 3,
+    padding: 10,
   },
 });
 export default FeedFooter;
