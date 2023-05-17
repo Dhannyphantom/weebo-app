@@ -15,6 +15,6 @@ src/constants/app.txt
 .easignore
 google-services.json
 GoogleService-Info.plist
-
+my-keystore.keystore
 # macOS
 .DS_Store

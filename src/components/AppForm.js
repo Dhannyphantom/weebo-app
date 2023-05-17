@@ -9,7 +9,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Formik } from "formik";
+import { Formik, useFormik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Fontisto } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
@@ -17,6 +17,11 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import { Settings, Profile, LoginManager } from "react-native-fbsdk-next";
+
+Settings.initializeSDK();
+
+Settings.setAppID("406752991548934");
 
 import AppText from "./AppText";
 import Spacer from "./Spacer";
@@ -50,7 +55,6 @@ GoogleSignin.configure({
     "556387937205-u0dqikikimj4oivrplmvrupcv49klgci.apps.googleusercontent.com",
   androidClientId:
     "556387937205-egppvnvnskbmkt36bau7sukvho1j2tpn.apps.googleusercontent.com",
-
   offlineAccess: false,
   scopes: ["https://www.googleapis.com/auth/user.gender.read"],
 });
@@ -62,9 +66,6 @@ const ForgotPassword = ({ setPassModal }) => {
   const [passMsg, setPassMsg] = useState({ error: null, success: null });
 
   const handleForgotPass = (formValues, extraData) => {
-    console.log("FORM:: ", formValues);
-    console.log("EXTRA:: ", extraData);
-
     if (!passMsg.success || (extraData && extraData.type === "recover")) {
       // No token so fetch token
       setPasLoading(true);
@@ -226,36 +227,14 @@ const Oauth = ({ name, onPress, icon, color = colors.google }) => {
   );
 };
 
-const AppForm = ({
-  login,
-  register,
-  btnTitle,
-  headerTitle,
-  onPress,
-  p1,
-  errorMessage,
-  elevation,
-  setErrMsg,
-  setElevation,
-  p2,
-  loading,
-  p3,
-  a,
-  b,
-  navTo,
-}) => {
-  const navigation = useNavigation();
-
-  const [showPass, setShowPass] = useState(true);
-  const [gender, setGender] = useState("male");
-  const [passModal, setPassModal] = useState(false);
-
-  const maleTranslator = useRef(new Animated.Value(1.4)).current;
+const SelectGender = ({ gender, setGender, useFormiks }) => {
+  const maleTranslator = useRef(new Animated.Value(1)).current;
   const femaleTranslator = useRef(new Animated.Value(1)).current;
 
   const theme = useContext(ThemeContext);
 
-  let initialValues, schema;
+  const { setFieldValue, touched, errors } = useFormiks;
+
   const handleGender = (type) => {
     if (type === "male") {
       Animated.parallel([
@@ -283,7 +262,109 @@ const AppForm = ({
       ]).start();
     }
     setGender(type);
+    setFieldValue("gender", type);
   };
+
+  return (
+    <View>
+      <View style={styles.avatarCont}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => handleGender("male")}
+        >
+          <Animated.View
+            style={[
+              styles.avatarView,
+              { transform: [{ scale: maleTranslator }] },
+            ]}
+          >
+            <Image
+              source={maleAvatar}
+              resizeMethod="scale"
+              resizeMode="contain"
+              style={{
+                ...styles.avatars,
+                backgroundColor:
+                  gender === "male" ? colors.accent : theme.extralight,
+              }}
+            />
+          </Animated.View>
+          <AppText
+            bold
+            style={{
+              textAlign: "center",
+              marginTop: gender === "male" ? 20 : 6,
+              color: gender === "male" ? colors.accent : colors.light,
+            }}
+          >
+            Male
+          </AppText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => handleGender("female")}
+        >
+          <Animated.View
+            style={[
+              styles.avatarView,
+              { transform: [{ scale: femaleTranslator }] },
+            ]}
+          >
+            <Image
+              source={femaleAvatar}
+              resizeMethod="scale"
+              resizeMode="contain"
+              style={{
+                ...styles.avatars,
+                backgroundColor:
+                  gender === "female" ? colors.facebook : theme.extralight,
+              }}
+            />
+          </Animated.View>
+          <AppText
+            bold
+            style={{
+              textAlign: "center",
+              marginTop: gender === "female" ? 20 : 6,
+              color: gender === "female" ? colors.facebook : colors.light,
+            }}
+          >
+            Female
+          </AppText>
+        </TouchableOpacity>
+      </View>
+      {errors["gender"] && touched["gender"] && (
+        <AppText style={styles.error}>{errors["gender"]}</AppText>
+      )}
+    </View>
+  );
+};
+
+const AppForm = ({
+  login,
+  register,
+  btnTitle,
+  headerTitle,
+  onPress,
+  p1,
+  errorMessage,
+  elevation,
+  setErrMsg,
+  setElevation,
+  p2,
+  loading,
+  p3,
+  a,
+  b,
+  navTo,
+}) => {
+  const navigation = useNavigation();
+
+  const [showPass, setShowPass] = useState(true);
+  const [gender, setGender] = useState("null");
+  const [passModal, setPassModal] = useState(false);
+
+  let initialValues, schema;
 
   const handleFormSubmit = (formValues) => {
     if (register) {
@@ -294,12 +375,26 @@ const AppForm = ({
     onPress(formValues);
   };
 
+  const handleAuthSignIn = (user) => {
+    console.log("Signed in successfully", user);
+  };
+
   const googleSignIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices();
-      console.log("HAS PLAY SERVICES");
-      const userInfo = await GoogleSignin.signIn();
-      console.log("USERINFO:: ", userInfo);
+      const hasPlay = await GoogleSignin.hasPlayServices();
+      if (hasPlay) {
+        const isSignedIn = await GoogleSignin.isSignedIn();
+        if (isSignedIn) {
+          const userInfo = await GoogleSignin.getCurrentUser();
+          // console.log("Signed User", userInfo.user);
+          handleAuthSignIn(userInfo.user);
+          // await GoogleSignin.revokeAccess();
+        } else {
+          const userInfo = await GoogleSignin.signIn();
+          // console.log("USERINFO:: ", userInfo.user);
+          handleAuthSignIn(userInfo.user);
+        }
+      }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -317,6 +412,29 @@ const AppForm = ({
     }
   };
 
+  const getFBCurrentUser = () => {
+    Profile.getCurrentProfile().then(function (currentProfile) {
+      if (currentProfile) {
+        handleAuthSignIn(currentProfile);
+      }
+    });
+  };
+
+  const fbSignIn = () => {
+    LoginManager.logInWithPermissions(["public_profile", "email"]).then(
+      function (result) {
+        if (result.isCancelled) {
+          console.log("Login cancelled");
+        } else {
+          getFBCurrentUser();
+        }
+      },
+      function (error) {
+        console.log("Login fail with error: " + error);
+      }
+    );
+  };
+
   login
     ? ((initialValues = { username: "", password: "" }),
       (schema = validationSchemaLogin))
@@ -325,7 +443,7 @@ const AppForm = ({
         username: "",
         email: "",
         password: "",
-        gender: "male",
+        gender: "",
       }),
       (schema = validationSchemaRegister))
     : null;
@@ -338,88 +456,28 @@ const AppForm = ({
           Connect and have fun with your fellow weebs
         </AppText>
       </View>
-      <Spacer style={styles.headerTitleCont}>
+      <Spacer>
         <AppText bold style={styles.headerTitle}>
           {headerTitle}
         </AppText>
       </Spacer>
       {/* //FORM */}
-      {p1 && (
-        <View style={styles.avatarCont}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => handleGender("male")}
-          >
-            <Animated.View
-              style={[
-                styles.avatarView,
-                { transform: [{ scale: maleTranslator }] },
-              ]}
-            >
-              <Image
-                source={maleAvatar}
-                resizeMethod="scale"
-                resizeMode="contain"
-                style={{
-                  ...styles.avatars,
-                  backgroundColor:
-                    gender === "male" ? colors.accent : theme.extralight,
-                }}
-              />
-            </Animated.View>
-            <AppText
-              bold
-              style={{
-                textAlign: "center",
-                marginTop: gender === "male" ? 20 : 6,
-                color: gender === "male" ? colors.accent : colors.light,
-              }}
-            >
-              Male
-            </AppText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => handleGender("female")}
-          >
-            <Animated.View
-              style={[
-                styles.avatarView,
-                { transform: [{ scale: femaleTranslator }] },
-              ]}
-            >
-              <Image
-                source={femaleAvatar}
-                resizeMethod="scale"
-                resizeMode="contain"
-                style={{
-                  ...styles.avatars,
-                  backgroundColor:
-                    gender === "female" ? colors.facebook : theme.extralight,
-                }}
-              />
-            </Animated.View>
-            <AppText
-              bold
-              style={{
-                textAlign: "center",
-                marginTop: gender === "female" ? 20 : 6,
-                color: gender === "female" ? colors.facebook : colors.light,
-              }}
-            >
-              Female
-            </AppText>
-          </TouchableOpacity>
-        </View>
-      )}
+
       <View style={styles.form}>
         <Formik
           initialValues={initialValues}
           onSubmit={(formValues) => handleFormSubmit(formValues)}
           validationSchema={schema}
         >
-          {() => (
+          {({ setFieldValue, errors, touched }) => (
             <>
+              {p1 && (
+                <SelectGender
+                  gender={gender}
+                  setGender={setGender}
+                  useFormiks={{ setFieldValue, errors, touched }}
+                />
+              )}
               {p1 && (
                 <FormField
                   elevation={elevation}
@@ -501,7 +559,7 @@ const AppForm = ({
         <Oauth
           name="Facebook"
           icon="facebook"
-          onPress={null}
+          onPress={fbSignIn}
           color={colors.facebook}
         />
       </View>

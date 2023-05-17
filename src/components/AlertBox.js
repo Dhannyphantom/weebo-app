@@ -30,6 +30,7 @@ const AlertBox = ({
   onPress,
   alertID,
   date,
+  setShouldScroll,
   character,
   isLoading,
   isSystem,
@@ -128,6 +129,8 @@ const AlertBox = ({
     <GestureHandlerRootView>
       <Swipeable
         ref={swipeRef}
+        // onBegan={() => setShouldScroll(false)}
+        // onSwipeableClose={() => setShouldScroll(true)}
         // onSwipeableOpen={onSwipeableOpen}
         renderRightActions={renderRightActions}
       >

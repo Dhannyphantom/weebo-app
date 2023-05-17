@@ -14,12 +14,11 @@ import getTimeStamp from "../constants/getTimestamp";
 import ActivityIndicator from "../components/ActivityIndicator";
 import Screen from "../components/Screen";
 import StatusRender from "../components/StatusRender";
-import AppButton from "../components/AppButton";
 import AppHeader from "../components/AppHeader";
 import Spacer from "../components/Spacer";
-import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import AlertModal from "../components/AlertModal";
+import { useNavigation } from "@react-navigation/native";
 
 const { height } = Dimensions.get("window");
 
@@ -29,6 +28,74 @@ const PROMPT_DELETE_ALL = {
   message: "Are you sure you want to wipe all notifications?",
   btn: "Delete",
   type: "delete_all",
+};
+
+const RenderAlerts = ({
+  item,
+  alertApi,
+  setAlertApi,
+  readNotification,
+  shouldScroll,
+  setShouldScroll,
+}) => {
+  const navigation = useNavigation();
+  const itemDate = getTimeStamp(item._id, "raw");
+
+  const handleReadNotification = (itemId, type) => {
+    const notifyData = { notifyId: item._id, action: null };
+    // read the notification;
+    const copyNoti = [...alertApi];
+    if (type == "read") {
+      notifyData.action = type;
+      const findIndex = alertApi.findIndex((obj) => obj._id == itemId);
+      copyNoti[findIndex] = { ...copyNoti[findIndex], read: true };
+      setAlertApi(copyNoti);
+    } else if (type === "delete") {
+      notifyData.action = "delete";
+      setAlertApi(copyNoti.filter((obj) => obj._id != itemId));
+    }
+
+    readNotification(notifyData, null, (err) => console.log(err));
+  };
+
+  const handleNavAlerts = () => {
+    if (!item.isSystem) {
+      if (["challenge", "lost", "accept"].includes(item.type)) {
+        item.show &&
+          navigation.navigate("Show", {
+            show: { _id: item.show, cover_photo: null },
+          });
+        item.character &&
+          navigation.navigate("Character", {
+            item: item.character?._id ?? item.character,
+          });
+      } else if (item.type === "request") {
+        navigation.navigate("Friends", { friends: userInfo.friends });
+      }
+    }
+    handleIconPress("read");
+  };
+
+  const handleIconPress = (type) => {
+    handleReadNotification(item._id, type);
+  };
+
+  return (
+    <AlertBox
+      user={item.user}
+      character={item?.character?.name}
+      date={itemDate.toLocaleString()}
+      isLoading={null}
+      isSystem={item.isSystem}
+      shouldScroll={shouldScroll}
+      setShouldScroll={setShouldScroll}
+      active={!item.read}
+      handlePressIcon={handleIconPress}
+      message={item.message}
+      alertID={item._id}
+      onPress={handleNavAlerts}
+    />
+  );
 };
 
 const AlertScreen = ({ navigation }) => {
@@ -43,6 +110,7 @@ const AlertScreen = ({ navigation }) => {
   const [errMsg, setErrMsg] = useState(null);
   const [prompt, setPrompt] = useState({ visible: false });
   const [loadedOnce, setLoadedOnce] = useState(false);
+  const [bools, setBools] = useState({ shouldScroll: true });
 
   const handleReadAll = () => {
     const notifyData = { notifyId: null, action: "read_all" };
@@ -65,64 +133,6 @@ const AlertScreen = ({ navigation }) => {
 
   const handlePrompt = () => {
     handleDeleteAll();
-  };
-
-  const renderAlerts = ({ item }) => {
-    const itemDate = getTimeStamp(item._id, "raw");
-
-    const handleReadNotification = (itemId, type) => {
-      const notifyData = { notifyId: item._id, action: null };
-      // read the notification;
-      const copyNoti = [...alertApi];
-      if (type == "read") {
-        notifyData.action = type;
-        const findIndex = alertApi.findIndex((obj) => obj._id == itemId);
-        copyNoti[findIndex] = { ...copyNoti[findIndex], read: true };
-        setAlertApi(copyNoti);
-      } else if (type === "delete") {
-        notifyData.action = "delete";
-        setAlertApi(copyNoti.filter((obj) => obj._id != itemId));
-      }
-
-      readNotification(notifyData, null, (err) => console.log(err));
-    };
-
-    const handleNavAlerts = () => {
-      if (!item.isSystem) {
-        if (["challenge", "lost", "accept"].includes(item.type)) {
-          item.show &&
-            navigation.navigate("Show", {
-              show: { _id: item.show, cover_photo: null },
-            });
-          item.character &&
-            navigation.navigate("Character", {
-              item: item.character?._id ?? item.character,
-            });
-        } else if (item.type === "request") {
-          navigation.navigate("Friends", { friends: userInfo.friends });
-        }
-      }
-      handleIconPress("read");
-    };
-
-    const handleIconPress = (type) => {
-      handleReadNotification(item._id, type);
-    };
-
-    return (
-      <AlertBox
-        user={item.user}
-        character={item?.character?.name}
-        date={itemDate.toLocaleString()}
-        isLoading={null}
-        isSystem={item.isSystem}
-        active={!item.read}
-        handlePressIcon={handleIconPress}
-        message={item.message}
-        alertID={item._id}
-        onPress={handleNavAlerts}
-      />
-    );
   };
 
   const fetchScreenData = (type = "refresh") => {
@@ -185,10 +195,22 @@ const AlertScreen = ({ navigation }) => {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={alertApi}
+            scrollEnabled={bools.shouldScroll}
             keyExtractor={(item) => item._id}
             refreshing={refreshing}
             onRefresh={fetchScreenData}
-            renderItem={renderAlerts}
+            renderItem={({ item }) => (
+              <RenderAlerts
+                item={item}
+                alertApi={alertApi}
+                setAlertApi={setAlertApi}
+                shouldScroll={bools.shouldScroll}
+                readNotification={readNotification}
+                setShouldScroll={(bool) =>
+                  setBools({ ...bool, shouldScroll: bool })
+                }
+              />
+            )}
             contentContainerStyle={{ paddingBottom: height * 0.12 }}
             style={{ flex: 1 }}
           />

@@ -483,7 +483,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
   const renderPageLikeSo = ({ item, index }) => {
     const isEvent = item.hasOwnProperty("challengersNum");
 
-    if (index % ADS_INTERVAL === 0) {
+    if ((index + 1) % ADS_INTERVAL === 0) {
       return (
         <>
           {isEvent ? (
