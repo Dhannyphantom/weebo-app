@@ -9,7 +9,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Formik, useFormik } from "formik";
+import { Formik } from "formik";
 import { Context as AuthContext } from "../config/AuthContext";
 import { Fontisto } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
@@ -40,6 +40,7 @@ import AppButton from "./AppButton";
 import AppLogo from "./AppLogo";
 import AppFadeIn from "./AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
+import PopMessage from "./PopMessage";
 
 const {
   validationSchemaLogin,
@@ -227,15 +228,16 @@ const Oauth = ({ name, onPress, icon, color = colors.google }) => {
   );
 };
 
-const SelectGender = ({ gender, setGender, useFormiks }) => {
+const SelectGender = ({ gender, setGender, useFormiks, noFormik = false }) => {
   const maleTranslator = useRef(new Animated.Value(1)).current;
   const femaleTranslator = useRef(new Animated.Value(1)).current;
 
   const theme = useContext(ThemeContext);
 
-  const { setFieldValue, touched, errors } = useFormiks;
+  const { setFieldValue, touched, errors } = useFormiks ?? {};
 
   const handleGender = (type) => {
+    // console.log(type, useFormiks);
     if (type === "male") {
       Animated.parallel([
         Animated.spring(maleTranslator, {
@@ -262,7 +264,7 @@ const SelectGender = ({ gender, setGender, useFormiks }) => {
       ]).start();
     }
     setGender(type);
-    setFieldValue("gender", type);
+    setFieldValue && setFieldValue("gender", type);
   };
 
   return (
@@ -333,9 +335,57 @@ const SelectGender = ({ gender, setGender, useFormiks }) => {
           </AppText>
         </TouchableOpacity>
       </View>
-      {errors["gender"] && touched["gender"] && (
+      {!noFormik && errors["gender"] && touched["gender"] && (
         <AppText style={styles.error}>{errors["gender"]}</AppText>
       )}
+    </View>
+  );
+};
+
+const RenderAuthModal = ({ data, handleAuthSignIn }) => {
+  const [gender, setGender] = useState(null);
+  const [email, setEmail] = useState(data?.email ?? "");
+  const [errMsg, setErrMsg] = useState(null);
+  const [bools, setBools] = useState({ loading: false });
+
+  const theme = useContext(ThemeContext);
+
+  // console.log(data);
+
+  const handleSubmit = () => {
+    setErrMsg(null);
+    if (gender === null) {
+      return setErrMsg("Please select gender");
+    } else if (!Boolean(email)) {
+      return setErrMsg("Please enter your email");
+    }
+    console.log({ ...data, email, gender });
+    // handleAuthSignIn({ ...data, email, gender }, (bool) =>
+    //   setBools({ ...bools, loading: bool })
+    // );
+  };
+
+  return (
+    <View style={[styles.authModal, { backgroundColor: theme.background }]}>
+      <AppText bold size="large" style={styles.modalText}>
+        Complete Profile
+      </AppText>
+      <View style={styles.form}>
+        <SelectGender gender={gender} noFormik setGender={setGender} />
+        <GrowInput
+          text={email}
+          setText={setEmail}
+          placeholder={Boolean(email) ? email : "Enter your email"}
+        />
+        {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+        <AppButton
+          style={{ marginTop: 20, marginBottom: 10 }}
+          title="Submit"
+          onPress={handleSubmit}
+          bare
+        />
+      </View>
+      <ActivityIndicator visible={bools.loading} absolute wTransparent />
     </View>
   );
 };
@@ -363,6 +413,11 @@ const AppForm = ({
   const [showPass, setShowPass] = useState(true);
   const [gender, setGender] = useState("null");
   const [passModal, setPassModal] = useState(false);
+  const [popper, setPopper] = useState({ vis: false });
+  const [bools, setBools] = useState({ authModal: false });
+  const [authData, setAuthData] = useState(null);
+
+  const { authSignIn } = useContext(AuthContext);
 
   let initialValues, schema;
 
@@ -375,8 +430,35 @@ const AppForm = ({
     onPress(formValues);
   };
 
-  const handleAuthSignIn = (user) => {
-    console.log("Signed in successfully", user);
+  const handleAuthSignIn = (user, cb) => {
+    cb && cb(true);
+    const sendData = {
+      userID: user.id ?? user.userID,
+      firstName: user.givenName ?? user.firstName,
+      lastName: user.familyName ?? user.lastName,
+      avatar: user.photo ?? user.imageURL,
+      email: user.email,
+      gender: user.gender,
+    };
+    //
+    authSignIn(
+      sendData,
+      (data) => {
+        console.log("success", data);
+        cb && cb(false);
+      },
+      (errData) => {
+        console.log(errData);
+        if (
+          errData?.data?.msg?.includes("gender") ||
+          errData?.data?.msg?.includes("email")
+        ) {
+          setBools({ ...bools, authModal: true });
+          setAuthData(errData?.data?.data);
+        }
+        cb && cb(false);
+      }
+    );
   };
 
   const googleSignIn = async () => {
@@ -391,23 +473,30 @@ const AppForm = ({
           // await GoogleSignin.revokeAccess();
         } else {
           const userInfo = await GoogleSignin.signIn();
-          // console.log("USERINFO:: ", userInfo.user);
           handleAuthSignIn(userInfo.user);
         }
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
-        console.log("sign in cancelled");
+        setPopper({ vis: true, msg: "Sign in cancelled", type: "failed" });
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log("sign in still in progress");
+        setPopper({
+          vis: true,
+          msg: "Sign in still in progress",
+          type: "failed",
+        });
         // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         // play services not available or outdated
-        console.log("play services not available");
+        setPopper({
+          vis: true,
+          msg: "Play services not available",
+          type: "failed",
+        });
       } else {
-        console.log(error);
         // some other error happened
+        setPopper({ vis: true, msg: `${error}`, type: "failed" });
       }
     }
   };
@@ -424,13 +513,17 @@ const AppForm = ({
     LoginManager.logInWithPermissions(["public_profile", "email"]).then(
       function (result) {
         if (result.isCancelled) {
-          console.log("Login cancelled");
+          setPopper({ vis: true, type: "failed", msg: "Login cancelled" });
         } else {
           getFBCurrentUser();
         }
       },
       function (error) {
-        console.log("Login fail with error: " + error);
+        setPopper({
+          vis: true,
+          type: "failed",
+          msg: "Login fail with error: " + error,
+        });
       }
     );
   };
@@ -462,7 +555,6 @@ const AppForm = ({
         </AppText>
       </Spacer>
       {/* //FORM */}
-
       <View style={styles.form}>
         <Formik
           initialValues={initialValues}
@@ -549,11 +641,25 @@ const AppForm = ({
                   title={btnTitle}
                 />
               </View>
+              <AppFadeIn
+                visible={bools.authModal}
+                setter={() => setBools({ authModal: false })}
+                RenderComponent={() => (
+                  <RenderAuthModal
+                    data={authData}
+                    handleAuthSignIn={handleAuthSignIn}
+                  />
+                )}
+              />
             </>
           )}
         </Formik>
       </View>
-      <AppText style={{ marginTop: 20 }}> Or sign {a} with</AppText>
+      {/* FORM END */}
+      <AppText bold style={{ marginTop: 25 }}>
+        {" "}
+        &bull;&bull;&bull; OR &bull;&bull;&bull;{" "}
+      </AppText>
       <View style={styles.icons}>
         <Oauth name="Google" icon="google-plus" onPress={googleSignIn} />
         <Oauth
@@ -579,6 +685,7 @@ const AppForm = ({
         </View>
       )}
 
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
       <AppFadeIn
         visible={passModal}
         setVisible={setPassModal}
@@ -613,13 +720,20 @@ const styles = StyleSheet.create({
       height: 1.8,
     },
   },
+  authModal: {
+    width: width * 0.96,
+    padding: 12,
+    borderRadius: 15,
+  },
   authText: {
     marginLeft: 8,
+    width: 100,
   },
   avatarCont: {
     marginTop: 35,
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 15,
   },
   avatars: {
     backgroundColor: colors.primary,
@@ -685,6 +799,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  modalText: {
+    textAlign: "center",
   },
   title: {
     maxWidth: "60%",

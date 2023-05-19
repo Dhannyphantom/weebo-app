@@ -3,6 +3,7 @@ import { useFormikContext } from "formik";
 
 import Input from "./Input";
 import AppText from "./AppText";
+import colors from "../constants/colors";
 
 const FormField = ({ icon, pass, onPress, name, ...otherProps }) => {
   const { setFieldTouched, handleChange, touched, errors } = useFormikContext();
@@ -19,7 +20,16 @@ const FormField = ({ icon, pass, onPress, name, ...otherProps }) => {
         onPress={onPress}
       />
       {touched[name] && errors[name] && (
-        <AppText style={{ color: "red" }}>{errors[name]}</AppText>
+        <AppText
+          style={{
+            color: colors.heartDark,
+            marginTop: 2,
+            marginBottom: 10,
+            textAlign: "center",
+          }}
+        >
+          {errors[name]}
+        </AppText>
       )}
     </>
   );

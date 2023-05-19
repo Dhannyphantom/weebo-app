@@ -268,7 +268,7 @@ const CreateForm = ({
         ) : null}
       </View>
       {errors[name] && touched[name] && (
-        <AppText style={{ color: "red" }}> {errors[name]} </AppText>
+        <AppText style={styles.error}> {errors[name]} </AppText>
       )}
       {dropdownA && (
         <PopDropDown
@@ -326,6 +326,12 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     color: colors.medium,
     textTransform: "capitalize",
+  },
+  error: {
+    color: colors.heartDark,
+    textAlign: "center",
+    marginTop: 4,
+    marginBottom: 8,
   },
 
   inputContainer: {

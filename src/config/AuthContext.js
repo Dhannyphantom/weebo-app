@@ -104,6 +104,32 @@ const signIn = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const authSignIn = (dispatch) => async (data, sc, cb) => {
+  try {
+    const response = await authApi.post("/auth", { user: data });
+    await AsyncStorage.setItem("token", response.data);
+
+    const user = await authApi.get("/me", {
+      headers: {
+        "x-auth-token": response.data,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
+      },
+      timeout: 15000,
+    });
+
+    dispatch({
+      type: "signin",
+      payload: { token: response.data, user: user.data },
+    });
+    sc && sc();
+  } catch (err) {
+    cb &&
+      cb({ err, data: err?.response?.data, msg: "Error trying to sign in" });
+  }
+};
+
 const signUp = (dispatch) => async (data, sc, cb) => {
   try {
     const response = await authApi.post("/register", data);
@@ -665,6 +691,7 @@ const getSocket = (dispatch) => () => {
 export const { Context, Provider } = createDataContext(
   authReducer,
   {
+    authSignIn,
     signIn,
     signOut,
     signUp,
