@@ -661,7 +661,7 @@ const AppForm = ({
         &bull;&bull;&bull; OR &bull;&bull;&bull;{" "}
       </AppText>
       <View style={styles.icons}>
-        <Oauth name="Google" icon="google-plus" onPress={googleSignIn} />
+        <Oauth name="Google" icon="google" onPress={googleSignIn} />
         <Oauth
           name="Facebook"
           icon="facebook"

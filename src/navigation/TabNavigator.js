@@ -17,6 +17,8 @@ import AlertNavigator from "./AlertNavigator";
 import HomeStack from "./HomeStack";
 import ProfilePic from "../components/ProfilePic";
 import ThemeContext from "../config/ThemeContext";
+import AppText from "../components/AppText";
+import { View } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -155,8 +157,24 @@ const TabIcon = ({ focused, color, size = 35, item }) => {
   );
 };
 
+export const Badger = ({ number }) => {
+  if (!number || number < 1) return null;
+  return (
+    <View style={styles.badge}>
+      <AppText bold style={styles.badgeText}>
+        {" "}
+        {number}{" "}
+      </AppText>
+    </View>
+  );
+};
+
 const TabButton = (props) => {
   const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
+
   const { item, onPress, accessibilityState } = props;
   const focused = accessibilityState?.selected;
 
@@ -199,6 +217,9 @@ const TabButton = (props) => {
           color={focused ? colors.primary : theme.medium}
           focused={focused}
         />
+        {item.name === "AlertStack" && (
+          <Badger number={userInfo.notifications} />
+        )}
       </Animated.View>
     </TouchableOpacity>
   );
@@ -207,6 +228,7 @@ const TabButton = (props) => {
 const TabNavigator = () => {
   // console.log(insets);
   const theme = useContext(ThemeContext);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -242,5 +264,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  badge: {
+    position: "absolute",
+    backgroundColor: colors.heart,
+    width: 25,
+    height: 25,
+    borderRadius: 25 / 2,
+    top: -(25 / 2),
+    left: -(25 / 2),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  badgeText: {
+    color: colors.white,
   },
 });

@@ -41,18 +41,29 @@ const RenderAlerts = ({
   const navigation = useNavigation();
   const itemDate = getTimeStamp(item._id, "raw");
 
+  const {
+    state: { userInfo },
+    updateMe,
+  } = useContext(AuthContext);
+
   const handleReadNotification = (itemId, type) => {
     const notifyData = { notifyId: item._id, action: null };
     // read the notification;
     const copyNoti = [...alertApi];
+    const findIndex = alertApi.findIndex((obj) => obj._id == itemId);
     if (type == "read") {
       notifyData.action = type;
-      const findIndex = alertApi.findIndex((obj) => obj._id == itemId);
-      copyNoti[findIndex] = { ...copyNoti[findIndex], read: true };
-      setAlertApi(copyNoti);
+      if (!copyNoti[findIndex].read) {
+        copyNoti[findIndex] = { ...copyNoti[findIndex], read: true };
+        setAlertApi(copyNoti);
+        updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
+      }
     } else if (type === "delete") {
       notifyData.action = "delete";
       setAlertApi(copyNoti.filter((obj) => obj._id != itemId));
+      if (!copyNoti[findIndex].read) {
+        updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
+      }
     }
 
     readNotification(notifyData, null, (err) => console.log(err));
@@ -73,7 +84,9 @@ const RenderAlerts = ({
         navigation.navigate("Friends", { friends: userInfo.friends });
       }
     }
-    handleIconPress("read");
+    setTimeout(() => {
+      handleIconPress("read");
+    }, 100);
   };
 
   const handleIconPress = (type) => {
@@ -103,6 +116,7 @@ const AlertScreen = ({ navigation }) => {
     readNotification,
     getUserData,
     wipeNotifications,
+    updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
   const [alertApi, setAlertApi] = useState([]);
@@ -118,6 +132,7 @@ const AlertScreen = ({ navigation }) => {
     copyNoti.forEach((obj) => {
       obj.read = true;
     });
+    updateMe({ data: 0, prop: "notifications" });
     readNotification(notifyData, null, (err) => console.log(err));
 
     setAlertApi(copyNoti);
@@ -127,6 +142,7 @@ const AlertScreen = ({ navigation }) => {
   // const hasReadAll = false;
 
   const handleDeleteAll = () => {
+    updateMe({ data: 0, prop: "notifications" });
     setAlertApi([]);
     wipeNotifications(null, (errData) => console.log(errData));
   };
