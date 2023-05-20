@@ -181,9 +181,9 @@ const SavedCollectionScreen = ({ route }) => {
   const screenParam = route.params;
 
   const createdNewCollection = (collections) => {
+    updateMe({ data: collections, prop: "my_collections" });
     setMyCollections(collections);
     setModalVis(false);
-    updateMe(collections, "my_collections");
   };
 
   useEffect(() => {

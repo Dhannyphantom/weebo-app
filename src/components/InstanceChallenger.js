@@ -65,6 +65,13 @@ const Challenger = ({
   const isManager = data.owner._id === userInfo._id;
 
   const handleChallenge = () => {
+    if (!data.isFollowing) {
+      return setPopper({
+        vis: true,
+        msg: "Please follow instance",
+        type: "failed",
+      });
+    }
     setLoading(true);
     parentError.setErrMsg(null);
     let info_data = null;
@@ -94,7 +101,10 @@ const Challenger = ({
       (resData) => {
         setAsset(null);
         setLoading(false);
-        fetchInstance("cover");
+        fetchInstance("cover", null, {
+          msg: "Instance challenged!",
+          type: "success",
+        });
         updateMe(resData.points, "points");
         setter();
       },
@@ -144,7 +154,10 @@ const Challenger = ({
       (_resData) => {
         setAsset(null);
         setLoading(false);
-        fetchInstance("cover");
+        fetchInstance("cover", null, {
+          msg: "Challenge accepted!",
+          type: "success",
+        });
         setter();
       },
       (errData) => {

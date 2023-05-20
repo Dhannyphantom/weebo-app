@@ -63,7 +63,8 @@ const CharacterScreen = ({ route, navigation }) => {
   const charID = character?._id;
   const userID = userInfo._id;
   const ownerID = character?.manager?._id;
-  const follow = userInfo.following?.find((obj) => obj._id == charID);
+  const follow = character.followers?.find((obj) => obj._id == userID);
+
   const challConst = character?.challengers?.find(
     (obj) => obj?.user?._id == userID
   );
@@ -199,7 +200,7 @@ const CharacterScreen = ({ route, navigation }) => {
     setShowUpload({ vis: false, data: null });
   };
 
-  const handleFetchCharacter = (type = "cover") => {
+  const handleFetchCharacter = (type = "cover", cb, popData) => {
     const isCover = type === "cover";
     const isLoader = type === "load";
 
@@ -211,6 +212,14 @@ const CharacterScreen = ({ route, navigation }) => {
         setCharacter(data);
         isLoader && setIsLoading({ loader: false, err: false });
         isCover && setIsCoverLoading(false);
+        cb && cb("success");
+        if (popData) {
+          setPopper({
+            vis: true,
+            msg: popData.msg,
+            type: popData.type,
+          });
+        }
       },
       (err) => {
         isLoader && setIsLoading({ loader: true, err: true });
@@ -220,6 +229,14 @@ const CharacterScreen = ({ route, navigation }) => {
             ? "Character has been deleted"
             : err.msg
         );
+        cb && cb("failed");
+        if (popData) {
+          setPopper({
+            vis: true,
+            msg: popData.msg,
+            type: popData.type,
+          });
+        }
       }
     );
   };
@@ -335,7 +352,7 @@ const CharacterScreen = ({ route, navigation }) => {
   };
 
   const handleFollowPress = () => {
-    if (follow && isMine) {
+    if (cardState.selected && isMine) {
       setAlertModal({
         visible: true,
         title: "Lose Character",
@@ -343,11 +360,11 @@ const CharacterScreen = ({ route, navigation }) => {
         btn: "LOSE",
         type: "unfollowC",
       });
-    } else if (follow && !isMine) {
+    } else if (cardState.selected && !isMine) {
       setAlertModal({
         visible: true,
         title: "Unfollow Character",
-        message: `Are you sure you really want to unfollow ${character.name.toUpperCase()}?`,
+        message: `Are you sure you want to miss out on ${character.name.toUpperCase()} feeds?`,
         btn: "YES",
         type: "unfollowC",
       });
@@ -369,7 +386,15 @@ const CharacterScreen = ({ route, navigation }) => {
       instance: "character",
     };
     withdrawChallenge(data, (res) => {
-      handleFetchCharacter("cover");
+      handleFetchCharacter("cover", (type) => {
+        setPopper({
+          type,
+          msg: `Challenge withdrawn ${
+            type === "failed" ? "un" : ""
+          }successfully`,
+          vis: true,
+        });
+      });
     });
   };
 
@@ -666,6 +691,7 @@ const CharacterScreen = ({ route, navigation }) => {
             id: character._id,
             name: character?.name,
             owner: character?.manager,
+            isFollowing: cardState.selected,
             contest: challengeModal.contest,
           }}
           fetchInstance={handleFetchCharacter}

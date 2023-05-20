@@ -213,7 +213,7 @@ const ShowScreen = ({ route, navigation }) => {
     handleRightPress: null,
   };
 
-  const getMyShows = (type) => {
+  const getMyShows = (type, cb, popData) => {
     const isRefresh = type === "refresh";
     const isFetch = type === "fetch";
     const isCover = type === "cover";
@@ -227,6 +227,14 @@ const ShowScreen = ({ route, navigation }) => {
       (data) => {
         const dataArr = [];
         setDataState(data);
+        cb && cb("success");
+        if (popData) {
+          setPopper({
+            vis: true,
+            msg: popData.msg,
+            type: popData.type,
+          });
+        }
         //data = {};
         for (const key in data) {
           let name = key;
@@ -271,6 +279,14 @@ const ShowScreen = ({ route, navigation }) => {
       (err) => {
         console.log(err);
         setErrMsg(err.data ?? err.msg);
+        cb && cb("failed");
+        if (popData) {
+          setPopper({
+            vis: true,
+            msg: popData.msg,
+            type: popData.type,
+          });
+        }
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);
         isCover && setIsCoverLoading(false);
@@ -385,8 +401,12 @@ const ShowScreen = ({ route, navigation }) => {
     withdrawChallenge(
       data,
       (res) => {
-        setPopper({ vis: true, type: "success", msg: "Challenge withdrawn" });
         getMyShows("cover");
+        setPopper({
+          vis: true,
+          type: "success",
+          msg: "Challenge withdrawn successfully",
+        });
       },
       (err) => {
         setPopper({ vis: true, type: "failed", msg: err });
@@ -637,6 +657,7 @@ const ShowScreen = ({ route, navigation }) => {
           id: show._id,
           name: dataState?.name_j ?? dataState?.name_e,
           owner: dataState?.manager,
+          isFollowing,
           contest: challengeModal.contest,
         }}
         fetchInstance={getMyShows}

@@ -157,6 +157,7 @@ const ShareCollection = ({ setter, id }) => {
               <ActivityIndicator
                 type="isEmpty"
                 visible={true}
+                transparent
                 text="You don't have a fellow weeb"
               />
             )}
@@ -165,6 +166,7 @@ const ShareCollection = ({ setter, id }) => {
       </>
       <ActivityIndicator
         visible={loading}
+        transparent
         wTransparent
         style={styles.activity}
       />

@@ -321,6 +321,7 @@ const getUserData = (dispatch) => async (data, sc, cb) => {
       cb({ err, msg: "Error fetching user info", data: err?.response?.data });
   }
 };
+
 const collectionRequestHandler = (dispatch) => async (data, sc, cb) => {
   let ENDPOINT = "/request_collection";
   delete data.endpoint;
@@ -371,6 +372,7 @@ const requestWeeb = (dispatch) => async (data, sc, cb) => {
       cb({ err, msg: "Error sending weeb request", data: err?.response?.data });
   }
 };
+
 const deleteUserAccount = (dispatch) => async (sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -468,6 +470,7 @@ const mailVerifier = (dispatch) => async (mailData, sc, cb) => {
     cb && cb(err?.response?.data);
   }
 };
+
 const readNotification = (dispatch) => async (notifyData, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");

@@ -130,7 +130,7 @@ const RenderEmptyList = () => {
         type="isEmpty"
         style={styles.activity}
         text="No media"
-        transparent
+        // transparent
       />
     </View>
   );
