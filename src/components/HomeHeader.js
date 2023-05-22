@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Context as AuthContext } from "../config/AuthContext";
 
 import colors from "../constants/colors";
 import Search from "./Search";
@@ -23,6 +24,7 @@ import AppFadeIn from "./AppFadeIn";
 
 import { gradients } from "../constants/colors";
 import { launchGallery } from "../constants/helpers";
+import Badger from "./Badger";
 
 const screen = Dimensions.get("window");
 
@@ -57,6 +59,9 @@ const HomeHeader = ({ characters }) => {
   const [cMode, setCMode] = useState(false);
 
   const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   const handleNav = async (type) => {
     if (type === "post") {
@@ -227,6 +232,7 @@ const HomeHeader = ({ characters }) => {
             onPress={() => navigation.navigate("Chat")}
           >
             <Ionicons name="chatbubbles" size={18} color={colors.chat} />
+            <Badger number={userInfo.chat_count} />
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
