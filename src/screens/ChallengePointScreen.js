@@ -299,7 +299,8 @@ const ChallengePointScreen = ({ navigation }) => {
         setCurrentPoints(resData.points);
         type === "refresh" && setRefreshing(false);
         setLoadedOnce(true);
-        userInfo.points != resData.points && updateMe(resData.points, "points");
+        userInfo.points != resData.points &&
+          updateMe({ data: resData.points, prop: "points" });
       },
       (err) => {
         console.log("CHALLENGE POINT SCREEN", err);
@@ -325,7 +326,7 @@ const ChallengePointScreen = ({ navigation }) => {
           instance: "user",
           instanceID: userInfo._id,
         };
-        updateUserData(userData, async () => {
+        updateUserData(userData, async (resData) => {
           try {
             const getter = await AsyncStorage.getItem("ads");
             const getAds = JSON.parse(getter);
@@ -335,10 +336,18 @@ const ChallengePointScreen = ({ navigation }) => {
             await AsyncStorage.setItem("ads", JSON.stringify(getAds));
             setAdInfo(getAds);
             setAdLoaded({ ...adLoaded, vis: false });
+            updateMe({
+              prop: "points",
+              data: resData.data.points ?? userInfo.points + ADS_POINT,
+            });
             rewarded.load();
           } catch (err) {
             //
-            console.log("ASYNC STORAGE", err);
+            setPopData({
+              vis: true,
+              type: "failed",
+              msg: "Something went wrong, Try again",
+            });
           }
         });
       }

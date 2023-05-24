@@ -23,6 +23,21 @@ const authReducer = (state, action) => {
         userInfo: action.payload,
       };
     case "update_me":
+      if (Array.isArray(action.payload.data)) {
+        let updateState = {};
+
+        action.payload.data.forEach((body) => {
+          updateState[body.prop] = updateState[body.data];
+        });
+
+        return {
+          ...state,
+          userInfo: {
+            ...state.userInfo,
+            ...updateState,
+          },
+        };
+      }
       return {
         ...state,
         userInfo: {

@@ -892,6 +892,13 @@ export const ads_keywords = [
 
 export const ADS_INTERVAL = 10;
 
+export const alertGuide = [
+  {
+    id: uuid.v4(),
+    icon: "gesture-swipe-left",
+    text: "You can swipe notifications for more actions",
+  },
+];
 export const homeGuide = [
   {
     id: uuid.v4(),

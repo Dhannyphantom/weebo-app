@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -19,6 +19,9 @@ import Spacer from "../components/Spacer";
 import colors from "../constants/colors";
 import AlertModal from "../components/AlertModal";
 import { useNavigation } from "@react-navigation/native";
+import TobiGuide from "../components/TobiGuide";
+import { alertGuide } from "../constants/data_store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { height } = Dimensions.get("window");
 
@@ -111,6 +114,8 @@ const RenderAlerts = ({
   );
 };
 
+const MemoizedAlerts = memo(RenderAlerts);
+
 const AlertScreen = ({ navigation }) => {
   const {
     readNotification,
@@ -125,6 +130,7 @@ const AlertScreen = ({ navigation }) => {
   const [prompt, setPrompt] = useState({ visible: false });
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [bools, setBools] = useState({ shouldScroll: true });
+  const [guide, setGuide] = useState({ vis: false, close: false });
 
   const handleReadAll = () => {
     const notifyData = { notifyId: null, action: "read_all" };
@@ -172,8 +178,19 @@ const AlertScreen = ({ navigation }) => {
     );
   };
 
+  const handleScreenGuide = async () => {
+    const tobiGuidesArr = JSON.parse(await AsyncStorage.getItem("tobi_guides"));
+    if (!tobiGuidesArr.includes("alert_guide")) {
+      setGuide({ ...guide, vis: true });
+
+      tobiGuidesArr.push("alert_guide");
+      await AsyncStorage.setItem("tobi_guides", JSON.stringify(tobiGuidesArr));
+    }
+  };
+
   useEffect(() => {
     // FETCH
+    handleScreenGuide();
     fetchScreenData("load");
   }, []);
 
@@ -216,7 +233,7 @@ const AlertScreen = ({ navigation }) => {
             refreshing={refreshing}
             onRefresh={fetchScreenData}
             renderItem={({ item }) => (
-              <RenderAlerts
+              <MemoizedAlerts
                 item={item}
                 alertApi={alertApi}
                 setAlertApi={setAlertApi}
@@ -239,6 +256,12 @@ const AlertScreen = ({ navigation }) => {
         />
       )}
       <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
+      <TobiGuide
+        data={guide}
+        setData={setGuide}
+        title="Notifications"
+        stateObj={alertGuide}
+      />
     </Screen>
   );
 };

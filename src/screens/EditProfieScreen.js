@@ -115,8 +115,14 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
             ...emailVerifiedPop,
             vis: true,
             cb: () => {
-              updateMe("points", resData.points);
-              updateMe("verified", true);
+              updateMe({
+                data: [
+                  { prop: "points", data: resData.points },
+                  { prop: "verified", data: true },
+                ],
+              });
+              // updateMe({ prop: "points", data: resData.points });
+              // updateMe({ prop: "verified", data: true });
               setEmailPop(false);
               navigation.goBack();
             },
@@ -130,7 +136,6 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
           setIsLoading(false);
         }
       );
-      //
     } else if (type === "request") {
       const sendData = {
         email: userInfo.email,
@@ -247,6 +252,7 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
   useEffect(() => {
     textInputOne?.current?.focus();
   }, [vis]);
+
   return (
     <View style={[styles.emailPop, { backgroundColor: theme.background }]}>
       <AppText size="large" style={styles.emailPopTitle} bold>
@@ -682,6 +688,7 @@ const EditProfileScreen = ({ navigation, route }) => {
     </Screen>
   );
 };
+
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",

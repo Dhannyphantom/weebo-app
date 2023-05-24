@@ -7,9 +7,11 @@ export default function Badger({ number }) {
   if (!number || number < 1) return null;
   return (
     <View style={styles.badge}>
-      <AppText bold style={styles.badgeText}>
-        {number}
-      </AppText>
+      <View style={styles.badgeView}>
+        <AppText bold style={styles.badgeText}>
+          {number}
+        </AppText>
+      </View>
     </View>
   );
 }
@@ -17,16 +19,20 @@ export default function Badger({ number }) {
 const styles = StyleSheet.create({
   badge: {
     position: "absolute",
-    backgroundColor: colors.heart,
-    width: 25,
-    height: 25,
-    borderRadius: 25 / 2,
-    top: -(25 / 2),
-    left: -(25 / 2),
-    justifyContent: "center",
-    alignItems: "center",
+    top: -8,
+    left: -8,
   },
   badgeText: {
     color: colors.white,
+  },
+  badgeView: {
+    backgroundColor: colors.primary,
+    padding: 5,
+    borderRadius: 100,
+    minWidth: 15,
+    minHeight: 15,
+    // borderRadius: 200,
+    // paddingHorizontal: 10,
+    // paddingVertical: 7,
   },
 });

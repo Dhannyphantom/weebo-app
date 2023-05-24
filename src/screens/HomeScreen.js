@@ -422,8 +422,8 @@ const HomeScreen = ({ navigation, route }) => {
       <TobiGuide
         data={guide}
         title="Post Actions"
-        setData={setGuide}
         stateObj={homeGuide}
+        setData={setGuide}
       />
     </>
   );

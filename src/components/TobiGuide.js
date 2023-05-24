@@ -155,7 +155,14 @@ const RenderGuide = ({ visObj, stateObj, title, setter, setVisObj }) => {
   );
 };
 
-export default function TobiGuide({ data, setData, setter, ...otherProps }) {
+export default function TobiGuide({
+  data,
+  setData,
+  setter,
+  title,
+  stateObj,
+  ...otherProps
+}) {
   // console.log(data);
   return (
     <AppFadeIn
@@ -163,6 +170,8 @@ export default function TobiGuide({ data, setData, setter, ...otherProps }) {
         <RenderGuide
           visObj={data}
           setVisObj={setData}
+          title={title}
+          stateObj={stateObj}
           setter={setter}
           {...otherProps}
         />

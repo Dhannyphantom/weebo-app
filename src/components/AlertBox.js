@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { memo, useContext, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -155,6 +155,7 @@ const AlertBox = ({
     </GestureHandlerRootView>
   );
 };
+
 const styles = StyleSheet.create({
   activity: {
     flex: 0,
@@ -214,4 +215,4 @@ const styles = StyleSheet.create({
     left: 6,
   },
 });
-export default AlertBox;
+export default memo(AlertBox);

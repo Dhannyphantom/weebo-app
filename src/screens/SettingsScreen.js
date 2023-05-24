@@ -237,7 +237,7 @@ const RenderSections = ({ item, section, editSettings }) => {
           } else {
             setPopper({
               vis: true,
-              type: "failed",
+              type: "success",
               msg: "Loading ads... Try again",
             });
             rewarded.load();
