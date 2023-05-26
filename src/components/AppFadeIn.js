@@ -5,6 +5,7 @@ import ThemeContext from "../config/ThemeContext";
 const AppFadeIn = ({
   visible,
   disableCloseModal,
+  disableTouchModal,
   closeModal,
   RenderComponent,
   setter,
@@ -63,7 +64,7 @@ const AppFadeIn = ({
             }),
           }}
         >
-          <TouchableOpacity activeOpacity={1}>
+          <TouchableOpacity disabled={disableTouchModal} activeOpacity={1}>
             <Animated.View style={{ transform: [{ scale: scaler }] }}>
               {RenderComponent && (
                 <RenderComponent

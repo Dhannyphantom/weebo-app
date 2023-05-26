@@ -13,7 +13,7 @@ import AlertBox from "../components/AlertBox";
 import getTimeStamp from "../constants/getTimestamp";
 import ActivityIndicator from "../components/ActivityIndicator";
 import Screen from "../components/Screen";
-import StatusRender from "../components/StatusRender";
+// import StatusRender from "../components/StatusRender";
 import AppHeader from "../components/AppHeader";
 import Spacer from "../components/Spacer";
 import colors from "../constants/colors";
@@ -144,7 +144,7 @@ const AlertScreen = ({ navigation }) => {
     setAlertApi(copyNoti);
   };
 
-  const hasReadAll = alertApi.every((obj) => obj.read);
+  const hasReadAll = alertApi.every((obj) => obj && obj.read);
   // const hasReadAll = false;
 
   const handleDeleteAll = () => {
@@ -157,17 +157,36 @@ const AlertScreen = ({ navigation }) => {
     handleDeleteAll();
   };
 
+  const fetchSyncedData = async () => {
+    try {
+      const syncedNoti = await AsyncStorage.getItem("notifications");
+      if (syncedNoti) {
+        // console.log("NOtifications:: ", JSON.parse(syncedNoti));
+        setAlertApi(JSON.parse(syncedNoti));
+        setLoadedOnce(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const fetchScreenData = (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
+
     getUserData(
       {
         id: userInfo._id,
         type: "get_notifications",
       },
-      (resData) => {
-        setAlertApi(resData.notifications.reverse());
+      async (resData) => {
+        // return console.log("Fetched Data:: ", resData);
+        setAlertApi(resData[0].notifications);
         setLoadedOnce(true);
         type === "refresh" && setRefreshing(false);
+        await AsyncStorage.setItem(
+          "notifications",
+          JSON.stringify(resData[0].notifications)
+        );
       },
       (err) => {
         // console.log(err.err?.response?.data);
@@ -190,6 +209,7 @@ const AlertScreen = ({ navigation }) => {
 
   useEffect(() => {
     // FETCH
+    fetchSyncedData();
     handleScreenGuide();
     fetchScreenData("load");
   }, []);
@@ -222,7 +242,7 @@ const AlertScreen = ({ navigation }) => {
           </View>
         )}
       />
-      <StatusRender />
+      {/* <StatusRender /> */}
       {alertApi[0] ? (
         <Spacer style={{ flex: 1, top: 10 }}>
           <FlatList

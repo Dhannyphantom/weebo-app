@@ -7,6 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,6 +30,9 @@ import ThemeContext from "../config/ThemeContext";
 import { ads_keywords, settingsData } from "../constants/data_store";
 import { ADS_ID } from "./ChallengePointScreen";
 import PopMessage from "../components/PopMessage";
+import AppFadeIn from "../components/AppFadeIn";
+import { app_policy } from "../constants/data_store";
+import AppButton from "../components/AppButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -56,6 +60,43 @@ const getAdsAlert = (count, visible = false) => ({
   type: "ads_watched",
 });
 
+const RenderTermItem = ({ title, detail }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View>
+      <AppText bold size="large" style={styles.termTitle}>
+        {title}
+      </AppText>
+      <View style={[styles.termDetail, { backgroundColor: theme.extralight }]}>
+        <AppText>{detail}</AppText>
+      </View>
+    </View>
+  );
+};
+
+const RenderTerms = ({ setter }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={[styles.terms, { backgroundColor: theme.background }]}>
+      <FlatList
+        data={app_policy}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <RenderTermItem title={item.name} detail={item.detail} />
+        )}
+        ListFooterComponent={() => (
+          <AppButton
+            style={styles.termBtn}
+            title="I Accept"
+            onPress={setter}
+            bare
+          />
+        )}
+      />
+    </View>
+  );
+};
+
 const SettingDropDown = ({ data, section, handlers }) => {
   const [popData, setPopData] = useState({
     vis: false,
@@ -63,6 +104,8 @@ const SettingDropDown = ({ data, section, handlers }) => {
     default: data.default,
   });
   const [alertModal, setAlertModal] = useState(alertData);
+  const [termsModal, setTermsModal] = useState({ vis: false, close: false });
+
   const {
     state: { userInfo },
     signOut,
@@ -80,12 +123,9 @@ const SettingDropDown = ({ data, section, handlers }) => {
           case "delete":
             setAlertModal({ ...alertData, visible: true });
             break;
-          case "book":
-            console.log("HOW TO USE");
-            break;
-
           case "account":
-            console.log("Account");
+            // console.log("Account", data);
+            setTermsModal({ vis: true, close: false });
             break;
         }
         break;
@@ -178,6 +218,18 @@ const SettingDropDown = ({ data, section, handlers }) => {
         RenderComponent={RenderDropDowns}
         setter={() => setPopData({ vis: false, data: data.options })}
         headerTitle="Languages"
+      />
+      <AppFadeIn
+        visible={termsModal.vis}
+        setter={() => setTermsModal({ vis: false, close: false })}
+        RenderComponent={() => (
+          <RenderTerms
+            setter={() => setTermsModal({ ...termsModal, close: true })}
+          />
+        )}
+        disableCloseModal
+        closeModal={termsModal}
+        disableTouchModal
       />
       <AlertModal
         obj={alertModal}
@@ -416,6 +468,7 @@ const SettingsScreen = () => {
     </Screen>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -452,6 +505,28 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.025,
     marginVertical: width * 0.01,
     minHeight: width * 0.2,
+    alignSelf: "center",
+  },
+  terms: {
+    width: width * 0.96,
+    maxHeight: height * 0.8,
+    borderRadius: 15,
+    padding: 20,
+  },
+  termBtn: {
+    marginTop: 20,
+    marginBottom: 25,
+    alignSelf: "center",
+  },
+  termTitle: {
+    textAlign: "center",
+    textTransform: "capitalize",
+    marginVertical: 15,
+  },
+  termDetail: {
+    width: "98%",
+    borderRadius: 15,
+    padding: 20,
     alignSelf: "center",
   },
 });
