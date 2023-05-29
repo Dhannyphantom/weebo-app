@@ -7,6 +7,7 @@ import {
   Platform,
   FlatList,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
@@ -17,7 +18,7 @@ import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
 
 import AppText from "./AppText";
-import CommentBar from "./CommentBar";
+import CommentBar, { INPUT_HEIGHT } from "./CommentBar";
 import Separator from "./Separator";
 import CommentDetails from "./CommentDetails";
 import PopUpModal from "./PopUpModal";
@@ -216,7 +217,6 @@ const CommentComponent = ({
   // const flatRef = useRef(null);
 
   const renderComments = ({ item }) => {
-    // console.log(item._id);
     return (
       <CommentDetails
         item={item}
@@ -233,8 +233,8 @@ const CommentComponent = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={78}
-      style={{ width: "100%", height: height - 60 }}
+      keyboardVerticalOffset={85}
+      style={styles.content}
     >
       {hasLoaded ? (
         <View style={{ flex: 1 }}>
@@ -334,6 +334,7 @@ const Comments = ({
   setMyComments,
   setModal,
 }) => {
+  if (!modalVis) return null;
   const {
     state: { userInfo },
   } = useContext(AuthContext);
@@ -567,6 +568,7 @@ const styles = StyleSheet.create({
   container: {
     width,
   },
+  content: { width: "100%", height: height - (INPUT_HEIGHT + 5) },
   commentReplyBox: {
     flexDirection: "row",
     height: 30,

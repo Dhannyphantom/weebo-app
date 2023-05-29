@@ -14,6 +14,7 @@ import ProfilePic from "./ProfilePic";
 import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
+export const INPUT_HEIGHT = 65;
 
 const CommentBar = (
   {
@@ -57,6 +58,7 @@ const CommentBar = (
           <TouchableOpacity activeOpacity={1} style={styles.emoji}>
             <Ionicons name="happy-outline" size={20} color={colors.medium} />
           </TouchableOpacity>
+          {/* <TextInput style={styles.input} /> */}
           <TextInput
             numberOfLines={4}
             ref={ref}
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: screen.width,
-    minHeight: 60,
+    minHeight: INPUT_HEIGHT,
     maxHeight: 150,
     flexDirection: "row",
     justifyContent: "space-between",

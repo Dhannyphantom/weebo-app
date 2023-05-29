@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import FeedFooter from "./FeedFooter";
 import FeedHeader from "./FeedHeader";
@@ -207,4 +207,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-export default FeedRender;
+export default memo(FeedRender);

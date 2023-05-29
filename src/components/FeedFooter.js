@@ -30,7 +30,6 @@ const FeedFooter = ({
   setMyComments,
   title,
   id,
-  user,
 }) => {
   const { getComments, updatePosts, editPostCaption, deletePosts } =
     useContext(FeedContext);

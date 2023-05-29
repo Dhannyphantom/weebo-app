@@ -192,6 +192,7 @@ export default function PostVideo({
   };
 
   const handleViewport = async (type) => {
+    // console.log("Viewport");
     if (type === "enter") {
       // if auto video play is on then play video
       const strSettings = await AsyncStorage.getItem("settings");
@@ -200,6 +201,8 @@ export default function PostVideo({
       const videoSettings = settings
         .find((obj) => obj.title === "General")
         .data.find((obj) => obj.key === "vid");
+
+      // console.log("Video settings");
 
       if (videoSettings.default) {
         try {
@@ -229,15 +232,15 @@ export default function PostVideo({
     }
   }, [status]);
 
-  useEffect(() => {
-    if (loop) {
-      try {
-        video?.current?.playAsync();
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (loop) {
+  //     try {
+  //       video?.current?.playAsync();
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (autoPlay === true) {
