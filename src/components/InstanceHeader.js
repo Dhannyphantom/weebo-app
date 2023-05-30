@@ -105,7 +105,11 @@ export const RenderVerifyInfo = ({
   );
 };
 
-const InstanceHeader = ({ instanceData }) => {
+const InstanceHeader = ({
+  instanceData,
+  RenderInstanceContent,
+  borderBottom,
+}) => {
   const {
     cover_photo,
     description,
@@ -389,89 +393,106 @@ const InstanceHeader = ({ instanceData }) => {
             iconColor={colors.white}
           />
         </View>
-
-        <View style={styles.icons}>
-          <Icon
-            name="account-star-outline"
-            activeOpacity={0.9}
-            size={55}
-            onPress={() => handleLeftPress && handleLeftPress()}
-            color={leftColor}
-          />
-          <ProfilePic
-            source={owner?.avatar}
-            size={130}
-            border={4.5}
-            gender={owner?.gender}
-            userID={owner?._id}
-            borderColor={theme.white}
-          />
-          {verified ? (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "red",
+            top: -30,
+            backgroundColor: theme.background,
+            borderRadius: 25,
+            // borderTopStartRadius: 25,
+            // borderTopEndRadius: 25,
+            // borderBottomStartRadius: borderBottom ? 25 : 0,
+            // borderBottomEndRadius: borderBottom ? 25 : 0,
+            marginBottom: borderBottom ? 25 : 0,
+            elevation: 20,
+          }}
+        >
+          <View style={styles.icons}>
             <Icon
-              text={null}
-              name={feedbackColor ? "check-all" : null}
+              name="account-star-outline"
+              activeOpacity={0.9}
               size={55}
-              color={colors.accentOld}
-              disablePress
-              onPress={null}
-              activeOpacity={1}
+              onPress={() => handleLeftPress && handleLeftPress()}
+              color={leftColor}
             />
-          ) : (
-            <Icon
-              text={subscribers ? getFeedNumber(subscribers) : null}
-              name={feedbackColor && !subscribers ? "account-check" : null}
-              size={55}
-              color={feedbackColor}
-              onPress={handleRightIconPress}
-              disablePress={isChannel}
-              activeOpacity={1}
+            <ProfilePic
+              source={owner?.avatar}
+              size={130}
+              border={4.5}
+              gender={owner?.gender}
+              userID={owner?._id}
+              borderColor={theme.white}
             />
-          )}
-        </View>
-        <View style={styles.textCont}>
-          <AppText style={styles.user} bold>
-            @{owner?.username}
-          </AppText>
-          {name && instance !== "character" && (
-            <View style={{ ...styles.headerBoxContainer, ...posObj }}>
-              <View style={styles.headerBoxCont}>
-                <Ionicons
-                  name={screenIcon}
-                  color={colors.primary}
-                  size={width * 0.04}
-                />
-                <AppText size="xlarge" style={styles.tvText} bold>
-                  {name}
-                </AppText>
-              </View>
-              <RenderUnverifiedTag />
-            </View>
-          )}
-          <Separator h={2} />
-          <AppText
-            style={{
-              textAlign: "center",
-              lineHeight: 35,
-              textTransform: "capitalize",
-            }}
-          >
-            {description}
-          </AppText>
-          <Separator h={2} />
-          {name && instance === "character" && (
-            <View style={styles.nameContainer}>
-              <Fontisto
-                name={name}
-                color={colors.primary}
-                size={width * 0.035}
+            {verified ? (
+              <Icon
+                text={null}
+                name={feedbackColor ? "check-all" : null}
+                size={55}
+                color={colors.accentOld}
+                disablePress
+                onPress={null}
+                activeOpacity={1}
               />
-              <AppText size="xlarge" style={styles.name} bold>
-                {instanceName}
-              </AppText>
-              <RenderUnverifiedTag />
-            </View>
-          )}
+            ) : (
+              <Icon
+                text={subscribers ? getFeedNumber(subscribers) : null}
+                name={feedbackColor && !subscribers ? "account-check" : null}
+                size={55}
+                color={feedbackColor}
+                onPress={handleRightIconPress}
+                disablePress={isChannel}
+                activeOpacity={1}
+              />
+            )}
+          </View>
+          <View style={styles.textCont}>
+            <AppText style={styles.user} bold>
+              @{owner?.username}
+            </AppText>
+            {name && instance !== "character" && (
+              <View style={{ ...styles.headerBoxContainer, ...posObj }}>
+                <View style={styles.headerBoxCont}>
+                  <Ionicons
+                    name={screenIcon}
+                    color={colors.primary}
+                    size={width * 0.04}
+                  />
+                  <AppText size="xlarge" style={styles.tvText} bold>
+                    {name}
+                  </AppText>
+                </View>
+                <RenderUnverifiedTag />
+              </View>
+            )}
+            <Separator h={2} />
+            <AppText
+              style={{
+                textAlign: "center",
+                lineHeight: 35,
+                textTransform: "capitalize",
+              }}
+            >
+              {description}
+            </AppText>
+            <Separator h={2} />
+            {name && instance === "character" && (
+              <View style={styles.nameContainer}>
+                <Fontisto
+                  name={name}
+                  color={colors.primary}
+                  size={width * 0.035}
+                />
+                <AppText size="xlarge" style={styles.name} bold>
+                  {instanceName}
+                </AppText>
+                <RenderUnverifiedTag />
+              </View>
+            )}
+          </View>
+          {RenderInstanceContent && <RenderInstanceContent />}
         </View>
+
         <DropDown
           lists={listItems}
           visible={dropDown}

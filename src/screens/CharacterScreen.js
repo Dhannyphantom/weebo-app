@@ -511,16 +511,20 @@ const CharacterScreen = ({ route, navigation }) => {
   const renderPage = ({ item }) => {
     return (
       <>
-        <InstanceHeader instanceData={headerData} />
-        <CharInfoScreen
-          challenged={challConst}
-          handleChangeTab={handleChangeTab}
-          handleWithdrawChallenge={handleWithdrawChallenge}
-          handleCharacterTransfer={handleCharacterTransfer}
-          cardState={cardState}
-          isMine={isMine}
-          character={character}
-          setChallengeModal={setChallengeModal}
+        <InstanceHeader
+          instanceData={headerData}
+          RenderInstanceContent={() => (
+            <CharInfoScreen
+              challenged={challConst}
+              handleChangeTab={handleChangeTab}
+              handleWithdrawChallenge={handleWithdrawChallenge}
+              handleCharacterTransfer={handleCharacterTransfer}
+              cardState={cardState}
+              isMine={isMine}
+              character={character}
+              setChallengeModal={setChallengeModal}
+            />
+          )}
         />
       </>
     );

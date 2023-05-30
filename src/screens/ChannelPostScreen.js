@@ -536,7 +536,11 @@ const ChannelPostScreen = ({ route, navigation }) => {
           <Animated.FlatList
             ListHeaderComponent={
               <>
-                <InstanceHeader scrollY={scrollY} instanceData={headerObj} />
+                <InstanceHeader
+                  borderBottom
+                  scrollY={scrollY}
+                  instanceData={headerObj}
+                />
                 <ActivityIndicator
                   visible={bools.reloadLoader}
                   size={0.2}

@@ -876,11 +876,16 @@ const ViewRoomScreen = ({ navigation, route }) => {
       <ActivityIndicator visible={isLoading} style={styles.activity} />
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>
-          <InstanceHeader instanceData={headerData} />
-          <ActivityIndicator
-            visible
-            type="isEmpty"
-            text={`No characters in this group yet \n Verify this group by clicking on the verify button`}
+          <InstanceHeader
+            instanceData={headerData}
+            RenderInstanceContent={() => (
+              <ActivityIndicator
+                visible
+                type="isEmpty"
+                style={{ bottom: 30 }}
+                text={`No characters in this group yet \n Verify this group by clicking on the verify button`}
+              />
+            )}
           />
         </View>
       )}

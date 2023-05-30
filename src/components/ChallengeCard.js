@@ -15,6 +15,7 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
         mSize="xlarge"
         mIcon={CARD_WIDTH / 3.5}
         cardWidth={CARD_WIDTH}
+        borderRadius={15}
         infoStyle={styles.info}
         avaterSize={CARD_WIDTH / 5}
         btmPadding={40}

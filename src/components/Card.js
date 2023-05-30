@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -30,6 +30,7 @@ const Card = ({
   show,
   avaterSize = 45,
   series,
+  borderRadius,
   manager,
   onPress,
   btmPadding = 16,
@@ -94,7 +95,7 @@ const Card = ({
   const handleConfirmAlert = () => {
     updateCardState(false);
     followChar({ charID, userID, route: "unfollow" }, null, (err) => {
-      console.log(err.err.response.data);
+      // console.log(err.err.response.data);
       setPopper({
         vis: true,
         type: "failed",
@@ -110,7 +111,10 @@ const Card = ({
           activeOpacity={0.94}
           style={[
             styles.imageContainer,
-            { backgroundColor: theme.backgroundExtralight },
+            {
+              backgroundColor: theme.backgroundExtralight,
+              borderRadius: borderRadius ? borderRadius : 8,
+            },
           ]}
           onPress={onPress}
         >
@@ -118,7 +122,10 @@ const Card = ({
             resizeMethod="resize"
             resizeMode="stretch"
             source={{ uri: image.uri }}
-            style={styles.image}
+            style={[
+              styles.image,
+              { borderRadius: borderRadius ? borderRadius : 8 },
+            ]}
           />
           <View style={styles.proPic}>
             {manager && manager?._id === app_constants.appID ? null : (
@@ -142,6 +149,7 @@ const Card = ({
           {
             backgroundColor: theme.background,
             elevation: theme.mode === "dark" ? 8 : 2,
+            borderRadius: borderRadius ? borderRadius : 8,
           },
         ]}
       >
@@ -257,4 +265,4 @@ const styles = StyleSheet.create({
     color: colors.medium,
   },
 });
-export default Card;
+export default memo(Card);
