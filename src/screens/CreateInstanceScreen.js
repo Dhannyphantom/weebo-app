@@ -150,14 +150,14 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   const nav = (info) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
     characterCreated(info.user);
-    updateMe(info.points, "points");
+    updateMe({ data: info.points, prop: "points" });
     navigation.replace("Character", {
       item: info?.character?._id,
       toScreen: "Home",
     });
   };
   const navShow = (info) => {
-    updateMe(info.points, "points");
+    updateMe({ data: info.points, prop: "points" });
     navigation.replace("Show", { show: info.show, toScreen: "Home" });
   };
 
@@ -393,7 +393,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     createGroup(
                       formValues,
                       (resData) => {
-                        updateMe(resData.points, "points");
+                        updateMe({ data: resData.points, prop: "points" });
                         navigation.goBack();
                       },
                       (obj) => actionCallback(obj)

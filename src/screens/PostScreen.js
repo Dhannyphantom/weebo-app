@@ -247,6 +247,7 @@ const PostScreen = ({ route, navigation }) => {
       </TouchableOpacity>
     );
   };
+
   const renderColors = ({ item }) => {
     return (
       <TouchableOpacity

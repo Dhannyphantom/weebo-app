@@ -232,16 +232,6 @@ export default function PostVideo({
     }
   }, [status]);
 
-  // useEffect(() => {
-  //   if (loop) {
-  //     try {
-  //       video?.current?.playAsync();
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (autoPlay === true) {
       onPlayVideo();

@@ -143,7 +143,6 @@ const CharacterScreen = ({ route, navigation }) => {
       selected: character?.verified,
       show: isMine,
     },
-
     {
       id: "3",
       name: "New event",
@@ -188,6 +187,7 @@ const CharacterScreen = ({ route, navigation }) => {
     verifiedList: character.verifiedList,
     followers: character?.followers?.length,
     coverLoading: isCoverLoading,
+    setCoverLoading: setIsCoverLoading,
     owner: character?.manager,
     handleLeftPress: () => handleFollowPress(),
     handleRightPress: null,

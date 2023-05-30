@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -15,6 +15,7 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
+import uuid from "react-native-uuid";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as ChallContext } from "../config/ChallContext";
@@ -183,56 +184,32 @@ const BackDrop = ({ myCharacters, scrollX }) => {
         height: BACKDROP_HEIGHT,
       }}
     >
-      <MaskedView
-        style={{ position: "absolute" }}
-        maskElement={
-          <AnimatedSvg
-            width={width}
-            height={BACKDROP_HEIGHT}
-            viewBox={`0 0 ${width} ${BACKDROP_HEIGHT}`}
-            style={
-              {
-                // transform: [{ translateX }],
-                // position: "absolute",
-              }
-            }
-          >
-            <Rect
-              x="0"
-              y="0"
-              width={width}
-              height={BACKDROP_HEIGHT}
-              fill="#00FF00"
-            />
-          </AnimatedSvg>
-        }
-      >
-        {myCharacters?.map((item, index) => {
-          return (
-            <Image
-              key={index.toString()}
-              source={item?.room_cover?.uri}
-              resizeMode="cover"
-              style={{
-                width,
-                height: 200,
-              }}
-            />
-          );
-        })}
-      </MaskedView>
-      {/* <FlatList
+      <FlatList
         data={myCharacters}
         removeClippedSubviews={false}
+        // snapToInterval={400}
         contentContainerStyle={{
           width,
           height: BACKDROP_HEIGHT,
         }}
         keyExtractor={(item) => item._id}
         renderItem={({ item, index }) => (
-          <RenderBackDrops item={item} index={index} scrollX={scrollX} />
+          <Image
+            source={{ uri: item?.room_cover?.uri }}
+            style={{
+              position: "absolute",
+              width,
+              height: BACKDROP_HEIGHT,
+            }}
+            resizeMode="cover"
+          />
+          // <MemoizedRenderBackDrops
+          //   item={item}
+          //   index={index}
+          //   scrollX={scrollX}
+          // />
         )}
-      /> */}
+      />
       <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
     </View>
   );
@@ -871,7 +848,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent />
-      <BackDrop myCharacters={pageData.characters} scrollX={scrollX} />
+      {/* <BackDrop myCharacters={pageData.characters} scrollX={scrollX} /> */}
+
       <Animated.FlatList
         data={pageData.characters}
         showsHorizontalScrollIndicator={false}

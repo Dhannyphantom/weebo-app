@@ -204,6 +204,7 @@ const ShowScreen = ({ route, navigation }) => {
     namePosition: "left",
     listItems,
     coverLoading: isCoverLoading,
+    setCoverLoading: setIsCoverLoading,
     handleLeftPress: () => handleFollowShow(),
     leftColor: isFollowed ? colors.heart : colors.medium,
     subscribers: null,

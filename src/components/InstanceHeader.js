@@ -110,6 +110,7 @@ const InstanceHeader = ({ instanceData }) => {
     cover_photo,
     description,
     coverLoading,
+    setCoverLoading,
     listItems,
     owner,
     verified,
@@ -195,6 +196,7 @@ const InstanceHeader = ({ instanceData }) => {
       onPress: function () {
         setFBack(1);
         setFBackModal(false);
+        setCoverLoading && setCoverLoading(true);
         const data = {
           type: instance,
           typeId: instanceID,
@@ -204,6 +206,7 @@ const InstanceHeader = ({ instanceData }) => {
           data,
           () => {
             if (!finder) {
+              setCoverLoading && setCoverLoading(false);
               updateMe(userInfo.points + FEEDBACK_WP, "points");
               return setPopper({
                 vis: true,
@@ -215,6 +218,7 @@ const InstanceHeader = ({ instanceData }) => {
           (err) => {
             console.log(err.message);
             console.log(err?.response?.data);
+            setCoverLoading && setCoverLoading(false);
             setPopper({
               vis: true,
               msg: err?.response?.message || "Something went wrong",
@@ -231,6 +235,7 @@ const InstanceHeader = ({ instanceData }) => {
       onPress: function () {
         setFBack(2);
         setFBackModal(false);
+        setCoverLoading && setCoverLoading(true);
         const data = {
           type: instance,
           typeId: instanceID,
@@ -239,14 +244,17 @@ const InstanceHeader = ({ instanceData }) => {
         userFeedback(
           data,
           () => {
-            if (!finder)
+            setCoverLoading && setCoverLoading(false);
+            if (!finder) {
               return setPopper({
                 vis: true,
                 msg: "Feedback sent successfully",
                 type: "success",
               });
+            }
           },
           (err) => {
+            setCoverLoading && setCoverLoading(false);
             setPopper({
               vis: true,
               msg: err?.response?.message,

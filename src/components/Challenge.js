@@ -409,7 +409,7 @@ const Challenge = ({
           onPress={() => handleVote("challenger")}
           style={[
             styles.scoreContainer,
-            { backgroundColor: checkC ? colors.unChange : colors.white },
+            { backgroundColor: checkC ? theme.unchange : theme.background },
           ]}
         >
           <AppText size="xlarge" bold>
@@ -427,7 +427,7 @@ const Challenge = ({
           onPress={() => handleVote("owner")}
           style={[
             styles.scoreContainer,
-            { backgroundColor: checkO ? colors.unChange : colors.white },
+            { backgroundColor: checkO ? theme.unchange : theme.background },
           ]}
         >
           <AppText size="xlarge" bold>

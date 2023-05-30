@@ -28,7 +28,8 @@ import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("window");
 
 const ChallengeScreen = ({ navigation }) => {
-  const { getChallenges, getAwards } = useContext(ChallContext);
+  const { getChallenges, getMyChallenges, getAwards } =
+    useContext(ChallContext);
 
   const {
     state: { userInfo },
@@ -39,6 +40,7 @@ const ChallengeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingEmpty, setRefreshingEmpty] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
+  const [fetchMine, setFetchMine] = useState(false);
 
   const theme = useContext(ThemeContext);
 
@@ -167,34 +169,50 @@ const ChallengeScreen = ({ navigation }) => {
     type === "list" && setRefreshing(true);
     type === "empty" && setRefreshingEmpty(true);
 
-    getChallenges(
-      (resData) => {
-        setChallengeInfo(resData);
-      },
-      (errData) => {
-        setLoadedOnce(true);
-      }
-    );
-    getAwards(
-      (resData) => {
-        setAwardData(resData);
-        type === "list" && setRefreshing(false);
-        type === "empty" && setRefreshingEmpty(false);
-        setTimeout(() => {
-          cb && cb();
-        }, 500);
-      },
-      (errData) => {
-        setLoadedOnce(true);
-      }
-    );
+    if (!fetchMine) {
+      getChallenges(
+        (resData) => {
+          setChallengeInfo(resData);
+        },
+        (errData) => {
+          setLoadedOnce(true);
+        }
+      );
+      getAwards(
+        (resData) => {
+          setAwardData(resData);
+          type === "list" && setRefreshing(false);
+          type === "empty" && setRefreshingEmpty(false);
+          setTimeout(() => {
+            cb && cb();
+          }, 500);
+        },
+        (errData) => {
+          setLoadedOnce(true);
+        }
+      );
+    } else {
+      getMyChallenges(
+        (resData) => {
+          setChallengeInfo(resData.myChallenges);
+          setLoadedOnce(true);
+          type === "list" && setRefreshing(false);
+          type === "empty" && setRefreshingEmpty(false);
+        },
+        (err) => {
+          setLoadedOnce(true);
+          type === "list" && setRefreshing(false);
+          type === "empty" && setRefreshingEmpty(false);
+        }
+      );
+    }
   };
 
   useEffect(() => {
     handleRefresh(() => {
       setLoadedOnce(true);
     }, "list");
-  }, []);
+  }, [fetchMine]);
 
   return (
     <Screen>
@@ -203,12 +221,10 @@ const ChallengeScreen = ({ navigation }) => {
         icon={false}
         RightComponent={() => (
           <AppButton
-            title="My Challenges"
-            RIcon="chevron-right"
+            title={`${!fetchMine ? "My" : "All"} Challenges`}
+            // RIcon="chevron-right"
             naked
-            onPress={() =>
-              navigation.navigate("MyChallenge", { data: challengeInfo })
-            }
+            onPress={() => setFetchMine(!fetchMine)}
           />
         )}
       />
