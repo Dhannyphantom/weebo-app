@@ -315,10 +315,6 @@ const updateUserData = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const characterCreated = (dispatch) => (data) => {
-  dispatch({ type: "update_profile", payload: data });
-};
-
 const getUserData = (dispatch) => async (data, sc, cb) => {
   // HAVE CHANGED THE PARAMS FOR THIS FUNCTION SO UPDATE THIS ^^
   const { id, type, query } = data;
@@ -716,7 +712,6 @@ export const { Context, Provider } = createDataContext(
     tryLocalSignin,
     addWeeb,
     instanceTransfer,
-    characterCreated,
     addToCollection,
     clearMessage,
     updateCollection,

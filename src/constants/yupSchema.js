@@ -142,7 +142,8 @@ const characterValidationSchema = Yup.object().shape({
     .min(3)
     .matches(/[0-9]+.+[0-9]cm/, "Height should be in cm e.g 182.0cm")
     .label("Height"),
-  birthday: Yup.string().required().lowercase().trim().min(3).label("Birthday"),
+  birthday: Yup.date().max(new Date()).label("Birthday"),
+  // birthday: Yup.string().required().lowercase().trim().min(3).label("Birthday"),
   voiceActor: Yup.array()
     .label("Voice actors")
     .of(Yup.string().min(2).lowercase().trim()),

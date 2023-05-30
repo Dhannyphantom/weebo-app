@@ -12,6 +12,7 @@ const LoaderImage = ({
   isVideoImage,
   full,
   containerStyle,
+  borderRadius,
   loading = false,
   noAspect,
   ...otherProps

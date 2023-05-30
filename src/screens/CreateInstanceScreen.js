@@ -40,12 +40,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errText, setErrText] = useState(null);
 
-  const { createCharacter, createGroup, prepareState, createShow } =
-    useContext(CharContext);
+  const { createCharacter, createGroup, createShow } = useContext(CharContext);
 
   const {
     state: { userInfo },
-    characterCreated,
     updateMe,
   } = useContext(AuthContext);
 
@@ -58,7 +56,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     type: characterTypes[0].title,
     gender: "male",
     height: "123cm",
-    birthday: new Date(),
+    birthday: new Date("January 1, 2000"),
     voiceActor: [],
     father: "none",
     mother: "none",
@@ -149,13 +147,14 @@ const CreateInstanceScreen = ({ route, navigation }) => {
 
   const nav = (info) => {
     //TODO:: ONLY UPDATE SPECIFIC FIELDS
-    characterCreated(info.user);
+    // characterCreated(info.user);
     updateMe({ data: info.points, prop: "points" });
     navigation.replace("Character", {
-      item: info?.character?._id,
+      item: info.characterID,
       toScreen: "Home",
     });
   };
+
   const navShow = (info) => {
     updateMe({ data: info.points, prop: "points" });
     navigation.replace("Show", { show: info.show, toScreen: "Home" });
@@ -164,7 +163,6 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   useEffect(() => {
     navigation.addListener("focus", () => {
       setIsLoading(false);
-      prepareState();
       Keyboard.dismiss();
     });
     navigation.addListener("blur", () => {
@@ -196,7 +194,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
             overScrollMode="never"
             listKey="characters"
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
+            renderItem={() => {
               return (
                 <>
                   <View>

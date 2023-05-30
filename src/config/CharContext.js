@@ -1,7 +1,6 @@
 import createDataContext from "./createDataContext";
 import instanceApi from "../api/instanceApi";
 import grabApi from "../api/grabApi";
-import baseURL from "../api/baseURL";
 import channelApi from "../api/channelApi";
 import followApi from "../api/followApi";
 import fetchApi from "../api/fetchApi";
@@ -11,8 +10,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const characterReducer = (state, action) => {
   switch (action.type) {
-    case "prepare_state":
-      return { errMsg: "", data: { prepare: true } };
+    // case "prepare_state":
+    //   return { errMsg: "", data: { prepare: true } };
     case "create_me":
       return { errMsg: "", data: action.payload };
     case "add_error":
@@ -51,6 +50,7 @@ const createCharacter = (dispatch) => async (data, sc, cb) => {
 
   // ===================================================
 };
+
 const createShow = (dispatch) => async (data, sc, cb) => {
   const imageObject = {
     name: data?.cover_photo?.uri.slice(-40),
@@ -79,6 +79,7 @@ const createShow = (dispatch) => async (data, sc, cb) => {
 
   // ===================================================
 };
+
 const createGroup = (dispatch) => async (data, sc, cb) => {
   const imageObject = {
     name: data?.cover_photo?.uri.slice(-40),
@@ -107,9 +108,10 @@ const createGroup = (dispatch) => async (data, sc, cb) => {
 
   // ===================================================
 };
-const prepareState = (dispatch) => () => {
-  dispatch({ type: "prepare_state" });
-};
+
+// const prepareState = (dispatch) => () => {
+//   dispatch({ type: "prepare_state" });
+// };
 
 const roomCharacters = (dispatch) => async (data, sc, cb) => {
   try {
@@ -204,6 +206,7 @@ const sendInvite = () => async (data, sc, cb) => {
     cb && cb(err?.response?.data);
   }
 };
+
 const inviteActions = () => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -358,6 +361,7 @@ const getAChannel = (dispatch) => async (id, sc, cb) => {
     cb && cb("Error fetching channels info");
   }
 };
+
 const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
   const { id, instance } = data;
   try {
@@ -413,6 +417,7 @@ const searchChannels = (dispatch) => async (data, sc, cb) => {
     cb && cb({ err, msg: "Error fetching channels" });
   }
 };
+
 const deleteChannel = (dispatch) => async (channelId, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -467,7 +472,7 @@ export const { Context, Provider } = createDataContext(
     createGroup,
     getCharacters,
     getTheCharacter,
-    prepareState,
+    // prepareState,
     createShow,
     instanceUpdater,
     roomCharacters,
