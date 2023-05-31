@@ -139,7 +139,12 @@ export default (time, time2, type) => {
     }
 
     const convDate = `${hr}:${min} ${post}`;
-    return convDate;
+    return {
+      time: convDate,
+      hr,
+      min,
+      post,
+    };
   }
 };
 

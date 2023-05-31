@@ -8,10 +8,12 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
+  Pressable,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import getFormatTime from "../constants/getFormatTime";
 import { setStatusBarStyle } from "expo-status-bar";
+import uuid from "react-native-uuid";
 
 import { Context as AcctContext } from "../config/AcctContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -28,6 +30,8 @@ import vidMaxChecker from "../constants/vidMaxChecker";
 import TabList from "./TabList";
 import { RenderCoverUpload } from "./CoverUpload";
 import { launchGallery } from "../constants/helpers";
+import ThemeContext from "../config/ThemeContext";
+import Spacer from "./Spacer";
 
 const { width, height } = Dimensions.get("window");
 
@@ -49,11 +53,25 @@ const tabItems = [
 
 const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
 
+const DateItem = ({ data }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={[styles.dateItem, { backgroundColor: theme.background }]}>
+      <AppText size="xlarge" bold style={styles.dateText}>
+        {" "}
+        {data}{" "}
+      </AppText>
+    </View>
+  );
+};
+
 const Events = ({ closer, instance, instanceID, followersCount }) => {
   const { handleNewEvents } = useContext(AcctContext);
   const { updateMe } = useContext(AuthContext);
 
-  console.log(followersCount);
+  const theme = useContext(ThemeContext);
+
+  // console.log(followersCount);
 
   const [type, setType] = useState(eventTypes);
   const [asset, setAsset] = useState(null);
@@ -188,6 +206,8 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
   };
 
   const renderEvents = () => {
+    const arrDate = getFormatTime(date, null, "date").split("/");
+    const timeObj = getFormatTime(date);
     return (
       <View style={{ flex: 1 }}>
         <AppText style={styles.subTitles} bold>
@@ -195,7 +215,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
         </AppText>
         <TabList items={tabItems} state={type} onPress={onChangeTab} />
         <AppText style={styles.subTitles} bold>
-          Give Event Title:
+          Event Title:
         </AppText>
         <GrowInput
           text={title}
@@ -207,22 +227,26 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
         <AppText style={styles.subTitles} bold>
           Schedule Event Day-time:
         </AppText>
-        <View>
-          <AppText size="xlarge" bold style={styles.title}>
-            {getFormatTime(date, null, "date")} {getFormatTime(date)}
-          </AppText>
-          <View style={styles.eventTypeCont}>
-            <AppButton
-              title="Set Date"
-              onPress={() => handleTime("date")}
-              bare
-            />
-            <AppButton
-              title="Set Time"
-              onPress={() => handleTime("time")}
-              bare
-            />
-          </View>
+        <View
+          style={[styles.dateContainer, { backgroundColor: theme.extralight }]}
+        >
+          <Pressable onPress={() => handleTime("date")} style={styles.date}>
+            {arrDate.map((item) => (
+              <DateItem data={item} key={uuid.v4()} />
+            ))}
+          </Pressable>
+          <Pressable onPress={() => handleTime("time")} style={styles.dateTime}>
+            <DateItem data={timeObj.hr} />
+            <AppText size="xlarge" bold>
+              {" "}
+              :{" "}
+            </AppText>
+            <DateItem data={timeObj.min} />
+            <Spacer ml={10}>
+              <DateItem data={timeObj.post} />
+            </Spacer>
+          </Pressable>
+
           {showDate && (
             <DateTimePicker
               testID="dateTimePicker"
@@ -400,6 +424,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width,
     // backgroundColor: colors.extraLight,
+  },
+  dateContainer: {
+    padding: 15,
+    width: "90%",
+    alignSelf: "center",
+    borderRadius: 12,
+  },
+  dateTime: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 15,
+  },
+  dateItem: {
+    backgroundColor: "#fff",
+    // margin:
+    marginHorizontal: 4,
+    // borderWidth: 2,
+    // borderColor: "#ddd",
+    paddingHorizontal: 10,
+    paddingVertical: 18,
+    borderRadius: 8,
+  },
+  date: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   error: {
     textAlign: "center",
