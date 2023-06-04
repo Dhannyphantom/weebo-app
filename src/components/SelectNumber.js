@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import colors from "../constants/colors";
 import AppButton from "./AppButton";
+import ThemeContext from "../config/ThemeContext";
 
 const SelectNumber = ({ num, style, setNum, limitY = 7, limitX = 0 }) => {
+  const theme = useContext(ThemeContext);
   const handleIncrement = () => {
     if (Number.isNaN(Number(num))) {
       setNum(limitX);
@@ -32,10 +34,17 @@ const SelectNumber = ({ num, style, setNum, limitY = 7, limitX = 0 }) => {
 
   return (
     <View style={[styles.container, style]}>
-      <AppButton title="-" bare onPress={handleDecrement} />
-      <View style={styles.inputContainer}>
+      <AppButton
+        title="-"
+        btnTextSize={"xlarge"}
+        bare
+        onPress={handleDecrement}
+      />
+      <View
+        style={[styles.inputContainer, { backgroundColor: theme.extralight }]}
+      >
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.color }]}
           maxLength={2}
           onKeyPress={({ nativeEvent: { key: keyValue } }) =>
             onChangeNumber(keyValue, true)
@@ -57,7 +66,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputContainer: {
-    backgroundColor: colors.extraLight,
     borderRadius: 8,
     width: 60,
     height: 50,

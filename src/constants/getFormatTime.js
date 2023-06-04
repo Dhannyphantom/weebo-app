@@ -125,10 +125,10 @@ export default (time, time2, type) => {
     };
   } else {
     if (tHr > 12) {
-      hr = tHr % 12;
+      hr = tHr % 12 === 0 ? 12 : tHr % 12;
       post = "PM";
     } else {
-      hr = tHr;
+      hr = tHr === 0 ? 12 : tHr;
       post = "AM";
     }
 

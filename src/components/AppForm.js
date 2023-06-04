@@ -344,6 +344,7 @@ const SelectGender = ({ gender, setGender, useFormiks, noFormik = false }) => {
 
 const RenderAuthModal = ({ data, handleAuthSignIn }) => {
   const [gender, setGender] = useState(null);
+  const [username, setUsername] = useState(data?.username ?? "");
   const [email, setEmail] = useState(data?.email ?? "");
   const [errMsg, setErrMsg] = useState(null);
   const [bools, setBools] = useState({ loading: false });
@@ -358,11 +359,15 @@ const RenderAuthModal = ({ data, handleAuthSignIn }) => {
       return setErrMsg("Please select gender");
     } else if (!Boolean(email)) {
       return setErrMsg("Please enter your email");
+    } else if (!Boolean(username)) {
+      return setErrMsg("Please enter your username");
     }
-    console.log({ ...data, email, gender });
-    // handleAuthSignIn({ ...data, email, gender }, (bool) =>
-    //   setBools({ ...bools, loading: bool })
-    // );
+    const sendObj = {
+      ...data,
+      email,
+      gender,
+    };
+    handleAuthSignIn(sendObj, (bool) => setBools({ ...bools, loading: bool }));
   };
 
   return (
@@ -372,11 +377,26 @@ const RenderAuthModal = ({ data, handleAuthSignIn }) => {
       </AppText>
       <View style={styles.form}>
         <SelectGender gender={gender} noFormik setGender={setGender} />
+        <AppText bold size="large" style={styles.authFormTitle}>
+          Username:
+        </AppText>
         <GrowInput
-          text={email}
-          setText={setEmail}
-          placeholder={Boolean(email) ? email : "Enter your email"}
+          text={username}
+          setText={setUsername}
+          placeholder={Boolean(username) ? username : "Enter your username"}
         />
+        {!data?.email && (
+          <>
+            <AppText bold size="large" style={styles.authFormTitle}>
+              Email:
+            </AppText>
+            <GrowInput
+              text={email}
+              setText={setEmail}
+              placeholder={Boolean(email) ? email : "Enter your email"}
+            />
+          </>
+        )}
         {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
         <AppButton
           style={{ marginTop: 20, marginBottom: 10 }}
@@ -431,15 +451,16 @@ const AppForm = ({
   };
 
   const handleAuthSignIn = (user, cb) => {
-    cb && cb(true);
+    // cb && cb(true);
     const sendData = {
       userID: user.id ?? user.userID,
-      firstName: user.givenName ?? user.firstName,
-      lastName: user.familyName ?? user.lastName,
-      avatar: user.photo ?? user.imageURL,
+      firstName: user.givenName ?? user.firstName ?? user.name,
+      lastName: user.familyName ?? user.lastName ?? user.second_name,
+      avatar: user.photo ?? user.imageURL ?? user.avatar,
       email: user.email,
       gender: user.gender,
     };
+
     //
     authSignIn(
       sendData,
@@ -728,6 +749,12 @@ const styles = StyleSheet.create({
   authText: {
     marginLeft: 8,
     width: 100,
+  },
+  authFormTitle: {
+    marginTop: 25,
+    marginBottom: 15,
+    alignSelf: "flex-start",
+    marginLeft: 20,
   },
   avatarCont: {
     marginTop: 35,

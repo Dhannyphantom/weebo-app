@@ -277,7 +277,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           <AppText style={{ color: colors.primary }}>{cpCalculator}WP</AppText>{" "}
         </AppText>
         <AppText style={styles.subTitles} bold>
-          My Media:
+          My Reference:
         </AppText>
         {(type.image || type.video) && (
           <View
@@ -330,10 +330,15 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
         )}
         {type.text && (
           <KeyboardAvoidingView
-            behavior={isInput ? "position" : null}
-            // keyboardVerticalOffset={isInput ? 1 : 0}
+            behavior={isInput ? "padding" : null}
+            style={{ flex: 1 }}
           >
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                { backgroundColor: theme.extralight },
+              ]}
+            >
               <TextInput
                 value={input}
                 onChangeText={(val) => setInput(val)}
@@ -341,7 +346,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
                 placeholder="Ask a Question"
                 onFocus={() => setIsInput(true)}
                 onBlur={() => setIsInput(false)}
-                style={styles.input}
+                style={[styles.input, { color: theme.color }]}
               />
             </View>
           </KeyboardAvoidingView>
@@ -426,8 +431,7 @@ const styles = StyleSheet.create({
     // backgroundColor: colors.extraLight,
   },
   dateContainer: {
-    padding: 15,
-    width: "90%",
+    padding: 25,
     alignSelf: "center",
     borderRadius: 12,
   },
@@ -450,7 +454,7 @@ const styles = StyleSheet.create({
   date: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
   },
   error: {
     textAlign: "center",

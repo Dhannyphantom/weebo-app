@@ -25,6 +25,7 @@ const AppButton = ({
   title,
   bare,
   disabled,
+  btnTextSize,
   bareWhite,
   bareRed,
   naked,
@@ -103,7 +104,7 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText style={styles.btnText} bold>
+              <AppText style={styles.btnText} size={btnTextSize} bold>
                 {title}
               </AppText>
               {RIcon && (
@@ -129,7 +130,7 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText style={styles.btnText} bold>
+              <AppText size={btnTextSize} style={styles.btnText} bold>
                 {" "}
                 {title}{" "}
               </AppText>
@@ -170,6 +171,7 @@ const AppButton = ({
                   ...styles.bareText,
                   color: bareRed ? colors.heart : colors.primary,
                 }}
+                size={btnTextSize}
                 bold
               >
                 {" "}
@@ -197,7 +199,7 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText style={styles.nakedText} bold>
+              <AppText size={btnTextSize} style={styles.nakedText} bold>
                 {" "}
                 {title}{" "}
               </AppText>
