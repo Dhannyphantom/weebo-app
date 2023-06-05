@@ -15,7 +15,10 @@ const authReducer = (state, action) => {
       return {
         ...state,
         errMsg: "",
-        userInfo: action.payload,
+        userInfo: {
+          ...state.userInfo,
+          ...action.payload,
+        },
       };
     case "update_avatar":
       return {
@@ -266,6 +269,8 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
         "x-auth-token": token,
       },
     });
+
+    // console.log(response.data                               );
     dispatch({ type: "update_profile", payload: response.data });
     sc && sc();
   } catch (err) {
@@ -714,7 +719,6 @@ export const { Context, Provider } = createDataContext(
     instanceTransfer,
     addToCollection,
     clearMessage,
-    updateCollection,
     getUserData,
     requestWeeb,
     getMyData,
@@ -722,6 +726,8 @@ export const { Context, Provider } = createDataContext(
     notificationSender,
     collectionRequestHandler,
     wipeNotifications,
+    updateCollection,
+    updateProfile,
     updateAvatar,
     updateUserData,
     updateMe,
@@ -730,7 +736,6 @@ export const { Context, Provider } = createDataContext(
     deleteMediaItem,
     sendInvite,
     deleteUserAccount,
-    updateProfile,
     fetchNearbyWeebs,
     resetPassword,
     recoverPassword,

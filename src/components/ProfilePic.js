@@ -27,6 +27,7 @@ const ProfilePic = ({
 }) => {
   const [picModal, setPicModal] = useState(false);
   const [display, setDisplay] = useState({ vis: false });
+  const [imageLoaded, setImageLoaded] = useState(false);
   const {
     getUserData,
     tryLocalSignin,
@@ -51,6 +52,10 @@ const ProfilePic = ({
     avatarSource = userInfo.gender === "male" ? proMale : proFemale;
   }
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   // console.log("Image source:: ", source);
 
   return (
@@ -68,26 +73,26 @@ const ProfilePic = ({
           overflow: "hidden",
         }}
       >
-        {!source ? (
-          <Image
-            source={avatarSource}
-            resizeMethod="resize"
-            resizeMode="contain"
-            style={[
-              {
-                ...styles.image,
-                // borderRadius: borderRad,
-              },
-              style,
-            ]}
-          />
-        ) : (
-          <Image
-            source={source}
-            resizeMethod="resize"
-            style={[styles.image, style]}
-          />
-        )}
+        <Image
+          source={avatarSource}
+          resizeMethod="resize"
+          resizeMode="contain"
+          style={[
+            {
+              ...styles.image,
+              position: "absolute",
+              opacity: imageLoaded || !source ? 0 : 1,
+            },
+            style,
+          ]}
+        />
+        <Image
+          source={source}
+          resizeMethod="resize"
+          onLoad={handleImageLoad}
+          style={[styles.image, style]}
+        />
+
         {source && source.thumb && (
           <Image
             source={{ uri: source.thumb }}

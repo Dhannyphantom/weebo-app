@@ -192,7 +192,7 @@ export default function PostVideo({
   };
 
   const handleViewport = async (type) => {
-    // console.log("Viewport");
+    console.log("Viewport", type);
     if (type === "enter") {
       // if auto video play is on then play video
       const strSettings = await AsyncStorage.getItem("settings");
