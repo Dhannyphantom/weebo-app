@@ -446,7 +446,7 @@ const getCommentReplies = (dispatch) => async (data, sc, cb) => {
 };
 
 // GETS HOME DATA [posts, statuses, shows, userInfo]
-const getHomeFeeds = (dispatch) => async (query, sc, cb) => {
+const getHomeFeeds = (_dispatch) => async (query, sc, cb) => {
   const uri = query
     ? `/homeData?limit=${query.limit}&page=${query.page}`
     : `/homeData?limit=15&page=1`;

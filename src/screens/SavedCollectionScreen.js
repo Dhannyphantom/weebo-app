@@ -182,6 +182,7 @@ const SavedCollectionScreen = ({ route }) => {
 
   const createdNewCollection = (collections) => {
     updateMe({ data: collections, prop: "my_collections" });
+    // return console.log(collections);
     setMyCollections(collections);
     setModalVis(false);
   };

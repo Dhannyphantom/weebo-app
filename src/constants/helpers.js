@@ -4,6 +4,8 @@ import * as Sharing from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
 import { Platform } from "react-native";
 import vidMaxChecker from "./vidMaxChecker";
+import { INSTANCE_FREE_PERIOD } from "./data_store";
+import getFormatTime from "./getFormatTime";
 
 // downloadMedia function
 const assetsArr = [];
@@ -212,4 +214,24 @@ export const getFeedNumber = (info) => {
     formattedNumber = number;
   }
   return formattedNumber;
+};
+
+export const canChallengeInstance = (challenge_stat) => {
+  const lastTime = new Date(challenge_stat.lastChallengeDate).getTime();
+
+  const dormantTime = lastTime + INSTANCE_FREE_PERIOD;
+  const checker = getFormatTime(dormantTime - Date.now(), null, "format_raw");
+
+  if (checker.expired) {
+    return { isExpired: true, data: checker.full };
+  } else {
+    return {
+      isExpired: false,
+      data: {
+        vis: true,
+        type: "failed",
+        msg: `Instance is not accepting challenge now, check back in ${checker.full}`,
+      },
+    };
+  }
 };

@@ -92,10 +92,14 @@ const HomeScreen = ({ navigation, route }) => {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await readyHomeScreen(() => {
+    fetchHomeData(() => {
       setBools({ ...bools, loadedOnce: true, reloadLoader: false });
       setRefreshing(false);
     });
+    // await readyHomeScreen(() => {
+    // setBools({ ...bools, loadedOnce: true, reloadLoader: false });
+    // setRefreshing(false);
+    // });
   }, []);
 
   const handleHomeScreenGuide = async (type) => {

@@ -460,16 +460,13 @@ const AppForm = ({
       email: user.email,
       gender: user.gender,
     };
-
     //
     authSignIn(
       sendData,
-      (data) => {
-        console.log("success", data);
+      (_data) => {
         cb && cb(false);
       },
       (errData) => {
-        console.log(errData);
         if (
           errData?.data?.msg?.includes("gender") ||
           errData?.data?.msg?.includes("email")

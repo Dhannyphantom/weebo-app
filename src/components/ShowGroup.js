@@ -589,6 +589,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
             searchBar={searchText}
             setSearchBar={setSearchText}
             pressCb={handleShowSearch}
+            style={styles.searchBar}
             ref={searchRef}
             placeholder={`Search ${headerTitle}`}
           />
@@ -757,6 +758,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: "center",
     alignItems: "center",
+  },
+  searchBar: {
+    width: "96%",
+    alignSelf: "center",
+    marginTop: 6,
   },
   searchView: {
     width,

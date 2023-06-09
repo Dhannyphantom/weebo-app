@@ -66,6 +66,57 @@ export default (time, time2, type) => {
     }
     return timerValue;
   }
+  if (type && type === "format_raw") {
+    let timerValue;
+    const timerSecs = time / 1000;
+    if (timerSecs >= 604800) {
+      const num = Math.ceil(timerSecs / 604800);
+      timerValue = {
+        short: `${num}w`,
+        full: `${num} weeks`,
+        mid: `${num} wks`,
+        data: num,
+        expired: false,
+      };
+    } else if (timerSecs >= 86400) {
+      const num = Math.ceil(timerSecs / 86400);
+      timerValue = {
+        short: `${num}d`,
+        full: `${num} days`,
+        mid: `${num} dys`,
+        data: num,
+        expired: false,
+      };
+    } else if (timerSecs >= 3600) {
+      const num = Math.ceil(timerSecs / 3600);
+      timerValue = {
+        short: `${num}h`,
+        full: `${num} hours`,
+        mid: `${num} hrs`,
+        data: num,
+        expired: false,
+      };
+    } else if (timerSecs >= 60) {
+      const num = Math.ceil(timerSecs / 60);
+      timerValue = {
+        short: `${num}m`,
+        full: `${num} minutes`,
+        mid: `${num} min`,
+        data: num,
+        expired: false,
+      };
+    } else if (timerSecs < 60) {
+      const num = Math.abs(Math.ceil(timerSecs / 60));
+      timerValue = {
+        short: `now`,
+        full: `${num} seconds`,
+        mid: `${num} sec`,
+        data: num,
+        expired: true,
+      };
+    }
+    return timerValue;
+  }
 
   if (type && type === "event") {
     const diff = (timer - currentTimer) / 1000;

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import { Viewport } from "@skele/components";
 import { StatusBar } from "expo-status-bar";
+import uuid from "react-native-uuid";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as CharContext } from "../config/CharContext";
@@ -26,9 +27,14 @@ import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
 
-import { showInfoProps } from "../constants/data_store";
-import { capFirstLetter, launchGallery } from "../constants/helpers";
+import { INSTANCE_FREE_PERIOD, showInfoProps } from "../constants/data_store";
+import {
+  canChallengeInstance,
+  capFirstLetter,
+  launchGallery,
+} from "../constants/helpers";
 import EventRender from "../components/EventRender";
+import getFormatTime from "../constants/getFormatTime";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -45,6 +51,7 @@ const hider = [
   "event",
   "manager",
   "verified",
+  "challenge_stat",
   "instance_creator",
   "verifiedList",
   "name_j",
@@ -133,6 +140,16 @@ const ShowScreen = ({ route, navigation }) => {
             msg: "Please verify your account",
           });
         }
+
+        // Check If instance can be challenged;
+        const { isExpired, data } = canChallengeInstance(
+          dataState.challenge_stat
+        );
+
+        if (!isExpired) {
+          return setPopper(data);
+        }
+
         setChallengeModal({ vis: true, contest: { mode: "start" } });
       },
       icon: "trophy-outline",
@@ -513,6 +530,7 @@ const ShowScreen = ({ route, navigation }) => {
               <FlatList
                 data={pageInfo}
                 keyExtractor={(item) => item.prop}
+                listKey={uuid.v4()}
                 renderItem={renderPageInfos}
                 style={{
                   flexDirection: "row",

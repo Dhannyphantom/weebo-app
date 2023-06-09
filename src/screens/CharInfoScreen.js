@@ -9,6 +9,7 @@ import AppText from "../components/AppText";
 import PopMessage from "../components/PopMessage";
 import colors from "../constants/colors";
 import getFormatTime from "../constants/getFormatTime";
+import { canChallengeInstance } from "../constants/helpers";
 
 const CharList = ({ name, icon, names, show, parentProps }) => {
   const { character, cardState } = parentProps;
@@ -112,6 +113,14 @@ const CharInfoScreen = ({
         msg: "Please verify your account",
       });
     }
+
+    // Check If instance can be challenged;
+    const { isExpired, data } = canChallengeInstance(character.challenge_stat);
+
+    if (!isExpired) {
+      return setPopper(data);
+    }
+
     setChallengeModal({ vis: true, contest: { mode: "start" } });
   };
 

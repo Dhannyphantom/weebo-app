@@ -315,7 +315,7 @@ const AppModal = ({
           setPopData({
             vis: true,
             type: "success",
-            msg: "Added to collection!",
+            msg: `Added to ${item.name} collection`,
           });
           setIsNewCollLoading(false);
         },
