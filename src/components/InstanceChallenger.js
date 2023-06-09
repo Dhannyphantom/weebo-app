@@ -72,6 +72,14 @@ const Challenger = ({
         type: "failed",
       });
     }
+
+    if (!asset || asset === null || !asset?.type) {
+      return setPopper({
+        vis: true,
+        msg: "Provide your challenge media or info",
+        type: "failed",
+      });
+    }
     setLoading(true);
     parentError.setErrMsg(null);
     let info_data = null;
@@ -116,6 +124,13 @@ const Challenger = ({
   };
 
   const handleAccept = () => {
+    if (!asset || asset === null || !asset?.type) {
+      return setPopper({
+        vis: true,
+        msg: "Provide your challenge media or info",
+        type: "failed",
+      });
+    }
     setLoading(true);
     const isMedia = asset.type !== "info_accept" && asset.type !== "info";
 

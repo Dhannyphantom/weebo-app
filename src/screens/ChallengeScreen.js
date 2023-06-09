@@ -114,7 +114,7 @@ const ChallengeScreen = ({ navigation }) => {
 
       return (
         // JUST SEND THE ITEM OBJECT TO THE COMPONENT
-        <View>
+        <View style={[styles.challengeItem, { backgroundColor: theme.white }]}>
           <Challenge
             image1={item?.challengerMedia}
             image2={item?.ownerMedia}
@@ -151,7 +151,7 @@ const ChallengeScreen = ({ navigation }) => {
             type={item.type}
             clientID={userInfo._id}
           />
-          <Separator h={2} m={10} />
+          {/* <Separator h={2} m={10} /> */}
         </View>
       );
     }
@@ -215,7 +215,7 @@ const ChallengeScreen = ({ navigation }) => {
   }, [fetchMine]);
 
   return (
-    <Screen>
+    <Screen style={{ backgroundColor: theme.backgroundExtralight }}>
       <AppHeader
         title="Versus"
         icon={false}
@@ -321,6 +321,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  challengeItem: {
+    marginBottom: 30,
+    borderRadius: 30,
+    paddingVertical: 20,
+    elevation: 5,
   },
   btnContainer: {
     alignItems: "center",

@@ -27,8 +27,13 @@ const Avatar = ({
         userID={feederID}
         size={size}
       />
-      <Spacer ml={6}>
-        <AppText size="small" style={nameStyle} bold={bold}>
+      <Spacer ml={4}>
+        <AppText
+          size="small"
+          // ellipsizeMode="tail"
+          style={{ ...styles.text, ...nameStyle }}
+          bold={bold}
+        >
           {at}
           {name}
         </AppText>

@@ -1,31 +1,24 @@
-// import {
-//   AdIconView,
-//   MediaView,
-//   AdChoicesView,
-//   TriggerableView,
-// } from "react-native-fbads";
-// class AdComponent extends React.Component {
-//   render() {
-//     return (
-//       <View>
-//         <AdChoicesView style={{ position: "absolute", left: 0, top: 0 }} />
-//         <AdIconView style={{ width: 50, height: 50 }} />
-//         <MediaView style={{ width: 160, height: 90 }} />
-//         <TriggerableView>
-//           <Text>{this.props.nativeAd.description}</Text>
-//         </TriggerableView>
-//       </View>
-//     );
-//   }
-// }
-
-// export default NativeAds(AdComponent);
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import {
+  AdIconView,
+  MediaView,
+  AdChoicesView,
+  TriggerableView,
+  withNativeAds,
+} from "react-native-fbads";
 
-export default function NativeAds() {
-  return <View style={styles.container}></View>;
+function NativeAds() {
+  return (
+    <View>
+      <AdChoicesView style={{ position: "absolute", left: 0, top: 0 }} />
+      <AdIconView style={{ width: 50, height: 50 }} />
+      <MediaView style={{ width: 160, height: 90 }} />
+      <TriggerableView>
+        <Text>{this.props.nativeAd.description}</Text>
+      </TriggerableView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -35,3 +28,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export default withNativeAds(NativeAds);

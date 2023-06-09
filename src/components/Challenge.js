@@ -60,9 +60,7 @@ const RenderFeed = ({
         bold
       />
 
-      <View
-        style={[styles.feedcontainer, { backgroundColor: theme.background }]}
-      >
+      <View style={styles.feedcontainer}>
         {type === "image" && (
           <TouchableOpacity
             activeOpacity={0.92}
@@ -187,7 +185,7 @@ const RenderModal = ({
 
         <RenderModalItem
           title="Challenger"
-          subTitle="@dhannyphantom"
+          subTitle={`@${data.users[0]}`}
           data={
             stats?.challengerScore >= 0
               ? stats.challengerScore?.toString()
@@ -196,7 +194,7 @@ const RenderModal = ({
         />
         <RenderModalItem
           title="Manager"
-          subTitle="@kira"
+          subTitle={`@${data.users[1]}`}
           data={stats?.ownerScore >= 0 ? stats?.ownerScore : "..."}
         />
       </View>
@@ -439,7 +437,7 @@ const Challenge = ({
       <PopUpModal
         ContentComponent={() => (
           <RenderModal
-            data={cardProps}
+            data={{ ...cardProps, users: [name1, name2] }}
             countdown={countdown}
             setModalVis={setModalVis}
             setLoaded={setLoaded}
@@ -480,7 +478,7 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 8,
     elevation: 2.5,
-    maxWidth: "90%",
+    maxWidth: "85%",
     marginLeft: 12,
   },
   feedcontainer: {

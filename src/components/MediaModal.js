@@ -6,7 +6,6 @@ import {
   Animated,
   Dimensions,
   View,
-  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
@@ -18,37 +17,41 @@ import PostVideo from "./PostVideo";
 import AppText from "./AppText";
 import FeedImage from "./FeedImage";
 import ThemeContext from "../config/ThemeContext";
+import colors from "../constants/colors";
 
 const barheight = Constants.statusBarHeight;
 
 const useHeight = barheight > 25 ? barheight + height * 0.0005 : barheight + 1;
 const { width, height } = Dimensions.get("window");
 
-const RenderInfo = ({ data, size, color }) => {
+const RenderInfoDetails = ({ info }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={styles.info} key={uuid.v4()}>
+      <AppText
+        style={{
+          ...styles.title,
+          color: theme.mode === "light" ? colors.medium : colors.primary,
+        }}
+        bold
+      >
+        {info.title}
+      </AppText>
+      <AppText style={styles.value}>{info.value ?? ""}</AppText>
+    </View>
+  );
+};
+
+const RenderInfo = ({ data }) => {
   const theme = useContext(ThemeContext);
 
-  const infoText = data.map((info, idx) => {
-    return (
-      <AppText key={uuid.v4()}>
-        <AppText style={{ ...styles.title, color: theme.medium }} bold>
-          {info.title}
-        </AppText>{" "}
-        {"\n"}
-        <AppText style={styles.value}>{info.value ?? ""}</AppText>
-        {"\n\n"}
-      </AppText>
-    );
+  const infoText = data.map((info) => {
+    return <RenderInfoDetails key={uuid.v4()} info={info} />;
   });
 
   return (
     <View style={[styles.infoContainer, { backgroundColor: theme.extralight }]}>
-      <AppText
-        numberOfLines={size === "small" ? 12 : null}
-        ellipsizeMode="tail"
-        style={styles.mainText}
-      >
-        {infoText}
-      </AppText>
+      {infoText}
     </View>
   );
 };
@@ -223,6 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  info: { marginBottom: 15 },
   textCont: {
     width: width,
     alignSelf: "center",
@@ -246,6 +250,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textTransform: "capitalize",
+    textAlign: "center",
+    alignSelf: "center",
+    lineHeight: 32,
   },
   value: {
     textTransform: "capitalize",

@@ -17,6 +17,8 @@ import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 // import * as Notifications from "expo-notifications";
+// import { NativeAdsManager } from "react-native-fbads";
+// import NativeAds from "../components/NativeAds";
 const Notifications = {
   removeNotificationSubscription: () => {},
   setNotificationHandler: () => {},
@@ -44,8 +46,8 @@ import BannerAds from "../components/BannerAds";
 import TobiGuide from "../components/TobiGuide";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
-
-// import NativeAds from "../components/NativeAds";
+const fbAdsPlacementID = "406752991548934_406754288215471";
+// const adsManager = new NativeAdsManager(fbAdsPlacementID, 15);
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -186,6 +188,7 @@ const HomeScreen = ({ navigation, route }) => {
         return (
           <>
             <BannerAds />
+            {/* <NativeAds adsManager={adsManager} /> */}
             <FeedRender item={item} user={userInfo._id} />
           </>
         );
