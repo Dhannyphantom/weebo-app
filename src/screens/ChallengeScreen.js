@@ -7,6 +7,7 @@ import {
   RefreshControl,
 } from "react-native";
 // import * as FacebookAds from "expo-ads-facebook";
+import { StatusBar } from "expo-status-bar";
 
 import { AntDesign } from "@expo/vector-icons";
 
@@ -19,10 +20,11 @@ import Separator from "../components/Separator";
 import VoteLogic from "../components/VoteLogic";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppHeader from "../components/AppHeader";
-import Awarder from "../components/Awarder";
+import Awarder, { RenderAwardInfo } from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
+import PopDropDown from "../components/PopDropDown";
 // import NativeAds, { fb_adsManager } from "../components/NativeAds";
 
 const { width, height } = Dimensions.get("window");
@@ -157,14 +159,6 @@ const ChallengeScreen = ({ navigation }) => {
     }
   };
 
-  const renderAwards = ({ item }) => {
-    return (
-      <View>
-        <Awarder item={item} />
-      </View>
-    );
-  };
-
   const handleRefresh = (cb, type) => {
     type === "list" && setRefreshing(true);
     type === "empty" && setRefreshingEmpty(true);
@@ -216,6 +210,7 @@ const ChallengeScreen = ({ navigation }) => {
 
   return (
     <Screen style={{ backgroundColor: theme.backgroundExtralight }}>
+      <StatusBar style="dark" />
       <AppHeader
         title="Versus"
         icon={false}
@@ -276,9 +271,9 @@ const ChallengeScreen = ({ navigation }) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
-                renderItem={renderAwards}
+                renderItem={({ item }) => <Awarder item={item} />}
               />
-              {awardData && awardData[0] && <Separator h={1} />}
+              {/* {awardData && awardData[0] && <Separator h={1} />} */}
             </>
           }
           style={{ marginTop: 10 }}

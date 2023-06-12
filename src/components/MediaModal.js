@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Modal,
@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import * as NavigationBar from "expo-navigation-bar";
 import Constants from "expo-constants";
 import uuid from "react-native-uuid";
 
@@ -64,6 +65,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   if (!isVisible || !item) return null;
 
   const { viewPostVideo } = useContext(FeedContext);
+  const theme = useContext(ThemeContext);
 
   const [errMsg, setErrMsg] = useState(null);
   const [post, setPost] = useState({
@@ -115,18 +117,29 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
     });
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
     setVisible({ vis: false, data: null });
+    await NavigationBar.setBackgroundColorAsync(theme.background);
+    await NavigationBar.setButtonStyleAsync(theme.bar);
   };
+
+  const prepareNavBar = async () => {
+    await NavigationBar.setBackgroundColorAsync("#00000000");
+    await NavigationBar.setButtonStyleAsync("light");
+  };
+
+  useEffect(() => {
+    prepareNavBar();
+  }, []);
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="inverted" />
       <Modal
         visible={isVisible}
         onRequestClose={handleCloseModal}
         statusBarTranslucent
-        transparent={assetType === "video" ? false : true}
+        transparent={assetType !== "video"}
         animationType="fade"
       >
         <Animated.View

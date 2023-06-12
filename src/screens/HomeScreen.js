@@ -259,7 +259,7 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const RenderLoadMore = () => {
-    if (loadMore) {
+    if (loadMore && feeds.hasOwnProperty("next")) {
       return (
         <View>
           <ActivityIndicator

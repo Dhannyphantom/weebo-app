@@ -51,7 +51,7 @@ export default (id, format, countdown) => {
     return timer;
   } else if (format === "format") {
     let timerValue;
-    const timerSecs = (date - currDate) / 1000;
+    const timerSecs = Math.abs((date - currDate) / 1000);
     if (timerSecs >= 604800) {
       const num = Math.ceil(timerSecs / 604800);
       timerValue = {

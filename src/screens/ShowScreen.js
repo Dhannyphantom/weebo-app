@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import { Viewport } from "@skele/components";
 import { StatusBar } from "expo-status-bar";
@@ -519,7 +525,7 @@ const ShowScreen = ({ route, navigation }) => {
     );
   };
 
-  const renderHome = () => {
+  const renderHome = useCallback(() => {
     if (isLoading) return null;
     return (
       <InstanceHeader
@@ -630,7 +636,7 @@ const ShowScreen = ({ route, navigation }) => {
         )}
       />
     );
-  };
+  }, [isLoading]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -716,6 +722,7 @@ const ShowScreen = ({ route, navigation }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",

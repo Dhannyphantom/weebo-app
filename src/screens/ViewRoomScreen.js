@@ -107,12 +107,12 @@ const RenderBackDrops = ({ item, index, scrollX }) => {
   const spacers = ["right-spacer", "left-spacer"];
   if (spacers.includes(item._id)) return null;
 
-  const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
+  // const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
 
-  const translateX = scrollX.interpolate({
-    inputRange,
-    outputRange: [-width, 0],
-  });
+  // const translateX = scrollX.interpolate({
+  //   inputRange,
+  //   outputRange: [-width, 0],
+  // });
 
   return (
     <MaskedView
@@ -128,7 +128,7 @@ const RenderBackDrops = ({ item, index, scrollX }) => {
             }
           }
         >
-          <Rect x="0" y="0" width={width} height={height} fill="red" />
+          <Rect x="0" y="0" width={width} height={height} fill="#fff" />
         </AnimatedSvg>
       }
     >
@@ -136,7 +136,7 @@ const RenderBackDrops = ({ item, index, scrollX }) => {
         removeClippedSubviews={true}
         style={{
           position: "absolute",
-          transform: [{ translateX }],
+          transform: [{ translateX: scrollX }],
           height,
           overflow: "hidden",
         }}
@@ -194,20 +194,16 @@ const BackDrop = ({ myCharacters, scrollX }) => {
         }}
         keyExtractor={(item) => item._id}
         renderItem={({ item, index }) => (
-          <Image
-            source={{ uri: item?.room_cover?.uri }}
-            style={{
-              position: "absolute",
-              width,
-              height: BACKDROP_HEIGHT,
-            }}
-            resizeMode="cover"
-          />
-          // <MemoizedRenderBackDrops
-          //   item={item}
-          //   index={index}
-          //   scrollX={scrollX}
+          // <Image
+          //   source={{ uri: item?.room_cover?.uri }}
+          //   style={{
+          //     position: "absolute",
+          //     width,
+          //     height: BACKDROP_HEIGHT,
+          //   }}
+          //   resizeMode="cover"
           // />
+          <RenderBackDrops item={item} index={index} scrollX={scrollX} />
         )}
       />
       <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
@@ -245,6 +241,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const params = route.params;
   // params = { instance}
   const scrollX = useRef(new Animated.Value(0)).current;
+  const backDropper = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
   let showInviteIcon = false;
@@ -848,7 +845,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent />
-      {/* <BackDrop myCharacters={pageData.characters} scrollX={scrollX} /> */}
+      <BackDrop myCharacters={pageData.characters} scrollX={backDropper} />
 
       <Animated.FlatList
         data={pageData.characters}
@@ -856,6 +853,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
         scrollEventThrottle={16}
         snapToAlignment="start"
         snapToInterval={ITEM_SIZE}
+        onMomentumScrollEnd={() =>
+          Animated.timing(backDropper, {
+            toValue: 200,
+            delay: 1000,
+            useNativeDriver: true,
+          }).start()
+        }
         refreshing={refreshing}
         onRefresh={() => fetchRoomCharacters("refresh")}
         decelerationRate={0}

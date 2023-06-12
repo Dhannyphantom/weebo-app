@@ -32,7 +32,7 @@ const LoaderImage = ({
         ...styles.container,
         backgroundColor: theme.extralight,
         borderRadius: full ? 1 : 12,
-        aspectRatio: noAspect ? null : image.width / image.height,
+        aspectRatio: noAspect ? null : image?.width / image?.height,
         ...style,
       }}
     >
