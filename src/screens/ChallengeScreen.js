@@ -25,6 +25,7 @@ import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 import PopDropDown from "../components/PopDropDown";
+import { capFirstLetter } from "../constants/helpers";
 // import NativeAds, { fb_adsManager } from "../components/NativeAds";
 
 const { width, height } = Dimensions.get("window");
@@ -48,16 +49,22 @@ const ChallengeScreen = ({ navigation }) => {
 
   const renderChallenges = ({ item }) => {
     if (item.challengersNum) {
-      const suffixTitle = ` ~~ ${
+      const suffixTitle = `--- ${
         item?.tagChannel?.name ??
         item?.tagCharacter?.name ??
-        item?.tagShow?.name ??
+        item?.tagShow?.name_j ??
+        item?.tagShow?.name_e ??
         item.tagGroup?.name
-      }`;
+      } ${item.tag} instance`;
+
       return (
         <VoteLogic
           title={item.title + suffixTitle}
           timer={item.expiresAt}
+          instance={{
+            tag: item.tag,
+            data: item[`tag${capFirstLetter(item.tag)}`],
+          }}
           cards={item.challengers}
           comments={item.comments}
           type={{ type: "events", c_type: item.c_type }}
@@ -74,6 +81,10 @@ const ChallengeScreen = ({ navigation }) => {
         <VoteLogic
           title={item.title}
           timer={item.expiresAt}
+          instance={{
+            tag: item.tag,
+            data: item[`tag${capFirstLetter(item.tag)}`],
+          }}
           cards={item.data}
           comments={item.comments}
           type={{ type: "characters" }}

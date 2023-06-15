@@ -29,7 +29,7 @@ const FeedRender = ({ item, user }) => {
 
   const [post, setPost] = useState({
     likes: item.likes.length,
-    comments: item.commentCount ?? 0,
+    comments: item.commentCount ?? "000",
     views: item.views.length,
     viewed: false,
     liked: false,
@@ -37,6 +37,7 @@ const FeedRender = ({ item, user }) => {
     active: 1,
     loading: false,
   });
+
   const [errMsg, setErrMsg] = useState(null);
   const theme = useContext(ThemeContext);
 

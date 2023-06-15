@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     borderTopStartRadius: width * 0.04,
     borderTopEndRadius: width * 0.04,
     backgroundColor: colors.white,
+    overflow: "hidden",
     maxHeight: height * 0.98,
   },
   headerTitle: {

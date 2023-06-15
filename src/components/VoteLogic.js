@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, ScrollView, Image } from "react-native";
 
 import { Context as ChallContext } from "../config/ChallContext";
 import { Context as AuthContext } from "../config/AuthContext";
+import { Context as FeedContext } from "../config/FeedContext";
+
 import FeedHeader from "../components/FeedHeader";
 import colors from "../constants/colors";
 import Vote from "../components/Vote";
@@ -10,15 +12,21 @@ import AppText from "./AppText";
 import Icon from "./Icon";
 import Separator from "./Separator";
 import getFormatTime from "../constants/getFormatTime";
-import PopUpModal from "./PopUpModal";
+// import PopUpModal from "./PopUpModal";
 import ProfilePic from "./ProfilePic";
 import Comments from "./Comments";
 import AppDetail from "./AppDetail";
 import PopMessage from "./PopMessage";
+import { COMMENT_COUNT } from "./FeedFooter";
+import PopDropDown from "./PopDropDown";
+import { RenderLinearGradient } from "../screens/ViewRoomScreen";
+import { Dimensions } from "react-native";
 
-const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
-  const { voteOne, getComments, replyComments, commentPost } =
-    useContext(ChallContext);
+const { width, height } = Dimensions.get("screen");
+
+const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
+  const { voteOne } = useContext(ChallContext);
+  const { getComments, replyComments, commentPost } = useContext(FeedContext);
   const {
     state: { userInfo },
     updateMe,
@@ -127,8 +135,7 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
     // setMyComments([]);
     setModalVis(true);
     getComments(
-      voteId,
-      commentType,
+      { instanceID: voteId, type: commentType, page: 1, limit: COMMENT_COUNT },
       (data) => handleDone(data),
       (err) => {
         setErrMsg(err.msg);
@@ -237,19 +244,40 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
 
   const InfoComponent = () => {
     const message = type.type == "events" ? "users" : "characters";
+    // console.log("INSTANCE DETAILS:: ", instance);
+    const { data, tag } = instance;
     return (
-      <View style={styles.infoContainer}>
-        <AppDetail
-          icon="timer"
-          title="Timer"
-          item={`${getFormatTime(timer, null, "format").full} left`}
-        />
-        <AppDetail
-          icon="ninja"
-          title={`${message} participating`}
-          item={`${scorer.length} ${message}`}
-        />
-      </View>
+      <ScrollView>
+        <View style={styles.infoContainer}>
+          <View>
+            <Image
+              source={data.cover_photo}
+              style={[
+                styles.infoImage,
+                { height: tag === "character" ? height * 0.5 : height * 0.25 },
+              ]}
+            />
+            <RenderLinearGradient
+              modalHeight={tag === "character" ? height * 0.5 : height * 0.35}
+            />
+          </View>
+          <AppText size="xlarge" bold style={styles.infoTitle}>
+            {data?.name || data?.name_j || data.name_e} {tag} instance challenge
+          </AppText>
+          <View style={styles.infoContent}>
+            <AppDetail
+              icon="timer"
+              title="Timer"
+              item={`${getFormatTime(timer, null, "format").full} left`}
+            />
+            <AppDetail
+              icon="ninja"
+              title={`${message} participating`}
+              item={`${scorer.length} ${message}`}
+            />
+          </View>
+        </View>
+      </ScrollView>
     );
   };
 
@@ -285,11 +313,11 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId }) => {
         setReply={setReply}
         avatar={userInfo.avatar}
       />
-      <PopUpModal
+      <PopDropDown
         visible={infoModal}
-        setVisible={setInfoModal}
-        modalHeight={null}
-        ContentComponent={InfoComponent}
+        setter={() => setInfoModal(false)}
+        // modalHeight={null}
+        RenderComponent={InfoComponent}
       />
       <PopMessage
         popData={popper}
@@ -312,8 +340,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.heart,
   },
   infoContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    borderTopStartRadius: width * 0.04,
+    borderTopEndRadius: width * 0.04,
+    // paddingVertical: 20,
+    // paddingHorizontal: 10,
+  },
+  infoImage: {
+    width: "100%",
+    borderTopStartRadius: width * 0.04,
+    borderTopEndRadius: width * 0.04,
+  },
+  infoContent: {
+    padding: 35,
+  },
+  infoTitle: {
+    marginTop: 30,
+    textAlign: "center",
+    textTransform: "capitalize",
   },
   pic: {
     alignItems: "center",

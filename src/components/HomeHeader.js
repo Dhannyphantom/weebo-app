@@ -246,7 +246,7 @@ const HomeHeader = ({ characters }) => {
       <View>
         {showSearch && (
           <Search
-            placeholder="Search characters, shows, groups, users"
+            placeholder="Search characters, shows, groups, @users"
             showSearch={showSearch}
             setShowSearch={setShowSearch}
             style={{ ...styles.searchBar, backgroundColor: theme.lighter }}

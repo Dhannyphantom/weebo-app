@@ -198,6 +198,13 @@ const InstanceHeader = ({
       title: "YES",
       icon: "check",
       onPress: function () {
+        if (!userInfo.verified) {
+          setPopper({
+            vis: true,
+            msg: "Please complete and verify your account!",
+            type: "failed",
+          });
+        }
         setFBack(1);
         setFBackModal(false);
         setCoverLoading && setCoverLoading(true);
@@ -220,8 +227,6 @@ const InstanceHeader = ({
             }
           },
           (err) => {
-            console.log(err.message);
-            console.log(err?.response?.data);
             setCoverLoading && setCoverLoading(false);
             setPopper({
               vis: true,
@@ -237,6 +242,13 @@ const InstanceHeader = ({
       title: "NO",
       icon: "cancel",
       onPress: function () {
+        if (!userInfo.verified) {
+          setPopper({
+            vis: true,
+            msg: "Please complete and verify your account!",
+            type: "failed",
+          });
+        }
         setFBack(2);
         setFBackModal(false);
         setCoverLoading && setCoverLoading(true);

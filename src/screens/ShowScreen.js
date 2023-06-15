@@ -64,6 +64,7 @@ const hider = [
   "name_e",
 ];
 const counter = ["characters", "groups", "followers", "posts", "challengers"];
+const LEAST_FOLLOWERS = 1;
 
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
@@ -183,7 +184,7 @@ const ShowScreen = ({ route, navigation }) => {
       id: "3",
       name: "New event",
       onPress: () => {
-        if (!checkIsVerified("isEvent")) return;
+        // if (!checkIsVerified("isEvent")) return;
         navigation.navigate("Event", {
           instance: "show",
           instanceID: dataState._id,
@@ -368,10 +369,10 @@ const ShowScreen = ({ route, navigation }) => {
       return false;
     } else {
       if (type === "isEvent") {
-        if (dataState?.followers?.length < 15) {
+        if (dataState?.followers?.length < LEAST_FOLLOWERS) {
           setPopper({
             vis: true,
-            msg: `At least 15 followers needed`,
+            msg: `At least ${LEAST_FOLLOWERS} followers needed`,
             type: "failed",
           });
         }

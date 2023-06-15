@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 
 import { Context as AcctContext } from "../config/AcctContext";
@@ -108,6 +108,10 @@ const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
   if (item.tagGroup) title2 = item.tagGroup.name;
   if (item.tagCharacter) title2 = item.tagCharacter.name;
   if (item.tagShow) title2 = item.tagShow.name;
+
+  useEffect(() => {
+    setChallengerNum(item.challengers?.length);
+  }, [item]);
 
   return (
     <>

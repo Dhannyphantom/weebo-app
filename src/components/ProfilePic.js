@@ -27,7 +27,6 @@ const ProfilePic = ({
 }) => {
   const [picModal, setPicModal] = useState(false);
   const [display, setDisplay] = useState({ vis: false });
-  const [imageLoaded, setImageLoaded] = useState(false);
   const {
     getUserData,
     tryLocalSignin,
@@ -51,10 +50,6 @@ const ProfilePic = ({
   } else {
     avatarSource = userInfo.gender === "male" ? proMale : proFemale;
   }
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
 
   // console.log("Image source:: ", source);
 
@@ -81,7 +76,7 @@ const ProfilePic = ({
             {
               ...styles.image,
               position: "absolute",
-              opacity: imageLoaded || !source ? 0 : 1,
+              opacity: !source ? 1 : 0,
             },
             style,
           ]}
@@ -89,7 +84,6 @@ const ProfilePic = ({
         <Image
           source={source}
           resizeMethod="resize"
-          onLoad={handleImageLoad}
           style={[styles.image, style]}
         />
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,6 +7,8 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
+
+import { Context as AuthContext } from "../config/AuthContext";
 
 import PopUpModal from "./PopUpModal";
 import AppText from "./AppText";
@@ -31,7 +33,13 @@ const JoinEvents = ({
     const [joinInput, setJoinInput] = useState("");
     const [errMsg, setErrMsg] = useState(null);
 
+    const {
+      state: { userInfo },
+    } = useContext(AuthContext);
+
     const handleJoinAnEvent = () => {
+      if (!userInfo.verified)
+        return setErrMsg("Complete and verify your account!");
       setjoinLoading(true);
       setErrMsg(null);
       const isText = joinData?.asset.type === "text";
@@ -58,7 +66,7 @@ const JoinEvents = ({
           });
         },
         (err) => {
-          console.log(err?.response?.data);
+          // console.log(err?.response?.data);
           setErrMsg(err.msg);
           setjoinLoading(false);
         }
@@ -75,7 +83,7 @@ const JoinEvents = ({
         <AppText style={{ textAlign: "center" }}>
           Will require{" "}
           <AppText style={{ color: colors.primary }} bold>
-            5WP
+            10WP
           </AppText>{" "}
           to join
         </AppText>

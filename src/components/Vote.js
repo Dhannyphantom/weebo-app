@@ -25,7 +25,6 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
 
   const navigation = useNavigation();
 
-  const vidFeed = { posts: [cardInfo.media], type: "video" };
   let touchTime = 0,
     timed;
 
@@ -43,21 +42,12 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
       // single
       timed = setTimeout(() => {
         if (!dPress) {
-          handleShowMedia({
-            item: cardInfo.media,
-            feed: {
-              type: "image",
-            },
-          });
+          setDisplayMedia({ vis: true, item: cardInfo.media });
         }
       }, 500);
     }
 
     touchTime = new Date().getTime();
-  };
-
-  const handleShowMedia = (mediaObj) => {
-    setDisplayMedia({ vis: true, data: mediaObj });
   };
 
   return (
@@ -104,6 +94,7 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={handlePressImage}
+                  onLongPress={() => setShowStat(!showStat)}
                   style={{
                     ...styles.imageContainer,
                     aspectRatio: cardInfo.media.width / cardInfo.media.height,

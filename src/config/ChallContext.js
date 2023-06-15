@@ -248,29 +248,6 @@ const withdrawChallenge = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const commentPost = (dispatch) => async (id, type, comment, sc, cb) => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const res = await followApi.post(
-      "/comment",
-      { id, comment, type },
-      {
-        headers: {
-          "x-auth-token": token,
-          "Cache-Control": "no-cache,no-store,must-revalidate",
-          Pragma: "no-cache",
-          Expires: 0,
-        },
-      }
-    );
-    dispatch({ type: "get_comments", payload: res.data });
-    sc && sc(res.data);
-  } catch (err) {
-    dispatch({ type: "add_error", payload: err.response.data });
-    cb("Error updating comment");
-  }
-};
-
 const replyComments = (dispatch) => async (pId, type, cId, reply, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -305,7 +282,6 @@ export const { Context, Provider } = createDataContext(
     getChallenges,
     getAwards,
     fetchStats,
-    commentPost,
     replyComments,
     voteOne,
     voteTwo,
