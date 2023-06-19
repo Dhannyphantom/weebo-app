@@ -122,16 +122,6 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
       if (results) {
         res = results[0];
       }
-
-      // RESTRICT VIDEO LIMIT
-      const { vidErr, bool } = vidMaxChecker(res.duration, 4);
-      if (bool) {
-        return setPopper({
-          vis: true,
-          type: "failed",
-          msg: vidErr,
-        });
-      }
     }
     res && setAsset(res);
   };
@@ -221,7 +211,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           text={title}
           mLine={false}
           setText={setTitle}
-          placeholder="Event title"
+          placeholder="Event title e.g Wallpaper challenge"
         />
 
         <AppText style={styles.subTitles} bold>
@@ -343,7 +333,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
                 value={input}
                 onChangeText={(val) => setInput(val)}
                 multiline
-                placeholder="Ask a Question"
+                placeholder="Write your view of the title..."
                 onFocus={() => setIsInput(true)}
                 onBlur={() => setIsInput(false)}
                 style={[styles.input, { color: theme.color }]}

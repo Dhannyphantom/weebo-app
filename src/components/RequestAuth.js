@@ -25,7 +25,7 @@ const RequestAuth = ({ navigation }) => {
 
   const run = () => {
     clearMessage();
-    tryLocalSignin(null, () => {
+    tryLocalSignin(null, (_err) => {
       navigation.navigate("Welcome");
     });
   };

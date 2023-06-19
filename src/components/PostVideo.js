@@ -98,9 +98,9 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   );
 };
 
-export const RenderMediaIcon = () => {
+export const RenderMediaIcon = ({ style }) => {
   return (
-    <View style={styles.playIcon}>
+    <View style={[styles.playIcon, style]}>
       <MaterialCommunityIcons
         name="motion-play"
         size={40}

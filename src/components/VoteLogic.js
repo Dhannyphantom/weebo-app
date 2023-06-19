@@ -110,19 +110,19 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
     const voteObj = {
       voteId,
       itemId,
-      type: "characters",
+      type: type === "events" ? "events" : "characters",
     };
-    if (type === "events") {
-      voteObj.type = "events";
-    }
+
     voteOne(
       voteObj,
       (resData) => {
-        if (resData.hasVotedBefore === false) {
+        if (resData?.hasVotedBefore === false) {
           updateMe(resData.points, "points");
         }
       },
-      (err) => setErrMsg(err)
+      (err) => {
+        console.log(err);
+      }
     );
   };
 
@@ -360,6 +360,7 @@ const styles = StyleSheet.create({
   },
   pic: {
     alignItems: "center",
+    marginVertical: 30,
   },
   spacer: {
     padding: 10,

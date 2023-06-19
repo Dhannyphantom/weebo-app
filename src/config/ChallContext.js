@@ -112,7 +112,7 @@ const acceptInstanceChallenge = (dispatch) => async (data, sc, cb) => {
 const voteOne = (dispatch) => async (data, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
-    const response = await challengeApi.put(
+    await challengeApi.put(
       "/voteOne",
       data, // should be an object
       {
@@ -126,7 +126,7 @@ const voteOne = (dispatch) => async (data, sc, cb) => {
     );
     sc && sc();
   } catch (err) {
-    cb && cb("Error updating vote!" + err?.response?.data);
+    cb && cb({ msg: "Error updating vote", data: err?.response?.data, err });
   }
 };
 

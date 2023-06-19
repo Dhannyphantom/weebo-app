@@ -58,7 +58,7 @@ const ChatRender = ({
     lowerSender = true;
   }
 
-  const timer = getTimeFormat(time);
+  const timer = getTimeFormat(time).time;
   const showDay = getTimeFormat(time, upperChat?.time);
   const showTimerLeft =
     lowerChat && lowerSender

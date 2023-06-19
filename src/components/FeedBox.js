@@ -1,14 +1,22 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import LoaderImage from "./LoaderImage";
-import PostVideo from "./PostVideo";
+import PostVideo, { RenderMediaIcon } from "./PostVideo";
 import MediaModal from "./MediaModal";
 import ThemeContext from "../config/ThemeContext";
+import { Image } from "react-native";
+import Spacer from "./Spacer";
 
 const { width, height } = Dimensions.get("window");
 
@@ -31,9 +39,10 @@ const FeedBox = ({
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
   const theme = useContext(ThemeContext);
   const handleShowMedia = (mediaObj) => {
+    if (!mediaObj) return null;
     setDisplayMedia({
       vis: true,
-      data: { item: mediaObj, feed: { type: mediaType } },
+      item: mediaObj,
     });
   };
 
@@ -105,12 +114,14 @@ const FeedBox = ({
         </TouchableOpacity>
       )}
       {mediaType == "video" && (
-        <PostVideo
-          vidUri={image.uri}
-          disableThumb
-          showMediaFunc={handleShowMedia}
-          viewable={false}
-        />
+        <Pressable onPress={() => handleShowMedia(image)}>
+          <Image
+            blurRadius={6}
+            source={{ uri: image.thumb }}
+            style={styles.thumb}
+          />
+          <RenderMediaIcon style={{ left: 10 }} />
+        </Pressable>
       )}
       {mediaType == "text" && (
         <View style={styles.infoCont}>
@@ -235,8 +246,14 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginBottom: 7,
     marginLeft: 6,
-
+    width: "95%",
     color: colors.primary,
+  },
+  thumb: {
+    width: "96%",
+    height: height * 0.65,
+    alignSelf: "center",
+    borderRadius: 10,
   },
 });
 export default FeedBox;

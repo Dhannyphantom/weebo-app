@@ -330,7 +330,7 @@ const HomeScreen = ({ navigation, route }) => {
           visible={showSpinner}
           type={loadedOnce ? "isEmpty" : "spin"}
           style={styles.pageActiviy}
-          text="No feeds yet, please follow a Weebo Instance"
+          text="You have no feeds"
           transparent
         />
       </>

@@ -16,15 +16,13 @@ import { Context as AuthContext } from "../config/AuthContext";
 import AppButton from "../components/AppButton";
 import Challenge from "../components/Challenge";
 import Screen from "../components/Screen";
-import Separator from "../components/Separator";
 import VoteLogic from "../components/VoteLogic";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppHeader from "../components/AppHeader";
-import Awarder, { RenderAwardInfo } from "../components/Awarder";
+import Awarder from "../components/Awarder";
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
-import PopDropDown from "../components/PopDropDown";
 import { capFirstLetter } from "../constants/helpers";
 // import NativeAds, { fb_adsManager } from "../components/NativeAds";
 

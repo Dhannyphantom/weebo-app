@@ -117,19 +117,20 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
   },
   headText: {
     marginLeft: 7,
-    color: colors.primary,
-    maxWidth: width * 0.6,
+    maxWidth: "96%",
+    marginBottom: 15,
   },
   left: {
     flexDirection: "row",
-    alignItems: "center",
   },
   right: {
     flexDirection: "row",
+    alignItems: "center",
     alignItems: "center",
   },
   text: {
@@ -146,7 +147,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginLeft: 4,
     color: colors.primary,
-    // maxWidth: "90%",
+    maxWidth: "95%",
+    marginBottom: 15,
   },
 });
 export default FeedHeader;

@@ -1,4 +1,4 @@
-import React, { memo, useContext, useRef, useState } from "react";
+import React, { memo, useContext, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -18,7 +18,7 @@ import Avatar from "./Avatar";
 import Cards from "./Cards";
 
 //files
-import appLogo from "../../assets/icon.png";
+import appLogo from "../../assets/favicon.png";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");

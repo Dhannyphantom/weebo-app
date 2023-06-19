@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Image,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -12,10 +13,11 @@ import ChallengeCard from "./ChallengeCard";
 import Icon from "./Icon";
 import Score from "./Score";
 import AppText from "./AppText";
-import PostVideo from "./PostVideo";
-import colors from "../constants/colors";
+import { RenderMediaIcon } from "./PostVideo";
+import colors, { postColors } from "../constants/colors";
 import ProfilePic from "./ProfilePic";
 import MediaModal from "./MediaModal";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -24,11 +26,12 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
   const [displayMedia, setDisplayMedia] = useState({ vis: false, data: null });
 
   const navigation = useNavigation();
+  const theme = useContext(ThemeContext);
 
   let touchTime = 0,
     timed;
 
-  const handlePressImage = () => {
+  const handlePressImage = (type) => {
     const now = new Date().getTime();
     const diff = now - touchTime;
     let dPress = null;
@@ -42,7 +45,18 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
       // single
       timed = setTimeout(() => {
         if (!dPress) {
-          setDisplayMedia({ vis: true, item: cardInfo.media });
+          setDisplayMedia({
+            vis: true,
+            item:
+              type === "info"
+                ? {
+                    bg: postColors[2].bg,
+                    tColor: postColors[2].text,
+                    text: cardInfo.info,
+                    type: "text",
+                  }
+                : cardInfo.media,
+          });
         }
       }, 500);
     }
@@ -66,8 +80,8 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
             {cardInfo.type == "text" && (
               <TouchableOpacity
                 activeOpacity={1}
-                onPress={() => setShowStat(!showStat)}
-                style={styles.infoContainer}
+                onPress={() => handlePressImage("info")}
+                style={[styles.infoContainer, { backgroundColor: theme.white }]}
               >
                 {!showStat ? (
                   <AppText style={styles.infoText} size="large" bold>
@@ -125,19 +139,32 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
               </View>
             )}
             {cardInfo.type === "video" && (
-              <View style={styles.videoContainer}>
-                {/* <PostVideo
-                  source={cardInfo?.media}
-                  small
-                  feed={vidFeed}
-                  showMediaFunc={handleShowMedia}
-                  disableDoublePress
-                  viewable={false}
-                /> */}
-                <AppText>
-                  Display a video thumb and use MediaModal to play video
-                </AppText>
-              </View>
+              <Pressable
+                onPress={handlePressImage}
+                onLongPress={() => setShowStat(!showStat)}
+                style={styles.videoContainer}
+              >
+                <Image
+                  source={{ uri: cardInfo?.media?.thumb }}
+                  style={styles.thumb}
+                  blurRadius={6}
+                />
+                <RenderMediaIcon />
+                {showStat && (
+                  <View style={styles.stats}>
+                    <ProfilePic
+                      source={cardInfo.user.avatar}
+                      size={width * 0.2}
+                      userID={cardInfo.user._id}
+                      border={2}
+                      borderColor={colors.white}
+                    />
+                    <AppText size="large" style={styles.username} bold>
+                      @{cardInfo.user.username}
+                    </AppText>
+                  </View>
+                )}
+              </Pressable>
             )}
           </View>
         )}
@@ -158,7 +185,6 @@ const styles = StyleSheet.create({
   infoContainer: {
     width: width * 0.4,
     height: width * 0.4,
-    backgroundColor: colors.extraLight,
     borderRadius: width * 0.022,
     marginLeft: 10,
     marginVertical: width * 0.022,
@@ -192,6 +218,11 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.022,
     justifyContent: "center",
     alignItems: "center",
+  },
+  thumb: {
+    width: width * 0.6,
+    height: height * 0.45,
+    borderRadius: 10,
   },
   username: {
     textAlign: "center",

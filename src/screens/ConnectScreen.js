@@ -139,6 +139,7 @@ const RenderEmptyWeebs = ({
 
   const weeboLocatorSwitch = () => {
     setIsLoading(true);
+    setErrMsg(null);
 
     updateUserData(
       {
@@ -153,6 +154,7 @@ const RenderEmptyWeebs = ({
       },
       (errData) => {
         setErrMsg(errData.data ?? errData.msg);
+        console.log(errData);
         setIsLoading(false);
       }
     );

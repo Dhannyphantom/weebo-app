@@ -66,8 +66,13 @@ const JoinEvents = ({
           });
         },
         (err) => {
-          // console.log(err?.response?.data);
-          setErrMsg(err.msg);
+          setErrMsg(
+            `${err.msg}${
+              Boolean(err?.err?.response?.data)
+                ? ": " + err?.err?.response?.data
+                : ""
+            }`
+          );
           setjoinLoading(false);
         }
       );
@@ -80,7 +85,7 @@ const JoinEvents = ({
           Submit Info Challenge
         </AppText>
         <Separator h={1} />
-        <AppText style={{ textAlign: "center" }}>
+        <AppText style={{ textAlign: "center", marginBottom: 15 }}>
           Will require{" "}
           <AppText style={{ color: colors.primary }} bold>
             10WP
@@ -116,10 +121,7 @@ const JoinEvents = ({
                 {joinData?.asset && joinData?.asset.type === "video" && (
                   <>
                     {joinData?.asset.uri && (
-                      <PostVideo
-                        vidUri={joinData?.asset.uri}
-                        viewable={false}
-                      />
+                      <PostVideo source={joinData?.asset} viewable={false} />
                     )}
                   </>
                 )}

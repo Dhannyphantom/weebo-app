@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard, { useClipboard } from "@react-native-community/clipboard";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -38,6 +38,7 @@ const modalShow = {
 
 const InviteWeebs = ({ closeModal }) => {
   const theme = useContext(ThemeContext);
+  const [clipStr, setClipper] = useClipboard();
   const {
     // sendInvite,
     state: {
@@ -52,11 +53,11 @@ const InviteWeebs = ({ closeModal }) => {
       case "link":
         // USE EXPO CLIPBOARD PACKAGE
         try {
-          Clipboard.setString("Hi");
+          setClipper(clipStr);
+          closeModal("copied");
         } catch (err) {
           console.log("Nope");
         }
-        closeModal("copied");
         break;
       case "share":
         await Share.share({ message });
@@ -80,16 +81,20 @@ const InviteWeebs = ({ closeModal }) => {
           activeOpacity={0.85}
           style={styles.invitesBtns}
         >
-          <Ionicons name="copy-outline" size={70} color={colors.medium} />
-          <AppText bold>Get My Link</AppText>
+          <Ionicons name="copy-outline" size={40} color={colors.medium} />
+          <AppText bold style={{ marginTop: 10 }}>
+            Get My Link
+          </AppText>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleInvites("share")}
           activeOpacity={0.85}
           style={styles.invitesBtns}
         >
-          <Ionicons name="share-outline" size={70} color={colors.medium} />
-          <AppText bold>Share Link</AppText>
+          <Ionicons name="share-outline" size={40} color={colors.medium} />
+          <AppText bold style={{ marginTop: 10 }}>
+            Share Link
+          </AppText>
         </TouchableOpacity>
       </View>
     </View>
@@ -446,6 +451,8 @@ const styles = StyleSheet.create({
   invitesBtns: {
     paddingHorizontal: 15,
     paddingVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   info: {
     flexDirection: "row",
