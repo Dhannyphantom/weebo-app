@@ -347,14 +347,18 @@ const subscribeChannel = (dispatch) => async (type, id, sc, cb) => {
   }
 };
 
-const getAChannel = (dispatch) => async (id, sc, cb) => {
+const getAChannel = (dispatch) => async (data, sc, cb) => {
+  const { id, page, limit } = data;
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/getChannel/${id}`, {
-      headers: {
-        "x-auth-token": token,
-      },
-    });
+    const res = await fetchApi.get(
+      `/getChannel/${id}?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
     sc && sc(res.data);
   } catch (err) {
     console.log(err);

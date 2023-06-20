@@ -10,6 +10,8 @@ import PopMessage from "../components/PopMessage";
 import colors from "../constants/colors";
 import getFormatTime from "../constants/getFormatTime";
 import { canChallengeInstance } from "../constants/helpers";
+import Separator from "../components/Separator";
+import EventRender from "../components/EventRender";
 
 const CharList = ({ name, icon, names, show, parentProps }) => {
   const { character, cardState } = parentProps;
@@ -101,7 +103,10 @@ const CharInfoScreen = ({
 }) => {
   const [popper, setPopper] = useState({ vis: false });
 
+  console.log(character.event);
+
   const {
+    updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
 
@@ -208,6 +213,23 @@ const CharInfoScreen = ({
         icon="account-multiple"
         id="c"
       />
+
+      {character?.event && (
+        <>
+          <Separator />
+          <AppText style={{ marginLeft: 18 }} size="large" bold>
+            EVENT
+          </AppText>
+          <Separator />
+          <EventRender
+            eventData={character.event}
+            isFollowing={cardState.selected}
+            userID={userInfo._id}
+            renderType="single"
+            updateMe={updateMe}
+          />
+        </>
+      )}
 
       <View style={styles.btnCont}>
         {isMine && !challenged && character?.verified ? (

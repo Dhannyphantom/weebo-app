@@ -33,6 +33,7 @@ import { launchGallery } from "../constants/helpers";
 import AlertModal from "../components/AlertModal";
 import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
+import { RenderLoadMore } from "./HomeScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -40,6 +41,7 @@ const boolsObj = {
   reloadLoader: false,
   imageLoading: false,
   loadedOnce: false,
+  loadMore: true,
 };
 
 const deletePrompt = {
@@ -88,15 +90,15 @@ const ChannelPostScreen = ({ route, navigation }) => {
   const [prompt, setPrompt] = useState(deletePrompt);
   const [popModal, setPopModal] = useState({ topper: false, modal: false });
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState({});
 
   const routeId = route.params.id;
   let isSubscribed, isMine, sColor;
   const { getAChannel, deleteChannel, updateChannel, subscribeChannel } =
     useContext(CharContext);
   const {
-    state: { userInfo },
     updateMe,
+    state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
 
@@ -336,21 +338,32 @@ const ChannelPostScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleGetChannel = (cb) => {
+  const handleGetChannel = (cb, page) => {
     getAChannel(
-      routeId,
+      { id: routeId, page: page ?? 1, limit: 15 },
       (data) => {
+        // return console.log("CHANNEL DATA FETCHED:: ", data);
         setPage(data.channelData);
-        setPosts(data.posts);
+        setPosts({ ...data.posts, event: data.event });
         setBools({ ...bools, loadedOnce: true });
         // console.log(data.posts);
         cb && cb();
       },
       (err) => {
-        console.log(err);
+        // console.log(err);
         setBools({ ...bools, loadedOnce: true });
       }
     );
+  };
+
+  const handleEndReached = (cb) => {
+    if (posts.hasOwnProperty("next")) {
+      handleGetChannel(cb, posts.next.page);
+    } else {
+      if (bools.loadMore) {
+        setBools({ ...bools, loadMore: false });
+      }
+    }
   };
 
   const handleStatusVisibility = (bool) => {
@@ -481,28 +494,32 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
 
   const renderPageLikeSo = ({ item, index }) => {
-    const isEvent = item.hasOwnProperty("challengersNum");
-
-    if ((index + 1) % ADS_INTERVAL === 0) {
+    if (index === 0) {
       return (
         <>
-          {isEvent ? (
-            <>
-              <EventRender />
-              <BannerAds />
-            </>
-          ) : (
-            <View style={{ bottom: 45 }}>
-              <BannerAds />
-              <FeedRender item={item} user={userInfo._id} />
-            </View>
-          )}
+          <View style={{ bottom: 45 }}>
+            {posts.event && (
+              <EventRender
+                eventData={posts.event}
+                isFollowing={isSubscribed}
+                userID={userInfo._id}
+                renderType="single"
+                updateMe={updateMe}
+              />
+            )}
+            <FeedRender item={item} user={userInfo._id} />
+          </View>
         </>
       );
+    } else if ((index + 1) % ADS_INTERVAL === 0) {
+      return (
+        <View style={{ bottom: 45 }}>
+          <BannerAds />
+          <FeedRender item={item} user={userInfo._id} />
+        </View>
+      );
     } else {
-      return isEvent ? (
-        <EventRender />
-      ) : (
+      return (
         <View style={{ bottom: 45 }}>
           <FeedRender item={item} user={userInfo._id} />
         </View>
@@ -531,6 +548,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
       ]}
     >
       <StatusBar style={theme.bar} />
+
       {page._id ? (
         <>
           <Animated.FlatList
@@ -549,13 +567,20 @@ const ChannelPostScreen = ({ route, navigation }) => {
                 />
               </>
             }
-            data={posts}
+            data={posts.results}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true }
             )}
             contentContainerStyle={{ paddingBottom: height * 0.1 }}
+            ListFooterComponent={() => (
+              <RenderLoadMore
+                hasNext={posts.hasOwnProperty("next")}
+                loader={bools.loadMore}
+              />
+            )}
             overScrollMode="never"
+            onEndReached={handleEndReached}
             refreshControl={
               <RefreshControl
                 progressBackgroundColor={theme.extralight}

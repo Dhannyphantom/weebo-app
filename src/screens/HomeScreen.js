@@ -66,6 +66,29 @@ const boolsObj = {
   showStatus: false,
 };
 
+export const RenderLoadMore = ({ hasNext, loader }) => {
+  if (loader && hasNext) {
+    return (
+      <View>
+        <ActivityIndicator
+          visible={loader}
+          type="spin"
+          size={0.2}
+          transparent
+        />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.noContent}>
+        <AppText bold size="larger" style={styles.noContentText}>
+          No more feeds
+        </AppText>
+      </View>
+    );
+  }
+};
+
 const HomeScreen = ({ navigation, route }) => {
   const {
     getHomeFeeds,
@@ -258,29 +281,6 @@ const HomeScreen = ({ navigation, route }) => {
       });
   };
 
-  const RenderLoadMore = () => {
-    if (loadMore && feeds.hasOwnProperty("next")) {
-      return (
-        <View>
-          <ActivityIndicator
-            visible={loadMore}
-            type="spin"
-            size={0.2}
-            transparent
-          />
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.noContent}>
-          <AppText bold size="larger" style={styles.noContentText}>
-            No more feeds
-          </AppText>
-        </View>
-      );
-    }
-  };
-
   const renderActions = ({ item, index }) => {
     const handleNav = () => {
       if (item.nav === "modal") {
@@ -394,7 +394,12 @@ const HomeScreen = ({ navigation, route }) => {
                 ListHeaderComponent={RenderPageHeader}
                 keyboardShouldPersistTaps="handled"
                 renderToHardwareTextureAndroid
-                ListFooterComponent={RenderLoadMore}
+                ListFooterComponent={() => (
+                  <RenderLoadMore
+                    loader={loadMore}
+                    hasNext={feeds.hasOwnProperty("next")}
+                  />
+                )}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: height * 0.1 }}
                 refreshControl={

@@ -615,22 +615,6 @@ const CharacterScreen = ({ route, navigation }) => {
               overScrollMode="never"
               renderItem={renderPage}
             />
-            {character?.event && (
-              <>
-                <Separator />
-                <AppText style={{ marginLeft: 18 }} size="large" bold>
-                  EVENT
-                </AppText>
-                <Separator />
-                <EventRender
-                  eventData={character.event}
-                  isFollowing={cardState.selected}
-                  userID={userInfo._id}
-                  renderType="single"
-                  updateMe={updateMe}
-                />
-              </>
-            )}
           </View>
         ) : (
           <View style={{ flex: 1 }}>

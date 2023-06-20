@@ -180,12 +180,12 @@ const AlertScreen = ({ navigation }) => {
       },
       async (resData) => {
         // return console.log("Fetched Data:: ", resData);
-        setAlertApi(resData[0].notifications);
+        setAlertApi(resData[0]?.notifications ?? []);
         setLoadedOnce(true);
         type === "refresh" && setRefreshing(false);
         await AsyncStorage.setItem(
           "notifications",
-          JSON.stringify(resData[0].notifications)
+          JSON.stringify(resData[0]?.notifications ?? [])
         );
       },
       (err) => {
