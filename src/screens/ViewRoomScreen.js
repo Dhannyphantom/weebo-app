@@ -16,6 +16,7 @@ import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import uuid from "react-native-uuid";
+// import { getColors } from 'react-native-image-colors'
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as ChallContext } from "../config/ChallContext";
@@ -136,7 +137,7 @@ const RenderBackDrops = ({ item, index, scrollX }) => {
         removeClippedSubviews={true}
         style={{
           position: "absolute",
-          transform: [{ translateX: scrollX }],
+          transform: [{ translateX: Animated.add(scrollX, index) }],
           height,
           overflow: "hidden",
         }}
@@ -211,6 +212,42 @@ const BackDrop = ({ myCharacters, scrollX }) => {
   );
 };
 
+const Dropper = ({ data, scrollX, activeSlide }) => {
+  // console.log(data[1].room_cover);
+  return (
+    <>
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          width,
+          height: BACKDROP_HEIGHT,
+          backgroundColor: "red",
+        }}
+      >
+        {/* {data?.map((item) => {
+        if (!item._id.includes("spacer")) {
+          return (
+            <View key={uuid.v4()}>
+              <ImageBackground
+                source={item.room_cover}
+                style={{ width: 100, height: 100 }}
+              />
+            </View>
+          );
+        }
+      })} */}
+        {/* <FlatList
+        data={data}
+        renderItem={({ item }) => {
+        }}
+      /> */}
+        <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
+      </View>
+    </>
+  );
+};
+
 const ViewRoomScreen = ({ navigation, route }) => {
   const { roomCharacters, getCharacters, instanceUpdater, sendInvite } =
     useContext(CharContext);
@@ -237,11 +274,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [popper, setPopper] = useState({ vis: false });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(1);
 
   const params = route.params;
   // params = { instance}
   const scrollX = useRef(new Animated.Value(0)).current;
-  const backDropper = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);
   let showInviteIcon = false;
@@ -845,7 +882,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent />
-      <BackDrop myCharacters={pageData.characters} scrollX={backDropper} />
+      {/* <BackDrop myCharacters={pageData.characters} scrollX={backDropper} /> */}
+      <Dropper
+        data={pageData?.characters}
+        scrollX={scrollX}
+        activeSlide={activeSlide}
+      />
 
       <Animated.FlatList
         data={pageData.characters}
@@ -853,13 +895,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
         scrollEventThrottle={16}
         snapToAlignment="start"
         snapToInterval={ITEM_SIZE}
-        onMomentumScrollEnd={() =>
-          Animated.timing(backDropper, {
-            toValue: 200,
-            delay: 1000,
-            useNativeDriver: true,
-          }).start()
-        }
+        onMomentumScrollEnd={({ nativeEvent }) => {
+          const xRad =
+            Math.round(nativeEvent.contentOffset.x / (ITEM_SIZE + SPACING)) + 1;
+          setActiveSlide(xRad);
+        }}
         refreshing={refreshing}
         onRefresh={() => fetchRoomCharacters("refresh")}
         decelerationRate={0}

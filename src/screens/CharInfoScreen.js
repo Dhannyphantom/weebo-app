@@ -103,8 +103,6 @@ const CharInfoScreen = ({
 }) => {
   const [popper, setPopper] = useState({ vis: false });
 
-  console.log(character.event);
-
   const {
     updateMe,
     state: { userInfo },

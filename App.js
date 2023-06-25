@@ -60,8 +60,8 @@ export default function App() {
   return (
     <>
       <View onLayout={onLayoutRootView} />
-      <Main />
-      {/* <Tester /> */}
+      {/* <Main /> */}
+      <Tester />
     </>
   );
 }

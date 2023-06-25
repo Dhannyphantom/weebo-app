@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
   Dimensions,
   FlatList,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -32,6 +33,7 @@ import InstanceChallenger from "../components/InstanceChallenger";
 import { launchGallery } from "../constants/helpers";
 import Separator from "../components/Separator";
 import EventRender from "../components/EventRender";
+import StickyHeader from "../components/StickyHeader";
 
 const { width, height } = Dimensions.get("window");
 
@@ -59,6 +61,7 @@ const CharacterScreen = ({ route, navigation }) => {
 
   const [character, setCharacter] = useState({ id: characterID });
   const [errMsg, setErrMsg] = useState(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const charID = character?._id;
   const userID = userInfo._id;
@@ -604,17 +607,22 @@ const CharacterScreen = ({ route, navigation }) => {
       <View style={styles.flatPost}>
         {!isLoading.loader ? (
           <View>
-            <FlatList
+            <Animated.FlatList
               data={["OTAKU"]}
               keyExtractor={(item, index) => item + index}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
+              onScroll={Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: true }
+              )}
               onRefresh={handleScreenRefresh}
               contentContainerStyle={{ paddingBottom: height * 0.05 }}
               overScrollMode="never"
               renderItem={renderPage}
             />
+            <StickyHeader scrollY={scrollY} title={character.name} />
           </View>
         ) : (
           <View style={{ flex: 1 }}>

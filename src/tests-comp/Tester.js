@@ -1,35 +1,29 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import AppButton from "../components/AppButton";
-import TobiGuide from "../components/TobiGuide";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import AppText from "../components/AppText";
+import { getColors } from "react-native-image-colors";
 
-const stateObj = [
-  {
-    icon: "account-check",
-    text: "Earn 2 Weebo Points (WP) by clicking this icon to VERIFY this instance",
-  },
-  {
-    icon: "trophy-outline",
-    text: "Challenge instance with cool RELATED media content or identifying invalid information",
-  },
-  {
-    icon: "advertisements",
-    text: "App contains ads. But none will disrupt the flow of your experience",
-  },
-];
+const imgUrl = require("../../assets/welcome.jpg");
 
 export default function Tester() {
-  const [guide, setGuide] = useState({ vis: false, close: false });
+  const [colors, setColors] = useState([]);
+
+  useEffect(() => {
+    getColors(imgUrl, {
+      fallback: "#228B22",
+      cache: true,
+      key: url,
+    }).then(setColors);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <TobiGuide data={guide} setData={setGuide} stateObj={stateObj} />
-      <AppButton
-        title="Toggle"
-        bare
-        onPress={() => {
-          setGuide({ ...guide, vis: true });
-        }}
-      />
+      <AppText> Hello world</AppText>
+      <Image source={imgUrl} style={{ width: 200, height: 450 }} />
+      <AppText size="xlarge" bold>
+        {" "}
+        {JSON.stringify(colors, null, 5)}{" "}
+      </AppText>
     </View>
   );
 }

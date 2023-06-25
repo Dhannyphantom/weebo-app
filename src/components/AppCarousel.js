@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import React from "react";
 import { View, StyleSheet, FlatList, Animated, Dimensions } from "react-native";
-import AppText from "./AppText";
 import FeedImage from "./FeedImage";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 const SLIDER_WIDTH = width;
 const SLIDER_CONTAINER_WIDTH = width * 0.9;
 const SLIDER_MARGIN = width * 0.05;

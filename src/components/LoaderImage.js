@@ -37,7 +37,7 @@ const LoaderImage = ({
       }}
     >
       <Image
-        source={{ uri: image.thumb }}
+        source={{ uri: image?.thumb }}
         {...otherProps}
         style={{
           ...styles.image,
