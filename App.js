@@ -6,7 +6,7 @@ import * as MediaLibrary from "expo-media-library";
 import Main from "./src/Main";
 import { View } from "react-native";
 import mobileAds from "react-native-google-mobile-ads";
-// import Tester from "./src/tests-comp/Tester";
+import Tester from "./src/tests-comp/Tester";
 
 SplashScreen.preventAutoHideAsync();
 

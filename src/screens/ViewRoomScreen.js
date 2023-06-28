@@ -15,6 +15,7 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import uuid from "react-native-uuid";
 // import { getColors } from 'react-native-image-colors'
 
@@ -212,39 +213,22 @@ const BackDrop = ({ myCharacters, scrollX }) => {
   );
 };
 
-const Dropper = ({ data, scrollX, activeSlide }) => {
-  // console.log(data[1].room_cover);
+const Dropper = ({ data = [], scrollX, activeSlide }) => {
+  const sliderNum = activeSlide === 2 ? 1 : activeSlide;
+
   return (
-    <>
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          width,
-          height: BACKDROP_HEIGHT,
-          backgroundColor: "red",
-        }}
-      >
-        {/* {data?.map((item) => {
-        if (!item._id.includes("spacer")) {
-          return (
-            <View key={uuid.v4()}>
-              <ImageBackground
-                source={item.room_cover}
-                style={{ width: 100, height: 100 }}
-              />
-            </View>
-          );
-        }
-      })} */}
-        {/* <FlatList
-        data={data}
-        renderItem={({ item }) => {
-        }}
-      /> */}
-        <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
-      </View>
-    </>
+    <View style={styles.dropper}>
+      <BlurView intensity={100} style={{ flex: 1 }} tint="dark">
+        {data && data[sliderNum] && (
+          <LinearGradient
+            colors={data[sliderNum]?.room_cover?.slice(0, 3)}
+            locations={[0.2, 0.85, 1]}
+            style={styles.dropGradient}
+          />
+        )}
+      </BlurView>
+      <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
+    </View>
   );
 };
 
@@ -740,8 +724,28 @@ const ViewRoomScreen = ({ navigation, route }) => {
             style={{
               textTransform: "capitalize",
               marginTop: SPACING,
+              color: colors.primary,
             }}
-            size="large"
+            bold
+          >
+            {item.show.name_j ?? item.show.name_e}
+          </AppText>
+          <AppText
+            style={{
+              textTransform: "capitalize",
+              marginTop: SPACING,
+              color: colors.black,
+            }}
+            bold
+          >
+            @{item.manager.username}
+          </AppText>
+          <AppText
+            style={{
+              textTransform: "capitalize",
+              marginTop: SPACING,
+            }}
+            bold
           >
             {item.followers?.length} followers
           </AppText>
@@ -1069,6 +1073,18 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  dropper: {
+    position: "absolute",
+    top: 0,
+    width,
+    height,
+  },
+  dropGradient: {
+    width,
+    height,
+    position: "absolute",
+    // bottom: 0,
   },
   error: {
     textAlign: "center",

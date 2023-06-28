@@ -441,7 +441,7 @@ const CharacterScreen = ({ route, navigation }) => {
   };
 
   const handleCoverChange = async (type) => {
-    if (type === "room" && !character.verified) {
+    if (!character.verified) {
       return setPopper({
         type: "failed",
         vis: true,
@@ -459,23 +459,14 @@ const CharacterScreen = ({ route, navigation }) => {
         instanceID: character._id,
         media: true,
       };
-      if (type === "room") {
-        dataObj.action = "room_cover";
-      }
+
       instanceUpdater(
         dataObj,
         (resData) => {
-          if (type === "cover") {
-            const newData = { ...character };
-            newData.cover_photo = resData.cover_photo;
-            setCharacter(newData);
-          } else {
-            setPopper({
-              vis: true,
-              type: "success",
-              msg: "Rooom cover updated successfully",
-            });
-          }
+          const newData = { ...character };
+          newData.cover_photo = resData?.updater?.cover_photo;
+          setCharacter(newData);
+
           setIsCoverLoading(false);
           setOpenMedia(false);
         },
@@ -536,51 +527,39 @@ const CharacterScreen = ({ route, navigation }) => {
   const RenderInstanceMedia = ({ style }) => {
     return (
       <View style={[styles.instanceMedia, style]}>
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+            marginTop: width * 0.05,
+          }}
+        >
           <TouchableOpacity
             onPress={() => handleCoverChange("cover")}
             activeOpacity={0.8}
-            style={{ alignSelf: "center" }}
+            style={{ alignSelf: "center", alignItems: "center" }}
           >
             <Feather name="user" size={width * 0.1} color={colors.primary} />
             <AppText style={{ textAlign: "center" }} bold>
-              Cover
+              New Cover
             </AppText>
           </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-around",
-              marginTop: width * 0.05,
-            }}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{ alignSelf: "center", alignItems: "center" }}
+            onPress={handleUploadStaus}
           >
-            <TouchableOpacity activeOpacity={0.8} onPress={handleUploadStaus}>
-              <Ionicons
-                name="ellipse-outline"
-                size={width * 0.1}
-                color={colors.primary}
-              />
+            <Ionicons
+              name="ellipse-outline"
+              size={width * 0.1}
+              color={colors.primary}
+            />
 
-              <AppText style={{ textAlign: "center" }} bold>
-                Story
-              </AppText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleCoverChange("room")}
-              activeOpacity={0.8}
-            >
-              <Ionicons
-                name="images-outline"
-                size={width * 0.1}
-                color={colors.primary}
-              />
-
-              <AppText style={{ textAlign: "center" }} bold>
-                Room Cover
-              </AppText>
-            </TouchableOpacity>
-          </View>
+            <AppText style={{ textAlign: "center" }} bold>
+              Story
+            </AppText>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -766,7 +745,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: width * 0.03,
     justifyContent: "center",
-    paddingVertical: width * 0.04,
+    paddingBottom: width * 0.08,
+    paddingTop: width * 0.04,
   },
   icons: {
     flexDirection: "row",
