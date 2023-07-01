@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  FlatList,
   TouchableOpacity,
   Animated,
 } from "react-native";
@@ -31,8 +30,6 @@ import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
 import { launchGallery } from "../constants/helpers";
-import Separator from "../components/Separator";
-import EventRender from "../components/EventRender";
 import StickyHeader from "../components/StickyHeader";
 
 const { width, height } = Dimensions.get("window");
@@ -49,7 +46,6 @@ for (let i = 0; i < dayta.length; i++) {
 const CharacterScreen = ({ route, navigation }) => {
   const {
     state: { userInfo },
-    updateMe,
   } = useContext(AuthContext);
 
   const { followChar, getTheCharacter, instanceUpdater } =

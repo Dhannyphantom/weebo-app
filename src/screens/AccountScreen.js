@@ -292,12 +292,12 @@ const AccountScreen = ({ navigation, route }) => {
             <Separator h={1} />
             <View style={styles.info}>
               <Info
-                title="Characters"
-                count={item.charactersOwned.length}
+                title="Instances"
+                count={item.instance_count}
                 onPress={() =>
                   navigation.navigate("CharacterList", {
                     id: userInfo._id,
-                    type: "myCharacters",
+                    type: "instances",
                   })
                 }
               />
@@ -314,7 +314,7 @@ const AccountScreen = ({ navigation, route }) => {
 
               <Info
                 title="Followers"
-                count={item.followers.length}
+                count={item.followers}
                 onPress={() =>
                   navigation.navigate("Followers", { type: "isMine" })
                 }

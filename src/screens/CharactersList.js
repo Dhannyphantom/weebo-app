@@ -17,18 +17,21 @@ import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
 import colors from "../constants/colors";
 import AppText from "../components/AppText";
+import TabList from "../components/TabList";
+import Shows from "../components/Shows";
+import GroupCard from "../components/GroupCard";
 
 const { width, height } = Dimensions.get("window");
 
 const CARD_WIDTH = width * 0.47;
 
-const EmptyList = () => {
+const EmptyList = ({ tab = "characters" }) => {
   return (
     <View style={{ width, height: height * 0.9 }}>
       <ActivityIndicator
         visible
         type="isEmpty"
-        text="No characters found"
+        text={`No ${tab} found`}
         style={styles.activity}
         transparent
       />
@@ -38,15 +41,25 @@ const EmptyList = () => {
 
 const CharactersList = ({ route, navigation }) => {
   const { getUserData } = useContext(AuthContext);
-  const [myCharacters, setMyCharacters] = useState([]);
+  const [instances, setInstances] = useState({
+    characters: [],
+    shows: [],
+    groups: [],
+  });
   const [favorites, setFavorites] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const [tab, setTab] = useState({
+    characters: true,
+    shows: false,
+    groups: false,
+  });
 
   let selector;
   const type = route.params.type;
   const otherId = route.params.id;
+  const activeTab = Object.entries(tab).find(([key, val]) => val === true)[0];
   const HEADER_TITLE =
     type == "following"
       ? "Following"
@@ -67,36 +80,47 @@ const CharactersList = ({ route, navigation }) => {
     );
   };
 
+  const tabItems = [
+    {
+      tab: "characters",
+      name: `characters (${instances["characters"].length})`,
+    },
+    {
+      tab: "shows",
+      name: `shows (${instances["shows"].length})`,
+    },
+    {
+      tab: "groups",
+      name: `groups (${instances["groups"].length})`,
+    },
+  ];
+
   useEffect(() => {
     switch (type) {
       case "following":
         selector = "get_following+favorites";
         break;
-      case "myCharacters":
+      case "instances":
       case "otherCharacters":
-        selector = "get_characters";
+        selector = "get_instances";
         break;
     }
+
     getUserData({ id: otherId, type: selector }, (data) => {
-      data.favorites && setFavorites(data.favorites);
-      if (data.following) {
-        const followingChar = data.following;
-        const favoritesIds = data.favorites.map((obj) => obj._id);
-        const filterFollowing = followingChar.filter(
-          (obj) => !favoritesIds.includes(obj._id)
-        );
-        setMyCharacters(filterFollowing);
-      }
-      data.charactersOwned && setMyCharacters(data.charactersOwned);
+      // data.favorites && setFavorites(data.favorites);
+      // if (data.following) {
+      //   const followingChar = data.following;
+      //   const favoritesIds = data.favorites.map((obj) => obj._id);
+      //   const filterFollowing = followingChar.filter(
+      //     (obj) => !favoritesIds.includes(obj._id)
+      //   );
+      //   setInstances(filterFollowing);
+      // }
+      // data.charactersOwned && setInstances(data.charactersOwned);
+      setInstances(data);
       setIsLoading(false);
     });
   }, [selector, navigation]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
 
   useEffect(() => {
     if (showSearch) {
@@ -109,8 +133,9 @@ const CharactersList = ({ route, navigation }) => {
   ) : (
     <Screen style={styles.container}>
       <AppHeader title={HEADER_TITLE} RightComponent={RightComp} />
+      <TabList state={tab} setState={setTab} items={tabItems} />
       <FlatList
-        data={["OTAKU"]}
+        data={["WEEBO"]}
         contentContainerStyle={{ paddingBottom: height * 0.12 }}
         keyExtractor={(item) => item}
         renderItem={() => {
@@ -121,7 +146,7 @@ const CharactersList = ({ route, navigation }) => {
                   <SearchBar
                     searchBar={searchText}
                     ref={searchRef}
-                    placeholder="Search characters..."
+                    placeholder={`Search ${activeTab}...`}
                     setSearchBar={setSearchText}
                     style={styles.searchComp}
                   />
@@ -136,40 +161,50 @@ const CharactersList = ({ route, navigation }) => {
                     <Show noHeader data={favorites} searchResult />
                   </>
                 )}
-                {myCharacters[0] && (
-                  <View style={{ width }}>
-                    <AppText size="xlarge" style={styles.charHeaderTitle} bold>
-                      Characters
-                    </AppText>
-                  </View>
+
+                {activeTab === "shows" ? (
+                  <Shows data={instances.shows} searchResult series />
+                ) : (
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    numColumns={2}
+                    listKey="renderCharacters"
+                    ListEmptyComponent={() => <EmptyList tab={activeTab} />}
+                    data={instances[activeTab]}
+                    keyExtractor={(item, index) => (item + index).toString()}
+                    renderItem={({ item }) => {
+                      return (
+                        <View style={styles.charCont}>
+                          {activeTab === "characters" ? (
+                            <ChallengeCard
+                              large
+                              name={item.dpName}
+                              id={item._id}
+                              show={item?.show?.name_j ?? item?.show?.name_e}
+                              followers={item.followers}
+                              avatar={item.manager && item.manager.avatar}
+                              owner={item.manager}
+                              image={item.cover_photo}
+                              onPress={() =>
+                                navigation.navigate("Character", {
+                                  item: item._id,
+                                })
+                              }
+                            />
+                          ) : activeTab === "groups" ? (
+                            <GroupCard
+                              item={item}
+                              showName
+                              onPress={() =>
+                                navigation.navigate("Group", { item })
+                              }
+                            />
+                          ) : null}
+                        </View>
+                      );
+                    }}
+                  />
                 )}
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  numColumns={2}
-                  listKey="renderCharacters"
-                  ListEmptyComponent={EmptyList}
-                  data={myCharacters}
-                  keyExtractor={(item, index) => (item + index).toString()}
-                  renderItem={({ item }) => {
-                    return (
-                      <View style={styles.charCont}>
-                        <ChallengeCard
-                          large
-                          name={item.dpName}
-                          id={item._id}
-                          show={item?.show?.name_j ?? item?.show?.name_e}
-                          followers={item.followers}
-                          avatar={item.manager && item.manager.avatar}
-                          owner={item.manager}
-                          image={item.cover_photo}
-                          onPress={() =>
-                            navigation.navigate("Character", { item: item._id })
-                          }
-                        />
-                      </View>
-                    );
-                  }}
-                />
               </View>
             </View>
           );
@@ -218,12 +253,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   searchIconCont: {
-    width: 25,
-    height: 25,
-    marginHorizontal: 10,
-    marginBottom: 8,
     justifyContent: "center",
     alignItems: "center",
+    padding: 15,
   },
   subTitle: {
     top: 8,

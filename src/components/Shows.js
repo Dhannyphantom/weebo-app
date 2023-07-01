@@ -18,6 +18,7 @@ const Shows = ({
   series,
   show,
 }) => {
+  if (!data[0]) return null;
   const navigation = useNavigation();
 
   const header = series ? "Show" : "Character";

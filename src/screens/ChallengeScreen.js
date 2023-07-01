@@ -127,8 +127,8 @@ const ChallengeScreen = ({ navigation }) => {
         // JUST SEND THE ITEM OBJECT TO THE COMPONENT
         <View style={[styles.challengeItem, { backgroundColor: theme.white }]}>
           <Challenge
-            image1={item?.challengerMedia}
-            image2={item?.ownerMedia}
+            image2={item?.challengerMedia}
+            image1={item?.ownerMedia}
             cardProps={{
               id,
               image: coverImage,
@@ -157,12 +157,11 @@ const ChallengeScreen = ({ navigation }) => {
             avatar2={item.manager.avatar}
             challengeID={item._id}
             challengeType="two"
-            ownerInfo={item.challengerInfo}
-            challengerInfo={item.ownerInfo}
+            challengerInfo={item.challengerInfo}
+            ownerInfo={item.ownerInfo}
             type={item.type}
             clientID={userInfo._id}
           />
-          {/* <Separator h={2} m={10} /> */}
         </View>
       );
     }

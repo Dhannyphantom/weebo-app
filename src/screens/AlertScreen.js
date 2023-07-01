@@ -22,6 +22,7 @@ import { useNavigation } from "@react-navigation/native";
 import TobiGuide from "../components/TobiGuide";
 import { alertGuide } from "../constants/data_store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LoadMoreContent } from "../components/Comments";
 
 const { height } = Dimensions.get("window");
 
@@ -32,6 +33,7 @@ const PROMPT_DELETE_ALL = {
   btn: "Delete",
   type: "delete_all",
 };
+const NOTIFICATION_LENGTH = 20;
 
 const RenderAlerts = ({
   item,
@@ -52,19 +54,24 @@ const RenderAlerts = ({
   const handleReadNotification = (itemId, type) => {
     const notifyData = { notifyId: item._id, action: null };
     // read the notification;
-    const copyNoti = [...alertApi];
-    const findIndex = alertApi.findIndex((obj) => obj._id == itemId);
+    const copyNoti = { ...alertApi };
+    const findIndex = alertApi.results.findIndex((obj) => obj._id == itemId);
     if (type == "read") {
       notifyData.action = type;
-      if (!copyNoti[findIndex].read) {
-        copyNoti[findIndex] = { ...copyNoti[findIndex], read: true };
+      if (!copyNoti.results[findIndex].read) {
+        copyNoti.results[findIndex] = {
+          ...copyNoti.results[findIndex],
+          read: true,
+        };
         setAlertApi(copyNoti);
         updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
       }
     } else if (type === "delete") {
       notifyData.action = "delete";
-      setAlertApi(copyNoti.filter((obj) => obj._id != itemId));
-      if (!copyNoti[findIndex].read) {
+      const alertResults = copyNoti.results;
+      const deleted = alertResults.filter((obj) => obj._id != itemId);
+      setAlertApi({ ...copyNoti, results: deleted });
+      if (!copyNoti.results[findIndex].read) {
         updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
       }
     }
@@ -124,18 +131,18 @@ const AlertScreen = ({ navigation }) => {
     updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
-  const [alertApi, setAlertApi] = useState([]);
+  const [alertApi, setAlertApi] = useState({ results: [] });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [prompt, setPrompt] = useState({ visible: false });
   const [loadedOnce, setLoadedOnce] = useState(false);
-  const [bools, setBools] = useState({ shouldScroll: true });
+  const [bools, setBools] = useState({ shouldScroll: true, loadMore: true });
   const [guide, setGuide] = useState({ vis: false, close: false });
 
   const handleReadAll = () => {
     const notifyData = { notifyId: null, action: "read_all" };
-    const copyNoti = [...alertApi];
-    copyNoti.forEach((obj) => {
+    const copyNoti = { ...alertApi };
+    copyNoti.results.forEach((obj) => {
       obj.read = true;
     });
     updateMe({ data: 0, prop: "notifications" });
@@ -144,12 +151,12 @@ const AlertScreen = ({ navigation }) => {
     setAlertApi(copyNoti);
   };
 
-  const hasReadAll = alertApi.every((obj) => obj && obj.read);
+  const hasReadAll = alertApi?.results?.every((obj) => obj && obj.read);
   // const hasReadAll = false;
 
   const handleDeleteAll = () => {
     updateMe({ data: 0, prop: "notifications" });
-    setAlertApi([]);
+    setAlertApi({ results: [] });
     wipeNotifications(null, (errData) => console.log(errData));
   };
 
@@ -161,7 +168,6 @@ const AlertScreen = ({ navigation }) => {
     try {
       const syncedNoti = await AsyncStorage.getItem("notifications");
       if (syncedNoti) {
-        // console.log("NOtifications:: ", JSON.parse(syncedNoti));
         setAlertApi(JSON.parse(syncedNoti));
         setLoadedOnce(true);
       }
@@ -172,16 +178,30 @@ const AlertScreen = ({ navigation }) => {
 
   const fetchScreenData = (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
+    type === "loadMore" && setBools({ ...bools, loadMore: true });
 
     getUserData(
       {
         id: userInfo._id,
         type: "get_notifications",
+        pagination: {
+          page: type === "loadMore" ? alertApi?.next?.page : 1,
+          limit:
+            type === "loadMore" ? alertApi?.next?.limit : NOTIFICATION_LENGTH,
+        },
       },
       async (resData) => {
         // return console.log("Fetched Data:: ", resData);
-        setAlertApi(resData[0]?.notifications ?? []);
+        if (type === "loadMore") {
+          setAlertApi({
+            ...resData,
+            results: alertApi.results.concat(resData.results),
+          });
+        } else {
+          setAlertApi(resData);
+        }
         setLoadedOnce(true);
+        setBools({ ...bools, loadMore: false });
         type === "refresh" && setRefreshing(false);
         await AsyncStorage.setItem(
           "notifications",
@@ -230,7 +250,7 @@ const AlertScreen = ({ navigation }) => {
                 <Feather name="check" color={colors.primary} size={20} />
               </TouchableOpacity>
             )}
-            {alertApi[0] && (
+            {alertApi?.results?.length > 0 && (
               <TouchableOpacity
                 onPress={() => setPrompt(PROMPT_DELETE_ALL)}
                 activeOpacity={0.6}
@@ -242,15 +262,25 @@ const AlertScreen = ({ navigation }) => {
           </View>
         )}
       />
-      {/* <StatusRender /> */}
-      {alertApi[0] ? (
+      {alertApi?.results?.length > 0 ? (
         <Spacer style={{ flex: 1, top: 10 }}>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={alertApi}
+            data={alertApi.results}
             scrollEnabled={bools.shouldScroll}
             keyExtractor={(item) => item._id}
             refreshing={refreshing}
+            ListFooterComponent={() => {
+              if (Boolean(alertApi?.next?.page)) {
+                return (
+                  <LoadMoreContent
+                    type="notifications"
+                    loading={bools.loadMore}
+                    onPress={() => fetchScreenData("loadMore")}
+                  />
+                );
+              }
+            }}
             onRefresh={fetchScreenData}
             renderItem={({ item }) => (
               <MemoizedAlerts

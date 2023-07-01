@@ -214,14 +214,12 @@ const BackDrop = ({ myCharacters, scrollX }) => {
 };
 
 const Dropper = ({ data = [], scrollX, activeSlide }) => {
-  const sliderNum = activeSlide === 2 ? 1 : activeSlide;
-
   return (
     <View style={styles.dropper}>
       <BlurView intensity={100} style={{ flex: 1 }} tint="dark">
-        {data && data[sliderNum] && (
+        {data && data[activeSlide] && (
           <LinearGradient
-            colors={data[sliderNum]?.room_cover?.slice(0, 3)}
+            colors={data[activeSlide]?.room_cover?.slice(0, 3)}
             locations={[0.2, 0.85, 1]}
             style={styles.dropGradient}
           />

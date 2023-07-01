@@ -322,15 +322,18 @@ const updateUserData = (dispatch) => async (data, sc, cb) => {
 
 const getUserData = (dispatch) => async (data, sc, cb) => {
   // HAVE CHANGED THE PARAMS FOR THIS FUNCTION SO UPDATE THIS ^^
-  const { id, type, query } = data;
+  const { id, type, query, pagination } = data;
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/userProfile/${id}/${type}?data=${query}`, {
-      headers: {
-        "x-auth-token": token,
-      },
-      timeout: 15000,
-    });
+    const res = await fetchApi.get(
+      `/userProfile/${id}/${type}?data=${query}&page=${pagination.page}&limit=${pagination.limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+        timeout: 15000,
+      }
+    );
     sc && sc(res.data);
   } catch (err) {
     cb &&

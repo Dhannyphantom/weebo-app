@@ -10,6 +10,7 @@ import proMale from "../../assets/arts/sasuke_1.png";
 import AccountBox from "./AccountBox";
 import ActivityIndicator from "./ActivityIndicator";
 import MediaModal from "./MediaModal";
+import ThemeContext from "../config/ThemeContext";
 
 const ProfilePic = ({
   source,
@@ -27,6 +28,8 @@ const ProfilePic = ({
 }) => {
   const [picModal, setPicModal] = useState(false);
   const [display, setDisplay] = useState({ vis: false });
+
+  const theme = useContext(ThemeContext);
   const {
     getUserData,
     tryLocalSignin,
@@ -51,7 +54,7 @@ const ProfilePic = ({
     avatarSource = userInfo.gender === "male" ? proMale : proFemale;
   }
 
-  // console.log("Image source:: ", source);
+  // console.log("Image source:: ", typeof source);
 
   return (
     <>
@@ -68,19 +71,21 @@ const ProfilePic = ({
           overflow: "hidden",
         }}
       >
-        <Image
-          source={avatarSource}
-          resizeMethod="resize"
-          resizeMode="contain"
-          style={[
-            {
-              ...styles.image,
-              position: "absolute",
-              opacity: !source ? 1 : 0,
-            },
-            style,
-          ]}
-        />
+        {typeof source !== "number" && (
+          <Image
+            source={avatarSource}
+            resizeMethod="resize"
+            resizeMode="contain"
+            style={[
+              {
+                ...styles.image,
+                position: "absolute",
+                backgroundColor: theme.extralight,
+              },
+              style,
+            ]}
+          />
+        )}
         <Image
           source={source}
           resizeMethod="resize"

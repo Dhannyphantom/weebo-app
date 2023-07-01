@@ -297,7 +297,7 @@ const RenderEmptyComments = () => {
   );
 };
 
-const LoadMoreContent = ({ type = "replies", onPress, loading }) => {
+export const LoadMoreContent = ({ type = "replies", onPress, loading }) => {
   const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
