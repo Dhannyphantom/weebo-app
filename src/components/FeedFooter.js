@@ -13,7 +13,7 @@ import AlertModal from "./AlertModal";
 import { getFeedNumber } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
-export const COMMENT_COUNT = 15;
+export const COMMENT_COUNT = 20;
 
 const FeedFooter = ({
   activeSlide,
@@ -144,7 +144,7 @@ const FeedFooter = ({
               color={post.liked ? colors.heart : colors.primary}
             />
             <AppText style={styles.counters}>
-              {post.likes < 0 ? "0" : getFeedNumber(post.likes)}
+              {getFeedNumber(post.likes)}
             </AppText>
           </TouchableOpacity>
           <TouchableOpacity

@@ -342,7 +342,7 @@ const SelectGender = ({ gender, setGender, useFormiks, noFormik = false }) => {
   );
 };
 
-const RenderAuthModal = ({ data, handleAuthSignIn }) => {
+const RenderAuthModal = ({ data, setter, handleAuthSignIn }) => {
   const [gender, setGender] = useState(null);
   const [username, setUsername] = useState(data?.username ?? "");
   const [email, setEmail] = useState(data?.email ?? "");
@@ -352,6 +352,16 @@ const RenderAuthModal = ({ data, handleAuthSignIn }) => {
   const theme = useContext(ThemeContext);
 
   // console.log(data);
+
+  const revokeAccess = async () => {
+    setErrMsg(null);
+    try {
+      await GoogleSignin.revokeAccess();
+      setter(false);
+    } catch (err) {
+      setEmail("Error trying to clear saved data!");
+    }
+  };
 
   const handleSubmit = () => {
     setErrMsg(null);
@@ -385,25 +395,26 @@ const RenderAuthModal = ({ data, handleAuthSignIn }) => {
           setText={setUsername}
           placeholder={Boolean(username) ? username : "Enter your username"}
         />
-        {!data?.email && (
-          <>
-            <AppText bold size="large" style={styles.authFormTitle}>
-              Email:
-            </AppText>
-            <GrowInput
-              text={email}
-              setText={setEmail}
-              placeholder={Boolean(email) ? email : "Enter your email"}
-            />
-          </>
-        )}
-        {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
-        <AppButton
-          style={{ marginTop: 20, marginBottom: 10 }}
-          title="Submit"
-          onPress={handleSubmit}
-          bare
+        <AppText bold size="large" style={styles.authFormTitle}>
+          Email:
+        </AppText>
+        <GrowInput
+          text={email}
+          setText={setEmail}
+          placeholder={Boolean(email) ? email : "Enter your email"}
         />
+        {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+        <View style={styles.btns}>
+          <AppButton title="Submit" onPress={handleSubmit} bare />
+          <AppButton
+            title="Clear"
+            onPress={revokeAccess}
+            LIcon="cancel"
+            style={{ marginLeft: 8 }}
+            bareRed
+            bare
+          />
+        </View>
       </View>
       <ActivityIndicator visible={bools.loading} absolute wTransparent />
     </View>
@@ -434,7 +445,7 @@ const AppForm = ({
   const [gender, setGender] = useState("null");
   const [passModal, setPassModal] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
-  const [bools, setBools] = useState({ authModal: false });
+  const [bools, setBools] = useState({ authModal: false, closeModal: false });
   const [authData, setAuthData] = useState(null);
 
   const { authSignIn } = useContext(AuthContext);
@@ -488,7 +499,6 @@ const AppForm = ({
           const userInfo = await GoogleSignin.getCurrentUser();
           // console.log("Signed User", userInfo.user);
           handleAuthSignIn(userInfo.user);
-          // await GoogleSignin.revokeAccess();
         } else {
           const userInfo = await GoogleSignin.signIn();
           handleAuthSignIn(userInfo.user);
@@ -661,11 +671,15 @@ const AppForm = ({
               </View>
               <AppFadeIn
                 visible={bools.authModal}
-                setter={() => setBools({ authModal: false })}
+                closeModal={bools.closeModal}
+                setter={() => setBools({ ...bools, authModal: false })}
                 RenderComponent={() => (
                   <RenderAuthModal
                     data={authData}
                     handleAuthSignIn={handleAuthSignIn}
+                    setter={(val) =>
+                      setBools({ ...bools, closeModal: { close: true } })
+                    }
                   />
                 )}
               />
@@ -781,6 +795,13 @@ const styles = StyleSheet.create({
     height: "115%",
   },
   btn: { alignSelf: "center", marginTop: 15, marginBottom: 20 },
+  btns: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    marginBottom: 10,
+  },
   container: {
     flex: 1,
     alignItems: "center",

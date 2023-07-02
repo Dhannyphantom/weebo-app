@@ -777,6 +777,13 @@ export const settingsData = [
         default: "null",
         options: "account",
       },
+      {
+        id: uuid.v4(),
+        name: "Support Weebo!",
+        type: "action",
+        default: "null",
+        options: "thumb-up",
+      },
     ],
   },
 ];
@@ -928,3 +935,7 @@ export const app_policy = [
 ];
 
 export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
+
+export const buymeacoffeeLink = "https://www.buymeacoffee.com/weeboapp";
+
+export const paydayLink = "https://usepayday.me/danielolojo455";

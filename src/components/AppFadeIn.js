@@ -46,7 +46,10 @@ const AppFadeIn = ({
       visible={visible}
       statusBarTranslucent
       transparent
-      onRequestClose={handleCloseModal}
+      onRequestClose={() => {
+        if (disableTouchModal) return;
+        handleCloseModal();
+      }}
       animationType="none"
     >
       <TouchableOpacity

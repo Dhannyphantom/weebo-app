@@ -7,7 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,6 +19,7 @@ import {
 } from "react-native-google-mobile-ads";
 import * as Device from "expo-device";
 import { Context as AuthContext } from "../config/AuthContext";
+import * as Linking from "expo-linking";
 
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
@@ -27,12 +28,21 @@ import colors from "../constants/colors";
 import PopDropDown from "../components/PopDropDown";
 import AlertModal from "../components/AlertModal";
 import ThemeContext from "../config/ThemeContext";
-import { ads_keywords, settingsData } from "../constants/data_store";
+import {
+  ads_keywords,
+  buymeacoffeeLink,
+  paydayLink,
+  settingsData,
+} from "../constants/data_store";
 import { ADS_ID } from "./ChallengePointScreen";
 import PopMessage from "../components/PopMessage";
 import AppFadeIn from "../components/AppFadeIn";
 import { app_policy } from "../constants/data_store";
 import AppButton from "../components/AppButton";
+
+//
+import buymeacoffeeImage from "../../assets/arts/bmac_button.png";
+import paydayLogo from "../../assets/arts/payday.webp";
 
 const { width, height } = Dimensions.get("window");
 
@@ -97,6 +107,72 @@ const RenderTerms = ({ setter }) => {
   );
 };
 
+const RenderSupportWeebo = ({ setter }) => {
+  const theme = useContext(ThemeContext);
+
+  const onLinkPress = (link) => {
+    Linking.openURL(link);
+    setter && setter();
+  };
+
+  return (
+    <View
+      style={{
+        width: width * 0.8,
+        backgroundColor: theme.background,
+        borderRadius: 25,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: 30,
+      }}
+    >
+      <AppText
+        size="xlarge"
+        style={{ marginTop: 15, textTransform: "uppercase", marginBottom: 15 }}
+        bold
+      >
+        Support Weebo!
+      </AppText>
+      <AppText
+        style={{
+          textAlign: "center",
+          width: "80%",
+          marginBottom: 30,
+        }}
+      >
+        Please support the weebo team for a better app experience and the
+        release of the iOS version
+      </AppText>
+      <TouchableOpacity
+        onPress={() => onLinkPress(buymeacoffeeLink)}
+        activeOpacity={1}
+      >
+        <Image
+          source={buymeacoffeeImage}
+          resizeMode="contain"
+          style={{ width: 300, height: 60 }}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => onLinkPress(paydayLink)}
+        style={{
+          backgroundColor: "#14171C",
+          paddingVertical: 20,
+          borderRadius: 15,
+          marginTop: 8,
+        }}
+      >
+        <Image
+          source={paydayLogo}
+          resizeMode="contain"
+          style={{ width: 300, height: 25 }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const SettingDropDown = ({ data, section, handlers }) => {
   const [popData, setPopData] = useState({
     vis: false,
@@ -105,6 +181,10 @@ const SettingDropDown = ({ data, section, handlers }) => {
   });
   const [alertModal, setAlertModal] = useState(alertData);
   const [termsModal, setTermsModal] = useState({ vis: false, close: false });
+  const [supportModal, setSupportModal] = useState({
+    vis: false,
+    close: false,
+  });
 
   const {
     state: { userInfo },
@@ -126,6 +206,10 @@ const SettingDropDown = ({ data, section, handlers }) => {
           case "account":
             // console.log("Account", data);
             setTermsModal({ vis: true, close: false });
+            break;
+          case "thumb-up":
+            // console.log("Account", data);
+            setSupportModal({ vis: true, close: false });
             break;
         }
         break;
@@ -188,7 +272,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
 
   return (
     <TouchableOpacity
-      activeOpactity={0.98}
+      activeOpacity={0.98}
       onPress={handleAction}
       style={{ padding: 12 }}
     >
@@ -229,6 +313,17 @@ const SettingDropDown = ({ data, section, handlers }) => {
         )}
         disableCloseModal
         closeModal={termsModal}
+        disableTouchModal
+      />
+      <AppFadeIn
+        visible={supportModal.vis}
+        setter={() => setSupportModal({ vis: false, close: false })}
+        RenderComponent={() => (
+          <RenderSupportWeebo
+            setter={() => setSupportModal({ ...supportModal, close: true })}
+          />
+        )}
+        closeModal={supportModal}
         disableTouchModal
       />
       <AlertModal
