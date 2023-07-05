@@ -35,12 +35,20 @@ Yup.addMethod(Yup.string, "strongPassword", function () {
 });
 
 const editValidationSchema = Yup.object().shape({
-  username: Yup.string().label("Username"),
+  username: Yup.string()
+    .oneWord()
+    .required()
+    .label("Email or username")
+    .min(4)
+    .max(20),
   name: Yup.string().label("First Name"),
   second_name: Yup.string().label("Last Name"),
   email: Yup.string().email().label("Email"),
   gender: Yup.string()
-    .matches(/male|female/i, "Gender should either be a male or female")
+    .matches(
+      /^male$|^female$|^others$/i,
+      "Gender should either be a male, female or others"
+    )
     .label("Gender"),
   country: Yup.string(),
   contact: Yup.number().optional(),
@@ -70,7 +78,12 @@ const changePassValidation = Yup.object().shape({
 });
 
 const validationSchemaLogin = Yup.object().shape({
-  username: Yup.string().oneWord().required().label("Email or username").min(4),
+  username: Yup.string()
+    .oneWord()
+    .required()
+    .label("Email or username")
+    .min(4)
+    .max(20),
   password: Yup.string().min(8).strongPassword().required().label("Password"),
 });
 
@@ -107,13 +120,16 @@ const resetPassValidation = Yup.object().shape({
 });
 
 const validationSchemaRegister = Yup.object().shape({
-  username: Yup.string().oneWord().required().min(4).max(15).label("Username"),
+  username: Yup.string().oneWord().required().min(4).max(20).label("Username"),
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().min(8).strongPassword().required().label("Password"),
   gender: Yup.string()
     .min(4)
     .required()
-    .matches(/^male$|^female$/i, "Gender should either be a male or female")
+    .matches(
+      /^male$|^female$|^others$/i,
+      "Gender should either be a male, female or others"
+    )
     .label("Gender"),
 });
 
@@ -154,7 +170,10 @@ const characterValidationSchema = Yup.object().shape({
     .trim()
     .required()
     .min(3)
-    .matches(/male|female/i, "Gender should either be a male or female")
+    .matches(
+      /^male$|^female$|^others$/i,
+      "Gender should either be a male, female or others"
+    )
     .label("Gender"),
   sisters: Yup.array()
     .label("Sister")
@@ -284,12 +303,38 @@ const passwordInitials = {
   confirmPass: "",
 };
 
+const authInitials = {
+  username: "",
+  email: "",
+  gender: "",
+};
+
+const validateAuthInitials = Yup.object().shape({
+  username: Yup.string()
+    .oneWord()
+    .required()
+    .label("Email or username")
+    .min(4)
+    .max(20),
+  gender: Yup.string()
+    .min(4)
+    .required()
+    .matches(
+      /^male$|^female$|^others$/i,
+      "Gender should either be a male, female or others"
+    )
+    .label("Gender"),
+  email: Yup.string().required().email().label("Email"),
+});
+
 export default {
   showValidationschema,
   characterValidationSchema,
   validationSchemaLogin,
   passwordInitials,
   validationSchemaRegister,
+  validateAuthInitials,
+  authInitials,
   forgotPassRecoverInitials,
   forgotPassResetInitials,
   recoverPassValidation,

@@ -6,6 +6,7 @@ import baseURL from "../api/baseURL";
 import followApi from "../api/followApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 let socket = io(baseURL.uri);
 
@@ -222,6 +223,11 @@ const tryLocalSignin = (dispatch) => async (callback, errCb) => {
 
 const signOut = (dispatch) => async () => {
   await AsyncStorage.removeItem("token");
+  try {
+    await GoogleSignin.revokeAccess();
+  } catch (err) {
+    //
+  }
   dispatch({ type: "signout" });
 };
 

@@ -23,7 +23,6 @@ const Input = ({
   ...otherProps
 }) => {
   const [eyeState, setEyestate] = useState(false);
-  const [iconState, setIconState] = useState(false);
 
   const theme = useContext(ThemeContext);
 
@@ -35,18 +34,12 @@ const Input = ({
   return (
     <Cards elevation={elevation} style={{ ...styles.inputBox }}>
       <View style={styles.icon}>
-        <MaterialCommunityIcons
-          name={icon}
-          size={15}
-          color={iconState ? colors.primary : colors.medium}
-        />
+        <MaterialCommunityIcons name={icon} size={15} color={colors.primary} />
       </View>
       <TextInput
         placeholder={placeholder}
         placeholderTextColor={colors.medium}
         style={[styles.input, { color: theme.color }]}
-        onFocus={() => setIconState(true)}
-        onBlur={() => setIconState(false)}
         {...otherProps}
       />
       {pass && eyeState && (

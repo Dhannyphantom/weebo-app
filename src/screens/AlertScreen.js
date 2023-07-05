@@ -301,7 +301,11 @@ const AlertScreen = ({ navigation }) => {
       ) : (
         <ActivityIndicator
           visible={true}
-          type={loadedOnce ? "isEmpty" : "spin"}
+          type={
+            loadedOnce && alertApi?.results && !alertApi.results[0]
+              ? "isEmpty"
+              : "spin"
+          }
           text="No new notifications"
         />
       )}

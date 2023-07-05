@@ -49,6 +49,8 @@ const {
   resetPassValidation,
   forgotPassResetInitials,
   forgotPassRecoverInitials,
+  authInitials,
+  validateAuthInitials,
 } = schemas;
 
 GoogleSignin.configure({
@@ -344,8 +346,6 @@ const SelectGender = ({ gender, setGender, useFormiks, noFormik = false }) => {
 
 const RenderAuthModal = ({ data, setter, handleAuthSignIn }) => {
   const [gender, setGender] = useState(null);
-  const [username, setUsername] = useState(data?.username ?? "");
-  const [email, setEmail] = useState(data?.email ?? "");
   const [errMsg, setErrMsg] = useState(null);
   const [bools, setBools] = useState({ loading: false });
 
@@ -355,69 +355,85 @@ const RenderAuthModal = ({ data, setter, handleAuthSignIn }) => {
 
   const revokeAccess = async () => {
     setErrMsg(null);
+    setBools({ loading: true });
     try {
       await GoogleSignin.revokeAccess();
       setter(false);
+      setBools({ loading: false });
     } catch (err) {
-      setEmail("Error trying to clear saved data!");
+      setErrMsg("Error trying to clear saved data!");
+      setBools({ loading: false });
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (formValues) => {
     setErrMsg(null);
     if (gender === null) {
       return setErrMsg("Please select gender");
-    } else if (!Boolean(email)) {
-      return setErrMsg("Please enter your email");
-    } else if (!Boolean(username)) {
-      return setErrMsg("Please enter your username");
     }
-    const sendObj = {
-      ...data,
-      email,
-      gender,
-    };
-    handleAuthSignIn(sendObj, (bool) => setBools({ ...bools, loading: bool }));
+    setBools({ ...bools, loading: true });
+
+    handleAuthSignIn(
+      {
+        ...data,
+        ...formValues,
+        resent: true,
+        emailChanged: data.email !== formValues.email,
+      },
+      (bool) => setBools({ ...bools, loading: bool })
+    );
   };
 
   return (
-    <View style={[styles.authModal, { backgroundColor: theme.background }]}>
-      <AppText bold size="large" style={styles.modalText}>
-        Complete Profile
-      </AppText>
-      <View style={styles.form}>
-        <SelectGender gender={gender} noFormik setGender={setGender} />
-        <AppText bold size="large" style={styles.authFormTitle}>
-          Username:
-        </AppText>
-        <GrowInput
-          text={username}
-          setText={setUsername}
-          placeholder={Boolean(username) ? username : "Enter your username"}
-        />
-        <AppText bold size="large" style={styles.authFormTitle}>
-          Email:
-        </AppText>
-        <GrowInput
-          text={email}
-          setText={setEmail}
-          placeholder={Boolean(email) ? email : "Enter your email"}
-        />
-        {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
-        <View style={styles.btns}>
-          <AppButton title="Submit" onPress={handleSubmit} bare />
-          <AppButton
-            title="Clear"
-            onPress={revokeAccess}
-            LIcon="cancel"
-            style={{ marginLeft: 8 }}
-            bareRed
-            bare
-          />
+    <Formik
+      initialValues={{
+        ...authInitials,
+        username: data?.username ?? "",
+        email: data?.email ?? "",
+      }}
+      validationSchema={validateAuthInitials}
+      onSubmit={handleSubmit}
+    >
+      {({ errors, values, setFieldValue, touched }) => (
+        <View style={[styles.authModal, { backgroundColor: theme.background }]}>
+          <AppText bold size="large" style={styles.modalText}>
+            Complete Profile
+          </AppText>
+          <View style={styles.form}>
+            <SelectGender
+              gender={gender}
+              useFormiks={{ setFieldValue, touched, errors }}
+              setGender={setGender}
+            />
+            <AppText bold size="large" style={styles.authFormTitle}>
+              Username:
+            </AppText>
+            <GrowInput
+              formik
+              name="username"
+              placeholder="Enter your username"
+            />
+            <AppText bold size="large" style={styles.authFormTitle}>
+              Email:
+            </AppText>
+            <GrowInput formik name="email" placeholder="Enter your email" />
+            {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+            <View style={styles.btns}>
+              <SubmitButton title="Submit" bared />
+              <AppButton
+                title="Clear"
+                onPress={revokeAccess}
+                LIcon="cancel"
+                style={{ marginLeft: 8 }}
+                bareRed
+                bare
+              />
+            </View>
+          </View>
+          <ActivityIndicator visible={bools.loading} absolute wTransparent />
         </View>
-      </View>
-      <ActivityIndicator visible={bools.loading} absolute wTransparent />
-    </View>
+      )}
+    </Formik>
   );
 };
 
@@ -467,23 +483,34 @@ const AppForm = ({
       userID: user.id ?? user.userID,
       firstName: user.givenName ?? user.firstName ?? user.name,
       lastName: user.familyName ?? user.lastName ?? user.second_name,
+      username: user.username,
       avatar: user.photo ?? user.imageURL ?? user.avatar,
       email: user.email,
       gender: user.gender,
+      verified: !user.emailChanged && user.email ? true : false,
     };
-    //
+
+    if (user.resent) sendData.resent = user.resent;
+
     authSignIn(
       sendData,
       (_data) => {
         cb && cb(false);
       },
       (errData) => {
+        // console.log(errData);
         if (
           errData?.data?.msg?.includes("gender") ||
           errData?.data?.msg?.includes("email")
         ) {
           setBools({ ...bools, authModal: true });
           setAuthData(errData?.data?.data);
+        } else {
+          setPopper({
+            vis: true,
+            msg: "Something went wrong",
+            type: "failed",
+          });
         }
         cb && cb(false);
       }
@@ -532,6 +559,7 @@ const AppForm = ({
   const getFBCurrentUser = () => {
     Profile.getCurrentProfile().then(function (currentProfile) {
       if (currentProfile) {
+        console.log("FB current profile:: ", currentProfile);
         handleAuthSignIn(currentProfile);
       }
     });

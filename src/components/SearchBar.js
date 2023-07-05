@@ -34,12 +34,11 @@ const SearchBar = (
         onChangeText={handleTextChange}
         value={searchBar}
       />
-      {searchBar.length > 0 && (
+      {searchBar.length > 0 ? (
         <TouchableOpacity
           style={styles.closeIcon}
           onPress={() => {
             setSearchBar("");
-            closeCb && closeCb();
           }}
         >
           {loading ? (
@@ -54,9 +53,24 @@ const SearchBar = (
             <MaterialCommunityIcons
               name="close-circle"
               color={colors.medium}
-              size={15}
+              size={20}
             />
           )}
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={styles.closeIcon}
+          activeOpacity={1}
+          onPress={() => {
+            setSearchBar("");
+            closeCb && closeCb();
+          }}
+        >
+          <MaterialCommunityIcons
+            name="cancel"
+            color={colors.medium}
+            size={20}
+          />
         </TouchableOpacity>
       )}
     </View>
