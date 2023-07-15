@@ -406,19 +406,13 @@ const InstanceHeader = ({
           />
         </View>
         <View
-          style={{
-            flex: 1,
-            backgroundColor: "red",
-            top: -30,
-            backgroundColor: theme.background,
-            borderRadius: 25,
-            // borderTopStartRadius: 25,
-            // borderTopEndRadius: 25,
-            // borderBottomStartRadius: borderBottom ? 25 : 0,
-            // borderBottomEndRadius: borderBottom ? 25 : 0,
-            marginBottom: borderBottom ? 25 : 0,
-            elevation: 20,
-          }}
+          style={[
+            styles.content,
+            {
+              backgroundColor: theme.background,
+              marginBottom: borderBottom ? 25 : 0,
+            },
+          ]}
         >
           <View style={styles.icons}>
             <Icon
@@ -546,6 +540,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    top: -30,
+    borderRadius: 30,
+    elevation: 5.5,
+    shadowRadius: 3,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 0,
+      height: 1.8,
+    },
   },
   headerBoxCont: {
     flexDirection: "row",

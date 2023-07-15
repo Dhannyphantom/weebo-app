@@ -450,6 +450,7 @@ const AppForm = ({
   setElevation,
   p2,
   loading,
+  setLoading,
   p3,
   a,
   b,
@@ -479,6 +480,7 @@ const AppForm = ({
 
   const handleAuthSignIn = (user, cb) => {
     // cb && cb(true);
+    setLoading(true);
     const sendData = {
       userID: user.id ?? user.userID,
       firstName: user.givenName ?? user.firstName ?? user.name,
@@ -505,12 +507,14 @@ const AppForm = ({
         ) {
           setBools({ ...bools, authModal: true });
           setAuthData(errData?.data?.data);
+          setLoading(false);
         } else {
           setPopper({
             vis: true,
             msg: "Something went wrong",
             type: "failed",
           });
+          setLoading(false);
         }
         cb && cb(false);
       }

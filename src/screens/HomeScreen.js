@@ -127,6 +127,8 @@ const HomeScreen = ({ navigation, route }) => {
     // });
   }, []);
 
+  // console.log(feeds);
+
   const handleHomeScreenGuide = async (type) => {
     const getGuides = await AsyncStorage.getItem("guides");
     const tobiGuides = await AsyncStorage.getItem("tobi_guides");

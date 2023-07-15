@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Card from "./Card";
 
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
 });
-export default ChallengeCard;
+export default memo(ChallengeCard);

@@ -191,7 +191,6 @@ const AlertScreen = ({ navigation }) => {
         },
       },
       async (resData) => {
-        // return console.log("Fetched Data:: ", resData);
         if (type === "loadMore") {
           setAlertApi({
             ...resData,
@@ -202,6 +201,9 @@ const AlertScreen = ({ navigation }) => {
         }
         setLoadedOnce(true);
         setBools({ ...bools, loadMore: false });
+        if (resData.counter) {
+          updateMe({ prop: "notifications", data: resData.counter });
+        }
         type === "refresh" && setRefreshing(false);
         await AsyncStorage.setItem(
           "notifications",

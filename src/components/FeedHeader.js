@@ -17,14 +17,14 @@ const FeedHeader = ({
   feederID,
   challenge,
   feedId,
-  // followers,
+  followers,
   tags,
   show,
   size = 40,
 }) => {
   const navigation = useNavigation();
   let channelName, channelID, channelSubs;
-  // console.log(tag);
+  const timestamp = getTimestamp(feedId ?? feederID, "feed");
   ///TODO WORK ON THIS TAG STUFF ....
   const isChannel = tags?.find(
     (obj) => obj.name === "channel" && obj.isSpecific
@@ -104,7 +104,9 @@ const FeedHeader = ({
               size={12}
             />
           </Spacer>
-          <AppText style={styles.text}>{getTimestamp(feedId, "feed")}</AppText>
+          <AppText style={{ ...styles.text, marginRight: show ? 12 : 1 }}>
+            {timestamp}
+          </AppText>
         </View>
       ) : null}
     </View>

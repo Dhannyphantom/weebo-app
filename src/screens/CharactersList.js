@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import ActivityIndicator from "../components/ActivityIndicator";
 import ChallengeCard from "../components/ChallengeCard";
@@ -46,7 +46,6 @@ const CharactersList = ({ route, navigation }) => {
     shows: [],
     groups: [],
   });
-  const [favorites, setFavorites] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
@@ -55,6 +54,8 @@ const CharactersList = ({ route, navigation }) => {
     shows: false,
     groups: false,
   });
+
+  // console.log(instances);
 
   let selector;
   const type = route.params.type;
@@ -83,15 +84,15 @@ const CharactersList = ({ route, navigation }) => {
   const tabItems = [
     {
       tab: "characters",
-      name: `characters (${instances["characters"].length})`,
+      name: `characters (${instances?.characters?.length})`,
     },
     {
       tab: "shows",
-      name: `shows (${instances["shows"].length})`,
+      name: `shows (${instances?.shows?.length})`,
     },
     {
       tab: "groups",
-      name: `groups (${instances["groups"].length})`,
+      name: `groups (${instances?.groups?.length})`,
     },
   ];
 
@@ -107,16 +108,7 @@ const CharactersList = ({ route, navigation }) => {
     }
 
     getUserData({ id: otherId, type: selector }, (data) => {
-      // data.favorites && setFavorites(data.favorites);
-      // if (data.following) {
-      //   const followingChar = data.following;
-      //   const favoritesIds = data.favorites.map((obj) => obj._id);
-      //   const filterFollowing = followingChar.filter(
-      //     (obj) => !favoritesIds.includes(obj._id)
-      //   );
-      //   setInstances(filterFollowing);
-      // }
-      // data.charactersOwned && setInstances(data.charactersOwned);
+      console.log(selector);
       setInstances(data);
       setIsLoading(false);
     });
@@ -153,15 +145,6 @@ const CharactersList = ({ route, navigation }) => {
                 </View>
               )}
               <View style={styles.charList}>
-                {favorites[0] && (
-                  <>
-                    <AppText size="xlarge" style={styles.charHeaderTitle} bold>
-                      Favorites
-                    </AppText>
-                    <Show noHeader data={favorites} searchResult />
-                  </>
-                )}
-
                 {activeTab === "shows" ? (
                   <Shows data={instances.shows} searchResult series />
                 ) : (
@@ -213,6 +196,7 @@ const CharactersList = ({ route, navigation }) => {
     </Screen>
   );
 };
+
 const styles = StyleSheet.create({
   activity: { width, height: "100%", position: "absolute" },
   container: {

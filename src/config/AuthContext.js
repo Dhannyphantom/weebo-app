@@ -224,7 +224,7 @@ const tryLocalSignin = (dispatch) => async (callback, errCb) => {
 const signOut = (dispatch) => async () => {
   await AsyncStorage.removeItem("token");
   try {
-    await GoogleSignin.revokeAccess();
+    // await GoogleSignin.revokeAccess();
   } catch (err) {
     //
   }

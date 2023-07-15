@@ -60,6 +60,7 @@ const hider = [
   "challenge_stat",
   "instance_creator",
   "verifiedList",
+  "favorites",
   "name_j",
   "name_e",
 ];
@@ -539,10 +540,12 @@ const ShowScreen = ({ route, navigation }) => {
                 keyExtractor={(item) => item.prop}
                 listKey={uuid.v4()}
                 renderItem={renderPageInfos}
+                contentContainerStyle={{ backgroundColor: "transparent" }}
                 style={{
                   flexDirection: "row",
                   flexWrap: "wrap",
                   alignItems: "center",
+                  backgroundColor: "transparent",
                 }}
               />
             </View>
@@ -731,8 +734,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   content: {
-    bottom: width * 0.11,
-    minHeight: height * 0.4,
+    flex: 1,
+    bottom: width * 0.12,
   },
   charCont: {
     marginBottom: 18,
@@ -764,7 +767,8 @@ const styles = StyleSheet.create({
     bottom: 130 / 2,
   },
   list: {
-    padding: 12,
+    padding: 25,
+    overflow: "hidden",
   },
   modalCont: {
     flex: 1,

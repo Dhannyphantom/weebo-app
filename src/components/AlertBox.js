@@ -51,7 +51,7 @@ const AlertBox = ({
     owner = username = "WEEBO";
     atSymbol = noAt = true;
     ownerImage = avatar = appLogo;
-    nameStyles = { ...styles.name, color: colors.heart };
+    nameStyles = { ...styles.name, color: colors.primary };
   } else {
     nameStyles = styles.name;
   }
@@ -138,8 +138,9 @@ const AlertBox = ({
           <Cards style={{ ...styles.container, ...border }}>
             <Avatar
               avatar={avatar}
-              bold={isSystem}
+              // bold={isSystem}
               size={30}
+              bold
               feederID={_id}
               name={username}
               nameStyle={nameStyles}

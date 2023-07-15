@@ -83,7 +83,7 @@ const InviteWeebs = ({ closeModal }) => {
         >
           <Ionicons name="copy-outline" size={40} color={colors.medium} />
           <AppText bold style={{ marginTop: 10 }}>
-            Get My Link
+            Copy Link
           </AppText>
         </TouchableOpacity>
         <TouchableOpacity
@@ -303,7 +303,7 @@ const AccountScreen = ({ navigation, route }) => {
               />
               <Info
                 title="Following"
-                count={item.following.length}
+                count={item.following}
                 onPress={() =>
                   navigation.navigate("CharacterList", {
                     id: userInfo._id,
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     paddingTop: width * 0.03,
   },
   invites: {
-    width: width * 0.95,
+    width: width * 0.7,
     borderRadius: 10,
     alignItems: "center",
     padding: 10,

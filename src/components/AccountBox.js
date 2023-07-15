@@ -137,9 +137,10 @@ const AccountBox = ({
       (data) => {
         setStatus(data.status);
         setProfileData([data.user]);
+        console.log(data);
       },
       (err) => {
-        setErrMsg(err);
+        setErrMsg(`${err.msg}: ${err.data}`);
       }
     );
   }, []);
@@ -198,8 +199,8 @@ const AccountBox = ({
               <Separator h={1} />
               <View style={styles.info}>
                 <Info
-                  title="Characters"
-                  count={info.charactersOwned.length}
+                  title="Instances"
+                  count={info.instance_count}
                   onPress={() =>
                     onLink("CharacterList", {
                       type: "otherCharacters",
@@ -209,7 +210,7 @@ const AccountBox = ({
                 />
                 <Info
                   title="Following"
-                  count={info.following.length}
+                  count={info.following}
                   onPress={() =>
                     onLink("CharacterList", {
                       type: "following",
@@ -220,7 +221,7 @@ const AccountBox = ({
 
                 <Info
                   title="Followers"
-                  count={info.followers.length}
+                  count={info.followers}
                   onPress={() =>
                     onLink("Followers", {
                       type: isMine ? "isMine" : "otherFollowers",

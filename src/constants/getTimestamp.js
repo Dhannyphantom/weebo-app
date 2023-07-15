@@ -95,7 +95,6 @@ export default (id, format, countdown) => {
         calender.months[date.getMonth()].short
       } ${date.getDate()}, ${date.getFullYear()}`;
     } else if (newDate >= 86400) {
-      const num = Math.floor(newDate / 86400);
       convDate = `yesterday`;
     } else if (newDate >= 3600) {
       const num = Math.floor(newDate / 3600);

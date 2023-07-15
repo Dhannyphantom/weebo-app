@@ -1,4 +1,4 @@
-import React, { memo, useContext, useState } from "react";
+import React, { memo, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -15,9 +15,6 @@ import Spacer from "./Spacer";
 
 import { app_constants } from "../constants/data_store";
 import { Context as AuthContext } from "../config/AuthContext";
-import { Context as CharContext } from "../config/CharContext";
-import AlertModal from "./AlertModal";
-import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
 import { getFeedNumber } from "../constants/helpers";
 const { width } = Dimensions.get("window");
@@ -28,81 +25,29 @@ const Card = ({
   followers = [],
   name,
   show,
-  avaterSize = 45,
   series,
   borderRadius,
   manager,
   onPress,
-  btmPadding = 16,
   id,
   mSize,
   style,
   isVerified,
+  avaterSize = 45,
+  btmPadding = 16,
   mIcon = 75,
   bIcon = 50,
 }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { followChar } = useContext(CharContext);
   const theme = useContext(ThemeContext);
 
-  let followingArr = series ? series : userInfo.following.map((obj) => obj._id);
-  const [alertData, setAlertData] = useState({ visible: false });
-  const [popper, setPopper] = useState({ vis: false });
-  const [cardState, setCardState] = useState({
-    liked: followers.length,
-    isFollowing: followingArr.includes(series ? userInfo._id : id),
-  });
+  const isFollowing = series?.includes(series ? userInfo._id : id);
 
-  const { isFollowing } = cardState;
-  const charID = id;
-  const userID = userInfo._id;
-
-  let cardFollowers = getFeedNumber(cardState.liked);
-
-  const updateCardState = (bool) => {
-    setCardState({
-      ...cardState,
-      isFollowing: bool,
-      liked: bool ? cardState.liked + 1 : cardState.liked - 1,
-    });
-  };
-
-  const handleFollowPress = () => {
-    if (isFollowing) {
-      // console.log(followingArr);
-      setAlertData({
-        title: "Unfollow Character",
-        visible: true,
-        message: `Are you sure you want to unfollow ${
-          name[0].toUpperCase() + name.slice(1)
-        }`,
-        btn: "Yes",
-      });
-    } else {
-      updateCardState(true);
-      followChar({ charID, userID, route: "follow" }, null, (err) =>
-        setPopper({
-          vis: true,
-          type: "failed",
-          msg: err.msg,
-        })
-      );
-    }
-  };
-
-  const handleConfirmAlert = () => {
-    updateCardState(false);
-    followChar({ charID, userID, route: "unfollow" }, null, (err) => {
-      // console.log(err.err.response.data);
-      setPopper({
-        vis: true,
-        type: "failed",
-        msg: err.msg,
-      });
-    });
-  };
+  let cardFollowers = getFeedNumber(
+    Array.isArray(followers) ? followers.length : followers
+  );
 
   return (
     <>
@@ -149,7 +94,7 @@ const Card = ({
           {
             backgroundColor: theme.background,
             elevation: theme.mode === "dark" ? 8 : 2,
-            borderRadius: borderRadius ? borderRadius : 8,
+            borderRadius: borderRadius ?? 8,
           },
         ]}
       >
@@ -157,21 +102,21 @@ const Card = ({
           style={{
             ...styles.iconContainer,
             bottom: mIcon / 2,
-            // ...iconContainerStyle,
           }}
         >
           <Icon
             name="star"
             style={styles.icon}
             color={isFollowing ? colors.heart : colors.medium}
-            onPress={handleFollowPress}
             size={bIcon}
+            disablePress
           />
           <Icon
             text={`${cardFollowers}`}
             size={mIcon}
             textSize={mSize}
             style={styles.icon}
+            disablePress
             activeOpacity={1}
           />
           <Icon
@@ -202,12 +147,6 @@ const Card = ({
           </AppText>
         </View>
       </View>
-      <AlertModal
-        obj={alertData}
-        setVisible={setAlertData}
-        onPress={handleConfirmAlert}
-      />
-      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </>
   );
 };
@@ -266,3 +205,48 @@ const styles = StyleSheet.create({
   },
 });
 export default memo(Card);
+
+/**
+ *   const handleFollowPress = () => {
+    if (isFollowing) {
+      setAlertData({
+        title: "Unfollow Character",
+        visible: true,
+        message: `Are you sure you want to unfollow ${
+          name[0].toUpperCase() + name.slice(1)
+        }`,
+        btn: "Yes",
+      });
+    } else {
+      updateCardState(true);
+      followChar({ charID, userID, route: "follow" }, null, (err) =>
+        setPopper({
+          vis: true,
+          type: "failed",
+          msg: err.msg,
+        })
+      );
+    }
+  };
+
+  const handleConfirmAlert = () => {
+    updateCardState(false);
+    followChar({ charID, userID, route: "unfollow" }, null, (err) => {
+      // console.log(err.err.response.data);
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: err.msg,
+      });
+    });
+  };
+
+    const updateCardState = (bool) => {
+    setCardState({
+      ...cardState,
+      isFollowing: bool,
+      liked: bool ? cardState.liked + 1 : cardState.liked - 1,
+    });
+  };
+
+ */

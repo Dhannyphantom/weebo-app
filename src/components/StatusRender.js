@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { getThumbnailAsync } from "expo-video-thumbnails";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppText from "./AppText";
@@ -28,9 +27,6 @@ const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 // TODO:: CACHE RESULTS TO ASYNCSTORAGE
 
 const StatusCardItem = ({ item, setDisplay, all }) => {
-  const [imager, setImager] = useState({});
-  const [loading, setLoading] = useState(true);
-
   const theme = useContext(ThemeContext);
   const navigation = useNavigation();
 
@@ -41,25 +37,6 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
       itemId: item._id,
       stories: all,
     });
-  };
-
-  const fetchThumb = async () => {
-    const lastPost = item.posts[item.posts.length - 1];
-    if (lastPost.type == "video" && !lastPost.thumb) {
-      try {
-        const res = await getThumbnailAsync(lastPost.uri, {
-          time: 5000,
-          quality: 0.1,
-        });
-        setImager(res);
-        setLoading(false);
-      } catch (err) {
-        setLoading(true);
-      }
-    } else {
-      setImager(lastPost);
-      setLoading(false);
-    }
   };
 
   const handleNav = () => {
@@ -78,10 +55,6 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
     }
   };
 
-  useEffect(() => {
-    fetchThumb();
-  }, []);
-
   return (
     <View style={styles.cardsContainer}>
       <>
@@ -92,18 +65,11 @@ const StatusCardItem = ({ item, setDisplay, all }) => {
         >
           <View style={[styles.media, { backgroundColor: theme.extralight }]}>
             <Image
-              source={{ uri: imager.thumb }}
-              blurRadius={2.5}
+              source={{ uri: item?.posts[0]?.thumb }}
+              blurRadius={5}
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
             />
           </View>
-          <ActivityIndicator
-            type="spin"
-            transparent
-            style={styles.activity}
-            size={0.25}
-            visible={loading}
-          />
         </TouchableOpacity>
       </>
       <View style={styles.profile}>

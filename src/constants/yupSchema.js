@@ -83,7 +83,7 @@ const validationSchemaLogin = Yup.object().shape({
     .required()
     .label("Email or username")
     .min(4)
-    .max(20),
+    .max(100),
   password: Yup.string().min(8).strongPassword().required().label("Password"),
 });
 

@@ -12,7 +12,8 @@ const InfoBox = ({ item, onPress }) => {
   let infoValue;
   if (Array.isArray(item.value)) {
     if (item.value?.length === 0) {
-      infoValue = "none";
+      // infoValue = "none";
+      return null;
     } else {
       infoValue = item.value.join(" | ");
     }

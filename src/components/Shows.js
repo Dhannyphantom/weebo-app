@@ -18,13 +18,13 @@ const Shows = ({
   series,
   show,
 }) => {
-  if (!data[0]) return null;
   const navigation = useNavigation();
 
   const header = series ? "Show" : "Character";
   if (!data) {
     return null;
   }
+
   const verifiedCharacters = data?.characters?.filter((obj) => obj?.verified);
   const unVerifiedCharacters = data?.characters?.filter(
     (obj) => !obj?.verified
@@ -75,7 +75,7 @@ const Shows = ({
               subTitleStyle={{ marginTop: 2.5 }}
               manager={item.manager}
               show={item.show.name_j ?? item.show.name_e}
-              followers={item.followers}
+              followers={419}
               onPress={() =>
                 navigation.navigate("Character", { item: item._id })
               }
@@ -95,7 +95,7 @@ const Shows = ({
               show={data}
               feederID={data._id}
               follow="following"
-              followers={data.followers.length}
+              followers={data?.followers[0]}
             />
           )}
           <FlatList
@@ -146,7 +146,7 @@ const Shows = ({
                   image={item.cover_photo}
                   avatar={!series ? item.manager.avatar : item.manager.avatar}
                   name={item.name_j ?? item.name_e ?? item.dpName}
-                  seriesChar={series ? item.followers : null}
+                  seriesChar={series ? 419 : null}
                   series={series}
                   id={item._id}
                   show={
@@ -154,7 +154,7 @@ const Shows = ({
                       ? item.show.name_j ?? item.name_e
                       : item?.creators?.join(", ")
                   }
-                  followers={item.followers}
+                  followers={[]}
                   onPress={() =>
                     navigation.navigate(header, { show: item, item: item._id })
                   }
