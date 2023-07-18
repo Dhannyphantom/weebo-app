@@ -28,6 +28,7 @@ const ProfilePic = ({
 }) => {
   const [picModal, setPicModal] = useState(false);
   const [display, setDisplay] = useState({ vis: false });
+  const [bools, setBools] = useState({ showPlaceholder: true });
 
   const theme = useContext(ThemeContext);
   const {
@@ -54,8 +55,6 @@ const ProfilePic = ({
     avatarSource = userInfo.gender === "male" ? proMale : proFemale;
   }
 
-  // console.log("Image source:: ", typeof source);
-
   return (
     <>
       <TouchableOpacity
@@ -71,7 +70,7 @@ const ProfilePic = ({
           overflow: "hidden",
         }}
       >
-        {typeof source !== "number" && (
+        {typeof source !== "number" && bools.showPlaceholder && (
           <Image
             source={avatarSource}
             resizeMethod="resize"
@@ -86,16 +85,24 @@ const ProfilePic = ({
             ]}
           />
         )}
-        <Image
-          source={source}
-          resizeMethod="resize"
-          style={[styles.image, style]}
-        />
+
+        {source && (
+          <Image
+            source={source}
+            resizeMethod="resize"
+            onLoad={() => setBools({ ...bools, showPlaceholder: false })}
+            onError={() => setBools({ ...bools, showPlaceholder: true })}
+            style={[styles.image, style]}
+          />
+        )}
 
         {source && source.thumb && (
           <Image
             source={{ uri: source.thumb }}
             resizeMethod="scale"
+            defaultSource={avatarSource}
+            onLoad={() => setBools({ ...bools, showPlaceholder: false })}
+            onError={() => setBools({ ...bools, showPlaceholder: true })}
             style={[styles.thumb, style]}
           />
         )}

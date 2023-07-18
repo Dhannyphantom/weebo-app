@@ -48,11 +48,10 @@ const itemChallenge = {
   iconPack: "MCI",
 };
 
-const HomeHeader = ({ characters }) => {
+const HomeHeader = () => {
   const navigation = useNavigation();
 
   const [modalVis, setModalVis] = useState(false);
-  const [myCharacters, setMyCharacters] = useState(characters);
   const [selectChar, setSelectChar] = useState([]);
   const [errMsg, setErrMsg] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -61,6 +60,8 @@ const HomeHeader = ({ characters }) => {
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
+    getUserData,
+    updateMe,
   } = useContext(AuthContext);
 
   const handleNav = async (type) => {
@@ -110,6 +111,20 @@ const HomeHeader = ({ characters }) => {
     }
   };
 
+  const fetchData = () => {
+    if (!userInfo.instances) {
+      getUserData(
+        { id: userInfo._id, type: "get_instances" },
+        (resData) => {
+          updateMe({ data: resData, prop: "instances" });
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
+  };
+
   const renderMyCharacters = ({ item }) => {
     return (
       <View style={styles.itemCont}>
@@ -122,7 +137,44 @@ const HomeHeader = ({ characters }) => {
     return (
       <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
         <View style={styles.links}>
-          {!cMode && (
+          {cMode ? (
+            <View style={styles.newChallenge}>
+              <View>
+                <AppText style={styles.charListHead} bold>
+                  Select characters
+                </AppText>
+                <Separator h={2} />
+                <View>
+                  <FlatList
+                    data={userInfo?.instances?.characters}
+                    keyExtractor={(item) => item._id}
+                    ListEmptyComponent={
+                      <ActivityIndicator
+                        visible={true}
+                        type="isEmpty"
+                        text="You don't have any characters"
+                      />
+                    }
+                    renderItem={renderMyCharacters}
+                  />
+                </View>
+              </View>
+
+              {selectChar.length > 0 && (
+                <AppButton
+                  title="NEXT"
+                  style={styles.nextBtn}
+                  bare
+                  onPress={() => {
+                    setModalVis(false);
+                    navigation.navigate("Contest", {
+                      characters: selectChar,
+                    });
+                  }}
+                />
+              )}
+            </View>
+          ) : (
             <View style={{ flexDirection: "row" }}>
               <ActionMenu
                 item={itemChallenge}
@@ -158,53 +210,14 @@ const HomeHeader = ({ characters }) => {
               </View>
             </View>
           )}
-
-          {cMode && (
-            <View style={styles.newChallenge}>
-              <View>
-                <AppText style={styles.charListHead} bold>
-                  Select characters
-                </AppText>
-                <Separator h={2} />
-                <View>
-                  <FlatList
-                    data={myCharacters}
-                    keyExtractor={(item) => item._id}
-                    ListEmptyComponent={
-                      <ActivityIndicator
-                        visible={true}
-                        type="isEmpty"
-                        text="You don't have any characters"
-                      />
-                    }
-                    renderItem={renderMyCharacters}
-                  />
-                </View>
-              </View>
-
-              {selectChar.length > 0 && (
-                <AppButton
-                  title="NEXT"
-                  style={styles.nextBtn}
-                  bare
-                  onPress={() => {
-                    setModalVis(false);
-                    navigation.navigate("Contest", {
-                      characters: selectChar,
-                    });
-                  }}
-                />
-              )}
-            </View>
-          )}
         </View>
       </View>
     );
   };
 
   useEffect(() => {
-    setMyCharacters(characters);
-  }, [characters]);
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>

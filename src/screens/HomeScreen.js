@@ -127,8 +127,6 @@ const HomeScreen = ({ navigation, route }) => {
     // });
   }, []);
 
-  // console.log(feeds);
-
   const handleHomeScreenGuide = async (type) => {
     const getGuides = await AsyncStorage.getItem("guides");
     const tobiGuides = await AsyncStorage.getItem("tobi_guides");
@@ -383,8 +381,12 @@ const HomeScreen = ({ navigation, route }) => {
           backgroundColor: theme.backgroundExtralight,
         }}
       >
-        <HomeHeader characters={userInfo.charactersOwned} />
-
+        <HomeHeader />
+        {errMsg && (
+          <AppText bold size="large" style={styles.error}>
+            {errMsg}
+          </AppText>
+        )}
         {!feeds?.results[0] ? (
           <RenderPageHeader />
         ) : (
@@ -392,7 +394,6 @@ const HomeScreen = ({ navigation, route }) => {
             <Viewport.Tracker>
               <FlatList
                 data={feeds?.results}
-                extraData={feeds}
                 ListHeaderComponent={RenderPageHeader}
                 keyboardShouldPersistTaps="handled"
                 renderToHardwareTextureAndroid
@@ -513,6 +514,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  error: {
+    textAlign: "center",
+    width: width * 0.7,
+    marginTop: 12,
+    color: colors.heartDark,
+    marginBottom: 25,
   },
   noContent: {
     width,
