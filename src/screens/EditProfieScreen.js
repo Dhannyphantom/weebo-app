@@ -121,15 +121,11 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
                   { prop: "verified", data: true },
                 ],
               });
-              // updateMe({ prop: "points", data: resData.points });
-              // updateMe({ prop: "verified", data: true });
-              setEmailPop(false);
               navigation.goBack();
+              setEmailPop(false);
+              setIsLoading(false);
             },
           });
-          // setPageData({ ...pageData, verified: true });
-          setIsLoading(false);
-          console.log("DonE");
         },
         (err) => {
           setPopper({ vis: true, msg: err, type: "failed" });

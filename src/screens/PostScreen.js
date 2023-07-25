@@ -136,6 +136,7 @@ const PostScreen = ({ route, navigation }) => {
           : navigation.goBack();
       },
       (err) => {
+        return console.log(err);
         setErrMsg(err.data ?? err.msg);
         setIsLoading(false);
       }
@@ -300,14 +301,16 @@ const PostScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (router.type) {
-      const tagObj = {
-        name: router.type,
-        id: router.id,
-        important: true,
-        dpName: router.name,
-        dpSubName: router.type,
-      };
-      setTagged([...tagged, tagObj]);
+      setTagged([
+        ...tagged,
+        {
+          name: router.type,
+          id: router.id,
+          important: true,
+          dpName: router.name,
+          dpSubName: router.type,
+        },
+      ]);
     }
   }, [router]);
 
