@@ -251,7 +251,7 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
     const imageObject = {
       name: data?.actionData?.uri.slice(-40),
       fileName: data?.actionData?.uri.slice(-40),
-      type: data.c_type === "image" ? "image/jpeg" : "video/mp4",
+      type: data?.actionData?.type === "image" ? "image/jpeg" : "video/mp4",
       uri: data?.actionData?.uri,
     };
     formData.append("uploader", imageObject);
@@ -324,8 +324,12 @@ const getChannels = (dispatch) => async (sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    console.log(err);
-    cb && cb("Error fetching channels info");
+    cb &&
+      cb({
+        msg: "Error fetching channels info",
+        data: err?.response?.data,
+        err,
+      });
   }
 };
 
@@ -361,8 +365,12 @@ const getAChannel = (dispatch) => async (data, sc, cb) => {
     );
     sc && sc(res.data);
   } catch (err) {
-    console.log(err);
-    cb && cb("Error fetching channels info");
+    cb &&
+      cb({
+        msg: "Error fetching channels info",
+        data: err?.response?.data,
+        err,
+      });
   }
 };
 
@@ -377,7 +385,6 @@ const fetchInfoProperties = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    console.log(err);
     cb &&
       cb({
         err,
@@ -398,7 +405,6 @@ const fetchGroupProperty = () => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    console.log(err);
     cb &&
       cb({
         err,

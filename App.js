@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import React, { useCallback, useEffect, useState } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -6,7 +7,7 @@ import * as MediaLibrary from "expo-media-library";
 import Main from "./src/Main";
 import { View } from "react-native";
 import mobileAds from "react-native-google-mobile-ads";
-import Tester from "./src/tests-comp/Tester";
+// import Tester from "./src/tests-comp/Tester";
 
 SplashScreen.preventAutoHideAsync();
 

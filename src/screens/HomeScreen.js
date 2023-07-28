@@ -207,7 +207,7 @@ const HomeScreen = ({ navigation, route }) => {
     if (item.instanceType === "show") {
       return <Shows data={item} show />;
     } else if (item.instanceType === "post") {
-      if (index % ADS_INTERVAL === 0) {
+      if (index !== 0 && index % ADS_INTERVAL === 0) {
         return (
           <>
             <BannerAds />

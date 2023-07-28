@@ -169,8 +169,7 @@ const signUp = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc();
   } catch (err) {
-    cb && cb(err?.response?.data);
-    console.log(err);
+    cb && cb({ data: err?.response?.data, msg: "Error signing up!", err });
   }
 };
 
@@ -276,7 +275,6 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
       },
     });
 
-    // console.log(response.data                               );
     dispatch({ type: "update_profile", payload: response.data });
     sc && sc();
   } catch (err) {
@@ -711,8 +709,12 @@ const getChatMessages = (dispatch) => async (senderId, recipientId, sc, cb) => {
     AsyncStorage.setItem("chats", JSON.stringify(res.data));
     sc && sc(res.data);
   } catch (err) {
-    console.log(err?.response?.data);
-    cb && cb("Error retrieving your chats");
+    cb &&
+      cb({
+        msg: "Error retrieving your chats",
+        data: err?.response?.data,
+        err,
+      });
   }
 };
 

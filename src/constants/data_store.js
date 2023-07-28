@@ -934,6 +934,7 @@ export const app_policy = [
   },
 ];
 
+// export const INSTANCE_FREE_PERIOD = 1000; // 7 DAYS
 export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
 
 export const buymeacoffeeLink = "https://www.buymeacoffee.com/weeboapp";

@@ -136,7 +136,6 @@ const PostScreen = ({ route, navigation }) => {
           : navigation.goBack();
       },
       (err) => {
-        return console.log(err);
         setErrMsg(err.data ?? err.msg);
         setIsLoading(false);
       }

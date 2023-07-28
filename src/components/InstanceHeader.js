@@ -205,9 +205,9 @@ const InstanceHeader = ({
             type: "failed",
           });
         }
+        setCoverLoading(true);
         setFBack(1);
         setFBackModal(false);
-        setCoverLoading && setCoverLoading(true);
         const data = {
           type: instance,
           typeId: instanceID,
@@ -218,7 +218,7 @@ const InstanceHeader = ({
           () => {
             if (!finder) {
               setCoverLoading && setCoverLoading(false);
-              updateMe(userInfo.points + FEEDBACK_WP, "points");
+              updateMe({ data: userInfo.points + FEEDBACK_WP, prop: "points" });
               return setPopper({
                 vis: true,
                 msg: "Feedback sent successfully",

@@ -33,14 +33,16 @@ import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
 
-import { INSTANCE_FREE_PERIOD, showInfoProps } from "../constants/data_store";
+import { showInfoProps } from "../constants/data_store";
 import {
   canChallengeInstance,
   capFirstLetter,
   launchGallery,
 } from "../constants/helpers";
 import EventRender from "../components/EventRender";
-import getFormatTime from "../constants/getFormatTime";
+import AppFadeIn from "../components/AppFadeIn";
+import ThemeContext from "../config/ThemeContext";
+import { TouchableOpacity } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -67,6 +69,130 @@ const hider = [
 const counter = ["characters", "groups", "followers", "posts", "challengers"];
 const LEAST_FOLLOWERS = 1;
 
+const UpdateInstance = ({ state, prop, data }) => {
+  const theme = useContext(ThemeContext);
+
+  const UpdateEndDate = () => {
+    const btnValue = useRef(new Animated.Value(1)).current;
+    const [bools, setBools] = useState({ state: false, btnDisabled: false });
+
+    const handleSwtichPress = (type) => {
+      setBools({ ...bools, btnDisabled: true });
+      switch (type) {
+        case "yes":
+          Animated.spring(btnValue, {
+            toValue: 1,
+            speed: 2,
+            bounciness: 20,
+            useNativeDriver: false,
+          }).start(() =>
+            setBools({ ...bools, state: true, btnDisabled: false })
+          );
+          break;
+        case "no":
+          Animated.spring(btnValue, {
+            toValue: 0.7,
+            speed: 2,
+            bounciness: 20,
+            useNativeDriver: false,
+          }).start(() =>
+            setBools({ ...bools, state: false, btnDisabled: false })
+          );
+      }
+    };
+
+    const xScaler = btnValue.interpolate({
+      inputRange: [0.7, 1],
+      outputRange: [1, 0.7],
+    });
+
+    const handleSubmit = () => {
+      console.log(bools);
+    };
+
+    return (
+      <View style={styles.updateAiring}>
+        <AppText size="xlarge" bold style={styles.updateTitle}>
+          {data.instanceName} {data.instance} Instance Currently Airing{" "}
+        </AppText>
+        <View style={styles.updateAiringStatus}>
+          <Animated.View
+            style={{
+              borderRadius: 15,
+              transform: [{ scale: btnValue }],
+              opacity: btnValue,
+              backgroundColor: btnValue.interpolate({
+                inputRange: [0.7, 1],
+                outputRange: [colors.extraLight, colors.unChange],
+              }),
+            }}
+          >
+            <TouchableOpacity
+              style={styles.updateBox}
+              activeOpacity={1}
+              onPress={() => handleSwtichPress("yes")}
+            >
+              <AppText bold size="xlarge">
+                YES
+              </AppText>
+            </TouchableOpacity>
+          </Animated.View>
+          <Animated.View
+            style={{
+              borderRadius: 15,
+              opacity: xScaler,
+              transform: [
+                {
+                  scale: xScaler,
+                },
+              ],
+              backgroundColor: btnValue.interpolate({
+                inputRange: [0.7, 1],
+                outputRange: [colors.unChange, colors.extraLight],
+              }),
+            }}
+          >
+            <TouchableOpacity
+              style={styles.updateBox}
+              activeOpacity={1}
+              onPress={() => handleSwtichPress("no")}
+            >
+              <AppText bold size="xlarge">
+                NO
+              </AppText>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+        <AppButton
+          title="Submit"
+          onPress={handleSubmit}
+          disabled={bools.btnDisabled}
+          bare
+          style={{ marginTop: 35 }}
+        />
+      </View>
+    );
+  };
+
+  const RenderUpdateInstance = () => {
+    return (
+      <View
+        style={[styles.updateInstance, { backgroundColor: theme.background }]}
+      >
+        {prop === "endDate" ? <UpdateEndDate /> : null}
+      </View>
+    );
+  };
+
+  return (
+    <AppFadeIn
+      visible={state?.bools?.updateInstance}
+      setter={() => state.setBools({ ...state.bools, updateInstance: false })}
+      RenderComponent={() => <RenderUpdateInstance />}
+    />
+  );
+};
+
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
   const { withdrawChallenge } = useContext(ChallContext);
@@ -81,6 +207,7 @@ const ShowScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
+  const [bools, setBools] = useState({ updateInstance: false });
   const [transfer, setTransfer] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
 
@@ -303,7 +430,6 @@ const ShowScreen = ({ route, navigation }) => {
         isCover && setIsCoverLoading(false);
       },
       (err) => {
-        console.log(err);
         setErrMsg(err.data ?? err.msg);
         cb && cb("failed");
         if (popData) {
@@ -340,7 +466,12 @@ const ShowScreen = ({ route, navigation }) => {
           setIsCoverLoading(false);
         },
         (err) => {
-          console.log(err);
+          setPopper({
+            vis: true,
+            msg: err.data ?? err.msg,
+            type: "failed",
+            cb: () => setIsCoverLoading(false),
+          });
         }
       );
     }
@@ -350,11 +481,9 @@ const ShowScreen = ({ route, navigation }) => {
     if (alertModal.type === "followC") {
       //follow show
       // followChar({ charID, userID }, "follow", () => follows(true));
-      console.log("Followed");
     } else if (alertModal.type === "unfollowC") {
       // unfollow show
       // followChar({ charID, userID }, "unfollow", () => follows(false));
-      console.log("Un - Followed");
     }
   };
 
@@ -459,12 +588,10 @@ const ShowScreen = ({ route, navigation }) => {
     followInstance(
       followObj,
       (resData) => {
-        console.log(resData);
         setIsFollowed(isFollowing ? false : true);
         setIsCoverLoading(false);
       },
       (err) => {
-        console.log(err);
         setErrMsg(err?.response.data);
         setIsCoverLoading(false);
       }
@@ -483,7 +610,6 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleItemPress = (item) => {
-    // console.log(item);
     switch (item.prop) {
       case "challengers":
         setModalVis(true);
@@ -491,10 +617,14 @@ const ShowScreen = ({ route, navigation }) => {
       case "posts":
         navigateToPosts();
         break;
+      case "endDate":
+        isMine && setBools({ ...bools, updateInstance: true });
+        break;
       default:
         break;
     }
   };
+
   const renderPageInfos = ({ item }) => {
     return <InfoBox item={item} onPress={() => handleItemPress(item)} />;
   };
@@ -645,6 +775,14 @@ const ShowScreen = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar style="light" />
+      <UpdateInstance
+        state={{ bools, setBools }}
+        prop="endDate"
+        data={{
+          instanceName: dataState?.name_j ?? dataState?.name_e,
+          instance: "show",
+        }}
+      />
       {isLoading ? (
         <ActivityIndicator
           visible={isLoading}
@@ -663,7 +801,6 @@ const ShowScreen = ({ route, navigation }) => {
           <>
             <Animated.FlatList
               data={["OTAKU"]}
-              // ListHeaderComponent={}
               listKey="@home"
               onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -795,6 +932,27 @@ const styles = StyleSheet.create({
   user: {
     textAlign: "center",
     bottom: 52,
+  },
+  updateAiring: {
+    // borderRadius: 20,
+  },
+  updateTitle: {
+    textTransform: "capitalize",
+    textAlign: "center",
+    marginBottom: 35,
+  },
+  updateInstance: {
+    padding: 25,
+    borderRadius: 20,
+  },
+  updateAiringStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  updateBox: {
+    paddingHorizontal: 32,
+    paddingVertical: 20,
   },
 });
 export default ShowScreen;
