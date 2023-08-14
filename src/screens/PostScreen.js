@@ -124,9 +124,15 @@ const PostScreen = ({ route, navigation }) => {
     }
     setIsLoading(true);
     setErrMsg(null);
-    postPix(
-      data,
-      () => {
+    postPix(data);
+
+    setPopper({
+      vis: true,
+      msg: "Uploading...",
+      loader: true,
+      type: "neutral",
+      cb: () => {
+        // NAVIGATE USER AWAY FROM SCREEN;
         setIsLoading(false);
         router.toScreen
           ? navigation.navigate(router.toScreen, {
@@ -135,11 +141,7 @@ const PostScreen = ({ route, navigation }) => {
             })
           : navigation.goBack();
       },
-      (err) => {
-        setErrMsg(err.data ?? err.msg);
-        setIsLoading(false);
-      }
-    );
+    });
   };
 
   const handleAddMore = async () => {
@@ -200,7 +202,7 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleSearchItem = (item) => {
-    if (!item.verified) return console.log(item.verified);
+    if (!item.verified) return; //setPopper({vis: true, msg: "Instance"});
     const tagObj = {
       name: item.type,
       id: item._id,

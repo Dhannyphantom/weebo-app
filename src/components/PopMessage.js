@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Dimensions, Animated } from "react-native";
 import colors from "../constants/colors";
 import AppText from "./AppText";
+import ThemeContext from "../config/ThemeContext";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("window");
 
@@ -11,11 +13,16 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
   // popData = { type : "success/failed", msg: "text", vis: bool, cb: func}
   if (!popData.vis) return null;
   const translator = useRef(new Animated.Value(0)).current;
+  const theme = useContext(ThemeContext);
 
   const circleStyles = {
     ...styles.circle,
     backgroundColor:
-      popData.type === "success" ? colors.greenLight : colors.heart,
+      popData.type === "success"
+        ? colors.greenLight
+        : popData.type === "failed"
+        ? colors.heart
+        : theme.chat,
 
     transform: [{ translateY: translator }],
     opacity: translator.interpolate({
@@ -57,6 +64,14 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
         >
           {popData.msg}
         </AppText>
+        {popData.loader && (
+          <ActivityIndicator
+            visible
+            size={0.18}
+            transparent
+            style={styles.loader}
+          />
+        )}
       </Animated.View>
     </View>
   );
@@ -76,9 +91,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 10,
     paddingVertical: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     elevation: 1.1,
     borderRadius: 10,
     bottom: 50,
+  },
+  loader: {
+    maxHeight: 18,
+    alignSelf: "flex-end",
+    maxWidth: 20,
+    marginRight: 8,
   },
   text: {
     color: colors.black,

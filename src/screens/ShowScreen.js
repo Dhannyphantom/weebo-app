@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -71,10 +72,15 @@ const LEAST_FOLLOWERS = 1;
 
 const UpdateInstance = ({ state, prop, data }) => {
   const theme = useContext(ThemeContext);
+  const { instanceUpdater } = useContext(CharContext);
 
   const UpdateEndDate = () => {
     const btnValue = useRef(new Animated.Value(1)).current;
-    const [bools, setBools] = useState({ state: false, btnDisabled: false });
+    const [bools, setBools] = useState({
+      state: false,
+      btnDisabled: false,
+      loading: false,
+    });
 
     const handleSwtichPress = (type) => {
       setBools({ ...bools, btnDisabled: true });
@@ -107,7 +113,24 @@ const UpdateInstance = ({ state, prop, data }) => {
     });
 
     const handleSubmit = () => {
-      console.log(bools);
+      setBools({ ...bools, loading: true });
+      instanceUpdater(
+        {
+          action: "endDate",
+          actionData: bools.state === true ? "yes" : "no",
+          instance: "show",
+          instanceID: data.instanceID,
+        },
+        (resData) => {
+          console.log(resData);
+          setBools({ ...bools, loading: false });
+        },
+        (errData) => {
+          console.log(errData);
+          console.log(errData.err);
+          setBools({ ...bools, loading: false });
+        }
+      );
     };
 
     return (
@@ -170,6 +193,13 @@ const UpdateInstance = ({ state, prop, data }) => {
           bare
           style={{ marginTop: 35 }}
         />
+        <ActivityIndicator
+          visible={bools.loading}
+          absolute
+          size={0.25}
+          style={{ borderRadius: 20 }}
+          wTransparent
+        />
       </View>
     );
   };
@@ -192,6 +222,16 @@ const UpdateInstance = ({ state, prop, data }) => {
     />
   );
 };
+
+const RenderPageInfos = memo(({ item, isMine, handleItemPress }) => {
+  return (
+    <InfoBox
+      item={item}
+      isMine={isMine}
+      onPress={() => handleItemPress(item)}
+    />
+  );
+});
 
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
@@ -216,7 +256,6 @@ const ShowScreen = ({ route, navigation }) => {
   );
   const [alertModal, setAlertModal] = useState({ visible: false });
   const [modalVis, setModalVis] = useState(false);
-  const [isFollowed, setIsFollowed] = useState(false);
   const [pageInfo, setPageInfo] = useState([]);
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
@@ -230,6 +269,7 @@ const ShowScreen = ({ route, navigation }) => {
   // show = { cover_photo, _id }
   const isFollowing =
     dataState.followers && dataState.followers.includes(userInfo._id);
+  const [isFollowed, setIsFollowed] = useState(isFollowing);
 
   const isMine = dataState.manager && dataState.manager._id === userInfo._id;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -574,12 +614,13 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleFollowShow = () => {
-    setIsCoverLoading(true);
+    setIsFollowed(!isFollowed);
+    const lastIsFollowed = isFollowed;
     let followObj = {
       instance: "show",
       instanceID: dataState._id,
     };
-    if (isFollowing) {
+    if (isFollowed) {
       // UNFOLLOWS
       followObj.action = "unfollow";
     } else {
@@ -588,12 +629,12 @@ const ShowScreen = ({ route, navigation }) => {
     followInstance(
       followObj,
       (resData) => {
-        setIsFollowed(isFollowing ? false : true);
-        setIsCoverLoading(false);
+        // setIsCoverLoading(false);
       },
       (err) => {
         setErrMsg(err?.response.data);
-        setIsCoverLoading(false);
+        // setIsCoverLoading(false);
+        setIsFollowed(lastIsFollowed);
       }
     );
   };
@@ -625,10 +666,6 @@ const ShowScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderPageInfos = ({ item }) => {
-    return <InfoBox item={item} onPress={() => handleItemPress(item)} />;
-  };
-
   useEffect(() => {
     getMyShows("fetch");
   }, []);
@@ -657,120 +694,24 @@ const ShowScreen = ({ route, navigation }) => {
     );
   };
 
-  const renderHome = useCallback(() => {
-    if (isLoading) return null;
+  if (isLoading) {
     return (
-      <InstanceHeader
-        instanceData={headerObj}
-        RenderInstanceContent={() => (
-          <View style={styles.content}>
-            <View style={styles.list}>
-              <FlatList
-                data={pageInfo}
-                keyExtractor={(item) => item.prop}
-                listKey={uuid.v4()}
-                renderItem={renderPageInfos}
-                contentContainerStyle={{ backgroundColor: "transparent" }}
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                }}
-              />
-            </View>
-            <View>
-              {dataState.groups && dataState?.groups[0] && (
-                <>
-                  <Separator h={1} />
-                  <AppText style={{ marginLeft: 12 }} size="large" bold>
-                    GROUPS & ORGANIZATIONS
-                  </AppText>
-                  <Separator h={1} />
-                </>
-              )}
-              <FlatList
-                data={dataState.groups}
-                listKey="groups"
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                keyExtractor={(i, ind) => i + ind}
-                renderItem={renderGroups}
-              />
-              {/* EVENTS */}
-              {dataState?.event && (
-                <>
-                  <Separator />
-                  <AppText style={{ marginLeft: 18 }} size="large" bold>
-                    EVENT
-                  </AppText>
-                  <Separator />
-                  <EventRender
-                    eventData={dataState.event}
-                    isFollowing={isFollowed}
-                    userID={userInfo._id}
-                    renderType="single"
-                    updateMe={updateMe}
-                  />
-                </>
-              )}
-              {dataState.characters && dataState?.characters[0] && (
-                <>
-                  <Separator h={1} />
-                  <View style={styles.flatTitle}>
-                    <AppText size="large" bold>
-                      CHARACTERS
-                    </AppText>
-                    <AppButton
-                      title="Enter room"
-                      onPress={() =>
-                        navigation.navigate("Room", {
-                          data: {
-                            instance: "show",
-                            instanceID: dataState._id,
-                          },
-                        })
-                      }
-                      naked
-                    />
-                  </View>
-                  <Separator h={1} />
-                </>
-              )}
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                numColumns={2}
-                listKey="characters"
-                data={dataState.characters}
-                keyExtractor={(item, index) => (item + index).toString()}
-                renderItem={({ item }) => {
-                  return (
-                    <View style={styles.charCont}>
-                      <ChallengeCard
-                        large
-                        name={item.dpName}
-                        id={item._id}
-                        show={item?.show?.name_j ?? item?.show?.name_e}
-                        followers={item.followers}
-                        avatar={item?.manager?.avatar}
-                        manager={item.manager}
-                        image={item.cover_photo}
-                        onPress={() =>
-                          navigation.navigate("Character", {
-                            item: item._id,
-                          })
-                        }
-                      />
-                    </View>
-                  );
-                }}
-              />
-            </View>
-          </View>
-        )}
+      <ActivityIndicator
+        visible={isLoading}
+        type="spin"
+        style={styles.activity}
       />
     );
-  }, [isLoading]);
+  } else if (errMsg && errMsg.includes("deleted_instance")) {
+    return (
+      <ActivityIndicator
+        visible
+        type="isEmpty"
+        text="Anime was  not verifiable and has been deleted"
+        style={styles.activity}
+      />
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -781,45 +722,164 @@ const ShowScreen = ({ route, navigation }) => {
         data={{
           instanceName: dataState?.name_j ?? dataState?.name_e,
           instance: "show",
+          instanceID: dataState?._id,
         }}
       />
-      {isLoading ? (
-        <ActivityIndicator
-          visible={isLoading}
-          type="spin"
-          style={styles.activity}
-        />
-      ) : errMsg && errMsg.includes("deleted_instance") ? (
-        <ActivityIndicator
-          visible
-          type="isEmpty"
-          text="Anime was  not verifiable and has been deleted"
-          style={styles.activity}
-        />
-      ) : (
-        <Viewport.Tracker>
-          <>
-            <Animated.FlatList
-              data={["OTAKU"]}
-              listKey="@home"
-              onScroll={Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                { useNativeDriver: true }
-              )}
-              renderItem={renderHome}
-              refreshing={refreshing}
-              contentContainerStyle={{ paddingBottom: height * 0.08 }}
-              onRefresh={handleScreenRefresh}
-              overScrollMode="never"
-              keyExtractor={(item, index) => item + index}
-            />
-            <StickyHeader
-              scrollY={scrollY}
-              title={dataState?.name_j || dataState?.name_e}
-            />
-          </>
-        </Viewport.Tracker>
-      )}
+
+      <Viewport.Tracker>
+        <>
+          <Animated.FlatList
+            data={["OTAKU"]}
+            listKey="@home"
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true }
+            )}
+            renderItem={() => {
+              return (
+                <InstanceHeader
+                  instanceData={headerObj}
+                  RenderInstanceContent={() => (
+                    <View style={styles.content}>
+                      <View style={styles.list}>
+                        <FlatList
+                          data={pageInfo}
+                          keyExtractor={(item) => item.prop}
+                          listKey={uuid.v4()}
+                          renderItem={({ item }) => (
+                            <RenderPageInfos
+                              item={item}
+                              isMine={isMine}
+                              handleItemPress={handleItemPress}
+                            />
+                          )}
+                          contentContainerStyle={{
+                            backgroundColor: "transparent",
+                          }}
+                          style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            alignItems: "center",
+                            backgroundColor: "transparent",
+                          }}
+                        />
+                      </View>
+                      <View>
+                        {dataState.groups && dataState?.groups[0] && (
+                          <>
+                            <Separator h={1} />
+                            <AppText
+                              style={{ marginLeft: 12 }}
+                              size="large"
+                              bold
+                            >
+                              GROUPS & ORGANIZATIONS
+                            </AppText>
+                            <Separator h={1} />
+                          </>
+                        )}
+                        <FlatList
+                          data={dataState.groups}
+                          listKey="groups"
+                          showsHorizontalScrollIndicator={false}
+                          horizontal
+                          keyExtractor={(i, ind) => i + ind}
+                          renderItem={renderGroups}
+                        />
+                        {/* EVENTS */}
+                        {dataState?.event && (
+                          <>
+                            <Separator />
+                            <AppText
+                              style={{ marginLeft: 18 }}
+                              size="large"
+                              bold
+                            >
+                              EVENT
+                            </AppText>
+                            <Separator />
+                            <EventRender
+                              eventData={dataState.event}
+                              isFollowing={isFollowed}
+                              userID={userInfo._id}
+                              renderType="single"
+                              updateMe={updateMe}
+                            />
+                          </>
+                        )}
+                        {dataState.characters && dataState?.characters[0] && (
+                          <>
+                            <Separator h={1} />
+                            <View style={styles.flatTitle}>
+                              <AppText size="large" bold>
+                                CHARACTERS
+                              </AppText>
+                              <AppButton
+                                title="Enter room"
+                                onPress={() =>
+                                  navigation.navigate("Room", {
+                                    data: {
+                                      instance: "show",
+                                      instanceID: dataState._id,
+                                    },
+                                  })
+                                }
+                                naked
+                              />
+                            </View>
+                            <Separator h={1} />
+                          </>
+                        )}
+                        <FlatList
+                          showsVerticalScrollIndicator={false}
+                          numColumns={2}
+                          listKey="characters"
+                          data={dataState.characters}
+                          keyExtractor={(item, index) =>
+                            (item + index).toString()
+                          }
+                          renderItem={({ item }) => {
+                            return (
+                              <View style={styles.charCont}>
+                                <ChallengeCard
+                                  large
+                                  name={item.dpName}
+                                  id={item._id}
+                                  show={
+                                    item?.show?.name_j ?? item?.show?.name_e
+                                  }
+                                  followers={item.followers}
+                                  avatar={item?.manager?.avatar}
+                                  manager={item.manager}
+                                  image={item.cover_photo}
+                                  onPress={() =>
+                                    navigation.navigate("Character", {
+                                      item: item._id,
+                                    })
+                                  }
+                                />
+                              </View>
+                            );
+                          }}
+                        />
+                      </View>
+                    </View>
+                  )}
+                />
+              );
+            }}
+            refreshing={refreshing}
+            contentContainerStyle={{ paddingBottom: height * 0.08 }}
+            onRefresh={handleScreenRefresh}
+            overScrollMode="never"
+            keyExtractor={(item, index) => item + index}
+          />
+          <StickyHeader
+            scrollY={scrollY}
+            title={dataState?.name_j || dataState?.name_e}
+          />
+        </>
+      </Viewport.Tracker>
 
       <InstanceChallenger
         visible={challengeModal.vis}

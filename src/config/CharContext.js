@@ -271,6 +271,7 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
         Accept: "application/json",
         "Content-Type": contentType,
       },
+      // transformRequest: () => formData,
       ...requestObj,
     });
     sc && sc(res.data);

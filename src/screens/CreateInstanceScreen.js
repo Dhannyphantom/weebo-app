@@ -330,7 +330,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                   />
                   <CreateFormArray headerC="aliases" name="other_names" type1 />
                   <CreateFormArray
-                    headerC="movies, spinoffs or manga related"
+                    headerC="movies titles, spinoffs or manga related titles"
                     name="spinoffs"
                     type1
                   />

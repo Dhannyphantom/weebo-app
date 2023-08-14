@@ -7,8 +7,9 @@ import AppText from "./AppText";
 
 const { width } = Dimensions.get("window");
 
-const InfoBox = ({ item, onPress }) => {
+const InfoBox = ({ item, onPress, isMine }) => {
   const theme = useContext(ThemeContext);
+  const isDate = ["release date", "endDate"].includes(item.prop);
   let infoValue;
   if (Array.isArray(item.value)) {
     if (item.value?.length === 0) {
@@ -17,7 +18,7 @@ const InfoBox = ({ item, onPress }) => {
     } else {
       infoValue = item.value.join(" | ");
     }
-  } else if (["release date", "endDate"].includes(item.prop)) {
+  } else if (isDate) {
     const timestamp = getDateObject(item.value);
     infoValue = timestamp.isFuture
       ? "Currently airing"
@@ -33,6 +34,7 @@ const InfoBox = ({ item, onPress }) => {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={onPress}
+      disabled={isDate && !isMine}
       style={[styles.container, { backgroundColor: theme.extralight }]}
     >
       <AppText style={styles.title} bold>

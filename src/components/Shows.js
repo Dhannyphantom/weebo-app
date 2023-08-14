@@ -71,11 +71,11 @@ const Shows = ({
               id={item._id}
               key={idx}
               isVerified={item.verified}
-              bScale={3}
               subTitleStyle={{ marginTop: 2.5 }}
               manager={item.manager}
               show={item.show.name_j ?? item.show.name_e}
-              followers={419}
+              followers={item.followers}
+              isFollowing={item.isFollowing}
               onPress={() =>
                 navigation.navigate("Character", { item: item._id })
               }
@@ -95,7 +95,7 @@ const Shows = ({
               show={data}
               feederID={data._id}
               follow="following"
-              followers={data?.followers[0]}
+              followers={data?.followers}
             />
           )}
           <FlatList

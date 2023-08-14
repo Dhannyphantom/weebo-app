@@ -19,7 +19,7 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
         infoStyle={styles.info}
         avaterSize={CARD_WIDTH / 5}
         btmPadding={40}
-        bIcon={CARD_WIDTH / 6.5}
+        bIcon={CARD_WIDTH / 5}
         {...otherProps}
       />
     );
@@ -29,10 +29,9 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
         <Card
           style={{ ...styles.card, width: series ? width * 0.5 : 140 }}
           btmStyle={{ ...styles.btmContainer, width: series ? 220 : 140 }}
-          iconContainerStyle={styles.iconContainer}
-          mIcon={series ? CARD_WIDTH / 5 : CARD_WIDTH / 5.5}
+          mIcon={series ? CARD_WIDTH / 5 : CARD_WIDTH / 5}
           subTitleStyle={styles.subTitle}
-          bIcon={series ? CARD_WIDTH / 8 : CARD_WIDTH / 10}
+          bIcon={series ? CARD_WIDTH / 10 : CARD_WIDTH / 8}
           btmPadding={20}
           series={seriesChar}
           avaterSize={30}

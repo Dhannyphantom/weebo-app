@@ -239,7 +239,6 @@ const SelectGender = ({ gender, setGender, useFormiks, noFormik = false }) => {
   const { setFieldValue, touched, errors } = useFormiks ?? {};
 
   const handleGender = (type) => {
-    // console.log(type, useFormiks);
     if (type === "male") {
       Animated.parallel([
         Animated.spring(maleTranslator, {
@@ -350,8 +349,6 @@ const RenderAuthModal = ({ data, setter, handleAuthSignIn }) => {
   const [bools, setBools] = useState({ loading: false });
 
   const theme = useContext(ThemeContext);
-
-  // console.log(data);
 
   const revokeAccess = async () => {
     setErrMsg(null);
@@ -500,7 +497,7 @@ const AppForm = ({
         cb && cb(false);
       },
       (errData) => {
-        // console.log(errData);
+        console.log(errData);
         if (
           errData?.data?.msg?.includes("gender") ||
           errData?.data?.msg?.includes("email")
@@ -511,7 +508,7 @@ const AppForm = ({
         } else {
           setPopper({
             vis: true,
-            msg: "Something went wrong",
+            msg: errData?.data ?? errData?.msg,
             type: "failed",
           });
           setLoading(false);
@@ -528,7 +525,6 @@ const AppForm = ({
         const isSignedIn = await GoogleSignin.isSignedIn();
         if (isSignedIn) {
           const userInfo = await GoogleSignin.getCurrentUser();
-          // console.log("Signed User", userInfo.user);
           handleAuthSignIn(userInfo.user);
         } else {
           const userInfo = await GoogleSignin.signIn();
@@ -563,7 +559,6 @@ const AppForm = ({
   const getFBCurrentUser = () => {
     Profile.getCurrentProfile().then(function (currentProfile) {
       if (currentProfile) {
-        console.log("FB current profile:: ", currentProfile);
         handleAuthSignIn(currentProfile);
       }
     });

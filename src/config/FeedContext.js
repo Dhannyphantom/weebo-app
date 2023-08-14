@@ -193,12 +193,13 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb &&
-      cb({
-        err,
-        data: err?.response?.data,
-        msg: "Error sending post to server",
-      });
+    cb
+      ? cb({
+          err,
+          data: err?.response?.data,
+          msg: "Error sending post to server",
+        })
+      : null;
   }
 
   // ======================================
@@ -527,5 +528,7 @@ export const { Provider, Context } = createDataContext(
     postPix,
     userFeedback,
   },
-  { shows: [], posts: 0, statuses: [], challengeFeeds: [] }
+  { shows: [], posts: 0, statuses: [], challengeFeeds: [], uploadStatus: {} }
 );
+
+// uploadStatus = {posts: ""}

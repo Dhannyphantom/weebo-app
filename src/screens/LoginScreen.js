@@ -15,7 +15,7 @@ const LoginScreen = ({ navigation }) => {
   const handleSignIn = (data) => {
     setLoading(true);
     signIn(data, null, (err) => {
-      setErrMsg(err);
+      setErrMsg(err?.data ?? err.msg);
       setLoading(false);
       setElevation(true);
     });

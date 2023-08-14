@@ -15,7 +15,7 @@ const RegisterScreen = ({ navigation }) => {
   const handleSignIn = (data) => {
     setLoading(true);
     signUp(data, null, (err) => {
-      setErrMsg(err);
+      setErrMsg(err.data ?? err.msg);
       setLoading(false);
       setElevation(true);
     });

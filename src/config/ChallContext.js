@@ -196,6 +196,7 @@ const getChallenges = (dispatch) => async (sc, cb) => {
       });
   }
 };
+
 const getMyChallenges = (dispatch) => async (sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");

@@ -14,7 +14,7 @@ import colors from "../constants/colors";
 import Spacer from "./Spacer";
 
 import { app_constants } from "../constants/data_store";
-import { Context as AuthContext } from "../config/AuthContext";
+// import { Context as AuthContext } from "../config/AuthContext";
 import ThemeContext from "../config/ThemeContext";
 import { getFeedNumber } from "../constants/helpers";
 const { width } = Dimensions.get("window");
@@ -22,10 +22,10 @@ const { width } = Dimensions.get("window");
 const Card = ({
   image,
   avatar,
-  followers = [],
+  followers = 0,
+  isFollowing,
   name,
   show,
-  series,
   borderRadius,
   manager,
   onPress,
@@ -38,12 +38,7 @@ const Card = ({
   mIcon = 75,
   bIcon = 50,
 }) => {
-  const {
-    state: { userInfo },
-  } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
-
-  const isFollowing = series?.includes(series ? userInfo._id : id);
 
   let cardFollowers = getFeedNumber(
     Array.isArray(followers) ? followers.length : followers
@@ -107,7 +102,7 @@ const Card = ({
           <Icon
             name="star"
             style={styles.icon}
-            color={isFollowing ? colors.heart : colors.medium}
+            color={isFollowing ? colors.primary : colors.light}
             size={bIcon}
             disablePress
           />
@@ -121,7 +116,7 @@ const Card = ({
           />
           <Icon
             name="check-all"
-            color={isVerified ? colors.accentOld : colors.medium}
+            color={isVerified ? colors.accentOld : colors.light}
             style={styles.icon}
             size={bIcon}
             iconSize={bIcon / 2.2}

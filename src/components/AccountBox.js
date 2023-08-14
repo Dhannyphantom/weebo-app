@@ -137,7 +137,6 @@ const AccountBox = ({
       (data) => {
         setStatus(data.status);
         setProfileData([data.user]);
-        console.log(data);
       },
       (err) => {
         setErrMsg(`${err.msg}: ${err.data}`);

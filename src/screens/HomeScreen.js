@@ -170,6 +170,7 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const fetchHomeData = (cb, loader) => {
+    setErrMsg(null);
     loader && setBools({ ...bools, loader: true });
     getHomeFeeds(
       { page: 1, limit: 15 },
@@ -182,6 +183,7 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (err) => {
+        console.log(err?.message);
         setErrMsg("Error fetching feeds");
         loader && setBools({ ...bools, loader: false });
         cb && cb();
@@ -231,6 +233,7 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const handleEndReached = (cb) => {
+    setErrMsg(null);
     if (feeds.hasOwnProperty("next")) {
       getHomeFeeds(
         { limit: 15, page: feeds.next.page },
@@ -242,7 +245,6 @@ const HomeScreen = ({ navigation, route }) => {
           // cb && cb();
         },
         (err) => {
-          console.log(err);
           setErrMsg("Error fetching feeds");
           // cb && cb();
         }

@@ -119,7 +119,7 @@ const signIn = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc();
   } catch (err) {
-    cb && cb(err?.response?.data);
+    cb && cb({ err, data: err?.response?.data, msg: "Error signing in!" });
   }
 };
 
