@@ -19,7 +19,7 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
     ...styles.circle,
     backgroundColor:
       popData.type === "success"
-        ? colors.greenLight
+        ? colors.unChange
         : popData.type === "failed"
         ? colors.heart
         : theme.chat,
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     // height: width * 0.2,
     alignSelf: "center",
-    padding: 10,
-    paddingVertical: 15,
+    padding: 15,
+    paddingVertical: 22,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

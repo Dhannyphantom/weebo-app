@@ -736,6 +736,7 @@ const ShowScreen = ({ route, navigation }) => {
               { useNativeDriver: true }
             )}
             renderItem={() => {
+              // return null;
               return (
                 <InstanceHeader
                   instanceData={headerObj}
@@ -849,6 +850,7 @@ const ShowScreen = ({ route, navigation }) => {
                                     item?.show?.name_j ?? item?.show?.name_e
                                   }
                                   followers={item.followers}
+                                  isFollowing={item.isFollowing}
                                   avatar={item?.manager?.avatar}
                                   manager={item.manager}
                                   image={item.cover_photo}

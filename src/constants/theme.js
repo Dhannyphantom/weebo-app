@@ -17,7 +17,8 @@ export default {
     transparent: "rgba(255,255,255, 0.3)",
     transparentBold: "rgba(255,255,255, 0.93)",
     transparentBolder: "rgba(255,255,255, 0.93)",
-    unchange: "rgba(205,196,236, 0.22)",
+    unchange: "#E6E4F7",
+    // unchange: "rgba(205,196,236, 0.22)",
     // unchange: "rgba(0,255,255, 0.15)",
     // unchange: "#fff3e0",
     // unchange: "#e3d8f0",
@@ -33,12 +34,14 @@ export default {
     transparent: "rgba(37,56,80, 0.3)",
     transparentBold: "rgba(37,56,80, 0.93)",
     transparentBolder: "rgba(19,30,42, 0.93)",
-    background: "#131e2a",
+    background: "#0f1822",
     backgroundLight: "#263950",
-    backgroundExtralight: "#131e2a",
+    backgroundExtralight: "#0f1822",
     lighter: "#263950",
     light: "#263950",
     extralight: "#2f4765",
     unchange: "#2f4765",
   },
 };
+
+// 131e2a

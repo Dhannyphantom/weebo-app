@@ -1,7 +1,5 @@
 const colors = {
   primary: "#5B4EC7",
-  // primary: "#4142BA",
-  primaryOld: "#935DE3",
   accent: "#d65b2c",
   accentOld: "#ff6600",
   medium: "#707070",
@@ -24,9 +22,7 @@ const colors = {
   facebook: "#3b5998",
   google: "#E24040",
   twitter: "#250654",
-  unChange: "rgba(205,196,236, 0.2)",
-  // unChange: "rgba(0,255,255, 0.15)",
-  // unChange: "#fff3e0",
+  unChange: "#E6E4F7",
   black: "#000",
 };
 
