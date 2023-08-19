@@ -7,8 +7,8 @@ export default {
     icon: "./assets/icon.png",
     splash: {
       image: "./assets/splash.png",
-      resizeMode: "contain",
-      backgroundColor: "#ff0",
+      resizeMode: "cover",
+      backgroundColor: "#fff",
     },
     updates: {
       fallbackToCacheTimeout: 0,
