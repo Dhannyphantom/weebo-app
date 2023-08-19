@@ -12,7 +12,7 @@ import MyPostScreen from "../screens/MyPostScreen";
 import SavedCollectionScreen from "../screens/SavedCollectionScreen";
 import ChallengePointScreen from "../screens/ChallengePointScreen";
 import CollectionScreen from "../screens/CollectionScreen";
-
+//
 const Stack = createNativeStackNavigator();
 
 const AccountNavigator = () => {
