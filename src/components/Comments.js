@@ -68,6 +68,7 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
         fetchReplies(() => cb && cb());
       },
       (err) => {
+        console.log("Error 1: ", err);
         setErrMsg(err.msg);
       }
     );
@@ -361,9 +362,10 @@ const Comments = ({
   };
 
   const handleSentComment = (type, data, cb) => {
+    setErrMsg(null);
+    const copier = [...comments.results];
     if (type === "comment") {
       // check if there is a dummy
-      const copier = [...comments.results];
       const finder = copier.findIndex(
         (obj) => obj.pending === true && obj.comment === data.comment
       );
@@ -375,7 +377,6 @@ const Comments = ({
         setMyComments({ ...comments, results: [...comments.results, data] });
       }
     } else if (type === "reply") {
-      const copier = [...comments.results];
       const finder = copier.find((obj) => obj._id == data.replyId);
       const finderIndex = finder.replies.findIndex(
         (obj) => obj.pending == true && obj.reply == data.reply
@@ -383,7 +384,7 @@ const Comments = ({
       if (finderIndex >= 0) {
         finder.replies[finderIndex] = data;
       } else {
-        copier[finder].replies.push(data);
+        copier[finderIndex].replies.push(data);
       }
       setMyComments({ ...comments, results: copier });
     } else if (type === "dummyComment") {
@@ -446,6 +447,7 @@ const Comments = ({
           cb && cb();
         },
         (err) => {
+          console.log("Error 2: ", err);
           setErrMsg(err.msg);
         }
       );

@@ -160,7 +160,7 @@ const getGroups = (dispatch) => async (sc, cb) => {
     });
     sc && sc(response.data);
   } catch (err) {
-    cb && cb("Error getting groups info ", err.response.data);
+    cb && cb("Error getting groups info ", err?.response?.data);
   }
 };
 
@@ -246,7 +246,7 @@ const replyComments = (dispatch) => async (pId, type, cId, reply, sc, cb) => {
     dispatch({ type: "get_comments", payload: response.data });
     sc && sc(response.data);
   } catch (err) {
-    dispatch({ type: "add_error", payload: err.response.data });
+    // dispatch({ type: "add_error", payload: err?.response?.data });
     cb && cb({ err, msg: "Error replying user" });
   }
 };
@@ -302,7 +302,7 @@ const likePost = (dispatch) => async (id, type, cb) => {
       }
     );
   } catch (err) {
-    dispatch({ type: "add_error", payload: err.response.data });
+    dispatch({ type: "add_error", payload: err?.response?.data });
     cb && cb("Error liking this post");
   }
 };

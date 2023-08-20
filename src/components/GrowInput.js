@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: "sen",
+    fontFamily: "sans-regular",
     padding: 5,
     paddingLeft: 10,
     lineHeight: 28,

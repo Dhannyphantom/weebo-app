@@ -18,7 +18,7 @@ const WelcomeScreen = ({ navigation }) => {
       <ImageBackground
         source={welcomeImage}
         style={styles.image}
-        blurRadius={width * 0.005}
+        // blurRadius={6}
       >
         <View style={styles.contents}>
           <View style={styles.btnCont}>

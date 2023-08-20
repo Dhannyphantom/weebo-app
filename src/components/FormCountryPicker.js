@@ -39,19 +39,22 @@ export default function FormCountryPicker({ style }) {
           }}
           dropdownTextStyles={{
             color: theme.color,
-            fontFamily: "sen",
+            fontFamily: "sans-regular",
           }}
           countryCodeContainerStyles={{
             backgroundColor: theme.extralight,
             borderColor: "#ddd",
           }}
-          countryCodeTextStyles={{ color: theme.color, fontFamily: "sen" }}
+          countryCodeTextStyles={{
+            color: theme.color,
+            fontFamily: "sans-regular",
+          }}
           phoneStyles={{
             height: 55,
             backgroundColor: theme.extralight,
             borderColor: "#ddd",
             color: theme.color,
-            fontFamily: "sen",
+            fontFamily: "sans-regular",
           }}
           searchStyles={{ height: 55, color: theme.color }}
         />

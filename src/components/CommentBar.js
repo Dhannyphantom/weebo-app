@@ -58,7 +58,6 @@ const CommentBar = (
           <TouchableOpacity activeOpacity={1} style={styles.emoji}>
             <Ionicons name="happy-outline" size={20} color={colors.medium} />
           </TouchableOpacity>
-          {/* <TextInput style={styles.input} /> */}
           <TextInput
             numberOfLines={4}
             ref={ref}
@@ -86,9 +85,8 @@ const CommentBar = (
         >
           <Feather
             name="send"
-            size={25}
+            size={26}
             color={type === "send" ? colors.chat : colors.primary}
-            fon
           />
         </TouchableOpacity>
       </Cards>
@@ -122,7 +120,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     lineHeight: 25,
-    fontFamily: "sen",
+    fontFamily: "sans-regular",
     paddingVertical: 8,
   },
   inputBox: {

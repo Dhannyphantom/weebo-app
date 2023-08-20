@@ -1,8 +1,15 @@
 import React, { useContext } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 
-const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
+const AppText = ({
+  children,
+  style,
+  size = "normal",
+  textStyle = "regular",
+  bold,
+  ...otherProps
+}) => {
   const theme = useContext(ThemeContext);
   //size = ["normal", "small", "xsmall", "large", "xlarge", "xxlarge"]
   let scaledSize;
@@ -32,43 +39,22 @@ const AppText = ({ children, style, size = "normal", bold, ...otherProps }) => {
     default:
       break;
   }
+
   return (
-    <>
-      {!bold && (
-        <Text
-          {...otherProps}
-          style={[
-            styles.text,
-            { color: theme.color },
-            { ...style, fontSize: scaledSize },
-          ]}
-        >
-          {children}
-        </Text>
-      )}
-      {bold && (
-        <Text
-          {...otherProps}
-          style={[
-            styles.bold,
-            { color: theme.color },
-            { ...style, fontSize: scaledSize },
-          ]}
-        >
-          {children}
-        </Text>
-      )}
-    </>
+    <Text
+      {...otherProps}
+      style={[
+        { color: theme.color },
+        {
+          ...style,
+          fontSize: scaledSize,
+          fontFamily: bold ? `sans-bold` : `sans-${textStyle}`,
+        },
+      ]}
+    >
+      {children}
+    </Text>
   );
 };
-const styles = StyleSheet.create({
-  text: {
-    // fontSize: fontScale * width * 0.023,
-    fontFamily: "sen",
-  },
-  bold: {
-    // fontSize: fontScale * width * 0.024,
-    fontFamily: "sen-bold-b1",
-  },
-});
+
 export default AppText;

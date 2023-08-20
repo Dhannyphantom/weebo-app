@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     marginLeft: 12,
-    fontFamily: "sen",
+    fontFamily: "sans-regular",
   },
   tag: {
     flexDirection: "row",

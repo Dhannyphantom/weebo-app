@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 15,
-    fontFamily: "sen",
+    fontFamily: "sans-regular",
   },
   icon: {
     marginLeft: 15,

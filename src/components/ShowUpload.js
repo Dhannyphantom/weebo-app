@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     color: colors.white,
     textAlign: "center",
     lineHeight: 30,
-    fontFamily: "sen",
+    fontFamily: "sans-regular",
     fontSize: width * 0.03,
     width: "100%",
     height: "100%",

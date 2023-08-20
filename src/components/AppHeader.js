@@ -42,7 +42,7 @@ const AppHeader = ({
                 color: colors.primary,
                 ...titleStyle,
               }}
-              bold
+              textStyle="black"
             >
               {title}
             </AppText>
