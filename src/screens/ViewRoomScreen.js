@@ -583,12 +583,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const fetchRoomCharacters = (type) => {
+    console.log(type);
     type === "refresh" && setRefreshing(true);
 
     roomCharacters(
       params.data,
       (resData) => {
-        // console.log(resData);
+        console.log("room characters", resData);
         setPageData({
           ...resData,
           characters: [
@@ -600,6 +601,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
         type === "refresh" && setRefreshing(false);
       },
       (err) => {
+        console.log(err?.response?.data);
         setErrMsg(err?.response?.data);
         type === "refresh" && setRefreshing(false);
       }
@@ -884,7 +886,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent />
-      {/* <BackDrop myCharacters={pageData.characters} scrollX={backDropper} /> */}
+      {/* <BackDrop myCharacters={pageData.characters} scrollX={0} /> */}
       <Dropper
         data={pageData?.characters}
         scrollX={scrollX}
@@ -918,7 +920,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
         }}
         renderItem={renderCharacters}
       />
-      {/* <RenderPageFooter /> */}
+      <RenderPageFooter />
       <ActivityIndicator visible={isLoading} style={styles.activity} />
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>

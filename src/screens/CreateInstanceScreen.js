@@ -405,7 +405,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     list="shows"
                     handleChange={handleCardState}
                   />
-                  <CreateForm headerF="leader" name="leader" />
+                  <CreateForm
+                    headerF="leader/founder's full name"
+                    name="leader"
+                  />
                   {/* <CreateForm headerE="theme song" name="song" /> */}
                   <CoverUpload type="group" show name="cover_photo" />
 
