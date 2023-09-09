@@ -120,19 +120,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    width,
   },
   headText: {
     marginLeft: 7,
-    maxWidth: "96%",
-    marginBottom: 15,
+    maxWidth: "95%",
   },
   left: {
     flexDirection: "row",
+    alignItems: "center",
   },
   right: {
     flexDirection: "row",
-    alignItems: "center",
     alignItems: "center",
   },
   text: {
@@ -150,7 +149,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     color: colors.primary,
     maxWidth: "95%",
-    marginBottom: 15,
   },
 });
 export default FeedHeader;

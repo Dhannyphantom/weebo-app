@@ -48,14 +48,23 @@ const RenderReplies = ({
           <Entypo name="dot-single" size={12} color={colors.medium} />
           {item.pending ? (
             <View>
-              <AppText>Pending...</AppText>
+              <AppText size="xsmall">Pending...</AppText>
             </View>
           ) : (
-            <AppText style={styles.commentDate}> {date} </AppText>
+            <AppText size="xsmall" style={styles.commentDate}>
+              {" "}
+              {date}{" "}
+            </AppText>
           )}
           {!item.pending && (
             <TouchableOpacity activeOpacity={0.7} onPress={handleReplies}>
-              <AppText style={styles.commentReply}>Reply</AppText>
+              <AppText
+                textStyle="semibold"
+                size="small"
+                style={styles.commentReply}
+              >
+                Reply
+              </AppText>
             </TouchableOpacity>
           )}
         </View>
@@ -98,10 +107,13 @@ const CommentDetails = ({
           <Entypo name="dot-single" size={12} color={colors.medium} />
           {item.pending ? (
             <View>
-              <AppText>Pending...</AppText>
+              <AppText size="xsmall">Pending...</AppText>
             </View>
           ) : (
-            <AppText style={styles.commentDate}> {date} </AppText>
+            <AppText size="small" style={styles.commentDate}>
+              {" "}
+              {date}{" "}
+            </AppText>
           )}
           {!item.pending && (
             <TouchableOpacity
@@ -110,7 +122,13 @@ const CommentDetails = ({
                 setReply(item);
               }}
             >
-              <AppText style={styles.commentReply}>Reply</AppText>
+              <AppText
+                size="small"
+                textStyle="semibold"
+                style={styles.commentReply}
+              >
+                Reply
+              </AppText>
             </TouchableOpacity>
           )}
         </View>

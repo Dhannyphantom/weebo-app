@@ -241,10 +241,13 @@ const HomeHeader = () => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
+            style={[
+              styles.buttonContainer,
+              { backgroundColor: colors.primary },
+            ]}
             onPress={() => navigation.navigate("Chat")}
           >
-            <Ionicons name="chatbubbles" size={18} color={colors.chat} />
+            <Ionicons name="chatbubbles" size={18} color={colors.white} />
             <Badger number={userInfo.chat_count} />
           </TouchableOpacity>
           <TouchableOpacity

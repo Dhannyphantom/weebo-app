@@ -22,7 +22,7 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
         ? colors.unChange
         : popData.type === "failed"
         ? colors.heart
-        : theme.chat,
+        : colors.primary,
 
     transform: [{ translateY: translator }],
     opacity: translator.interpolate({

@@ -209,7 +209,7 @@ const ChatScreen = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <Screen style={{ ...styles.container, backgroundColor: theme.chat }}>
+    <Screen style={{ ...styles.container, backgroundColor: colors.primary }}>
       <StatusBar style="light" />
       <View style={styles.littleCont}>
         <View style={styles.chatHeader}>
@@ -259,14 +259,14 @@ const ChatScreen = ({ navigation }) => {
                   activeOpacity={0.88}
                   onPress={handleSearchPress}
                 >
-                  <Feather name="search" color={colors.primary} size={18} />
+                  <Feather name="search" color={colors.white} size={18} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.topIcons}
                   activeOpacity={0.88}
                   onPress={handlePlusPress}
                 >
-                  <Feather name="plus" size={18} color={colors.primary} />
+                  <Feather name="plus" size={18} color={colors.white} />
                 </TouchableOpacity>
               </>
             )}
@@ -374,10 +374,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   topIcons: {
-    width: 38,
-    height: 38,
     padding: 10,
-    marginRight: 10,
+    marginRight: 2,
     justifyContent: "center",
     alignItems: "center",
   },

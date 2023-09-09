@@ -62,7 +62,7 @@ const ActionMenu = ({
               )}
             </View>
             <View style={styles.upText}>
-              <AppText size="large" bold style={styles.title}>
+              <AppText size="large" textStyle="black" style={styles.title}>
                 {title}
               </AppText>
               {subTitle && (
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   title: {
-    width: "100%",
+    maxWidth: "90%",
     color: colors.white,
     textTransform: "uppercase",
   },

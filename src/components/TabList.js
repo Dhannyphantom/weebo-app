@@ -13,7 +13,7 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 
 const { width } = Dimensions.get("screen");
-const TAB_WIDTH = width * 0.85;
+const TAB_WIDTH = width * 0.9;
 
 export default function TabList({ items = [], state, setState, onPress }) {
   // items = [{ tab: "s", name: "Channels" }]
@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: TAB_WIDTH,
     alignSelf: "center",
-    marginVertical: 10,
+    marginVertical: 8,
     overflow: "hidden",
     borderRadius: width * 0.02,
   },
   box: {
-    paddingVertical: 25,
+    paddingVertical: 18,
     flexDirection: "row",
     flex: 1,
     alignItems: "center",

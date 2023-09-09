@@ -101,7 +101,7 @@ const ChatRender = ({
                 size="large"
                 style={{
                   ...styles.message,
-                  color: theme.mode === "dark" ? theme.color : colors.chat,
+                  color: theme.mode === "dark" ? theme.color : colors.primary,
                 }}
               >
                 {message}
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
   box: {
-    backgroundColor: colors.chat,
+    backgroundColor: colors.primary,
     padding: 7,
     paddingHorizontal: 16,
     alignSelf: "center",

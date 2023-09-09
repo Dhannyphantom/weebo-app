@@ -177,7 +177,7 @@ const ChatUserScreen = ({ route }) => {
   return (
     <Screen style={styles.container}>
       <StatusBar style="light" />
-      <View style={[styles.backdrop, { backgroundColor: theme.chat }]} />
+      <View style={[styles.backdrop, { backgroundColor: colors.primary }]} />
       <AppHeader
         title={username}
         titleStyle={{ color: colors.white }}

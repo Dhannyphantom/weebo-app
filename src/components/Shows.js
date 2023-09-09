@@ -44,16 +44,14 @@ const Shows = ({
     return (
       <View style={styles.footerContainer}>
         <View>
-          <AppText size="small" style={{ color: colors.medium, padding: 10 }}>
+          <AppText
+            size="small"
+            textStyle="bold"
+            style={{ color: colors.medium }}
+          >
             UNVERIFIED CHARACTERS
           </AppText>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 5,
-            }}
-          >
+          <View style={styles.separator}>
             <MaterialCommunityIcons
               name="circle"
               size={width * 0.03}
@@ -113,7 +111,7 @@ const Shows = ({
                   name={item.dpName}
                   id={item._id}
                   isVerified={item.verified}
-                  bScale={3}
+                  // bScale={3}
                   manager={item.manager}
                   show={item.show.name_j ?? item.show.name_e}
                   followers={item.followers}
@@ -176,7 +174,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   line: {
-    minWidth: width,
+    // minWidth: width,
+    flex: 1,
+    alignSelf: "flex-start",
+  },
+  separator: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 5,
+    marginTop: 6,
   },
 });
 

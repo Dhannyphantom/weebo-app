@@ -159,14 +159,14 @@ const DownComponent = ({
             backgroundColor: theme.extralight,
           }}
         >
-          <AppText>Replying @{reply.user.username}</AppText>
+          <AppText size="xsmall">Replying @{reply.user.username}</AppText>
           <TouchableOpacity
             style={styles.commentClose}
             onPress={() => setReply({})}
           >
             <MaterialCommunityIcons
               name="close-circle"
-              size={15}
+              size={18}
               color={colors.medium}
             />
           </TouchableOpacity>
@@ -383,17 +383,23 @@ const Comments = ({
       );
       if (finderIndex >= 0) {
         finder.replies[finderIndex] = data;
-      } else {
-        copier[finderIndex].replies.push(data);
+        copier[finderIndex]?.replies?.push(data);
       }
+      // else {
+      //   console.log(finderIndex);
+      //   console.log(copier[finderIndex]);
+      //   // copier[finderIndex].replies.push(data);
+      // }
       setMyComments({ ...comments, results: copier });
     } else if (type === "dummyComment") {
       setMyComments({ ...comments, results: [...comments.results, data] });
     } else if (type === "dummyReply") {
-      const copier = [...comments.results];
-      const finder = copier.findIndex((obj) => obj._id == data.replyId);
-      copier[finder].replies.push(data);
-      setMyComments({ ...comments, results: copier });
+      // const finder = copier.find((obj) => obj._id == data.replyId);
+      // const finderIndex = finder.replies.findIndex(
+      //   (obj) => obj.pending == true && obj.reply == data.reply
+      // );
+      // copier[finderIndex]?.replies?.push(data);
+      // setMyComments({ ...comments, results: copier });
     }
     setPost && setPost({ ...post, comments: post.comments + 1 });
     cb && cb();
@@ -573,10 +579,12 @@ const styles = StyleSheet.create({
   content: { width: "100%", height: height - (INPUT_HEIGHT + 5) },
   commentReplyBox: {
     flexDirection: "row",
-    height: 30,
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  commentClose: {
+    padding: 8,
   },
   errorText: {
     color: colors.heart,

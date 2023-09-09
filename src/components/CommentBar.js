@@ -86,7 +86,7 @@ const CommentBar = (
           <Feather
             name="send"
             size={26}
-            color={type === "send" ? colors.chat : colors.primary}
+            color={type === "send" ? colors.primary : colors.primary}
           />
         </TouchableOpacity>
       </Cards>
