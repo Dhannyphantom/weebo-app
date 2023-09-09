@@ -32,6 +32,8 @@ export default function App() {
     }
   };
 
+  // Hello
+
   useEffect(() => {
     async function prepare() {
       try {
