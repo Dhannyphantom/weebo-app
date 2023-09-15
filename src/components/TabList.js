@@ -49,7 +49,12 @@ export default function TabList({ items = [], state, setState, onPress }) {
   }, [state]);
 
   return (
-    <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
+    <Cards
+      style={{ ...styles.boxCont, backgroundColor: theme.background }}
+      onLayout={({ event }) => {
+        console.log(event);
+      }}
+    >
       {items.map((obj, idx) => {
         let sColor;
         if (state[obj.tab]) {
@@ -66,7 +71,12 @@ export default function TabList({ items = [], state, setState, onPress }) {
             style={styles.box}
           >
             <FontAwesome5 name="dot-circle" size={14} color={sColor} />
-            <AppText bold style={styles.boxText}>
+            <AppText
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              bold
+              style={styles.boxText}
+            >
               {obj.name ? obj.name : obj.tab}
             </AppText>
           </TouchableOpacity>
@@ -96,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
   },
   box: {
-    paddingVertical: 18,
+    paddingVertical: 20,
     flexDirection: "row",
     flex: 1,
     alignItems: "center",
@@ -105,6 +115,7 @@ const styles = StyleSheet.create({
   boxText: {
     marginLeft: 9,
     textTransform: "capitalize",
+    maxWidth: "70%",
   },
   slider: {
     position: "absolute",

@@ -66,7 +66,7 @@ const boolsObj = {
   showStatus: false,
 };
 
-export const RenderLoadMore = ({ hasNext, loader }) => {
+export const RenderLoadMore = ({ hasNext, loader, text = "feeds" }) => {
   if (loader && hasNext) {
     return (
       <View>
@@ -82,7 +82,7 @@ export const RenderLoadMore = ({ hasNext, loader }) => {
     return (
       <View style={styles.noContent}>
         <AppText bold size="larger" style={styles.noContentText}>
-          No more feeds
+          No more {text}
         </AppText>
       </View>
     );

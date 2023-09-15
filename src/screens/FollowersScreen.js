@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { Context as AuthContext } from "../config/AuthContext";
 
-import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import AppHeader from "../components/AppHeader";
 import FriendBox from "../components/FriendBox";
 import ActivityIndicator from "../components/ActivityIndicator";
+
+const FOLLOWERS_LIMIT = 30;
 
 const FollowersScreen = ({ navigation, route }) => {
   const {
@@ -15,30 +16,47 @@ const FollowersScreen = ({ navigation, route }) => {
     getUserData,
   } = useContext(AuthContext);
 
-  const [myFollowers, setMyFollowers] = useState([]);
+  const [myFollowers, setMyFollowers] = useState({ results: [] });
   const [errMsg, setErrMsg] = useState(null);
-  const [bools, setBools] = useState({ isLoading: true });
+  const [bools, setBools] = useState({ isLoading: true, loadMore: false });
 
   const params = route.params;
+
+  const fetchFollowers = (
+    page = 1,
+    limit = FOLLOWERS_LIMIT,
+    shouldLoadMore
+  ) => {
+    if (shouldLoadMore) setBools({ ...bools, loadMore: true });
+    getUserData(
+      {
+        id: params.id ?? userInfo._id,
+        type: "get_followers",
+        pagination: { page, limit },
+      },
+      (resData) => {
+        if (shouldLoadMore) {
+          setMyFollowers({
+            ...resData.followers,
+            results: myFollowers?.results?.concat(resData?.followers?.results),
+          });
+        } else {
+          setMyFollowers(resData.followers);
+        }
+        setBools({ ...bools, isLoading: false, loadMore: false });
+      },
+      (err) => {
+        setErrMsg(err.data);
+        setBools({ ...bools, isLoading: false, loadMore: false });
+      }
+    );
+  };
 
   useEffect(() => {
     switch (params.type) {
       case "isMine":
-        setMyFollowers(userInfo.followers);
-        setBools({ ...bools, isLoading: false });
-        break;
       case "otherFollowers":
-        getUserData(
-          { id: params.id, type: "get_followers" },
-          (resData) => {
-            setMyFollowers(resData.followers);
-            setBools({ ...bools, isLoading: false });
-          },
-          (err) => {
-            setErrMsg(err.data);
-            setBools({ ...bools, isLoading: false });
-          }
-        );
+        fetchFollowers();
         break;
       default:
         // setMyFollowers(userInfo.followers);
@@ -51,7 +69,20 @@ const FollowersScreen = ({ navigation, route }) => {
     <Screen style={styles.container}>
       {/* PUT A SEARCH IN THE APPHEADER */}
       <AppHeader title="Followers" />
-      <FriendBox data={myFollowers} />
+      <FriendBox
+        data={myFollowers}
+        scrollLoad={{
+          loadMore: bools.loadMore,
+          isLoading: bools.isLoading,
+          onLoadMore: () => {
+            if (myFollowers?.hasOwnProperty("next")) {
+              fetchFollowers(myFollowers?.next?.page, FOLLOWERS_LIMIT, true);
+            } else {
+              setBools({ ...bools, loadMore: false });
+            }
+          },
+        }}
+      />
       <ActivityIndicator visible={bools.isLoading} absolute transparent />
       <ActivityIndicator
         visible={Boolean(errMsg)}

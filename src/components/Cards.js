@@ -2,7 +2,13 @@ import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 
-const Cards = ({ children, elevation = true, style }) => {
+const Cards = ({
+  children,
+  elevation = true,
+  onLayout,
+  style,
+  ...otherProps
+}) => {
   const theme = useContext(ThemeContext);
   return (
     <View
@@ -12,6 +18,8 @@ const Cards = ({ children, elevation = true, style }) => {
         elevation: elevation ? 5 : 0,
         ...style,
       }}
+      onLayout={(ev) => onLayout && onLayout(ev)}
+      {...otherProps}
     >
       {children}
     </View>

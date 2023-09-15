@@ -17,6 +17,7 @@ import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 import AlertModal from "./AlertModal";
+import { RenderLoadMore } from "../screens/HomeScreen";
 
 const { width } = Dimensions.get("window");
 const transferPrompt = (user, itemId) => ({
@@ -35,6 +36,7 @@ const FriendBox = ({
   typeObj,
   callback,
   friended,
+  scrollLoad,
   updateThisInstance,
   instanceLogic,
   length = 0.95,
@@ -301,14 +303,31 @@ const FriendBox = ({
     }
   };
 
+  const onEndReached = () => {
+    if (!Boolean(scrollLoad)) return;
+
+    scrollLoad.onLoadMore();
+  };
+
   return (
     <>
       <FlatList
-        data={data}
+        data={Boolean(scrollLoad) ? data?.results : data}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         renderItem={renderFriends}
+        onEndReached={onEndReached}
+        ListFooterComponent={() => {
+          if (!scrollLoad.isLoading)
+            return (
+              <RenderLoadMore
+                loader={scrollLoad.loadMore}
+                hasNext={data?.hasOwnProperty("next")}
+                text="weebs"
+              />
+            );
+        }}
       />
       <ActivityIndicator
         type="spin"

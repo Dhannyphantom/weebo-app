@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, Image, Dimensions, Text, View } from "react-native";
 
 import header from "../../assets/icon.png";
-import icon from "../../assets/icon.png";
+import icon from "../../assets/icon256.png";
 import ThemeContext from "../config/ThemeContext";
 
 const { width } = Dimensions.get("window");
@@ -33,7 +33,11 @@ const AppLogo = ({ style, type = "header" }) => {
   }
 
   return (
-    <Image source={logoSource} style={[styles.logo, logoDefaultStyle, style]} />
+    <Image
+      source={logoSource}
+      resizeMethod="scale"
+      style={[styles.logo, logoDefaultStyle, style]}
+    />
   );
 };
 const styles = StyleSheet.create({

@@ -218,11 +218,11 @@ const Oauth = ({ name, onPress, icon, color = colors.google }) => {
       style={[
         styles.auth,
         {
-          backgroundColor: theme.white,
+          backgroundColor: color,
         },
       ]}
     >
-      <Fontisto name={icon} size={25} color={color} />
+      <Fontisto name={icon} size={25} color={colors.white} />
       <AppText size="xsmall" style={styles.authText}>
         Continue with {name}
       </AppText>
@@ -787,6 +787,7 @@ const styles = StyleSheet.create({
   authText: {
     marginLeft: 8,
     width: 100,
+    color: colors.white,
   },
   authFormTitle: {
     marginTop: 25,

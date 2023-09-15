@@ -72,35 +72,31 @@ const tabStyle = {
 };
 
 const style = {
-  // minHeight: width * 0.12,
-  height: 62,
+  // height: 62,
+  height: "6.5%",
+  minHeight: 65,
+  maxHeight: 80,
   backgroundColor: colors.white,
   borderWidth: -1,
   position: "absolute", //THIS WILL MAKE THE BACKGROUND TAB-BAR TRANSPARENT
-  // marginBottom: 9,
-  // marginHorizontal: width * 0.05,
-  borderRadius: 12,
+  borderRadius: 10,
   width: width * 0.7,
   left: width / 2 - (width * 0.7) / 2,
   elevation: 12,
   shadowRadius: 6,
-  bottom: 16,
-
+  bottom: 15,
   shadowColor: "black",
   shadowOpacity: 0.15,
   shadowOffset: {
     width: 0,
     height: 1.8,
   },
-  borderColor: colors.white,
+  // borderColor: colors.white,
 };
 
 const screenOptions = {
   headerShown: false,
   tabBarLabelPosition: "beside-icon",
-  tabBarLabelStyle: {
-    marginLeft: 3,
-  },
   tabBarStyle: style,
   tabBarActiveTintColor: colors.primary,
   tabBarItemStyle: tabStyle,

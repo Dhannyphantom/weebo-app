@@ -8,6 +8,8 @@ import colors from "../constants/colors";
 
 // files
 import welcomeImage from "../../assets/welcome.jpg";
+import AppText from "../components/AppText";
+import AppLogo from "../components/AppLogo";
 
 const { width, height } = Dimensions.get("window");
 
@@ -20,6 +22,12 @@ const WelcomeScreen = ({ navigation }) => {
         style={styles.image}
         // blurRadius={6}
       >
+        <View style={styles.icon}>
+          <AppLogo type="icon" />
+          <AppText style={styles.iconText} textStyle="black" size="xlarge">
+            Embrace your inner weeeb
+          </AppText>
+        </View>
         <View style={styles.contents}>
           <View style={styles.btnCont}>
             <Spacer mv={width * 0.01}>
@@ -56,6 +64,15 @@ const styles = StyleSheet.create({
   contents: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  icon: {
+    flex: 0.5,
+    // backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconText: {
+    color: colors.primary,
   },
   btnCont: {
     bottom: width * 0.1,
