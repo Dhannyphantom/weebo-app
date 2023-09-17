@@ -33,7 +33,7 @@ import { launchGallery } from "../constants/helpers";
 import AlertModal from "../components/AlertModal";
 import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
-import { RenderLoadMore } from "./HomeScreen";
+import RenderLoadMore from "../components/RenderLoadMore";
 
 const { width, height } = Dimensions.get("window");
 

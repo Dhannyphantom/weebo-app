@@ -51,9 +51,9 @@ export default function TabList({ items = [], state, setState, onPress }) {
   return (
     <Cards
       style={{ ...styles.boxCont, backgroundColor: theme.background }}
-      onLayout={({ event }) => {
-        console.log(event);
-      }}
+      // onLayout={(ev) => {
+      //   console.log("Hello::", ev?.nativeEvent?.layout);
+      // }}
     >
       {items.map((obj, idx) => {
         let sColor;
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     flexDirection: "row",
     flex: 1,
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
   boxText: {

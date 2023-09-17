@@ -44,6 +44,7 @@ import ThemeContext from "../config/ThemeContext";
 import appConfig from "../../app.config";
 import BannerAds from "../components/BannerAds";
 import TobiGuide from "../components/TobiGuide";
+import RenderLoadMore from "../components/RenderLoadMore";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
 const fbAdsPlacementID = "406752991548934_406754288215471";
@@ -64,29 +65,6 @@ const boolsObj = {
   reloadLoader: true,
   loader: false,
   showStatus: false,
-};
-
-export const RenderLoadMore = ({ hasNext, loader, text = "feeds" }) => {
-  if (loader && hasNext) {
-    return (
-      <View>
-        <ActivityIndicator
-          visible={loader}
-          type="spin"
-          size={0.2}
-          transparent
-        />
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.noContent}>
-        <AppText bold size="larger" style={styles.noContentText}>
-          No more {text}
-        </AppText>
-      </View>
-    );
-  }
 };
 
 const HomeScreen = ({ navigation, route }) => {
@@ -524,16 +502,7 @@ const styles = StyleSheet.create({
     color: colors.heartDark,
     marginBottom: 25,
   },
-  noContent: {
-    width,
-    height: height * 0.05,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  noContentText: {
-    color: colors.medium,
-    textAlign: "center",
-  },
+
   statusHeader: {
     flex: 1,
     justifyContent: "center",

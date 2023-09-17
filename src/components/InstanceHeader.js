@@ -484,14 +484,16 @@ const InstanceHeader = ({
             <Separator h={2} />
             {name && instance === "character" && (
               <View style={styles.nameContainer}>
-                <Fontisto
-                  name={name}
-                  color={colors.primary}
-                  size={width * 0.035}
-                />
-                <AppText size="xlarge" style={styles.name} bold>
-                  {instanceName}
-                </AppText>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Fontisto
+                    name={name}
+                    color={colors.primary}
+                    size={width * 0.035}
+                  />
+                  <AppText size="xlarge" style={styles.name} bold>
+                    {instanceName}
+                  </AppText>
+                </View>
                 <RenderUnverifiedTag />
               </View>
             )}
@@ -580,10 +582,14 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   nameContainer: {
+    width,
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 10,
+    justifyContent: "space-between",
+    paddingLeft: 15,
+    paddingRight: 20,
+    // marginLeft: 10,
   },
   textCont: {
     bottom: 52,

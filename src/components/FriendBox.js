@@ -17,7 +17,7 @@ import AppButton from "./AppButton";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 import AlertModal from "./AlertModal";
-import { RenderLoadMore } from "../screens/HomeScreen";
+import RenderLoadMore from "./RenderLoadMore";
 
 const { width } = Dimensions.get("window");
 const transferPrompt = (user, itemId) => ({

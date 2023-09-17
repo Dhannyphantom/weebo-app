@@ -36,11 +36,7 @@ const HomeStack = () => {
       <Stack.Screen name="Saved" component={SavedCollectionScreen} />
       <Stack.Screen name="Collection" component={CollectionScreen} />
       <Stack.Screen name="ChannelPost" component={ChannelPostScreen} />
-      <Stack.Screen
-        name="CharacterList"
-        options={{ headerShown: true }}
-        component={CharactersList}
-      />
+      <Stack.Screen name="CharacterList" component={CharactersList} />
       <Stack.Screen name="Followers" component={FollowersScreen} />
       <Stack.Screen name="MyPost" component={MyPostScreen} />
       <Stack.Screen name="Group" component={GroupsScreen} />
