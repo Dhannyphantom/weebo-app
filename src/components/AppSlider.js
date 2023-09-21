@@ -17,6 +17,7 @@ import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("window");
 
 const CONTENT_WIDTH = width;
+// Helloo Git
 
 const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   if (!sliderData) return null;
