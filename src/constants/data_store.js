@@ -659,14 +659,14 @@ export const HomeArr = [
   {
     id: "9686981",
     title: "Weebo welcomes You!",
-    text: "Weebo welcomes you to the Manga / Anime community of degenerate weebs just like you \n Have fun and connect with your fellow weebs in this Beta version",
+    text: "Weebo welcomes you to the Manga / Anime community of degenerate weebs just like you \n Have fun and connect with your fellow weebs in this Beta version.",
     bg: "#C45D33",
     image: narutoChibi,
   },
   {
     id: "2986",
     title: "Weebo Instances",
-    text: "Weebo Instances represents official Anime or anime related Series e.g Boku no Hero Academia, Characters e.g Todoroki, Groups e.g Class 1-A \n These Weebo Instances will be managed by you when created, or won in Challenges",
+    text: "Weebo Instances represents official Anime or anime related Series e.g Boku no Hero Academia, Characters e.g Todoroki, Groups e.g Class 1-A \n These Weebo Instances will be managed by you when created, or 'acquired'.",
     bg: "#A40D4E",
     // bg: "#9E6B59",
     image: togaChibi,
@@ -674,14 +674,14 @@ export const HomeArr = [
   {
     id: "986082",
     title: "Weebo on Android",
-    text: "Weebo is currently only available on the android platform (Beta). \n The team is working really hard for the iOS version, please be patient and stay updated",
+    text: "Weebo is currently only available on the android platform (Beta). \n The team is working really hard for the iOS version, please be patient and stay updated.",
     bg: "#77472E",
     image: leviChibi,
   },
   {
     id: "276",
     title: "Support Weebo",
-    text: "You can support the Weebo team to help improve this app. \n The Weebo developer team requires support for a better app management and user experience \n Navigate to \t Profile > Settings & More ",
+    text: "You can support the Weebo team to help improve this app. \n The Weebo developer team requires support for a better app management and user experience",
     bg: colors.facebook,
     image: luffyChibi,
   },

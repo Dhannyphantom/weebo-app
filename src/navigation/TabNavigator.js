@@ -104,7 +104,7 @@ const screenOptions = {
   tabBarShowLabel: false,
 };
 
-const TabIcon = ({ focused, color, size = 35, item }) => {
+const TabIcon = ({ focused, color, size = 40, item }) => {
   const { iconName, name, iconPack, iconFName, iconFPack } = item;
   const theme = useContext(ThemeContext);
   const {
@@ -209,7 +209,6 @@ const TabButton = (props) => {
 };
 
 const TabNavigator = () => {
-  // console.log(insets);
   const theme = useContext(ThemeContext);
 
   return (

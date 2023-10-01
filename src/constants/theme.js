@@ -10,7 +10,6 @@ export default {
     chat: "#573854",
     white: "#fff",
     light: "#F5F2F2",
-    // lighter: "#dddddd",
     lighter: "#fffcf9",
     extralight: "#F5F2F2",
     mediumLight: "#707070",
@@ -18,10 +17,6 @@ export default {
     transparentBold: "rgba(255,255,255, 0.93)",
     transparentBolder: "rgba(255,255,255, 0.93)",
     unchange: "#E6E4F7",
-    // unchange: "rgba(205,196,236, 0.22)",
-    // unchange: "rgba(0,255,255, 0.15)",
-    // unchange: "#fff3e0",
-    // unchange: "#e3d8f0",
   },
   dark: {
     color: "#fff",

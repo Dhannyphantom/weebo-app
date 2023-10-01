@@ -17,7 +17,58 @@ import ThemeContext from "../config/ThemeContext";
 const { width, height } = Dimensions.get("window");
 
 const CONTENT_WIDTH = width;
-// Helloo Git
+
+const RenderBoxContent = ({ item, scrollX, index }) => {
+  if (item.text == "spacer") return <View style={styles.spacer} />;
+  const contentTranslator = scrollX.interpolate({
+    inputRange: [
+      (index - 2) * CONTENT_WIDTH,
+      (index - 1) * CONTENT_WIDTH,
+      index * CONTENT_WIDTH,
+    ],
+    outputRange: [0.85, 1, 0.85],
+    extrapolate: "clamp",
+  });
+  const imageTranslator = scrollX.interpolate({
+    inputRange: [
+      (index - 2) * CONTENT_WIDTH,
+      (index - 1) * CONTENT_WIDTH,
+      index * CONTENT_WIDTH,
+    ],
+    outputRange: [0.35, 1, 0.35],
+    extrapolate: "clamp",
+  });
+
+  return (
+    <Animated.View
+      style={{
+        ...styles.box,
+        backgroundColor: item.bg,
+        transform: [{ scale: contentTranslator }],
+      }}
+    >
+      <AppText
+        style={{ color: colors.white, textAlign: "center" }}
+        size="xxlarge"
+        bold
+      >
+        {item.title}
+      </AppText>
+      <AppText style={styles.text} size="large">
+        {item.text}
+      </AppText>
+      <Animated.Image
+        source={item.image}
+        resizeMode="contain"
+        resizeMethod="scale"
+        style={{
+          ...styles.image,
+          transform: [{ scale: imageTranslator }],
+        }}
+      />
+    </Animated.View>
+  );
+};
 
 const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
   if (!sliderData) return null;
@@ -95,58 +146,6 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
     );
   };
 
-  const RenderBoxContent = ({ item, index }) => {
-    if (item.text == "spacer") return <View style={styles.spacer} />;
-    const contentTranslator = scrollX.interpolate({
-      inputRange: [
-        (index - 2) * CONTENT_WIDTH,
-        (index - 1) * CONTENT_WIDTH,
-        index * CONTENT_WIDTH,
-      ],
-      outputRange: [0.85, 1, 0.85],
-      extrapolate: "clamp",
-    });
-    const imageTranslator = scrollX.interpolate({
-      inputRange: [
-        (index - 2) * CONTENT_WIDTH,
-        (index - 1) * CONTENT_WIDTH,
-        index * CONTENT_WIDTH,
-      ],
-      outputRange: [0.1, 1, 0.1],
-      extrapolate: "clamp",
-    });
-
-    return (
-      <Animated.View
-        style={{
-          ...styles.box,
-          backgroundColor: item.bg,
-          transform: [{ scale: contentTranslator }],
-        }}
-      >
-        <AppText
-          style={{ color: colors.white, textAlign: "center" }}
-          size="xxlarge"
-          bold
-        >
-          {item.title}
-        </AppText>
-        <AppText style={styles.text} size="large">
-          {item.text}
-        </AppText>
-        <Animated.Image
-          source={item.image}
-          resizeMode="contain"
-          resizeMethod="scale"
-          style={{
-            ...styles.image,
-            transform: [{ scale: imageTranslator }],
-          }}
-        />
-      </Animated.View>
-    );
-  };
-
   useEffect(() => {
     if (visible) {
       Animated.timing(modalTranslator, {
@@ -186,7 +185,9 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
           <Animated.FlatList
             data={HomeArr}
             keyExtractor={(item) => item.id}
-            renderItem={RenderBoxContent}
+            renderItem={({ item, index }) => (
+              <RenderBoxContent item={item} index={index} scrollX={scrollX} />
+            )}
             horizontal
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -197,6 +198,7 @@ const AppSlider = ({ visible, sliderData = HomeArr, goCallBackFunc }) => {
             bounces={false}
             ref={flatRef}
             decelerationRate={0.02}
+            scrollEventThrottle={16}
             snapToAlignment="center"
             pagingEnabled
             showsHorizontalScrollIndicator={false}

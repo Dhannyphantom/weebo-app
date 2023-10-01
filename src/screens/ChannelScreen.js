@@ -57,7 +57,6 @@ const ChannelHeaderComp = ({
   channels,
   renderChannelsTwo,
 }) => {
-  // console.log(checkSubChannels);
   return (
     <View>
       <TabList
@@ -127,7 +126,6 @@ const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
         updateMe(userInfo.points - POINTS, "points");
       },
       (errData) => {
-        console.log(errData);
         setErrMsg(errData.data ?? errData.msg);
         setIsLoading(false);
       }
@@ -150,9 +148,16 @@ const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
             validationSchema={validationSchema}
             onSubmit={handleFormSubmit}
           >
-            <AppText style={{ color: theme.medium, textAlign: "center" }} bold>
-              Will require {POINTS}CP
-            </AppText>
+            {errMsg ? (
+              <AppText style={styles.error}>{errMsg}</AppText>
+            ) : (
+              <AppText
+                style={{ color: theme.medium, textAlign: "center" }}
+                bold
+              >
+                Will require {POINTS}CP
+              </AppText>
+            )}
             <View style={{ padding: 12 }}>
               <CreateForm
                 name="name"
@@ -185,7 +190,6 @@ const CreateChannelForm = ({ setBoxState, addNewElement, setModal }) => {
             <ActivityIndicator type="spin" visible={true} wTransparent />
           )}
         </View>
-        {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
       </View>
     </View>
   );
@@ -202,16 +206,9 @@ const ChannelListComp = ({
   const navigation = useNavigation();
   const { subscribeChannel } = useContext(CharContext);
   const handleSubscribe = (type, id) => {
-    subscribeChannel(
-      type,
-      id,
-      (data) => {
-        addNewElement(data);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    subscribeChannel(type, id, (data) => {
+      addNewElement(data);
+    });
   };
   const handleImagePress = (id) => {
     navigation.navigate("ChannelPost", { id });
@@ -430,7 +427,6 @@ const ChannelScreen = ({ route, navigation }) => {
   };
 
   const renderSeachResults = ({ item }) => {
-    console.log(item);
     return null;
     let unsubscribe, isMine, subscribe;
     if (item.manager._id == userInfo._id) {

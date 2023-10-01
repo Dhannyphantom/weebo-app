@@ -23,9 +23,9 @@ const WelcomeScreen = ({ navigation }) => {
         // blurRadius={6}
       >
         <View style={styles.icon}>
-          <AppLogo type="icon" />
+          <AppLogo style={{ width: 100, height: 100 }} type="icon" />
           <AppText style={styles.iconText} textStyle="black" size="xlarge">
-            Embrace your inner weeeb
+            Embrace your inner weeb
           </AppText>
         </View>
         <View style={styles.contents}>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconText: {
-    color: colors.primary,
+    color: colors.unChange,
   },
   btnCont: {
     bottom: width * 0.1,
