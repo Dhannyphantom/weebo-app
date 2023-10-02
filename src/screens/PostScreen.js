@@ -602,8 +602,8 @@ const styles = StyleSheet.create({
   },
   input: {
     textAlign: "center",
-    fontSize: 23,
-    fontFamily: "sen-bold-b1",
+    fontSize: 18,
+    fontFamily: "sans-semibold",
     flex: 1,
     padding: 10,
   },

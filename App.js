@@ -69,17 +69,3 @@ export default function App() {
     </>
   );
 }
-
-/*
-nova: require("./assets/fonts/Nova/proximanova_regular.otf"),
-          // "nova-medium": require("./assets/fonts/Nova/proximanova_medium.otf"),
-          // "nova-bold": require("./assets/fonts/Nova/proximanova_bold.otf"),
-          // "nova-semibold": require("./assets/fonts/Nova/proximanova_semibold.otf"),
-          // "nova-black": require("./assets/fonts/Nova/proximanova_black.otf"),
-          // "nova-thin": require("./assets/fonts/Nova/proximanova_thin.otf"),
-          // "nova-extrabold": require("./assets/fonts/Nova/proximanova_extrabold.otf"),
-          // "nova-extralight": require("./assets/fonts/Nova/proximanova_light.otf"),
-           sen: require("./assets/fonts/sen/Sen-Regular.ttf"),
-          "sen-bold-b1": require("./assets/fonts/sen/Sen-Bold.ttf"),
-          "sen-bold-b2": require("./assets/fonts/sen/Sen-ExtraBold.ttf"),
-*/

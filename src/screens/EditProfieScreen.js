@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   emailPopInput: {
     flex: 1,
     textAlign: "center",
-    fontFamily: "sen-bold-b1",
+    fontFamily: "sans-semibold",
     fontSize: width * 0.05,
   },
   emailPopTitle: {

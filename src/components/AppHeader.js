@@ -53,22 +53,28 @@ const AppHeader = ({
       {type === "transparent" && (
         <View style={{ ...styles.bgContainer, ...style }}>
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.9}
             onPress={() => navigation.goBack()}
-            style={styles.bgIconCont}
+            style={{
+              ...styles.bgIconCont,
+              backgroundColor: theme.transparentBold,
+            }}
           >
-            <Feather name="chevron-left" size={19} color={iconColor} />
+            <Feather name="chevron-left" size={19} color={colors.black} />
           </TouchableOpacity>
           {dotPress && (
             <TouchableOpacity
               onPress={dotPress}
-              activeOpacity={0.7}
-              style={styles.bgIconCont}
+              activeOpacity={0.9}
+              style={{
+                ...styles.bgIconCont,
+                backgroundColor: theme.transparentBold,
+              }}
             >
               <MaterialCommunityIcons
                 name="dots-vertical"
-                size={width * 0.045}
-                color={iconColor}
+                size={20}
+                color={colors.black}
               />
             </TouchableOpacity>
           )}
@@ -93,12 +99,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   bgIconCont: {
-    backgroundColor: "rgba(0,0,0,0.09)",
     width: width * 0.1,
     height: width * 0.1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: width * 0.02,
+    borderRadius: (width * 0.1) / 2,
   },
   title: {
     textTransform: "capitalize",

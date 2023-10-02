@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 40,
     fontSize: 20,
-    fontFamily: "sen-bold-b1",
+    fontFamily: "sans-semibold",
   },
   media: {
     height: "100%",

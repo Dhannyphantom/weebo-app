@@ -354,7 +354,9 @@ const AccountScreen = ({ navigation, route }) => {
             <Link
               name="My Collections"
               iconName="star"
-              onPress={() => navigation.navigate("Saved")}
+              onPress={() =>
+                navigation.navigate("Saved", { userID: userInfo._id })
+              }
             />
             <Link
               name="Invite Weebs"

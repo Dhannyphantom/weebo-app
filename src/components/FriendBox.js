@@ -306,7 +306,7 @@ const FriendBox = ({
   const onEndReached = () => {
     if (!Boolean(scrollLoad)) return;
 
-    scrollLoad.onLoadMore();
+    scrollLoad?.onLoadMore();
   };
 
   return (
@@ -319,10 +319,10 @@ const FriendBox = ({
         renderItem={renderFriends}
         onEndReached={onEndReached}
         ListFooterComponent={() => {
-          if (!scrollLoad.isLoading)
+          if (!scrollLoad?.isLoading)
             return (
               <RenderLoadMore
-                loader={scrollLoad.loadMore}
+                loader={scrollLoad?.loadMore}
                 hasNext={data?.hasOwnProperty("next")}
                 text="weebs"
               />

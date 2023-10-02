@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 19,
-    fontFamily: "sen-bold-b2",
+    fontFamily: "sans-semibold",
   },
 });
 export default SelectNumber;
