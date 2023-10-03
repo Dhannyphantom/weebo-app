@@ -73,6 +73,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
       height: 0,
     },
   };
+
   const showFormInitials = {
     name_j: name,
     name_e: "none",
@@ -91,6 +92,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
       height: 0,
     },
   };
+
   const groupInitials = {
     name,
     show: "",
@@ -357,7 +359,11 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     dropdown={subGenres}
                     type2
                   />
-                  <CreateForm headerC="current episodes" name="episodes" />
+                  <CreateForm
+                    headerC="current episodes"
+                    name="episodes"
+                    keyboardType="phone-pad"
+                  />
                   <CoverUpload type="show" show name="cover_photo" />
 
                   {errText ? (

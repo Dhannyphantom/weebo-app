@@ -47,6 +47,7 @@ const CreateForm = ({
   pass,
   name,
   onSelectItem,
+  ...InputProps
 }) => {
   const [dropDown, setDropDown] = useState(false);
   const [show, setShow] = useState(false);
@@ -164,6 +165,7 @@ const CreateForm = ({
               onBlur={() => setFieldTouched(name)}
               style={[styles.input, { color: theme.color }]}
               onChangeText={handleChange(name)}
+              {...InputProps}
             />
           )}
         {placeholder && !grow && (
@@ -181,6 +183,7 @@ const CreateForm = ({
               style={[styles.inputTwo, { color: theme.color }]}
               placeholderTextColor={theme.color}
               editable={false}
+              {...InputProps}
             />
             {close && (
               <TouchableOpacity onPress={close} activeOpacity={0.7}>
@@ -200,6 +203,7 @@ const CreateForm = ({
             style={[styles.input, { color: theme.color }]}
             placeholderTextColor={colors.medium}
             onChangeText={handleChange(name)}
+            {...InputProps}
           />
         )}
         {pass && (
@@ -210,6 +214,7 @@ const CreateForm = ({
             placeholderTextColor={colors.medium}
             onChangeText={handleChange(name)}
             secureTextEntry
+            {...InputProps}
           />
         )}
         {grow && (
@@ -223,6 +228,7 @@ const CreateForm = ({
             onContentSizeChange={({ nativeEvent }) =>
               setHeight(nativeEvent.contentSize.height)
             }
+            {...InputProps}
           />
         )}
         {dropdownA ? (

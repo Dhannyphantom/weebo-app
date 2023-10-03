@@ -36,6 +36,8 @@ export const RenderVerifyInfo = ({
   vInstance,
   vInstanceID,
 }) => {
+  const [toggle, setToggle] = useState(false);
+
   const theme = useContext(ThemeContext);
   const countdown = getTimestamp(vInstanceID ?? 0, "countdown", TIMER);
   const vPostive = vList?.filter((obj) => obj.feedback === "correct").length;
@@ -47,9 +49,31 @@ export const RenderVerifyInfo = ({
 
   return (
     <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>
-      <AppText style={styles.verifyModalTitle} size="large" bold>
-        {vName} verification stats
-      </AppText>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <AppText style={styles.verifyModalTitle} size="large" bold>
+          {vName} verification stats
+        </AppText>
+        <TouchableOpacity activeOpacity={1} onPress={() => setToggle(!toggle)}>
+          <Ionicons
+            name="information-circle-outline"
+            size={30}
+            color={colors.light}
+          />
+        </TouchableOpacity>
+      </View>
+      {toggle && (
+        <AppText size="small" style={styles.info}>
+          For verification, will require either 1000 followers, OR 1000 +ve
+          feedbacks both with 0 -ve feedback. Note that -ve feedbacks reduces by
+          a certain percentage the chances of being verified.
+        </AppText>
+      )}
       <View style={styles.verifyModalContent}>
         <View
           style={{
@@ -57,7 +81,7 @@ export const RenderVerifyInfo = ({
           }}
         >
           <AppText size="xlarge" bold>
-            {vFollowers}
+            {toggle ? MINIMUM_FOLLOWERS : vFollowers}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
             Followers
@@ -69,7 +93,7 @@ export const RenderVerifyInfo = ({
           }}
         >
           <AppText size="xlarge" bold>
-            {vPostive}
+            {toggle ? MINIMUM_FEEDBACK : vPostive}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
             +ve Feedback
@@ -81,7 +105,7 @@ export const RenderVerifyInfo = ({
           }}
         >
           <AppText size="xlarge" bold>
-            {vNegative}
+            {toggle ? 0 : vNegative}
           </AppText>
           <AppText bold style={{ color: colors.medium }}>
             -ve Feedback
@@ -577,6 +601,12 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
+  info: {
+    textAlign: "center",
+    alignSelf: "center",
+    marginTop: 10,
+    maxWidth: "94%",
+  },
   name: {
     marginLeft: 6,
     textTransform: "capitalize",
@@ -641,7 +671,7 @@ const styles = StyleSheet.create({
   verifyModalTitle: {
     textTransform: "capitalize",
     textAlign: "center",
-    marginTop: 6,
+    marginRight: 6,
   },
   verifyModalContent: {
     flex: 0.9,

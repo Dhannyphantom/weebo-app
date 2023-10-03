@@ -578,13 +578,6 @@ const EditProfileScreen = ({ navigation, route }) => {
               {() => (
                 <View style={styles.form}>
                   <CreateForm
-                    headerZ="username"
-                    placeholder={pageData.username}
-                  />
-                  <CreateForm headerZ="email" placeholder={pageData.email} />
-                  <CreateForm headerZ="gender" placeholder={pageData.gender} />
-
-                  <CreateForm
                     headerZ="first name"
                     name="name"
                     mutable={
@@ -608,6 +601,12 @@ const EditProfileScreen = ({ navigation, route }) => {
                       formInitials.city.length > 1 ? formInitials.city : "city"
                     }
                   />
+                  <CreateForm
+                    headerZ="username"
+                    placeholder={pageData.username}
+                  />
+                  <CreateForm headerZ="email" placeholder={pageData.email} />
+                  <CreateForm headerZ="gender" placeholder={pageData.gender} />
                   {errMsg && (
                     <AppText style={styles.errText}> {errMsg} </AppText>
                   )}

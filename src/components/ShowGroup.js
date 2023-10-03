@@ -93,7 +93,7 @@ export const RenderGenres = ({
   return (
     <View style={styles.modalContainer}>
       <AppButton
-        title="SELECT"
+        title={`SELECT ${selected.length > 0 ? selected.length : ""}`}
         onPress={saveSelectedGenre}
         bare
         style={{ alignSelf: "center" }}
