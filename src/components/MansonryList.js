@@ -19,6 +19,8 @@ import ActivityIndicator from "./ActivityIndicator";
 
 const { width, height } = Dimensions.get("window");
 
+const MEDIA_LENGTH_COLUMN = 30;
+
 const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   const isVideoImage = item.type != "image";
   const theme = useContext(ThemeContext);
@@ -130,7 +132,7 @@ const RenderEmptyList = () => {
         type="isEmpty"
         style={styles.activity}
         text="No media"
-        // transparent
+        transparent
       />
     </View>
   );
@@ -255,7 +257,7 @@ export default function MansonryList({
       <MasonryList
         data={media}
         keyExtractor={(item) => item._id}
-        numColumns={2}
+        numColumns={media.length > MEDIA_LENGTH_COLUMN ? 3 : 2}
         style={{
           ...styles.mansonry,
           backgroundColor: theme.backgroundExtralight,
