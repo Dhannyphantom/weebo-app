@@ -36,7 +36,6 @@ const ShowUpload = ({ visObj, setVisible }) => {
   const [showInput, setShowInput] = useState(false);
   const [popData, setPopData] = useState({ vis: false });
   // const [errMsg, setErrMsg] = useState(null);
-  const [vidDuration, setVidDuration] = useState(0);
   const [statusInput, setStatusInput] = useState("");
   const [editOptions, setEditOptions] = useState({
     color: "normal",
@@ -106,9 +105,14 @@ const ShowUpload = ({ visObj, setVisible }) => {
         tColor: editOptions.color,
         pos: dragger,
         text: textArrays,
-        durationMillis: vidDuration,
+        durationMillis: data.post.duration,
       },
     };
+
+    delete sendData.post.duration;
+    delete sendData.post.base64;
+    delete sendData.post.exif;
+
     statusUploader(
       sendData,
       (resData) => {
@@ -119,15 +123,11 @@ const ShowUpload = ({ visObj, setVisible }) => {
         setPopData({
           vis: true,
           type: "failed",
-          msg: err.msg,
+          msg: err.msg + ", try again",
         });
         setIsLoading(false);
       }
     );
-  };
-
-  const handleVidLoad = (dur) => {
-    setVidDuration(dur);
   };
 
   const handlePanelMenu = (type) => {
@@ -305,7 +305,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
           </View>
         ) : (
           <View style={styles.vidContainer}>
-            <PostVideo source={post} onLoadEnd={handleVidLoad} />
+            <PostVideo source={post} />
             <ActivityIndicator
               visible={isLoading}
               type="loader"

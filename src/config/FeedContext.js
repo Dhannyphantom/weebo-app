@@ -166,7 +166,10 @@ const getGroups = (dispatch) => async (sc, cb) => {
 
 const postPix = (dispatch) => async (data, sc, cb, up) => {
   const formData = new FormData();
-  formData.append("data", JSON.stringify({ ...data, bucket: "posts" }));
+  formData.append(
+    "data",
+    JSON.stringify({ ...data, mediaInfoPath: "post", bucket: "posts" })
+  );
   for (let i = 0; i < data.post.length; i++) {
     const e = data.post[i].uri;
     const imageObject = {
@@ -379,7 +382,14 @@ const followInstance = (dispatch) => async (data, sc, cb) => {
 
 const statusUploader = (dispatch) => async (data, sc, cb) => {
   const formData = new FormData();
-  formData.append("data", JSON.stringify({ ...data, bucket: "statuses" }));
+  formData.append(
+    "data",
+    JSON.stringify({
+      ...data,
+      mediaInfoPath: "post",
+      bucket: "statuses",
+    })
+  );
   if (data.post.mime !== "text") {
     const imageObject = {
       name: data.post.uri.slice(-40),
@@ -404,7 +414,10 @@ const statusUploader = (dispatch) => async (data, sc, cb) => {
     .then((data) => {
       sc && sc(data);
     })
-    .catch((err) => cb && cb({ err, msg: "Error uploading story" }));
+    .catch((err) => {
+      cb && cb({ err, msg: "Error uploading story, try again" });
+      console.log(err);
+    });
   // ======================================
 };
 

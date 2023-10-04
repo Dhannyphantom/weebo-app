@@ -109,6 +109,8 @@ export default function RenderStoryList({
     }
   };
 
+  // console.log(item.durationMillis);
+
   useEffect(() => {
     if (isKey) {
       const speed =
