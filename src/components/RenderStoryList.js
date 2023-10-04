@@ -24,6 +24,7 @@ const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
 const SCROLL_SEPARATOR = height * 0.08;
 const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
+const LOTTIE_SPEED = 2;
 const PRGORESS_BAR_DURATION = 15000;
 const VIEWERS_HEIGHT = height * 0.93;
 const VIEWERS_HEIGHT_SHOW = height * 0.08;
@@ -46,7 +47,8 @@ export default function RenderStoryList({
   handleCloseModal,
   idx,
 }) {
-  const [progress, setProgress] = useState(3);
+  const [progress, setProgress] = useState(LOTTIE_SPEED);
+  const [shouldPlayVideo, setShouldPlayVideo] = useState(null);
   const [viewToggle, setViewToggle] = useState(false);
   const safeInsets = useSafeAreaInsets();
 
@@ -57,6 +59,7 @@ export default function RenderStoryList({
     outputRange: [colors.medium, "transparent"],
   });
   const isKey = activeItem == item._id;
+  const isVideo = item?.type === "video";
 
   const handleAnimFinish = () => {
     if (onEnd.endList) {
@@ -87,11 +90,30 @@ export default function RenderStoryList({
     }
   };
 
+  const animationControl = (type) => {
+    switch (type) {
+      case "pause":
+        lottieRef?.current?.pause();
+        if (isVideo) {
+          setShouldPlayVideo(true);
+        }
+        break;
+      case "play":
+        lottieRef?.current?.resume();
+        if (isVideo) {
+          setShouldPlayVideo(false);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
     if (isKey) {
       const speed =
         !item.durationMillis || item.disableDoublePress == 0
-          ? 3
+          ? LOTTIE_SPEED
           : PRGORESS_BAR_DURATION / item.durationMillis;
       setProgress(speed);
       lottieRef?.current?.play();
@@ -106,11 +128,16 @@ export default function RenderStoryList({
           top: safeInsets.top,
         }}
       >
-        <View style={styles.mediaContainer}>
+        <TouchableOpacity
+          onPressIn={() => animationControl("pause")}
+          onPressOut={() => animationControl("play")}
+          activeOpacity={1}
+          style={styles.mediaContainer}
+        >
           <View
             style={{
               ...styles.mediaCont,
-              aspectRatio: item?.width / item?.height,
+              aspectRatio: isVideo ? item?.width / item?.height : null,
             }}
           >
             {item?.type === "image" && (
@@ -125,13 +152,14 @@ export default function RenderStoryList({
                 />
               </>
             )}
-            {item?.type === "video" && (
+            {isVideo && (
               <View style={styles.vidContainer}>
                 <PostVideo
                   source={item}
                   autoPlay={isKey}
                   showPlayIcon={false}
                   disablePlayback
+                  shouldPlay={shouldPlayVideo}
                 />
               </View>
             )}
@@ -204,7 +232,7 @@ export default function RenderStoryList({
               </>
             )}
           </Animated.View>
-        </View>
+        </TouchableOpacity>
       </View>
       {isKey && (
         <View
@@ -269,6 +297,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     maxHeight: height,
+    minWidth: width,
   },
   mediaContainer: {
     width,

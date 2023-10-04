@@ -102,13 +102,15 @@ const RenderHeaderList = ({ item, date }) => {
               item[item.instance]?.name_j ??
               item[item.instance]?.name_e}
           </AppText>
-          <AppText style={styles.headerInstance}>{item.instance}</AppText>
+          <AppText textStyle="black" style={styles.headerInstance}>
+            {item.instance}
+          </AppText>
           <AppText style={styles.headerDate}>
             {dater ? getTimestamp(dater, "status") : " "}
           </AppText>
         </View>
         <ProfilePic
-          source={item[item.instance]?.cover_photo?.uri}
+          source={item[item.instance]?.cover_photo}
           size={60}
           border={1.5}
           borderColor={colors.white}
@@ -385,7 +387,7 @@ const styles = StyleSheet.create({
   headerInstance: {
     textTransform: "capitalize",
     textAlign: "right",
-    color: colors.primaryOld,
+    color: colors.primary,
   },
   headerDate: {
     textAlign: "right",

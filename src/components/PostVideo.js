@@ -118,6 +118,7 @@ export default function PostVideo({
   onLongPress,
   onLoadEnd,
   disablePlayback = false,
+  shouldPlay = null,
   pos = 0,
   style,
   loop = false,
@@ -238,6 +239,12 @@ export default function PostVideo({
       video?.current?.stopAsync();
     }
   }, [autoPlay]);
+
+  useEffect(() => {
+    if ((shouldPlay === true || shouldPlay === false) && shouldPlay !== null) {
+      onPlayVideo();
+    }
+  }, [shouldPlay]);
 
   return (
     <ViewportAwareVideo
