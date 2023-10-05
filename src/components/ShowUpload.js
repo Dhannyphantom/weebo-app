@@ -53,6 +53,8 @@ const ShowUpload = ({ visObj, setVisible }) => {
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         setEditOptions({ ...editOptions, drag: true });
+        dragger.setOffset({ x: dragger.x._value, y: dragger.y._value });
+        dragger.setValue({ x: 0, y: 0 });
       },
       onPanResponderMove: (evt, gestureState) => {
         dragger.setValue({
@@ -60,15 +62,9 @@ const ShowUpload = ({ visObj, setVisible }) => {
           y: gestureState.dy,
         });
       },
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderRelease: () => {
         setEditOptions({ ...editOptions, drag: false });
-        Animated.spring(dragger, {
-          toValue: {
-            x: gestureState.dx + 10,
-            y: gestureState.dy + 10,
-          },
-          useNativeDriver: true,
-        }).start();
+        dragger.flattenOffset();
       },
     })
   ).current;
