@@ -11,8 +11,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-// import { Context as AuthContext } from "../config/AuthContext";
-// import { Context as FeedContext } from "../config/FeedContext";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
@@ -38,12 +36,19 @@ const viewabilityConfig = {
 const RenderHeader = ({
   headerScroll,
   initialScrollIndexHeader,
+  setAnimationStatus,
   modalData,
   date,
 }) => {
   const safeInsets = useSafeAreaInsets();
   const renderHeaderList = ({ item }) => {
-    return <RenderHeaderList item={item} date={date} />;
+    return (
+      <RenderHeaderList
+        item={item}
+        date={date}
+        setAnimationStatus={setAnimationStatus}
+      />
+    );
   };
 
   const initialScrollIndexHeaderRef = useRef(initialScrollIndexHeader).current;
@@ -81,10 +86,10 @@ const StoryListSeperator = () => {
   return <View style={styles.separator} />;
 };
 
-const RenderHeaderList = ({ item, date }) => {
+const RenderHeaderList = ({ item, date, setAnimationStatus }) => {
   const [dater, setDater] = useState(date);
   const handleMenu = () => {
-    console.log("menun pressed");
+    setAnimationStatus("pause");
   };
 
   useEffect(() => {
@@ -128,9 +133,18 @@ const RenderHeaderList = ({ item, date }) => {
   );
 };
 
+const RenderEmptyComponent = () => {
+  return (
+    <View>
+      <AppText>EMPTYYYYYYYYYYYYYY</AppText>
+    </View>
+  );
+};
+
 export default function DisplayStatus({ modalObj, setVisible }) {
   const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
+  const [animationStatus, setAnimationStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [statuses, setStatuses] = useState({
     data: [],
@@ -223,6 +237,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         idx={index}
         scroller={{ scroller, setScroller }}
         storyLength={statuses.data.length}
+        animationStatus={animationStatus}
         handleCloseModal={handleCloseModal}
         listScrollRef={listScrollRef}
         onEnd={{ endList, setEndList }}
@@ -233,14 +248,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
 
   const handleEndReached = () => {
     setEndList(true);
-  };
-
-  const RenderEmptyComponent = () => {
-    return (
-      <View>
-        <AppText>EMPTYYYYYYYYYYYYYY</AppText>
-      </View>
-    );
   };
 
   useEffect(() => {
@@ -314,10 +321,6 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             onViewableItemsChanged={onViewableItemsChanged}
             maxToRenderPerBatch={8}
             removeClippedSubviews
-            // onScroll={Animated.event(
-            //   [{ nativeEvent: { contentOffset: { x: scrollY } } }],
-            //   { useNativeDriver: true }
-            // )}
             initialNumToRender={5}
             overScrollMode="never"
             scrollEnabled={scroller}
@@ -332,9 +335,9 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             modalData={modalObj?.stories}
             headerScroll={headerScroll}
             initialScrollIndexHeader={initialScrollIndexHeader}
+            setAnimationStatus={setAnimationStatus}
             date={active.key}
           />
-          {/* <RenderFloater handleCloseModal={handleCloseModal} /> */}
           <ActivityIndicator
             visible={isLoading}
             type="loader"

@@ -322,7 +322,13 @@ const ChannelPostScreen = ({ route, navigation }) => {
   };
 
   const handleUploadStaus = async () => {
-    const { results } = await launchGallery("all", false, false, null, 45);
+    const { results, _error } = await launchGallery(
+      "all",
+      false,
+      false,
+      null,
+      45
+    );
 
     if (results) {
       // setIsCoverLoading(true);
@@ -335,6 +341,13 @@ const ChannelPostScreen = ({ route, navigation }) => {
       };
 
       setShowUpload({ vis: true, data: statusObj });
+    } else if (_error) {
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: _error,
+        timer: 3,
+      });
     }
   };
 

@@ -196,13 +196,12 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb
-      ? cb({
-          err,
-          data: err?.response?.data,
-          msg: "Error sending post to server",
-        })
-      : null;
+    cb &&
+      cb({
+        err,
+        data: err?.response?.data,
+        msg: "Error sending post to server",
+      });
   }
 
   // ======================================
@@ -416,7 +415,6 @@ const statusUploader = (dispatch) => async (data, sc, cb) => {
     })
     .catch((err) => {
       cb && cb({ err, msg: "Error uploading story, try again" });
-      console.log(err);
     });
   // ======================================
 };

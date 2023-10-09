@@ -18,8 +18,6 @@ import AppText from "./AppText";
 import colors from "../constants/colors";
 import Separator from "./Separator";
 
-import { subGenres } from "../constants/data_store";
-
 const { width, height } = Dimensions.get("window");
 const CIRCLER = width * 0.1;
 const SCROLL_SEPARATOR = height * 0.08;
@@ -45,19 +43,14 @@ export default function RenderStoryList({
   activeItem,
   onEnd,
   handleCloseModal,
+  animationStatus = null,
   idx,
 }) {
   const [progress, setProgress] = useState(LOTTIE_SPEED);
   const [shouldPlayVideo, setShouldPlayVideo] = useState(null);
-  const [viewToggle, setViewToggle] = useState(false);
   const safeInsets = useSafeAreaInsets();
 
   const lottieRef = useRef(null);
-  const viewTranslator = useRef(new Animated.Value(VIEWERS_HEIGHT)).current;
-  const bgTranslator = viewTranslator.interpolate({
-    inputRange: [VIEWERS_HEIGHT_SHOW, VIEWERS_HEIGHT],
-    outputRange: [colors.medium, "transparent"],
-  });
   const isKey = activeItem == item._id;
   const isVideo = item?.type === "video";
 
@@ -69,24 +62,6 @@ export default function RenderStoryList({
         animated: true,
         offset: SCROLL_INTERVAL * (idx + 1),
       });
-    }
-  };
-
-  const handleViewPress = () => {
-    if (!viewToggle) {
-      setScroller(false);
-      lottieRef?.current?.pause();
-      Animated.spring(viewTranslator, {
-        toValue: VIEWERS_HEIGHT_SHOW,
-        useNativeDriver: false,
-      }).start(() => setViewToggle(true));
-    } else {
-      setScroller(true);
-      lottieRef?.current?.play();
-      Animated.timing(viewTranslator, {
-        toValue: VIEWERS_HEIGHT,
-        useNativeDriver: false,
-      }).start(() => setViewToggle(false));
     }
   };
 
@@ -121,6 +96,12 @@ export default function RenderStoryList({
       lottieRef?.current?.play();
     }
   }, [activeItem]);
+
+  useEffect(() => {
+    if (animationStatus !== null) {
+      animationControl(animationStatus);
+    }
+  }, [animationStatus]);
 
   return (
     <>
@@ -202,38 +183,16 @@ export default function RenderStoryList({
               })}
             </View>
           )}
-          <Animated.View
-            style={{
-              ...styles.viewersContainer,
-              transform: [{ translateY: viewTranslator }],
-              backgroundColor: bgTranslator,
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleViewPress}
-              style={styles.viewersBtn}
-            >
+          <View style={styles.viewersContainer}>
+            <View style={styles.viewersBtn}>
               <View style={styles.viewersHeader}>
                 <AntDesign name="eye" size={22} color={colors.white} />
                 <AppText bold size="xlarge" style={styles.viewersCount}>
                   0
                 </AppText>
               </View>
-            </TouchableOpacity>
-            {viewToggle && (
-              <>
-                <Separator h={2} />
-                <View style={styles.viewersList}>
-                  <FlatList
-                    data={subGenres}
-                    listKey={uuid.v4()}
-                    keyExtractor={(item) => item.id}
-                    renderItem={RenderViewContent}
-                  />
-                </View>
-              </>
-            )}
-          </Animated.View>
+            </View>
+          </View>
         </TouchableOpacity>
       </View>
       {isKey && (

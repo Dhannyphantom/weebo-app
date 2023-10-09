@@ -48,22 +48,25 @@ const PostScreen = ({ route, navigation }) => {
         uri: obj.uri,
         width: obj.width,
         height: obj.height,
+        durationMillis: obj.duration || 0,
         type: obj.type,
       }));
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [showTag, setShowTag] = useState(false);
+  const [bools, setBools] = useState({
+    disablePostBtn: false,
+    searchLoading: false,
+    isLoading: false,
+    showTag: false,
+  });
   const [tagLists, setTagLists] = useState([]);
   const [tagged, setTagged] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
   const [display, setDisplay] = useState(assets ? assets[0] : {});
   const [errMsg, setErrMsg] = useState(null);
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
   const [media, setMedia] = useState(writer ? [] : assets);
-
   const flatt = useRef();
   const searchInputRef = useRef(null);
   const mainFlatListRef = useRef(null);
@@ -101,15 +104,15 @@ const PostScreen = ({ route, navigation }) => {
 
   let tagTitle;
 
-  !tagged[0] && !showTag
+  !tagged[0] && !bools.showTag
     ? (tagTitle = "Add")
-    : showTag
+    : bools.showTag
     ? (tagTitle = "Hide")
     : (tagTitle = "Show");
 
   const handlePost = () => {
     if (!tagged[0]) return setErrMsg("Please add at least a tag");
-    setShowTag(false);
+    setBools({ ...bools, showTag: false });
     if (!userInfo.verified) {
       setPopper({
         vis: true,
@@ -122,8 +125,9 @@ const PostScreen = ({ route, navigation }) => {
       textRef?.current?.focus();
       return setErrMsg("Please write a post");
     }
-    setIsLoading(true);
+    setBools({ ...bools, isLoading: true, disablePostBtn: true });
     setErrMsg(null);
+
     postPix(data);
 
     setPopper({
@@ -133,7 +137,7 @@ const PostScreen = ({ route, navigation }) => {
       type: "neutral",
       cb: () => {
         // NAVIGATE USER AWAY FROM SCREEN;
-        setIsLoading(false);
+        setBools({ ...bools, isLoading: false, disablePostBtn: false });
         router.toScreen
           ? navigation.navigate(router.toScreen, {
               reloadPosts: true,
@@ -181,7 +185,7 @@ const PostScreen = ({ route, navigation }) => {
   };
 
   const handleSearchTag = () => {
-    setSearchLoading(true);
+    setBools({ ...bools, searchLoading: true });
     searchStuffs(
       { term: search, type: "all" },
       (resData) => {
@@ -192,11 +196,11 @@ const PostScreen = ({ route, navigation }) => {
         groups.map((obj) => (obj.type = "group"));
         characters.map((obj) => (obj.type = "character"));
         setTagLists(series.concat(groups, characters));
-        setSearchLoading(false);
+        setBools({ ...bools, searchLoading: false });
       },
       (err) => {
         // setErrMsg(err);
-        setSearchLoading(false);
+        setBools({ ...bools, searchLoading: false });
       }
     );
   };
@@ -319,7 +323,7 @@ const PostScreen = ({ route, navigation }) => {
     if (!tagged[0]) {
       searchInputRef?.current?.focus();
     }
-  }, [showTag]);
+  }, [bools.showTag]);
 
   return (
     <Screen>
@@ -330,6 +334,7 @@ const PostScreen = ({ route, navigation }) => {
           <AppButton
             title="POST"
             naked
+            disabled={bools.disablePostBtn}
             style={styles.postBtn}
             onPress={handlePost}
           />
@@ -371,32 +376,32 @@ const PostScreen = ({ route, navigation }) => {
                 </AppText>
               )}
               <View style={styles.tagHeader}>
-                {showTag && (
+                {bools.showTag && (
                   <AppText style={styles.searchTitle} bold>
                     Add instance tags
                   </AppText>
                 )}
-                {!showTag && <View />}
+                {!bools.showTag && <View />}
                 <AppButton
                   title={`${tagTitle} tags`}
                   style={styles.postBtn}
                   onPress={() => {
                     setSearch("");
                     setTagLists([]);
-                    setShowTag(!showTag);
+                    setBools({ ...bools, showTag: !bools.showTag });
                     setErrMsg(null);
                   }}
                   naked
                 />
               </View>
-              {showTag && (
+              {bools.showTag && (
                 <View style={{ flex: 1, marginBottom: 25 }}>
                   <SearchBar
                     searchBar={search}
                     ref={searchInputRef}
                     setSearchBar={setSearch}
                     pressCb={handleSearchTag}
-                    loading={searchLoading}
+                    loading={bools.searchLoading}
                     style={styles.search}
                     placeholder="Search characters, shows and groups related to your post"
                   />
@@ -455,7 +460,7 @@ const PostScreen = ({ route, navigation }) => {
                     icon="reload"
                   />
                   <ActivityIndicator
-                    visible={isLoading}
+                    visible={bools.isLoading}
                     style={styles.activity}
                     type="spin"
                     wTransparent
@@ -472,7 +477,7 @@ const PostScreen = ({ route, navigation }) => {
                   <Image source={{ uri: display.uri }} style={styles.image} />
                   <ActivityIndicator
                     style={styles.activity}
-                    visible={isLoading}
+                    visible={bools.isLoading}
                     type="spin"
                     wTransparent
                   />
@@ -526,7 +531,7 @@ const PostScreen = ({ route, navigation }) => {
                       placeholder="Write a post..."
                     />
                     <ActivityIndicator
-                      visible={isLoading}
+                      visible={bools.isLoading}
                       style={styles.activity}
                       type="spin"
                       wTransparent

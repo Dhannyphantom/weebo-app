@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get("window");
 const MOVE_Y = height * 0.1;
 
 const PopMessage = ({ popData, timer = 1, setter }) => {
-  // popData = { type : "success/failed", msg: "text", vis: bool, cb: func}
+  // popData = { type : "success/failed", msg: "text", vis: bool, cb: func, timer: secs}
   if (!popData.vis) return null;
   const translator = useRef(new Animated.Value(0)).current;
   const theme = useContext(ThemeContext);
@@ -42,7 +42,7 @@ const PopMessage = ({ popData, timer = 1, setter }) => {
         Animated.timing(translator, {
           toValue: 0,
           duration: 180,
-          delay: timer * 1000,
+          delay: popData.timer ? popData.timer * 1000 : timer * 1000,
           useNativeDriver: true,
         }),
       ]).start(() => {
