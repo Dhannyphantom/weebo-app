@@ -269,6 +269,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             storyLength: e.posts.length,
             storyNumber: idxer,
             lastItem,
+            statusId: e._id,
             storyGroupNumber: i + 1,
             counter,
           };

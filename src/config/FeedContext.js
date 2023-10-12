@@ -511,6 +511,28 @@ const postReport = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const storyActions = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await postApi.put("status", data, {
+      headers: {
+        "x-auth-token": token,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0,
+      },
+    });
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({
+        err,
+        msg: "Error reacting to story!, Try again",
+        data: err?.response?.data,
+      });
+  }
+};
+
 export const { Provider, Context } = createDataContext(
   feedReducer,
   {
@@ -519,6 +541,7 @@ export const { Provider, Context } = createDataContext(
     likePost,
     updatePosts,
     getStatuses,
+    storyActions,
     deletePosts,
     getInstancePosts,
     filterInstances,
