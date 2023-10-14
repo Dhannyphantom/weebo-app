@@ -283,6 +283,7 @@ const HomeHeader = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     zIndex: 5,

@@ -28,6 +28,7 @@ const PRGORESS_BAR_DURATION = 15000;
 // files
 import heartLottie from "../../assets/animations/heartPop.json";
 import circleLottie from "../../assets/animations/circe_countdown.json";
+import { getFeedNumber } from "../constants/helpers";
 
 export default function RenderStoryList({
   item,
@@ -42,7 +43,10 @@ export default function RenderStoryList({
   const [progress, setProgress] = useState(LOTTIE_SPEED);
   const [shouldPlayVideo, setShouldPlayVideo] = useState(null);
   const [bools, setBools] = useState({
-    liked: false,
+    liked: item.isLiked,
+    likes: item.likes,
+    views: item.viewers,
+    viewed: item.isViewed,
   });
   const safeInsets = useSafeAreaInsets();
 
@@ -89,6 +93,7 @@ export default function RenderStoryList({
           setBools({
             ...bools,
             liked: type === "like" ? true : false,
+            likes: type === "like" ? bools.likes + 1 : bools.likes - 1,
           });
         }
       }
@@ -122,6 +127,10 @@ export default function RenderStoryList({
           : PRGORESS_BAR_DURATION / item.durationMillis;
       setProgress(speed);
       lottieRef?.current?.play();
+      if (!bools.viewed) {
+        onStoryReact("view");
+        setBools({ ...bools, views: bools.views + 1, viewed: true });
+      }
     }
   }, [activeItem]);
 
@@ -145,12 +154,8 @@ export default function RenderStoryList({
           activeOpacity={1}
           style={styles.mediaContainer}
         >
-          <View
-            style={{
-              ...styles.mediaCont,
-              aspectRatio: isVideo ? item?.width / item?.height : null,
-            }}
-          >
+          <View style={styles.mediaCont}>
+            {/* IMAGE COMPONENT */}
             {item?.type === "image" && (
               <>
                 <Image
@@ -163,6 +168,7 @@ export default function RenderStoryList({
                 />
               </>
             )}
+            {/* VIDEO COMPONENT */}
             {isVideo && (
               <View style={styles.vidContainer}>
                 <PostVideo
@@ -175,6 +181,7 @@ export default function RenderStoryList({
               </View>
             )}
           </View>
+          {/* TEXT COMPONENT */}
           {item.text[0] && (
             <View
               style={{
@@ -210,12 +217,12 @@ export default function RenderStoryList({
             <View style={styles.viewersHeader}>
               <AntDesign name="eyeo" size={35} color={colors.white} />
               <AppText bold size="large" style={styles.viewersCount}>
-                1K
+                {getFeedNumber(bools.views)}
               </AppText>
             </View>
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => onStoryReact("like")}
+              onPress={() => onStoryReact(bools.liked ? "unlike" : "like")}
               style={styles.viewersHeader}
             >
               <AntDesign
@@ -224,7 +231,7 @@ export default function RenderStoryList({
                 color={bools.liked ? colors.heart : colors.white}
               />
               <AppText bold size="large" style={styles.viewersCount}>
-                300
+                {getFeedNumber(bools.likes)}
               </AppText>
             </TouchableOpacity>
           </View>
@@ -318,6 +325,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mediaCont: {
+    width,
+    height,
     maxHeight: height,
   },
   storyLike: {
@@ -339,11 +348,13 @@ const styles = StyleSheet.create({
     right: 20,
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+    borderRadius: 100,
   },
   viewersHeader: {
     // flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    padding: 15,
   },
   viewersList: {
     width,

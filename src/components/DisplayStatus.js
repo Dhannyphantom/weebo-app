@@ -89,7 +89,8 @@ const StoryListSeperator = () => {
 const RenderHeaderList = ({ item, date, setAnimationStatus }) => {
   const [dater, setDater] = useState(date);
   const handleMenu = () => {
-    setAnimationStatus("pause");
+    // setAnimationStatus("pause");
+    // Menu options like Report story, Chat, Unfollow instance
   };
 
   useEffect(() => {
@@ -180,6 +181,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     // CODE BELOW FOR CHECKING AND ANIMATING THE HEADER SCROLL
 
     setEndList(changed[0].item.lastItem);
+    console.log(changed);
 
     if (changed.length > 1) {
       const currViewValue = changed[0].item.storyGroupNumber;

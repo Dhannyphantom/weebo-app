@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -117,6 +118,7 @@ const StatusRender = ({ show, setter }) => {
 
   const [stories, setStories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { getStatuses } = useContext(FeedContext);
 
@@ -156,21 +158,32 @@ const StatusRender = ({ show, setter }) => {
     return <StatusCardItem item={item} all={stories} setDisplay={setDisplay} />;
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchStories(() => setRefreshing(false));
+  };
+
+  const fetchStories = (cb) => {
+    getStatuses(
+      (resData) => {
+        setStories(resData);
+        setIsLoading(false);
+        cb && cb();
+      },
+      (errData) => {
+        console.log(errData);
+        cb && cb();
+      }
+    );
+  };
+
   useEffect(() => {
     if (show) {
       Animated.timing(opaciter, {
         toValue: 1,
         useNativeDriver: true,
       }).start(() => {
-        getStatuses(
-          (resData) => {
-            setStories(resData);
-            setIsLoading(false);
-          },
-          (errData) => {
-            console.log(errData);
-          }
-        );
+        fetchStories();
       });
     }
   }, [show]);
@@ -201,6 +214,15 @@ const StatusRender = ({ show, setter }) => {
           data={stories}
           numColumns={2}
           listKey="@statuses"
+          refreshControl={
+            <RefreshControl
+              progressBackgroundColor={theme.extralight}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
           ListEmptyComponent={ListEmptyComponent}
           keyExtractor={(item) => item._id}
           renderItem={renderStatuses}
