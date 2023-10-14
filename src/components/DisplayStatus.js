@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { setButtonStyleAsync } from "expo-navigation-bar";
 import { Feather } from "@expo/vector-icons";
+
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import ProfilePic from "./ProfilePic";
@@ -23,15 +25,18 @@ const SCROLL_SEPARATOR = height * 0.08;
 const SCROLL_INTERVAL = height + SCROLL_SEPARATOR;
 const ACTIVE_DEFAULT = {
   key: null,
-  type: null,
+  type: "pause",
   prevViewValue: null,
+  item: null,
   duration: 5000,
 };
 const viewabilityConfig = {
   waitForInteraction: false,
-  minimumViewTime: 10,
-  viewAreaCoveragePercentThreshold: 50,
+  minimumViewTime: 1,
+  viewAreaCoveragePercentThreshold: 80,
 };
+
+setButtonStyleAsync("light");
 
 const RenderHeader = ({
   headerScroll,
@@ -39,8 +44,19 @@ const RenderHeader = ({
   setAnimationStatus,
   modalData,
   date,
+  active,
 }) => {
   const safeInsets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (active) {
+      headerScroll.current?.scrollToIndex({
+        animated: true,
+        index: active?.storyGroupNumber - 1,
+      });
+    }
+  }, [active]);
+
   const renderHeaderList = ({ item }) => {
     return (
       <RenderHeaderList
@@ -86,7 +102,11 @@ const StoryListSeperator = () => {
   return <View style={styles.separator} />;
 };
 
-const RenderHeaderList = ({ item, date, setAnimationStatus }) => {
+const RenderHeaderList = ({
+  item,
+  date,
+  // setAnimationStatus,
+}) => {
   const [dater, setDater] = useState(date);
   const handleMenu = () => {
     // setAnimationStatus("pause");
@@ -178,31 +198,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems, changed }) => {
-    // CODE BELOW FOR CHECKING AND ANIMATING THE HEADER SCROLL
-
     setEndList(changed[0].item.lastItem);
-    console.log(changed);
-
-    if (changed.length > 1) {
-      const currViewValue = changed[0].item.storyGroupNumber;
-      const prevViewValue = changed[1].item.storyGroupNumber;
-      if (currViewValue > prevViewValue) {
-        headerScroll.current?.scrollToOffset({
-          animated: true,
-          offset: width * prevViewValue,
-        });
-      } else if (currViewValue < prevViewValue) {
-        headerScroll.current?.scrollToOffset({
-          animated: true,
-          offset: width * currViewValue - width,
-        });
-      }
-      // TO RESET ENDLIST WHEN THE CURRENT ITEM IS NOT THE LAST ITEM
-    } else if (changed.length == 1) {
-      if (!viewableItems[0]) {
-        setActive({ ...active, prevViewValue: changed });
-      }
-    }
 
     if (!viewableItems[0]) {
       // maybe the first screen
@@ -210,16 +206,20 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     } else if (viewableItems[0]?.item?.type === "video") {
       // a video so play video
       setActive({
+        ...active,
         key: viewableItems[0]?.key,
         type: "play",
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+        item: viewableItems[0]?.item,
       });
     } else if (viewableItems[0]?.item?.type === "image") {
       // an image so pause video
       setActive({
+        ...active,
         key: viewableItems[0]?.key,
         type: "pause",
         duration: viewableItems[0]?.item?.durationMillis ?? 5000,
+        item: viewableItems[0]?.item,
       });
     }
   }).current;
@@ -340,6 +340,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             initialScrollIndexHeader={initialScrollIndexHeader}
             setAnimationStatus={setAnimationStatus}
             date={active.key}
+            active={active.item}
           />
           <ActivityIndicator
             visible={isLoading}

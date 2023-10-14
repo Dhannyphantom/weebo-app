@@ -15,7 +15,7 @@ export default (id, format, countdown) => {
   } else if (format === "millis") {
     return date.getTime();
   } else if (format === "status") {
-    if (newDate >= 86400) {
+    if (newDate >= 86400 - 60 * 60 * 4) {
       timer = `yesterday`;
     } else if (newDate >= 3600) {
       const num = Math.ceil(newDate / 3600);

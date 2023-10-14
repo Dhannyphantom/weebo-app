@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
-import { Text } from "react-native";
+import { Text, Dimensions } from "react-native";
 import ThemeContext from "../config/ThemeContext";
+
+const { fontScale, scale } = Dimensions.get("screen");
 
 const AppText = ({
   children,
@@ -15,29 +17,27 @@ const AppText = ({
   let scaledSize;
   switch (size) {
     case "normal":
-      scaledSize = 14;
+      scaledSize = (17 * fontScale) / scale;
       break;
     case "small":
-      scaledSize = 12;
+      scaledSize = (14 * fontScale) / scale;
       break;
     case "xsmall":
-      scaledSize = 11;
+      scaledSize = (10 * fontScale) / scale;
       break;
     case "xxsmall":
-      scaledSize = 9;
+      scaledSize = (8 * fontScale) / scale;
       break;
     case "large":
-      scaledSize = 16;
+      scaledSize = (18 * fontScale) / scale;
       break;
     case "xlarge":
-      scaledSize = 19;
+      scaledSize = (20 * fontScale) / scale;
       break;
     case "xxlarge":
-      scaledSize = 22;
+      scaledSize = (24 * fontScale) / scale;
     case "xxxlarge":
-      scaledSize = 28;
-    default:
-      break;
+      scaledSize = (28 * fontScale) / scale;
   }
 
   return (

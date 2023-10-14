@@ -12,7 +12,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 
-const { width } = Dimensions.get("screen");
+const { width, scale } = Dimensions.get("screen");
 const TAB_WIDTH = width * 0.9;
 
 export default function TabList({ items = [], state, setState, onPress }) {
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
   },
   box: {
-    paddingVertical: 25,
+    paddingVertical: 32 / scale,
     flexDirection: "row",
     flex: 1,
     alignItems: "flex-start",

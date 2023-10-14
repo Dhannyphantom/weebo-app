@@ -19,7 +19,7 @@ import ProfilePic from "../components/ProfilePic";
 import ThemeContext from "../config/ThemeContext";
 import Badger from "../components/Badger";
 
-const { width } = Dimensions.get("window");
+const { width, scale, fontScale } = Dimensions.get("screen");
 
 const Tab = createBottomTabNavigator();
 
@@ -73,8 +73,8 @@ const tabStyle = {
 
 const style = {
   // height: 62,
-  height: "6.5%",
-  minHeight: 65,
+  height: 100 / scale,
+  // minHeight: 65,
   maxHeight: 80,
   backgroundColor: colors.white,
   borderWidth: -1,
@@ -132,7 +132,7 @@ const TabIcon = ({ focused, color, size = 40, item }) => {
     return (
       <ProfilePic
         source={userInfo.avatar}
-        size={size}
+        size={size / scale + 8}
         border={2}
         borderRad={size / 2}
         borderColor={focused ? "#ddd" : theme.backgroundLight}
@@ -144,9 +144,9 @@ const TabIcon = ({ focused, color, size = 40, item }) => {
   return (
     <>
       {focused ? (
-        <IconFocused name={iconFName} color={color} size={size / 1.5} />
+        <IconFocused name={iconFName} color={color} size={size / scale} />
       ) : (
-        <Icon name={iconName} color={color} size={size / 1.5} />
+        <Icon name={iconName} color={color} size={size / scale} />
       )}
     </>
   );

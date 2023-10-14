@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { setButtonStyleAsync } from "expo-navigation-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
@@ -23,6 +24,8 @@ const Notifications = {
   removeNotificationSubscription: () => {},
   setNotificationHandler: () => {},
 };
+
+setButtonStyleAsync("dark");
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";

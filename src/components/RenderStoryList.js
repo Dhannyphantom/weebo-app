@@ -154,33 +154,29 @@ export default function RenderStoryList({
           activeOpacity={1}
           style={styles.mediaContainer}
         >
-          <View style={styles.mediaCont}>
-            {/* IMAGE COMPONENT */}
-            {item?.type === "image" && (
-              <>
-                <Image
-                  source={{ uri: item?.uri }}
-                  resizeMode="cover"
-                  style={{
-                    ...styles.image,
-                    aspectRatio: item?.width / item?.height,
-                  }}
-                />
-              </>
-            )}
-            {/* VIDEO COMPONENT */}
-            {isVideo && (
-              <View style={styles.vidContainer}>
-                <PostVideo
-                  source={item}
-                  autoPlay={isKey}
-                  showPlayIcon={false}
-                  disablePlayback
-                  shouldPlay={shouldPlayVideo}
-                />
-              </View>
-            )}
-          </View>
+          {/* IMAGE COMPONENT */}
+          {item?.type === "image" && (
+            <Image
+              source={{ uri: item?.uri }}
+              resizeMode="cover"
+              style={{
+                ...styles.image,
+                aspectRatio: item?.width / item?.height,
+              }}
+            />
+          )}
+          {/* VIDEO COMPONENT */}
+          {isVideo && (
+            <View style={styles.vidContainer}>
+              <PostVideo
+                source={item}
+                autoPlay={isKey}
+                showPlayIcon={false}
+                disablePlayback
+                shouldPlay={shouldPlayVideo}
+              />
+            </View>
+          )}
           {/* TEXT COMPONENT */}
           {item.text[0] && (
             <View
@@ -317,17 +313,13 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: height,
     minWidth: width,
+    alignSelf: "center",
   },
   mediaContainer: {
     width,
     height,
     alignItems: "center",
     justifyContent: "center",
-  },
-  mediaCont: {
-    width,
-    height,
-    maxHeight: height,
   },
   storyLike: {
     position: "absolute",
@@ -339,7 +331,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   vidContainer: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
     backgroundColor: colors.dark,
   },
   viewersContainer: {

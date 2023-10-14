@@ -11,8 +11,14 @@ import {
   RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {
+  setBackgroundColorAsync,
+  setButtonStyleAsync,
+} from "expo-navigation-bar";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import DisplayStatus from "./DisplayStatus";
@@ -26,6 +32,8 @@ const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
 
 // TODO:: CACHE RESULTS TO ASYNCSTORAGE
+setBackgroundColorAsync("rgba(255,255,255,0.1)");
+setButtonStyleAsync("light");
 
 const StatusCardItem = ({ item, setDisplay, all }) => {
   const theme = useContext(ThemeContext);
@@ -163,15 +171,23 @@ const StatusRender = ({ show, setter }) => {
     fetchStories(() => setRefreshing(false));
   };
 
-  const fetchStories = (cb) => {
+  const fetchStories = async (cb, type) => {
+    if (type === "initial") {
+      const saved_stories = await AsyncStorage.getItem("stories");
+      if (saved_stories) {
+        setStories(JSON.parse(saved_stories));
+        setIsLoading(false);
+      }
+    }
+
     getStatuses(
-      (resData) => {
+      async (resData) => {
         setStories(resData);
         setIsLoading(false);
         cb && cb();
+        await AsyncStorage.setItem("stories", JSON.stringify(resData));
       },
       (errData) => {
-        console.log(errData);
         cb && cb();
       }
     );
@@ -183,7 +199,7 @@ const StatusRender = ({ show, setter }) => {
         toValue: 1,
         useNativeDriver: true,
       }).start(() => {
-        fetchStories();
+        fetchStories(null, "initial");
       });
     }
   }, [show]);

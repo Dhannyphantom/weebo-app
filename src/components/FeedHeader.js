@@ -97,14 +97,17 @@ const FeedHeader = ({
       </View>
       {show || name ? (
         <View style={styles.right}>
-          <Spacer mr={4}>
+          <Spacer mr={3}>
             <MaterialCommunityIcons
               name="timelapse"
               color={colors.light}
               size={12}
             />
           </Spacer>
-          <AppText style={{ ...styles.text, marginRight: show ? 12 : 1 }}>
+          <AppText
+            size="small"
+            style={{ ...styles.text, marginRight: show ? 12 : 1 }}
+          >
             {timestamp}
           </AppText>
         </View>
@@ -117,10 +120,10 @@ const styles = StyleSheet.create({
     fontSize: 9,
   },
   headerContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width,
   },
   headText: {
     marginLeft: 7,
