@@ -86,7 +86,7 @@ const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
         setJoinData({ vis: true, asset: res, eventId });
       }
     } catch (err) {
-      console.log(err);
+      // setErrMsg(err)
     }
   };
 

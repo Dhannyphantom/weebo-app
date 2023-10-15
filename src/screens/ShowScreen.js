@@ -277,7 +277,7 @@ const ShowScreen = ({ route, navigation }) => {
   const listItems = [
     {
       id: "5078",
-      name: "upload story",
+      name: "new story",
       onPress: () => handleUploadStory(),
       icon: "circle-outline",
       show: isMine,

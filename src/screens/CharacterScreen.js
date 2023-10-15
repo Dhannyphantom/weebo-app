@@ -103,7 +103,7 @@ const CharacterScreen = ({ route, navigation }) => {
   const listItems = [
     {
       id: "5078",
-      name: "upload media",
+      name: "post media",
       onPress: () => setOpenMedia(!openMedia),
       icon: "upload",
       show: character?.verified && isMine,

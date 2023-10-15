@@ -114,6 +114,7 @@ const Shows = ({
                   // bScale={3}
                   manager={item.manager}
                   show={item.show.name_j ?? item.show.name_e}
+                  isFollowing={item.isFollowing}
                   followers={item.followers}
                   onPress={() =>
                     navigation.navigate("Character", { item: item._id })
@@ -152,7 +153,8 @@ const Shows = ({
                       ? item.show.name_j ?? item.name_e
                       : item?.creators?.join(", ")
                   }
-                  followers={[]}
+                  followers={item.followers}
+                  isFollowing={item.isFollowing}
                   onPress={() =>
                     navigation.navigate(header, { show: item, item: item._id })
                   }

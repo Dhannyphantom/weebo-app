@@ -17,7 +17,7 @@ import { app_constants } from "../constants/data_store";
 // import { Context as AuthContext } from "../config/AuthContext";
 import ThemeContext from "../config/ThemeContext";
 import { getFeedNumber } from "../constants/helpers";
-const { width } = Dimensions.get("window");
+const { width, scale } = Dimensions.get("window");
 
 const Card = ({
   image,
@@ -29,14 +29,14 @@ const Card = ({
   borderRadius,
   manager,
   onPress,
-  id,
+  // id,
   mSize,
   style,
   isVerified,
   avaterSize = 45,
   btmPadding = 16,
-  mIcon = 75,
-  bIcon = 50,
+  mIcon = 75 / scale,
+  bIcon = 50 / scale,
 }) => {
   const theme = useContext(ThemeContext);
 
@@ -134,7 +134,7 @@ const Card = ({
           </AppText>
           <AppText
             numberOfLines={1}
-            size="xsmall"
+            size="small"
             ellipsizeMode="tail"
             style={styles.subTitle}
           >

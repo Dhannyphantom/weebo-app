@@ -143,9 +143,9 @@ export default (time, time2, type) => {
     }
 
     if (todayChecker) {
-      return `Today at ${hr}:${min} ${post}`;
+      return `Today by ${hr}:${min} ${post}`;
     } else if (tomorrowChecker) {
-      return `Tomorrow at ${hr}:${min} ${post}`;
+      return `Tomorrow by ${hr}:${min} ${post}`;
     } else if (diff > 86400) {
       return `In ${Math.round(diff / 86400)} days`;
     } else if (diff < 0) {

@@ -53,8 +53,6 @@ const CharactersList = ({ route, navigation }) => {
     groups: false,
   });
 
-  // console.log(instances);
-
   let selector;
   const type = route.params.type;
   const otherId = route.params.id;
@@ -106,7 +104,6 @@ const CharactersList = ({ route, navigation }) => {
     }
 
     getUserData({ id: otherId, type: selector }, (data) => {
-      console.log(selector);
       setInstances(data);
       setIsLoading(false);
     });
@@ -163,6 +160,7 @@ const CharactersList = ({ route, navigation }) => {
                               id={item._id}
                               show={item?.show?.name_j ?? item?.show?.name_e}
                               followers={item.followers}
+                              isFollowing={item.isFollowing}
                               avatar={item.manager && item.manager.avatar}
                               owner={item.manager}
                               image={item.cover_photo}

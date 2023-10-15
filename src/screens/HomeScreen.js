@@ -164,7 +164,6 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (err) => {
-        console.log(err?.message);
         setErrMsg("Error fetching feeds");
         loader && setBools({ ...bools, loader: false });
         cb && cb();
@@ -455,11 +454,10 @@ async function registerForPushNotificationsAsync() {
         })
       ).data;
     } catch (err) {
-      console.log(err);
       // YOU'RE PROBABLY OFFLINE OR PROJECT NOT BUILT WITH FCM KEYS.
     }
   } else {
-    console.log("Please use a physical device for Push Notifications");
+    // setErrMsg("Please use a physical device for Push Notifications");
   }
 
   if (Platform.OS === "android") {
