@@ -32,6 +32,7 @@ import { RenderCoverUpload } from "./CoverUpload";
 import { launchGallery } from "../constants/helpers";
 import ThemeContext from "../config/ThemeContext";
 import Spacer from "./Spacer";
+import { EVENT_FOLLOWERS } from "../constants/data_store";
 
 const { width, height } = Dimensions.get("window");
 
@@ -71,8 +72,6 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
 
   const theme = useContext(ThemeContext);
 
-  // console.log(followersCount);
-
   const [type, setType] = useState(eventTypes);
   const [asset, setAsset] = useState(null);
   const [title, setTitle] = useState("");
@@ -91,6 +90,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
   const activeTabName = tabItems.find((obj) => type[obj.tab]).name;
   const showImage = asset && type.image && asset.type === "image";
   const showVideo = asset && type.video && asset.type == "video";
+  const followersMsg = `Your followers or subscribers not up to ${EVENT_FOLLOWERS}.`;
 
   const handleChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -126,7 +126,23 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
     res && setAsset(res);
   };
 
+  const hasEnoughFollowers = () => {
+    if (followersCount < EVENT_FOLLOWERS) {
+      setPopper({
+        vis: true,
+        msg: followersMsg,
+        type: "failed",
+      });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleStartEvent = () => {
+    if (!hasEnoughFollowers()) {
+      return;
+    }
     setIsLoading(true);
     setErrMsg(null);
     if (title.length < 2) {
@@ -365,6 +381,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
 
   useEffect(() => {
     setStatusBarStyle("dark");
+    hasEnoughFollowers();
   }, []);
 
   return (
