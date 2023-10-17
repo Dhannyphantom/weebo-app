@@ -76,12 +76,10 @@ const RenderChallengers = ({ name, id, setChallengeModal, isManager }) => {
     fetchGroupProperty(
       { id, prop: "challengers" },
       (resData) => {
-        // console.log(resData);
         setLoading(false);
         setChallengers(resData.challengers);
       },
       (errData) => {
-        // console.log(errData);
         setErrMsg(errData.data ?? errData.msg);
         setLoading(false);
       }
@@ -474,7 +472,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
         fetchRoomCharacters("load");
       },
       (err) => {
-        // console.log(err);
         setErrMsg(err?.response.data);
         setBools({ ...bools, cover: false });
       }
@@ -547,7 +544,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
       setShowSearch(!showSearch);
     } else {
       setPopModal({ ...popModal, vis: true, characters: true });
-      console.log("This was clicked!");
       // set;
     }
   };
@@ -574,7 +570,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
           setBools({ ...bools, cover: false });
         },
         (err) => {
-          console.log(err);
           setPopper({ vis: true, type: "failed", msg: err.data ?? err.msg });
           setBools({ ...bools, cover: false });
         }
@@ -583,13 +578,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const fetchRoomCharacters = (type) => {
-    console.log(type);
     type === "refresh" && setRefreshing(true);
 
     roomCharacters(
       params.data,
       (resData) => {
-        console.log("room characters", resData);
         setPageData({
           ...resData,
           characters: [
@@ -601,7 +594,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
         type === "refresh" && setRefreshing(false);
       },
       (err) => {
-        console.log(err?.response?.data);
         setErrMsg(err?.response?.data);
         type === "refresh" && setRefreshing(false);
       }
@@ -621,7 +613,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const handleSendInvite = (item, data) => {
     setIsLoading(true);
-    // console.log(item);
     const inviteData = {
       instance: "character",
       instanceID: item?._id,

@@ -934,6 +934,32 @@ export const app_policy = [
   },
 ];
 
+export const SEARCH_FILTERS = [
+  { keypath: "Shape Layer 1", color: "rgba(91, 78, 199,1)" },
+  { keypath: "Shape Layer 2", color: "rgba(91, 78, 199, 0.91)" },
+  { keypath: "Shape Layer 3", color: "rgba(91, 78, 199, 0.8)" },
+  { keypath: "Shape Layer 4", color: "rgba(91, 78, 199, 0.7)" },
+  { keypath: "Shape Layer 5", color: "rgba(91, 78, 199, 0.95)" },
+  { keypath: "Shape Layer 6", color: "rgba(91, 78, 199, 0.65)" },
+  { keypath: "Shape Layer 7", color: "rgba(91, 78, 199, 0.95)" },
+  { keypath: "Shape Layer 8", color: "rgba(91, 78, 199, 0.4)" },
+  { keypath: "Shape Layer 9", color: "rgba(91, 78, 199, 0.9)" },
+  { keypath: "Shape Layer 10", color: "rgba(91, 78, 199, 0.2)" },
+];
+
+export const SEARCH_FILTERS_DARK = [
+  { keypath: "Shape Layer 1", color: "#131e2a" },
+  { keypath: "Shape Layer 2", color: "#263950" },
+  { keypath: "Shape Layer 3", color: "#2f4765" },
+  { keypath: "Shape Layer 4", color: "#131e2a" },
+  { keypath: "Shape Layer 5", color: "#263950" },
+  { keypath: "Shape Layer 6", color: "#2f4765" },
+  { keypath: "Shape Layer 7", color: "#263950" },
+  { keypath: "Shape Layer 8", color: "#131e2a" },
+  { keypath: "Shape Layer 9", color: "#2f4765" },
+  { keypath: "Shape Layer 10", color: "#131e2a" },
+];
+
 // export const INSTANCE_FREE_PERIOD = 1000; // 7 DAYS
 export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
 export const EVENT_FOLLOWERS = 15; // 7 DAYS

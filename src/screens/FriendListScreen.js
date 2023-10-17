@@ -24,10 +24,18 @@ const FriendListScreen = ({ route, navigation }) => {
   } = useContext(AuthContext);
 
   const [showSearch, setShowSearch] = useState(false);
-  const [weebos, setWeebos] = useState({ weebs: [], requests: [] });
+  const [weebos, setWeebos] = useState({
+    weebs: [],
+    requests: [],
+    pending: [],
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [tab, setTab] = useState({ weebs: true, requests: false });
+  const [tab, setTab] = useState({
+    weebs: true,
+    requests: false,
+    pending: false,
+  });
 
   const searchRef = useRef(null);
 
@@ -35,8 +43,8 @@ const FriendListScreen = ({ route, navigation }) => {
     navigation.navigate("ChatUser", { item });
   };
 
-  const fetchWeebs = (noLoader) => {
-    !noLoader && setIsLoading(true);
+  const fetchWeebs = (noLoader, cb) => {
+    !noLoader && !cb && setIsLoading(true);
     getUserData(
       {
         id: userInfo._id,
@@ -47,12 +55,14 @@ const FriendListScreen = ({ route, navigation }) => {
         setWeebos({
           weebs: res_data.friends,
           requests: res_data.weeb_requests,
+          pending: res_data.pending_requests,
         });
-        setIsLoading(false);
+        !cb && setIsLoading(false);
+        cb && cb();
       },
-      (err_data) => {
-        console.log(err_data?.err?.response?.data);
-        setIsLoading(false);
+      (_err_data) => {
+        !cb && setIsLoading(false);
+        cb && cb();
       }
     );
   };
@@ -60,11 +70,15 @@ const FriendListScreen = ({ route, navigation }) => {
   const handleTabChange = (type) => {
     switch (type) {
       case "requests":
-        setTab({ requests: true, weebs: false });
+        setTab({ requests: true, weebs: false, pending: false });
         break;
 
       case "weebs":
-        setTab({ requests: false, weebs: true });
+        setTab({ requests: false, weebs: true, pending: false });
+        break;
+
+      case "pending":
+        setTab({ requests: false, weebs: false, pending: true });
         break;
 
       default:
@@ -101,6 +115,7 @@ const FriendListScreen = ({ route, navigation }) => {
             items={[
               { tab: "weebs", name: "Weebs" },
               { tab: "requests", name: ` ${weebos.requests.length} Requests` },
+              { tab: "pending", name: `${weebos.pending.length} Pending` },
             ]}
             onPress={handleTabChange}
           />
@@ -130,7 +145,7 @@ const FriendListScreen = ({ route, navigation }) => {
                 text="No weebo..."
               />
             </>
-          ) : (
+          ) : tab.requests ? (
             <>
               {/* WEEB REQUEST TAB */}
               <View>
@@ -147,7 +162,24 @@ const FriendListScreen = ({ route, navigation }) => {
                 text="No weeb requests..."
               />
             </>
-          )}
+          ) : tab.pending ? (
+            <>
+              {/* WEEB REQUEST TAB */}
+              <View>
+                <FriendBox
+                  data={weebos.pending}
+                  callback={fetchWeebs}
+                  type="pending"
+                  // onPress={onFriendPress}
+                />
+              </View>
+              <ActivityIndicator
+                visible={!weebos.requests[0]}
+                type="isEmpty"
+                text="No weeb requests..."
+              />
+            </>
+          ) : null}
         </>
       )}
 

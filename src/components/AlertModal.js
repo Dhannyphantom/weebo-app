@@ -20,6 +20,7 @@ const obj = {
   message: "Are sure you want to miss out all the fun?",
   btn: "YES",
   type: "signout",
+  data: {}
 };
   */
 

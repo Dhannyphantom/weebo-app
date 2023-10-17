@@ -26,35 +26,17 @@ import PopMessage from "../components/PopMessage";
 import { capFirstLetter } from "../constants/helpers";
 import AppButton from "../components/AppButton";
 import ActivityIndicator from "../components/ActivityIndicator";
+import { SEARCH_FILTERS, SEARCH_FILTERS_DARK } from "../constants/data_store";
 
 const { width, height } = Dimensions.get("screen");
-const SEARCH_FILTERS = [
-  { keypath: "Shape Layer 1", color: "#fff3e0" },
-  { keypath: "Shape Layer 2", color: "#ff9100" },
-  { keypath: "Shape Layer 3", color: "#ffb74d" },
-  { keypath: "Shape Layer 4", color: "#fff3e0" },
-  { keypath: "Shape Layer 5", color: "#fff3e0" },
-  { keypath: "Shape Layer 6", color: "#ff9100" },
-  { keypath: "Shape Layer 7", color: "#ffb74d" },
-  { keypath: "Shape Layer 8", color: "#ff9100" },
-  { keypath: "Shape Layer 9", color: "#fff3e0" },
-  { keypath: "Shape Layer 10", color: "#ff9100" },
-];
-const SEARCH_FILTERS_DARK = [
-  { keypath: "Shape Layer 1", color: "#131e2a" },
-  { keypath: "Shape Layer 2", color: "#263950" },
-  { keypath: "Shape Layer 3", color: "#2f4765" },
-  { keypath: "Shape Layer 4", color: "#131e2a" },
-  { keypath: "Shape Layer 5", color: "#263950" },
-  { keypath: "Shape Layer 6", color: "#2f4765" },
-  { keypath: "Shape Layer 7", color: "#263950" },
-  { keypath: "Shape Layer 8", color: "#131e2a" },
-  { keypath: "Shape Layer 9", color: "#2f4765" },
-  { keypath: "Shape Layer 10", color: "#131e2a" },
-];
+
 const PROFILE_WIDTH = 150;
 const NUM_COLUMNS = Math.floor(width / 150);
-const LIGHT_COLORS = ["#ff9100", "#ffb74d", "#fff3e0"];
+const LIGHT_COLORS = [
+  "rgba(91, 78, 199,1)",
+  "rgba(91, 78, 199, 0.6)",
+  "rgba(91, 78, 199, 0.2)",
+];
 
 const Weebs = ({ item, handleCloseModal, index }) => {
   const opaciter = useRef(new Animated.Value(0)).current;
@@ -238,10 +220,12 @@ const ConnectScreen = ({ navigation }) => {
       ? LIGHT_COLORS
       : [theme.transparentBolder, theme.transparentBold, theme.transparent];
 
-  const parentColor = theme.mode === "light" ? "#ff9100" : theme.background;
+  const parentColor =
+    theme.mode === "light" ? colors.primary : theme.background;
 
   const handleSearch = (pageNum = 1, limit = 10, cb) => {
     // check if user has updated his profile;
+    return lottieRef?.current?.play();
     if (!userInfo?.country && !userInfo?.city) {
       setPopper({
         vis: true,
@@ -334,7 +318,7 @@ const ConnectScreen = ({ navigation }) => {
       style={[
         styles.container,
         {
-          backgroundColor: parentColor,
+          backgroundColor: colors.white,
         },
       ]}
     >
