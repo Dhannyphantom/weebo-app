@@ -211,7 +211,8 @@ const BackDrop = ({ myCharacters, scrollX }) => {
   );
 };
 
-const Dropper = ({ data = [], scrollX, activeSlide }) => {
+const Dropper = ({ data = [], activeSlide }) => {
+  if (data.length <= 2) return null;
   return (
     <View style={styles.dropper}>
       <BlurView intensity={100} style={{ flex: 1 }} tint="dark">
@@ -381,7 +382,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
       id: "5",
       name: "Update Cover",
       selected: true,
-      onPress: () => handleCoverImageChange(),
+      onPress: () => {
+        if (checkIsVerified()) {
+          handleCoverImageChange();
+        }
+      },
       icon: "reload",
       show: isManager,
     },
@@ -398,8 +403,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
       name: isManager ? "Add or Invite Characters" : "Join",
       show: true,
       onPress: () => {
-        handleCharacterInvites();
-        onCloseModal();
+        if (checkIsVerified()) {
+          handleCharacterInvites();
+          onCloseModal();
+        }
       },
     },
     {
@@ -544,7 +551,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
       setShowSearch(!showSearch);
     } else {
       setPopModal({ ...popModal, vis: true, characters: true });
-      // set;
     }
   };
 
@@ -612,6 +618,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
   };
 
   const handleSendInvite = (item, data) => {
+    if (!item.verified) {
+      return setPopper({
+        vis: true,
+        msg: "Character is not verified",
+        type: "failed",
+      });
+    }
     setIsLoading(true);
     const inviteData = {
       instance: "character",
@@ -880,7 +893,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       {/* <BackDrop myCharacters={pageData.characters} scrollX={0} /> */}
       <Dropper
         data={pageData?.characters}
-        scrollX={scrollX}
+        // scrollX={scrollX}
         activeSlide={activeSlide}
       />
 
@@ -929,19 +942,27 @@ const ViewRoomScreen = ({ navigation, route }) => {
         </View>
       )}
       {showSearch && (
-        <Screen
+        <View
           style={{
+            backgroundColor: theme.background,
+            borderTopStartRadius: 30,
+            borderTopEndRadius: 30,
             position: "absolute",
             width: "100%",
-            marginTop: 20,
-            height: "100%",
+            marginTop: 10,
+            height: "85%",
+            paddingVertical: 20,
+            bottom: 0,
           }}
         >
+          <AppText style={{ marginLeft: 15 }} textStyle="black">
+            Search Instances
+          </AppText>
           <SearchBar
             searchBar={searcher}
             ref={searchRef}
             setSearchBar={setSearcher}
-            style={{ width: "90%", alignSelf: "center" }}
+            style={{ width: "90%", alignSelf: "center", marginTop: 8 }}
             pressCb={handleSearchInstance}
             closeCb={handleCloseSearch}
             placeholder="Invite Characters..."
@@ -963,7 +984,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
           ) : (
             <AppText style={styles.error}> {errMsg} </AppText>
           )}
-        </Screen>
+        </View>
       )}
       <>
         <PopMessage

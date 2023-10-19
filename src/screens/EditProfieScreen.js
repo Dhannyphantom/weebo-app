@@ -133,6 +133,13 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
         }
       );
     } else if (type === "request") {
+      if (userInfo.verified) {
+        return setPopper({
+          vis: true,
+          type: "success",
+          msg: "Account is verified already!",
+        });
+      }
       const sendData = {
         email: userInfo.email,
         type: "verification",

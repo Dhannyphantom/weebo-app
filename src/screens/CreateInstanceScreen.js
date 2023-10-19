@@ -16,6 +16,7 @@ import { Context as AuthContext } from "../config/AuthContext";
 import {
   characterRoles,
   characterTypes,
+  gender_droplist,
   showGenres,
   subGenres,
 } from "../constants/data_store";
@@ -109,8 +110,6 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     show: false,
     group: false,
   });
-  const [role, setRole] = useState(characterRoles[0]);
-  const [cType, setCtype] = useState(characterTypes[0]);
   const [changeD, setChangeD] = useState(false);
   // createName helps render the whole as a flatlist
   const [createName, setCreateName] = useState([{ id: "1", name }]);
@@ -236,20 +235,20 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       />
                       <CreateForm
                         headerA="role"
-                        onSelectItem={(item) => setRole(item)}
-                        selectedItem={role}
                         dropdownA={characterRoles}
                         name="role"
                       />
                       <CreateForm
                         headerB="type"
-                        onSelectItem={(item) => setCtype(item)}
-                        selectedItem={cType}
                         dropdownA={characterTypes}
                         numColumns={2}
                         name="type"
                       />
-                      <CreateForm headerA="gender" name="gender" />
+                      <CreateForm
+                        headerA="gender"
+                        dropdownA={gender_droplist}
+                        name="gender"
+                      />
                       <CreateForm headerA="height" name="height" />
                       <CreateForm
                         headerA="birthday"

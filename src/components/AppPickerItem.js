@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   headerText: {
     textAlign: "center",
     fontSize: 11,
+    textTransform: "capitalize",
   },
   selected: {
     borderWidth: 1,

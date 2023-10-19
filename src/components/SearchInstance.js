@@ -17,7 +17,7 @@ const { width } = Dimensions.get("window");
 export const DisplayInstance = ({ item, onPress, type }) => {
   return (
     <TouchableOpacity
-      disabled={!item.verified}
+      // disabled={!item.verified}
       activeOpacity={0.9}
       onPress={() => onPress && onPress(item)}
     >

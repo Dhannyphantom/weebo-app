@@ -42,14 +42,15 @@ const CreateForm = ({
   placeholder,
   dropdownA,
   curr,
-  selectedItem,
   mutable,
   pass,
   name,
-  onSelectItem,
   ...InputProps
 }) => {
-  const [dropDown, setDropDown] = useState(false);
+  const [dropDown, setDropDown] = useState({
+    vis: false,
+    text: `Select ${headerA || headerB}`,
+  });
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(
     dateTime2 ? new Date("January 1, 2000") : new Date()
@@ -234,11 +235,9 @@ const CreateForm = ({
         {dropdownA ? (
           <TouchableOpacity
             style={styles.dropDownCont}
-            onPress={() => setDropDown(true)}
+            onPress={() => setDropDown({ ...dropDown, vis: true })}
           >
-            <AppText style={styles.dropDownText}>
-              {selectedItem ? selectedItem.title : headerB || headerA}
-            </AppText>
+            <AppText style={styles.dropDownText}>{dropDown.text}</AppText>
             <View style={styles.chevron}>
               <MaterialCommunityIcons
                 name="chevron-down"
@@ -278,8 +277,8 @@ const CreateForm = ({
       )}
       {dropdownA && (
         <PopDropDown
-          visible={dropDown}
-          setter={() => setDropDown(false)}
+          visible={dropDown.vis}
+          setter={() => setDropDown({ ...dropDown, vis: false })}
           closer={() => modalStatus}
           closeCallback={setModalStatus}
           RenderComponent={() => (
@@ -302,7 +301,7 @@ const CreateForm = ({
                     onPress={() => {
                       setModalStatus("close");
                       // return console.log("Help");
-                      onSelectItem(item);
+                      setDropDown({ ...dropDown, text: item.title });
                       setFieldValue(name, item.title);
                     }}
                   />
@@ -327,6 +326,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: "100%",
   },
   dropDownText: {
     paddingLeft: 15,

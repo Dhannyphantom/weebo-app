@@ -960,6 +960,21 @@ export const SEARCH_FILTERS_DARK = [
   { keypath: "Shape Layer 10", color: "#131e2a" },
 ];
 
+export const gender_droplist = [
+  {
+    id: uuid.v4,
+    title: "male",
+  },
+  {
+    id: uuid.v4,
+    title: "female",
+  },
+  {
+    id: uuid.v4,
+    title: "others",
+  },
+];
+
 // export const INSTANCE_FREE_PERIOD = 1000; // 7 DAYS
 export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
 export const EVENT_FOLLOWERS = 15; // 7 DAYS
