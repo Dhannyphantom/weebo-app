@@ -206,9 +206,14 @@ const ChannelListComp = ({
   const navigation = useNavigation();
   const { subscribeChannel } = useContext(CharContext);
   const handleSubscribe = (type, id) => {
-    subscribeChannel(type, id, (data) => {
-      addNewElement(data);
-    });
+    subscribeChannel(
+      type,
+      id,
+      (data) => {
+        addNewElement(data);
+      },
+      (err) => console.log(err)
+    );
   };
   const handleImagePress = (id) => {
     navigation.navigate("ChannelPost", { id });

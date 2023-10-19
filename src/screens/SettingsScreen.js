@@ -278,7 +278,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
     >
       {data.type === "dropdown" && (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AppText size="large" style={{ textTransform: "capitalize" }}>
+          <AppText size="small" style={{ textTransform: "capitalize" }}>
             {data.default}
           </AppText>
           <MaterialCommunityIcons
