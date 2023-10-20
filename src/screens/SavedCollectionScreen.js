@@ -100,7 +100,13 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   );
 };
 
-export const CollectionCard = ({ index, onPress, screenParam, item }) => {
+export const CollectionCard = ({
+  index,
+  onPress,
+  screenParam,
+  item,
+  size = 0.3,
+}) => {
   const navigation = useNavigation();
   let colNum;
   index % 2 == 0 ? (colNum = 1) : (colNum = 2);
@@ -115,7 +121,7 @@ export const CollectionCard = ({ index, onPress, screenParam, item }) => {
     <TouchableOpacity activeOpacity={0.85} onPress={onCardPress}>
       <LinearGradient
         colors={[gradients[colNum].bg, gradients[colNum].bg1]}
-        style={styles.collBox}
+        style={{ ...styles.collBox, width: width * size }}
       >
         <AppText style={styles.collText} bold>
           {item.name}
@@ -144,6 +150,8 @@ export const RenderCollections = ({
       data={collections}
       contentContainerStyle={{
         paddingBottom: height * (noPadding ? 0 : 0.1),
+        justifyContent: "center",
+        alignItems: "center",
       }}
       ListEmptyComponent={
         <ActivityIndicator
@@ -291,13 +299,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   collBox: {
-    height: width * 0.28,
-    width: width * 0.31,
+    height: width / 4,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
     marginHorizontal: width * 0.005,
-    marginTop: 8,
+    marginTop: 10,
   },
   collText: {
     textAlign: "center",

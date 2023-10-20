@@ -263,7 +263,12 @@ const addNewCollection = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc(res.data);
   } catch (err) {
-    cb && cb("Error saving new collection!");
+    cb &&
+      cb({
+        msg: "Error saving new collection!",
+        err,
+        data: err?.response?.data,
+      });
   }
 };
 

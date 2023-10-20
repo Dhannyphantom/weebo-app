@@ -202,7 +202,11 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           return;
         }
 
-        setErrMsg(err.msg);
+        setErrMsg(
+          `${err.msg}: ${
+            err.err?.response?.data ? err.err?.response?.data : ""
+          }`
+        );
       }
     );
   };

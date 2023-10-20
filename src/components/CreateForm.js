@@ -41,6 +41,7 @@ const CreateForm = ({
   close,
   placeholder,
   dropdownA,
+  dropdownMultiple,
   curr,
   mutable,
   pass,
@@ -50,6 +51,7 @@ const CreateForm = ({
   const [dropDown, setDropDown] = useState({
     vis: false,
     text: `Select ${headerA || headerB}`,
+    multiples: [],
   });
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(
@@ -281,35 +283,69 @@ const CreateForm = ({
           setter={() => setDropDown({ ...dropDown, vis: false })}
           closer={() => modalStatus}
           closeCallback={setModalStatus}
-          RenderComponent={() => (
-            <>
-              <AppButton
-                title="Close"
-                style={styles.modalBtn}
-                bare
-                onPress={() => setModalStatus("close")}
-              />
-              <FlatList
-                data={dropdownA}
-                keyExtractor={(item) => item.id}
-                listKey="selectDrop"
-                renderItem={({ item }) => (
-                  <AppPickerItem
-                    text={item.title}
-                    desc={item.description}
-                    example={item.example}
-                    onPress={() => {
+          RenderComponent={() => {
+            const isDropdownMultiple =
+              dropdownMultiple && dropDown.multiples[0];
+            return (
+              <>
+                <AppButton
+                  title={isDropdownMultiple ? "Done" : "Close"}
+                  style={styles.modalBtn}
+                  LIcon={isDropdownMultiple && "check"}
+                  bare
+                  onPress={() => {
+                    if (isDropdownMultiple) {
                       setModalStatus("close");
-                      // return console.log("Help");
-                      setDropDown({ ...dropDown, text: item.title });
-                      setFieldValue(name, item.title);
-                    }}
-                  />
-                )}
-                numColumns={numColumns}
-              />
-            </>
-          )}
+                      setFieldValue(name, dropDown.multiples);
+                    } else {
+                      setModalStatus("close");
+                    }
+                  }}
+                />
+                <FlatList
+                  data={dropdownA}
+                  keyExtractor={(item) => item.id}
+                  listKey="selectDrop"
+                  renderItem={({ item }) => (
+                    <AppPickerItem
+                      text={item.title}
+                      desc={item.description}
+                      selected={dropDown.multiples.includes(item.title)}
+                      example={item.example}
+                      onPress={() => {
+                        if (isDropdownMultiple) {
+                          const isSelected = dropDown.multiples.includes(
+                            item.title
+                          );
+                          let newMultiples = [];
+                          if (isSelected) {
+                            newMultiples = dropDown.multiples.filter(
+                              (itemTitle) => item.title !== itemTitle
+                            );
+                          } else {
+                            const multiple_Sets = new Set([
+                              ...dropDown.multiples,
+                              item.title,
+                            ]);
+                            newMultiples = [...multiple_Sets];
+                          }
+                          setDropDown({
+                            ...dropDown,
+                            multiples: newMultiples,
+                          });
+                        } else {
+                          setModalStatus("close");
+                          setDropDown({ ...dropDown, text: item.title });
+                          setFieldValue(name, item.title);
+                        }
+                      }}
+                    />
+                  )}
+                  numColumns={numColumns}
+                />
+              </>
+            );
+          }}
         />
       )}
     </View>

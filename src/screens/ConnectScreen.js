@@ -225,7 +225,7 @@ const ConnectScreen = ({ navigation }) => {
 
   const handleSearch = (pageNum = 1, limit = 10, cb) => {
     // check if user has updated his profile;
-    return lottieRef?.current?.play();
+    // return lottieRef?.current?.play();
     if (!userInfo?.country && !userInfo?.city) {
       setPopper({
         vis: true,
@@ -352,7 +352,7 @@ const ConnectScreen = ({ navigation }) => {
               Search Weebs
             </AppText>
             <AppText bold style={styles.headerSubtitle}>
-              Connect with your fellow weeb whose nearby
+              Discover & Connect with your nearby fellow weebs
             </AppText>
           </View>
 

@@ -11,7 +11,7 @@ import {
   Keyboard,
 } from "react-native";
 import uuid from "react-native-uuid";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -227,6 +227,164 @@ const RenderTags = ({ tags, translator, handleCloseModal }) => {
   );
 };
 
+const RenderCollection = ({
+  boxState,
+  postUris,
+  pId,
+  setPopData,
+  collectionText,
+  setCollectionText,
+  setShowText,
+  showText,
+}) => {
+  const { addNewCollection } = useContext(FeedContext);
+  const {
+    addToCollection,
+    updateMe,
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const [isNewCollLoading, setIsNewCollLoading] = useState(false);
+  const [collectionData, setCollectionData] = useState(userInfo.my_collections);
+  const [errMsg, setErrMsg] = useState(null);
+
+  let collBtnText = "New Collection";
+
+  if (collectionText.length > 1) {
+    collBtnText = "Save Collection";
+  }
+
+  const handleAddToCollection = (item) => {
+    setIsNewCollLoading(true);
+    setErrMsg(null);
+    let urisArr = [];
+    if (boxState.index && boxState.index > -1) {
+      for (let i = 0; i < postUris.length; i++) {
+        const e = postUris[i];
+        if (i + 1 == boxState.index) {
+          // urisArr = [{ uri: e.uri, width: e.width, height: e.height }];
+          const postObj = { ...e };
+          delete postObj._id;
+          urisArr.push(postObj);
+          break;
+        }
+      }
+    } else {
+      urisArr = postUris.map((obj) => {
+        return { ...obj };
+        // return { uri: obj.uri, width: obj.width, height: obj.height };
+      });
+    }
+    const data = {
+      name: item.name,
+      isSingle: boxState.index !== null ? true : false,
+      postData: {
+        postId: pId,
+        type: "post",
+        uris: urisArr,
+      },
+    };
+    addToCollection(
+      data,
+      () => {
+        setPopData({
+          vis: true,
+          type: "success",
+          msg: `Added to ${item.name} collection`,
+        });
+        setIsNewCollLoading(false);
+      },
+      (err) => {
+        setErrMsg(err.data ?? err.msg);
+        setIsNewCollLoading(false);
+      }
+    );
+  };
+
+  const handleNewCollection = () => {
+    const data = {
+      name: collectionText,
+    };
+    if (showText) {
+      if (collectionText.length > 1 && collBtnText.startsWith("Save")) {
+        setIsNewCollLoading(true);
+        addNewCollection(
+          data,
+          (resData) => {
+            setCollectionData(resData);
+            updateMe({ data: resData, prop: "my_collections" });
+            setCollectionText("");
+            setIsNewCollLoading(false);
+          },
+          (err) => {
+            setPopData({
+              vis: true,
+              msg: `${err.msg}${err.data ? `: ${err.data}` : ""}`,
+              type: "failed",
+            });
+            setIsNewCollLoading(false);
+          }
+        );
+      }
+      setShowText(false);
+    } else {
+      setShowText(true);
+    }
+  };
+
+  return (
+    <>
+      {/* use RenderCollections component from SavedCollectioScreen */}
+      <FlatList
+        data={collectionData}
+        style={{ height: height * 0.54 }}
+        contentContainerStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        ListHeaderComponent={
+          <>
+            <AppButton
+              title={collBtnText}
+              onPress={handleNewCollection}
+              style={{ alignSelf: "center", marginTop: 15 }}
+              LIcon="plus"
+              bare
+            />
+            {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
+          </>
+        }
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={
+          <ActivityIndicator
+            type="isEmpty"
+            visible={true}
+            style={{ marginTop: 30 }}
+            text="No collections"
+          />
+        }
+        numColumns={3}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item, index }) => (
+          <CollectionCard
+            onPress={handleAddToCollection}
+            item={item}
+            size={0.29}
+            index={index}
+          />
+        )}
+      />
+      <ActivityIndicator
+        style={styles.activityCollection}
+        type="spin"
+        visible={isNewCollLoading}
+        wTransparent
+      />
+    </>
+  );
+};
+
 const AppModal = ({
   action,
   pId,
@@ -244,21 +402,13 @@ const AppModal = ({
   updatePosts,
   placeholder,
 }) => {
-  const { addNewCollection } = useContext(FeedContext);
-  const {
-    updateMe,
-    addToCollection,
-    state: { userInfo },
-  } = useContext(AuthContext);
   const [text, setText] = useState("");
   const [oldText, setOldText] = useState("");
-  const [collectionText, setCollectionText] = useState("");
-  const [isNewCollLoading, setIsNewCollLoading] = useState(false);
-  const [collectionData, setCollectionData] = useState(userInfo.my_collections);
   const [showText, setShowText] = useState(false);
   const [popData, setPopData] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
   const [bools, setBools] = useState({ loading: false, report: false });
+  const [collectionText, setCollectionText] = useState("");
 
   const growInputRef = useRef();
   const growInputRefTwo = useRef();
@@ -274,105 +424,7 @@ const AppModal = ({
     outputRange: [0, 1],
   });
 
-  let collBtnText = "New Collection";
   const theme = useContext(ThemeContext);
-
-  const RenderCollection = () => {
-    //
-    const handleAddToCollection = (item) => {
-      setIsNewCollLoading(true);
-      setErrMsg(null);
-      let urisArr = [];
-      if (boxState.index && boxState.index > -1) {
-        for (let i = 0; i < postUris.length; i++) {
-          const e = postUris[i];
-          if (i + 1 == boxState.index) {
-            // urisArr = [{ uri: e.uri, width: e.width, height: e.height }];
-            const postObj = { ...e };
-            delete postObj._id;
-            urisArr.push(postObj);
-            break;
-          }
-        }
-      } else {
-        urisArr = postUris.map((obj) => {
-          return { ...obj };
-          // return { uri: obj.uri, width: obj.width, height: obj.height };
-        });
-      }
-      const data = {
-        name: item.name,
-        isSingle: boxState.index !== null ? true : false,
-        postData: {
-          postId: pId,
-          type: "post",
-          uris: urisArr,
-        },
-      };
-      addToCollection(
-        data,
-        () => {
-          setPopData({
-            vis: true,
-            type: "success",
-            msg: `Added to ${item.name} collection`,
-          });
-          setIsNewCollLoading(false);
-        },
-        (err) => {
-          setErrMsg(err.data ?? err.msg);
-          setIsNewCollLoading(false);
-        }
-      );
-    };
-
-    return (
-      <>
-        {/* use RenderCollections component from SavedCollectioScreen */}
-        <FlatList
-          data={collectionData}
-          style={{ flex: 1, height: height * 0.54 }}
-          ListHeaderComponent={
-            <>
-              <AppButton
-                title={collBtnText}
-                onPress={handleNewCollection}
-                style={{ alignSelf: "center", marginTop: 15 }}
-                LIcon="plus"
-                bare
-              />
-              {errMsg && <AppText style={styles.error}>{errMsg}</AppText>}
-            </>
-          }
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          ListEmptyComponent={
-            <ActivityIndicator
-              type="isEmpty"
-              visible={true}
-              style={{ marginTop: 30 }}
-              text="No collections"
-            />
-          }
-          numColumns={3}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item, index }) => (
-            <CollectionCard
-              onPress={handleAddToCollection}
-              item={item}
-              index={index}
-            />
-          )}
-        />
-        <ActivityIndicator
-          style={styles.activityCollection}
-          type="spin"
-          visible={isNewCollLoading}
-          wTransparent
-        />
-      </>
-    );
-  };
 
   const handleCloseModal = () => {
     showContent(null, true);
@@ -452,41 +504,11 @@ const AppModal = ({
     }
   };
 
-  if (collectionText.length > 1) {
-    collBtnText = "Save Collection";
-  }
-  const handleNewCollection = () => {
-    const data = {
-      name: collectionText,
-    };
-    if (showText) {
-      if (collectionText.length > 1 && collBtnText.startsWith("Save")) {
-        setIsNewCollLoading(true);
-        addNewCollection(
-          data,
-          (resData) => {
-            setCollectionData(resData);
-            updateMe(resData, "my_collections");
-            setCollectionText("");
-            setIsNewCollLoading(false);
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-      }
-      setShowText(false);
-    } else {
-      setShowText(true);
-    }
-  };
-
   useEffect(() => {
     growInputRefTwo?.current?.focus();
   }, [showText]);
 
   useEffect(() => {
-    setCollectionData(userInfo.my_collections);
     setOldText(placeholder);
     setText(placeholder);
     if (boxState.caption) {
@@ -594,7 +616,16 @@ const AppModal = ({
                   placeholder="Collection's name"
                 />
               )}
-              <RenderCollection />
+              <RenderCollection
+                boxState={boxState}
+                pId={pId}
+                collectionText={collectionText}
+                setCollectionText={setCollectionText}
+                postUris={postUris}
+                showText={showText}
+                setPopData={setPopData}
+                setShowText={setShowText}
+              />
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -711,21 +742,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 100,
   },
-  collBox: {
-    height: width * 0.27,
-    width: width * 0.3,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    borderRadius: 12,
-    marginHorizontal: width * 0.005,
-    marginTop: 8,
-  },
-  collText: {
-    textAlign: "center",
-    color: colors.white,
-    fontSize: 17,
-    marginBottom: 5,
-  },
+
   caption: {
     width: "97%",
     height: "30%",

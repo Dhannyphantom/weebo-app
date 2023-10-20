@@ -583,6 +583,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
         title={headerTitle}
         RightComponent={RenderSearch}
       />
+      {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       {showSearch && (
         <>
           <SearchBar
@@ -656,6 +657,11 @@ const styles = StyleSheet.create({
   activity: {
     width,
     height: height * 0.8,
+  },
+  error: {
+    textAlign: "center",
+    marginVertical: 10,
+    color: colors.heartDark,
   },
   filterContainer: {
     width,

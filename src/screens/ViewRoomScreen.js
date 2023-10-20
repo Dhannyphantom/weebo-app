@@ -278,7 +278,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     {
       id: "507734",
       icon: "menu",
-      text: "Actions",
+      text: "More Actions",
       isProfile: { vis: false, data: null },
       show: isManager && showInviteIcon,
       onPress: () => setGroupAction(true),
@@ -935,7 +935,11 @@ const ViewRoomScreen = ({ navigation, route }) => {
                 visible
                 type="isEmpty"
                 style={{ bottom: 30 }}
-                text={`No characters in this group yet \n Verify this group by clicking on the verify button`}
+                text={`No characters in this group yet ${
+                  !pageData.verified
+                    ? "\n Verify this group by clicking on the verify button"
+                    : ""
+                }`}
               />
             )}
           />

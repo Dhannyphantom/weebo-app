@@ -103,7 +103,7 @@ const FloatIcons = ({ data }) => {
                 ) : (
                   <View style={styles.picContainer}>
                     <ProfilePic
-                      source={obj?.isProfile?.data?.avatar?.uri}
+                      source={obj?.isProfile?.data?.avatar}
                       borderRad={200}
                       border={1.2}
                       userID={obj?.isProfile?.data?._id}
