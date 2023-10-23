@@ -8,8 +8,6 @@ import {
   Animated,
   Image,
   TouchableOpacity,
-  Text,
-  ImageBackground,
 } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Rect } from "react-native-svg";
@@ -55,7 +53,12 @@ const ITEM_SIZE = Platform.OS === "ios" ? width * 0.72 : width * 0.74;
 const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 const BACKDROP_HEIGHT = height * 0.65;
-const boolsObj = { cover: false, followed: false, transfer: false };
+const boolsObj = {
+  cover: false,
+  followed: false,
+  transfer: false,
+  myCharacters: false,
+};
 const popObj = {
   characters: false,
   vis: false,
@@ -103,57 +106,6 @@ const RenderChallengers = ({ name, id, setChallengeModal, isManager }) => {
   );
 };
 
-const RenderBackDrops = ({ item, index, scrollX }) => {
-  const spacers = ["right-spacer", "left-spacer"];
-  if (spacers.includes(item._id)) return null;
-
-  // const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
-
-  // const translateX = scrollX.interpolate({
-  //   inputRange,
-  //   outputRange: [-width, 0],
-  // });
-
-  return (
-    <MaskedView
-      style={{ position: "absolute" }}
-      maskElement={
-        <AnimatedSvg
-          width={width}
-          height={height}
-          viewBox={`0 0 ${width} ${height}`}
-          style={
-            {
-              // transform: [{ translateX }],
-            }
-          }
-        >
-          <Rect x="0" y="0" width={width} height={height} fill="#fff" />
-        </AnimatedSvg>
-      }
-    >
-      <Animated.View
-        removeClippedSubviews={true}
-        style={{
-          position: "absolute",
-          transform: [{ translateX: Animated.add(scrollX, index) }],
-          height,
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          source={{ uri: item?.room_cover?.uri }}
-          style={{
-            width,
-            height: BACKDROP_HEIGHT,
-          }}
-          resizeMode="cover"
-        />
-      </Animated.View>
-    </MaskedView>
-  );
-};
-
 export const RenderLinearGradient = ({ modalHeight }) => {
   const theme = useContext(ThemeContext);
 
@@ -175,42 +127,6 @@ export const RenderLinearGradient = ({ modalHeight }) => {
   );
 };
 
-const BackDrop = ({ myCharacters, scrollX }) => {
-  return (
-    <View
-      style={{
-        position: "absolute",
-        width,
-        height: BACKDROP_HEIGHT,
-      }}
-    >
-      <FlatList
-        data={myCharacters}
-        removeClippedSubviews={false}
-        // snapToInterval={400}
-        contentContainerStyle={{
-          width,
-          height: BACKDROP_HEIGHT,
-        }}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item, index }) => (
-          // <Image
-          //   source={{ uri: item?.room_cover?.uri }}
-          //   style={{
-          //     position: "absolute",
-          //     width,
-          //     height: BACKDROP_HEIGHT,
-          //   }}
-          //   resizeMode="cover"
-          // />
-          <RenderBackDrops item={item} index={index} scrollX={scrollX} />
-        )}
-      />
-      <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
-    </View>
-  );
-};
-
 const Dropper = ({ data = [], activeSlide }) => {
   if (data.length <= 2) return null;
   return (
@@ -225,6 +141,133 @@ const Dropper = ({ data = [], activeSlide }) => {
         )}
       </BlurView>
       <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
+    </View>
+  );
+};
+
+const RenderMyCharacters = ({ roomID }) => {
+  const [selectedCharacters, setSelectedCharacters] = useState([]);
+  const [myCharacters, setMyCharacters] = useState([]);
+  const [bools, setBools] = useState({ loading: true, err: null });
+  const [popper, setPopper] = useState({ vis: false });
+
+  const {
+    getUserData,
+    state: { userInfo },
+  } = useContext(AuthContext);
+  const { sendInvite } = useContext(CharContext);
+  //
+  const handleCharacterSelect = (item) => {
+    const index = selectedCharacters.findIndex((obj) => obj.name == item.name);
+    if (index == -1) {
+      setSelectedCharacters([...selectedCharacters, item]);
+    } else if (index > -1) {
+      setSelectedCharacters(
+        selectedCharacters.filter((obj) => obj.name !== item.name)
+      );
+    }
+  };
+
+  const renderCharactersOwned = ({ item }) => {
+    return (
+      <SelectItem
+        item={item}
+        check={selectedCharacters}
+        pickItem={handleCharacterSelect}
+        setPopper={setPopper}
+      />
+    );
+  };
+
+  const handleSendInvite = (data) => {
+    setBools({ ...bools, loading: true, err: null });
+    sendInvite(
+      data,
+      (resData) => {
+        setBools({ ...bools, loading: false });
+        setPopper({
+          vis: true,
+          msg: resData,
+          type: "success",
+        });
+      },
+      (err) => {
+        setBools({ ...bools, loading: false, err });
+        setPopper({ vis: true, msg: err, type: "failed" });
+      }
+    );
+  };
+
+  const RenderFooterComponent = () => {
+    if (!selectedCharacters[0]) return null;
+
+    const handleJoinGroup = () => {
+      const sendCharacters = selectedCharacters.map((item) => item._id);
+      const inviteData = {
+        instance: "character",
+        instanceID: sendCharacters,
+        group: roomID,
+        type: "join",
+      };
+      handleSendInvite(inviteData);
+    };
+
+    return (
+      <View>
+        <AppButton
+          title="Join group"
+          bare
+          onPress={handleJoinGroup}
+          style={{ alignSelf: "center", marginTop: 10 }}
+        />
+      </View>
+    );
+  };
+
+  useEffect(() => {
+    getUserData(
+      {
+        type: "get_instances",
+        id: userInfo._id,
+      },
+      (resData) => {
+        setMyCharacters(resData.characters);
+        setBools({ ...bools, loading: false });
+      },
+      (errData) => {
+        setBools({ ...bools, err: errData.data, loading: false });
+      }
+    );
+  }, []);
+
+  return (
+    <View style={styles.modal}>
+      <AppText style={styles.myCharacterTitle} textStyle="black" size="large">
+        MY CHARACTERS
+      </AppText>
+      <FlatList
+        data={myCharacters}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCharactersOwned}
+        ListEmptyComponent={
+          <ActivityIndicator
+            type="isEmpty"
+            text={
+              "You have no characters. \n Challenge a Character Instance now to acquire one. \n Or Create a non-existing Character Instance by searching the featured character's name"
+            }
+            style={{ marginTop: 50 }}
+            visible={true}
+          />
+        }
+        ListFooterComponent={RenderFooterComponent}
+      />
+      <ActivityIndicator
+        type="spin"
+        visible={bools.loading}
+        style={styles.activityTwo}
+        wTransparent
+      />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };
@@ -244,7 +287,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [popModal, setPopModal] = useState(popObj);
   const [groupAction, setGroupAction] = useState(false);
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
-  const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [verifyModal, setVerifyModal] = useState(false);
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
@@ -276,7 +318,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const floatData = [
     {
-      id: "507734",
+      id: uuid.v4(),
       icon: "menu",
       text: "More Actions",
       isProfile: { vis: false, data: null },
@@ -284,7 +326,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       onPress: () => setGroupAction(true),
     },
     {
-      id: "7",
+      id: uuid.v4(),
       text: "Challengers",
       onPress: () => setPopModal({ ...popModal, vis: true, challengers: true }),
       icon: "trophy",
@@ -292,8 +334,9 @@ const ViewRoomScreen = ({ navigation, route }) => {
       isProfile: { vis: false, data: null },
       show: true,
     },
+
     {
-      id: "50745988",
+      id: uuid.v4(),
       text: "Challenge",
       isProfile: { vis: false, data: null },
       onPress: () => {
@@ -314,7 +357,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       selected: true,
     },
     {
-      id: "5078",
+      id: uuid.v4(),
       text: "Withdraw Challenge",
       isProfile: { vis: false, data: null },
       onPress: () => {
@@ -328,15 +371,16 @@ const ViewRoomScreen = ({ navigation, route }) => {
       selected: true,
     },
     {
-      id: "169576",
-      name: "Withdraw challenge",
-      onPress: () => handleWithdrawChallenge(),
-      icon: "trophy-outline",
+      id: uuid.v4(),
+      text: "Join Group",
+      onPress: () => handleCharacterInvites(),
+      icon: "plus",
       selected: true,
-      show: !isManager && false, // && you are a challenger
+      isProfile: { vis: false, data: null },
+      show: !isManager,
     },
     {
-      id: "2",
+      id: uuid.v4(),
       text: "Posts",
       onPress: () => navigateToPosts(),
       icon: "image-multiple",
@@ -345,8 +389,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
       show: true,
     },
     {
-      id: "vdush2",
-      text: bools.followed ? "Unfollow" : "Follow", // or Unfollow
+      id: uuid.v4(),
+      text: bools.followed ? "Unfollow" : "Follow",
       onPress: () => handleGroupFollow(),
       icon: "star",
       selected: true,
@@ -354,7 +398,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       show: !isManager,
     },
     {
-      id: "9806792",
+      id: uuid.v4(),
       isProfile: {
         vis: true,
         data: pageData?.manager,
@@ -617,8 +661,8 @@ const ViewRoomScreen = ({ navigation, route }) => {
     });
   };
 
-  const handleSendInvite = (item, data) => {
-    if (!item.verified) {
+  const handleSendInvite = (item, data, cb) => {
+    if (item && !item.verified) {
       return setPopper({
         vis: true,
         msg: "Character is not verified",
@@ -626,6 +670,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       });
     }
     setIsLoading(true);
+    cb && cb(true);
     const inviteData = {
       instance: "character",
       instanceID: item?._id,
@@ -638,10 +683,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
       (resData) => {
         fetchRoomCharacters();
         setIsLoading(false);
+        cb && cb(false);
         setPopper({ vis: true, msg: resData, type: "success" });
       },
       (err) => {
         setIsLoading(false);
+        cb && cb(false);
         setPopper({ vis: true, msg: err, type: "fail" });
         setErrMsg(err);
       }
@@ -781,7 +828,12 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const RenderAllPopups = () => {
     if (popModal.characters) {
-      return <RenderMyCharacters />;
+      return (
+        <RenderMyCharacters
+          handleSendInvite={handleSendInvite}
+          roomID={params?.roomID}
+        />
+      );
     } else if (popModal.invites) {
       return <RenderInvites />;
     } else if (popModal.challengers) {
@@ -794,85 +846,6 @@ const ViewRoomScreen = ({ navigation, route }) => {
         />
       );
     }
-  };
-
-  const RenderMyCharacters = () => {
-    //
-    const handleCharacterSelect = (item) => {
-      const index = selectedCharacters.findIndex(
-        (obj) => obj.name == item.name
-      );
-      if (index == -1) {
-        setSelectedCharacters([...selectedCharacters, item]);
-      } else if (index > -1) {
-        setSelectedCharacters(
-          selectedCharacters.filter((obj) => obj.name !== item.name)
-        );
-      }
-    };
-
-    const renderCharactersOwned = ({ item }) => {
-      return (
-        <SelectItem
-          item={item}
-          check={selectedCharacters}
-          pickItem={handleCharacterSelect}
-        />
-      );
-    };
-
-    const RenderFooterComponent = () => {
-      if (!selectedCharacters[0]) return null;
-
-      const handleJoinGroup = () => {
-        const sendCharacters = selectedCharacters.map((item) => item._id);
-        const inviteData = {
-          instance: "character",
-          instanceID: sendCharacters,
-          group: params.roomID,
-          type: "join",
-        };
-        handleSendInvite(null, inviteData);
-      };
-
-      return (
-        <View>
-          <AppButton
-            title="Join group"
-            bare
-            onPress={handleJoinGroup}
-            style={{ alignSelf: "center", marginTop: 10 }}
-          />
-        </View>
-      );
-    };
-
-    return (
-      <View style={styles.modal}>
-        <FlatList
-          data={userInfo.charactersOwned}
-          keyExtractor={(item) => item._id}
-          renderItem={renderCharactersOwned}
-          ListEmptyComponent={
-            <ActivityIndicator
-              type="isEmpty"
-              text={
-                "You have no characters. \n Challenge a Character Instance now to obtain one. \n Or Create a non-existing Character Instance by searching the featured character's name"
-              }
-              style={{ marginTop: 50 }}
-              visible={true}
-            />
-          }
-          ListFooterComponent={RenderFooterComponent}
-        />
-        <ActivityIndicator
-          type="spin"
-          visible={isLoading}
-          style={styles.activityTwo}
-          wTransparent
-        />
-      </View>
-    );
   };
 
   useEffect(() => {
@@ -1131,6 +1104,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     alignItems: "center",
   },
+  myCharacterTitle: {
+    marginVertical: 10,
+    textAlign: "center",
+    marginBottom: 15,
+  },
   searchInstance: {
     flex: 1,
     backgroundColor: colors.extraLight,
@@ -1142,3 +1120,93 @@ const styles = StyleSheet.create({
 });
 
 export default ViewRoomScreen;
+
+/*
+const BackDrop = ({ myCharacters, scrollX }) => {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        width,
+        height: BACKDROP_HEIGHT,
+      }}
+    >
+      <FlatList
+        data={myCharacters}
+        removeClippedSubviews={false}
+        // snapToInterval={400}
+        contentContainerStyle={{
+          width,
+          height: BACKDROP_HEIGHT,
+        }}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item, index }) => (
+          // <Image
+          //   source={{ uri: item?.room_cover?.uri }}
+          //   style={{
+          //     position: "absolute",
+          //     width,
+          //     height: BACKDROP_HEIGHT,
+          //   }}
+          //   resizeMode="cover"
+          // />
+          <RenderBackDrops item={item} index={index} scrollX={scrollX} />
+        )}
+      />
+      <RenderLinearGradient modalHeight={BACKDROP_HEIGHT} />
+    </View>
+  );
+};
+
+const RenderBackDrops = ({ item, index, scrollX }) => {
+  const spacers = ["right-spacer", "left-spacer"];
+  if (spacers.includes(item._id)) return null;
+
+  // const inputRange = [(index - 2) * ITEM_SIZE, (index - 1) * ITEM_SIZE];
+
+  // const translateX = scrollX.interpolate({
+  //   inputRange,
+  //   outputRange: [-width, 0],
+  // });
+
+  return (
+    <MaskedView
+      style={{ position: "absolute" }}
+      maskElement={
+        <AnimatedSvg
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+          style={
+            {
+              // transform: [{ translateX }],
+            }
+          }
+        >
+          <Rect x="0" y="0" width={width} height={height} fill="#fff" />
+        </AnimatedSvg>
+      }
+    >
+      <Animated.View
+        removeClippedSubviews={true}
+        style={{
+          position: "absolute",
+          transform: [{ translateX: Animated.add(scrollX, index) }],
+          height,
+          overflow: "hidden",
+        }}
+      >
+        <Image
+          source={{ uri: item?.room_cover?.uri }}
+          style={{
+            width,
+            height: BACKDROP_HEIGHT,
+          }}
+          resizeMode="cover"
+        />
+      </Animated.View>
+    </MaskedView>
+  );
+};
+
+*/

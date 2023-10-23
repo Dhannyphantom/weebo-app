@@ -30,7 +30,6 @@ const AlertBox = ({
   onPress,
   alertID,
   date,
-  setShouldScroll,
   character,
   isLoading,
   isSystem,
