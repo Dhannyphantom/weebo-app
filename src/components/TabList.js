@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
   },
   box: {
-    paddingVertical: 32 / scale,
+    paddingVertical: 20,
     flexDirection: "row",
     flex: 1,
     alignItems: "flex-start",

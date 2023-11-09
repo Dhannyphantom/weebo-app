@@ -92,6 +92,25 @@ const RenderAlerts = ({
           });
       } else if (item.type === "request") {
         navigation.navigate("Friends", { friends: userInfo.friends });
+      } else if (item.type === "navigate") {
+        // THIS SHOULD ACCOUNT FOR ALL NAVIGATION
+        if (item.hasOwnProperty("group")) {
+          // Navigate to Group Screen,
+          navigation.navigate("Room", {
+            data: {
+              instance: "group",
+              instanceID: item.group,
+            },
+          });
+        } else if (item.hasOwnProperty("character")) {
+          navigation.navigate("Character", {
+            item: item.character?._id ?? item.character,
+          });
+        } else if (item.hasOwnProperty("show")) {
+          navigation.navigate("Show", {
+            show: { _id: item.show, cover_photo: null },
+          });
+        }
       }
     }
     setTimeout(() => {
