@@ -273,6 +273,10 @@ const ShowScreen = ({ route, navigation }) => {
 
   const isMine = dataState.manager && dataState.manager._id === userInfo._id;
   const scrollY = useRef(new Animated.Value(0)).current;
+  const isChallenger =
+    isMine &&
+    challengerArr?.length > 0 &&
+    Boolean(challengerArr.find((obj) => obj.pending == true));
 
   const listItems = [
     {
@@ -346,6 +350,7 @@ const ShowScreen = ({ route, navigation }) => {
       icon: "Trophy",
       iconPack: "AD",
       selected: true,
+      badge: isChallenger,
       show: true,
     },
     {
@@ -385,6 +390,7 @@ const ShowScreen = ({ route, navigation }) => {
     description: `By ${dataState?.creators?.join(", ")}`,
     cover_photo: dataState?.cover_photo,
     owner: dataState?.manager,
+    badge: Boolean(isChallenger),
     screenIcon: "ios-tv",
     feedback: {
       instanceID: dataState?._id,

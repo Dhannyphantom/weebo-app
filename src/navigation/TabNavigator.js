@@ -201,7 +201,7 @@ const TabButton = (props) => {
           focused={focused}
         />
         {item.name === "AlertStack" && (
-          <Badger number={userInfo.notifications} />
+          <Badger number={userInfo.notifications} noNumber />
         )}
       </Animated.View>
     </TouchableOpacity>

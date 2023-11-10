@@ -71,9 +71,7 @@ const obj = {
           </AppText>
           <Separator h={1} />
           <View style={styles.mboxIn}>
-            <AppText size="large" style={styles.message}>
-              {obj.message}
-            </AppText>
+            <AppText style={styles.message}>{obj.message}</AppText>
             {verifyPrompt && (
               <View>
                 <AppText size="large" bold style={styles.prompt}>

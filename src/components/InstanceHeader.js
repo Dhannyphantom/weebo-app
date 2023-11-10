@@ -144,6 +144,7 @@ const InstanceHeader = ({
     verified,
     handleLeftPress,
     handleRightPress,
+    badge,
     followers,
     verifiedList,
     subscribers,
@@ -426,6 +427,7 @@ const InstanceHeader = ({
             style={{ position: "absolute", top: safeInset.top }}
             type="transparent"
             dotPress={() => setDropDown(true)}
+            badge={badge}
             iconColor={colors.white}
           />
         </View>
@@ -558,6 +560,7 @@ const InstanceHeader = ({
     </>
   );
 };
+
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",

@@ -18,10 +18,11 @@ import Separator from "./Separator";
 import AlertModal from "./AlertModal";
 import PopMessage from "./PopMessage";
 import ActivityIndicator from "./ActivityIndicator";
+import { capFirstLetter } from "../constants/helpers";
 
 const { width } = Dimensions.get("window");
 
-const InstanceInvites = ({ data, instance, setVisible }) => {
+const InstanceInvites = ({ data, instance, setVisible, callback }) => {
   /// data = [...]
   const navigation = useNavigation();
   const { inviteActions } = useContext(CharContext);
@@ -53,6 +54,7 @@ const InstanceInvites = ({ data, instance, setVisible }) => {
       sendData,
       (resData) => {
         handleInviteFilter(isDecline ? data._id : dataID, type);
+        callback && callback();
       },
       (err) => {
         console.log(err);
@@ -122,7 +124,13 @@ const InstanceInvites = ({ data, instance, setVisible }) => {
         setAlertModal({
           visible: true,
           title: "CANCEL REQUEST",
-          message: `Do you really want to cancel this operation?`,
+          message: `Are you sure ${capFirstLetter(
+            instance.name,
+            true
+          )} is not a member of ${capFirstLetter(
+            item?.instance?.name,
+            true
+          )} group`,
           btn: "YES",
           type: "cancel",
           data: item,

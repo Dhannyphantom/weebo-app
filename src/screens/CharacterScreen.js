@@ -89,7 +89,9 @@ const CharacterScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState({ loader: true, err: false });
   const [transfer, setTransfer] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
-  const [challengerArr, setChallengerArr] = useState(character.challengers);
+  const [challengerArr, setChallengerArr] = useState(
+    character.challengers ?? []
+  );
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
     contest: null,
@@ -100,6 +102,12 @@ const CharacterScreen = ({ route, navigation }) => {
   const [showUpload, setShowUpload] = useState({ vis: false, data: null });
   const [popper, setPopper] = useState({ vis: false });
 
+  const isChallenger =
+    isMine &&
+    challengerArr?.length > 0 &&
+    Boolean(challengerArr.find((obj) => obj.pending == true));
+  const isInvited = isMine && character?.invites?.length > 0;
+
   const listItems = [
     {
       id: "5078",
@@ -108,6 +116,7 @@ const CharacterScreen = ({ route, navigation }) => {
       icon: "upload",
       show: character?.verified && isMine,
       selected: true,
+      badge: false,
     },
     {
       id: "2",
@@ -116,6 +125,7 @@ const CharacterScreen = ({ route, navigation }) => {
       icon: "image-multiple-outline",
       show: true,
       selected: true,
+      badge: false,
     },
     {
       id: "23",
@@ -123,6 +133,7 @@ const CharacterScreen = ({ route, navigation }) => {
       onPress: () => handleFavPress(),
       icon: "star-outline",
       selected: cardState.fav,
+      badge: false,
       show: true,
     },
     {
@@ -133,6 +144,7 @@ const CharacterScreen = ({ route, navigation }) => {
       iconPack: "AD",
       selected: true,
       show: true,
+      badge: isChallenger,
     },
     {
       id: "5q1",
@@ -141,6 +153,7 @@ const CharacterScreen = ({ route, navigation }) => {
       icon: "account-plus-outline",
       selected: character?.verified,
       show: isMine,
+      badge: isInvited,
     },
     {
       id: "3",
@@ -155,6 +168,7 @@ const CharacterScreen = ({ route, navigation }) => {
       iconPack: "F",
       show: character?.verified && isMine,
       selected: true,
+      badge: false,
     },
     {
       id: "873",
@@ -163,6 +177,7 @@ const CharacterScreen = ({ route, navigation }) => {
       icon: "account-remove-outline",
       show: true,
       selected: follow,
+      badge: false,
     },
   ];
   const leftColor = cardState.selected ? colors.heart : colors.medium;
@@ -187,6 +202,7 @@ const CharacterScreen = ({ route, navigation }) => {
     followers: character?.followers?.length,
     coverLoading: isCoverLoading,
     setCoverLoading: setIsCoverLoading,
+    badge: Boolean(isChallenger || isInvited),
     owner: character?.manager,
     handleLeftPress: () => handleFollowPress(),
     handleRightPress: null,
@@ -646,6 +662,7 @@ const CharacterScreen = ({ route, navigation }) => {
               setVisible={() =>
                 setCharacterTab({ ...characterTab, invites: false })
               }
+              callback={() => handleFetchCharacter("load")}
               instance={{
                 name: character.name,
                 id: character._id,

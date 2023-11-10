@@ -80,6 +80,7 @@ const DropDown = ({
           <AppText style={styles.itemTitle} bold>
             {item.name}
           </AppText>
+          {item.badge && <View style={styles.badge} />}
         </View>
         {!lastItem && <Separator h={1} />}
       </TouchableOpacity>
@@ -150,6 +151,13 @@ const styles = StyleSheet.create({
     height: "100%",
     position: "absolute",
     top: 0,
+  },
+  badge: {
+    width: 10,
+    height: 10,
+    borderRadius: 15 / 2,
+    backgroundColor: colors.heartLight,
+    marginLeft: 10,
   },
   content: {
     elevation: 2,

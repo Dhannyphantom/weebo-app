@@ -7,6 +7,7 @@ import AppText from "./AppText";
 import Separator from "./Separator";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
+import Badger from "./Badger";
 
 const { width } = Dimensions.get("window");
 
@@ -15,6 +16,7 @@ const AppHeader = ({
   titleStyle,
   icon = true,
   style,
+  badge,
   dotPress,
   type = "background",
   separator = true,
@@ -76,6 +78,7 @@ const AppHeader = ({
                 size={20}
                 color={colors.black}
               />
+              <Badger noNumber number={badge ? 1 : 0} />
             </TouchableOpacity>
           )}
         </View>
