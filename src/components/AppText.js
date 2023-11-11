@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, Dimensions } from "react-native";
 import ThemeContext from "../config/ThemeContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { fontScale } = Dimensions.get("screen");
 
@@ -13,35 +14,65 @@ const AppText = ({
   ...otherProps
 }) => {
   const theme = useContext(ThemeContext);
+
   //size = ["normal", "small", "xsmall", "large", "xlarge", "xxlarge"]
   let scaledSize;
   switch (size) {
     case "normal":
-      scaledSize = 14 / fontScale;
+      scaledSize = 14;
       break;
     case "small":
-      scaledSize = 12 / fontScale;
+      scaledSize = 12;
       break;
     case "xsmall":
-      scaledSize = 10 / fontScale;
+      scaledSize = 10;
       break;
     case "xxsmall":
-      scaledSize = 8 / fontScale;
+      scaledSize = 8;
       break;
     case "xxxsmall":
-      scaledSize = 6.5 / fontScale;
+      scaledSize = 6.5;
       break;
     case "large":
-      scaledSize = 18 / fontScale;
+      scaledSize = 18;
       break;
     case "xlarge":
-      scaledSize = 20 / fontScale;
+      scaledSize = 20;
       break;
     case "xxlarge":
-      scaledSize = 24 / fontScale;
+      scaledSize = 24;
     case "xxxlarge":
-      scaledSize = 28 / fontScale;
+      scaledSize = 28;
   }
+
+  const prepare = async () => {
+    let appSettings = await AsyncStorage.getItem("settings");
+    if (appSettings) {
+      appSettings = JSON.parse(appSettings);
+      const fScaler = appSettings[1]?.data[1]?.default;
+      switch (fScaler) {
+        case "normal":
+          setFScale(1);
+          break;
+        case "smaller":
+          setFScale(0.15);
+          break;
+        case "small":
+          setFScale(0.5);
+          break;
+        case "large":
+          setFScale(1.5);
+          break;
+        case "larger":
+          setFScale(2);
+          break;
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   // prepare();
+  // }, []);
 
   return (
     <Text

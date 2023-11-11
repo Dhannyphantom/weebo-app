@@ -19,7 +19,7 @@ export default {
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#5B4EC7",
+        backgroundColor: "rgba(255, 255, 255, 0)",
       },
       package: "com.phantom.weebo",
       permissions: [

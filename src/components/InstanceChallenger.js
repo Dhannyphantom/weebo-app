@@ -264,14 +264,14 @@ const Challenger = ({
             <Link
               style={styles.linkShort}
               name="Video"
-              iconName="image-multiple"
+              iconName="video"
               onPress={() => initializeChallenge("video")}
             />
           </View>
           <Link
             style={styles.link}
             name="Invalid information"
-            iconName="image-multiple"
+            iconName="information-variant"
             onPress={() => initializeChallenge("info")}
           />
         </View>
@@ -281,7 +281,7 @@ const Challenger = ({
             <Link
               style={styles.link}
               name="Invalid information"
-              iconName="image-multiple"
+              iconName="information-variant"
               onPress={() => acceptChallenge("info")}
             />
           )}
@@ -297,7 +297,7 @@ const Challenger = ({
             <Link
               style={styles.link}
               name="Video"
-              iconName="image-multiple"
+              iconName="video"
               onPress={() => acceptChallenge("video")}
             />
           )}
@@ -697,9 +697,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
           setAssetData(resData.data);
           setLoading(false);
         },
-        (errData) => {
-          console.log(errData);
-        }
+        (_errData) => {}
       );
     }
   };
@@ -732,7 +730,8 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
         <>
           <View style={styles.rowWide}>
             <AppText style={{ ...styles.title }} size="large" bold>
-              Select Invalid Info
+              Select Invalid Info ({capFirstLetter(data?.name, true)}{" "}
+              {capFirstLetter(data?.instance)})
             </AppText>
             <TouchableOpacity
               style={{ padding: 14 }}
@@ -793,7 +792,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
         >
           <AppText style={styles.emptyText} size="xlarge" bold>
             A weeb believes some of the information provided for this instance
-            are not valid. {"\n\n"} Accept now to prove them wrong
+            are not valid. {"\n\n"} Accept challenge now to prove them wrong
           </AppText>
         </View>
       )}
@@ -999,6 +998,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
+    maxWidth: width * 0.85,
   },
   video: {
     position: "absolute",

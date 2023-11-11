@@ -40,7 +40,7 @@ export default function App() {
         await Font.loadAsync({
           "reglise-black": require("./assets/fonts/reglise/ReglisseBack-eZewm.otf"),
           reglise: require("./assets/fonts/reglise/Reglisse-0WOD9.otf"),
-          fonter: require("./assets/fonts/SnackerComicPersonalUseOnly-g3Z5.ttf"),
+          fonter: require("./assets/fonts/Somatic_Rounded.otf"),
           "sans-regular": require("./assets/fonts/open_sans/OpenSans_Regular.ttf"),
           "sans-bold": require("./assets/fonts/open_sans/OpenSans_Bold.ttf"),
           "sans-black": require("./assets/fonts/open_sans/OpenSans_ExtraBold.ttf"),

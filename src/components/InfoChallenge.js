@@ -18,7 +18,7 @@ export const RenderInfoDetails = ({ info }) => {
           ...styles.title,
           color: theme.mode === "light" ? colors.medium : colors.primary,
         }}
-        bold
+        textStyle="black"
       >
         {info.title}
       </AppText>

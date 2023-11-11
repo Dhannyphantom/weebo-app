@@ -59,13 +59,13 @@ const CharList = ({ name, icon, names, show, parentProps }) => {
   );
 };
 
-const CharFlat = ({ name, icon, id, parentProps }) => {
+const CharFlat = ({ name, icon, id, propKey, parentProps }) => {
   const { character } = parentProps;
   let prop = name.replace(/\s/g, "");
-  if (character[prop].length <= 0) return null;
+  if (character[propKey ?? prop].length <= 0) return null;
   return (
     <FlatList
-      data={character[prop]}
+      data={character[propKey ?? prop]}
       keyExtractor={(item) => item}
       ListHeaderComponent={
         <View style={styles.charLists}>
@@ -136,6 +136,13 @@ const CharInfoScreen = ({
           show
           icon="television"
         />
+        <CharFlat
+          parentProps={{ character }}
+          name="Aliases"
+          propKey="other_names"
+          icon="human-male-boy"
+          id="a"
+        />
         <CharList
           parentProps={{ cardState, character }}
           name="role"
@@ -186,6 +193,11 @@ const CharInfoScreen = ({
           name="mother"
           icon="human-female"
         />
+        <CharList
+          parentProps={{ cardState, character }}
+          name="lover"
+          icon="heart"
+        />
       </View>
       <CharFlat
         parentProps={{ character }}
@@ -204,12 +216,6 @@ const CharInfoScreen = ({
         name="sisters"
         icon="human-female-girl"
         id="b"
-      />
-      <CharFlat
-        parentProps={{ character }}
-        name="groups"
-        icon="account-multiple"
-        id="c"
       />
 
       {character?.event && (

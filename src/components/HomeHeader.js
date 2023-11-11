@@ -269,7 +269,6 @@ const HomeHeader = () => {
           />
         )}
       </View>
-      <Separator h={1} m={0.5} />
       {errMsg && (
         <AppText bold style={styles.error}>
           {errMsg}

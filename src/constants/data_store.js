@@ -756,6 +756,13 @@ export const settingsData = [
         default: false,
         options: [],
       },
+      {
+        id: "2",
+        name: "Font size",
+        type: "dropdown",
+        default: "normal",
+        options: ["smaller", "small", "normal", "large", "larger"],
+      },
     ],
   },
   {
@@ -893,6 +900,11 @@ export const ads_keywords = [
   "comics",
   "manga",
   "manhwa",
+  "japan",
+  "japanese",
+  "ramen",
+  "naruto",
+  "culture",
   "toon",
   "animation",
 ];

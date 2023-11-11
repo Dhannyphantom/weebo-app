@@ -12,6 +12,11 @@ let socket = io(baseURL.uri);
 
 const authReducer = (state, action) => {
   switch (action.type) {
+    case "update_settings":
+      return {
+        ...state,
+        userSettings: action.payload,
+      };
     case "update_profile":
       return {
         ...state,
@@ -87,12 +92,13 @@ const authReducer = (state, action) => {
       return { ...state, errMsg: "" };
     case "signin":
       return {
+        ...state,
         token: action.payload.token,
         errMsg: "",
         userInfo: action.payload.user,
       };
     case "signout":
-      return { token: null, errMsg: "", userInfo: {} };
+      return { ...state, token: null, errMsg: "", userInfo: {} };
     default:
       return state;
   }
@@ -697,6 +703,10 @@ const checkRoom = (dispatch) => () => {
   socket.emit("check room");
 };
 
+const updateSettings = (dispatch) => (newSettings) => {
+  dispatch({ type: "update_settings", payload: newSettings });
+};
+
 // THIS IS CHAT MESSAGES BTW THE USER AND RECIPIENT
 const getChatMessages = (dispatch) => async (senderId, recipientId, sc, cb) => {
   try {
@@ -754,6 +764,7 @@ export const { Context, Provider } = createDataContext(
     fetchNearbyWeebs,
     resetPassword,
     recoverPassword,
+    updateSettings,
     //chats
     getSocket,
     joinRoom,

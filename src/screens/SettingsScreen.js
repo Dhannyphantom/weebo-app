@@ -230,11 +230,12 @@ const SettingDropDown = ({ data, section, handlers }) => {
     //
     const handleChooseOption = (item) => {
       setPopData({ ...popData, default: item });
-      handlers.editSettings(section.title, "Language", item);
+      handlers.editSettings(section.title, data.name, item);
     };
 
     const renderLists = ({ item }) => {
       const isDefault = item === popData.default;
+
       return (
         <TouchableOpacity
           onPress={() => handleChooseOption(item)}
@@ -301,7 +302,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
         visible={popData.vis}
         RenderComponent={RenderDropDowns}
         setter={() => setPopData({ vis: false, data: data.options })}
-        headerTitle="Languages"
+        headerTitle={data.name}
       />
       <AppFadeIn
         visible={termsModal.vis}
@@ -504,15 +505,20 @@ const RenderSections = ({ item, section, editSettings }) => {
 const SettingsScreen = () => {
   const [settings, setSettings] = useState([]);
 
+  const { updateSettings } = useContext(AuthContext);
+
   const readyScreen = async () => {
     const getSettings = await AsyncStorage.getItem("settings");
     if (getSettings) {
       setSettings(JSON.parse(getSettings));
+      // updateSettings(JSON.parse(getSettings));
       // UNCOMMENT LINE BELOW TO REFRESH SETTINGS
       // await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
     } else {
+      // There are no previous settings so set to default settings
       setSettings(settingsData);
       await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
+      // updateSettings(settingsData);
     }
   };
 
