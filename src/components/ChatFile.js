@@ -7,10 +7,15 @@ import ThemeContext from "../config/ThemeContext";
 import getTimestamp from "../constants/getTimestamp";
 import { capFirstLetter } from "../constants/helpers";
 
+import { Context as AuthContext } from "../config/AuthContext";
+
 const { width } = Dimensions.get("window");
 
 const ChatFile = ({ item, setChatAction, onPress }) => {
   const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
 
   return (
     <TouchableOpacity
@@ -41,14 +46,20 @@ const ChatFile = ({ item, setChatAction, onPress }) => {
               {getTimestamp(item?.last_message?._id)}
             </AppText>
           </View>
-          <AppText
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{ ...styles.msg, flex: 1, maxWidth: "80%", marginLeft: 7 }}
-          >
-            {item?.last_message?.message ??
-              `Say hi to ${capFirstLetter(item?.user?.username)}`}
-          </AppText>
+          <View style={styles.box3}>
+            <AppText
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ ...styles.msg, flex: 1, maxWidth: "80%", marginLeft: 2 }}
+            >
+              {item?.last_message?.message ??
+                `Say hi to ${capFirstLetter(item?.user?.username)}`}
+            </AppText>
+            {!item?.last_message?.read &&
+              item?.last_message?.sender != userInfo._id && (
+                <View style={styles.badge} />
+              )}
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -71,6 +82,12 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1.8,
     },
+  },
+  badge: {
+    width: 15,
+    height: 15,
+    borderRadius: 15 / 2,
+    backgroundColor: colors.heart,
   },
   box1: {
     flex: 1,

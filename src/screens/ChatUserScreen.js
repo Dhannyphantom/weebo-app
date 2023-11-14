@@ -129,6 +129,7 @@ const ChatUserScreen = ({ route }) => {
   useEffect(() => {
     getSocket().on("message", ({ sender, message, sent, chatId, time }) => {
       if (sender.username == username) {
+        // console.log("Send another event", sender);
         const id = (Math.random() * 1000).toString();
         //recipients' client
         setChats([
@@ -141,15 +142,44 @@ const ChatUserScreen = ({ route }) => {
             time,
           },
         ]);
+        // Send another event that message is read
+
+        getSocket().emit("readMessage", {
+          recipient: _id,
+          sender: userInfo._id,
+          chatId,
+        });
       } else {
         // senders' client
         // look for the message and tag is sent;
-        const chatsArr = [...chats];
-        const index = chatsArr.findIndex((obj) => obj._id == chatId);
-        if (index > -1) {
-          chatsArr[index] = { ...chatsArr[index], sent };
-        }
+        const chatsArr = chats.map((chatObj) => {
+          if (chatObj._id == chatId) {
+            return {
+              ...chatObj,
+              sent,
+            };
+          } else {
+            return chatObj;
+          }
+        });
+
         setChats(chatsArr);
+      }
+    });
+
+    getSocket().on("messageRead", ({ sender, recipient }) => {
+      if (sender == _id) {
+        const myChats = [...chats].map((chatObj) => {
+          if (!chatObj.read) {
+            return {
+              ...chatObj,
+              read: true,
+            };
+          } else {
+            return chatObj;
+          }
+        });
+        setChats(myChats);
       }
     });
 
@@ -181,6 +211,7 @@ const ChatUserScreen = ({ route }) => {
       <AppHeader
         title={username}
         titleStyle={{ color: colors.white }}
+        iconColor={colors.white}
         separator={false}
       />
       <KeyboardAvoidingView

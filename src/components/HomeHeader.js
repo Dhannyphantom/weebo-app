@@ -241,14 +241,11 @@ const HomeHeader = () => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={[
-              styles.buttonContainer,
-              { backgroundColor: colors.primary },
-            ]}
+            style={styles.buttonContainer}
             onPress={() => navigation.navigate("Chat")}
           >
             <Ionicons name="chatbubbles" size={18} color={colors.white} />
-            <Badger number={userInfo.chat_count} />
+            <Badger offset={-4} number={userInfo.chat_count} />
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
@@ -299,6 +296,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginLeft: 10,
     justifyContent: "center",
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   buttonMid: {

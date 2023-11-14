@@ -3,13 +3,18 @@ import { StyleSheet, View } from "react-native";
 import colors from "../constants/colors";
 import AppText from "./AppText";
 
-// const BADGE_SIZE = 25;
+const BADGE_OFFSET = -2;
 
-export default function Badger({ number, noNumber }) {
+export default function Badger({ number, noNumber = true, offset = 0 }) {
   if (!number || number < 1) return null;
   const formatNumber = number > 99 ? "99+" : number;
   return (
-    <View style={styles.badge}>
+    <View
+      style={[
+        styles.badge,
+        { top: BADGE_OFFSET + offset, left: BADGE_OFFSET + offset },
+      ]}
+    >
       <View style={[styles.badgeView, noNumber && styles.noNumber]}>
         {!noNumber && (
           <AppText
@@ -28,8 +33,6 @@ export default function Badger({ number, noNumber }) {
 const styles = StyleSheet.create({
   badge: {
     position: "absolute",
-    top: -2,
-    left: -2,
   },
   badgeText: {
     color: colors.white,

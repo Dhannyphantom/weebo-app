@@ -35,7 +35,7 @@ const AppHeader = ({
             activeOpacity={icon ? 0.66 : 1}
           >
             {icon && (
-              <Feather name="chevron-left" size={19} color={theme.medium} />
+              <Feather name="chevron-left" size={19} color={iconColor} />
             )}
             <AppText
               size="large"
@@ -62,7 +62,7 @@ const AppHeader = ({
               backgroundColor: theme.transparentBold,
             }}
           >
-            <Feather name="chevron-left" size={19} color={colors.black} />
+            <Feather name="chevron-left" size={19} color={iconColor} />
           </TouchableOpacity>
           {dotPress && (
             <TouchableOpacity
@@ -76,7 +76,7 @@ const AppHeader = ({
               <MaterialCommunityIcons
                 name="dots-vertical"
                 size={20}
-                color={colors.black}
+                color={iconColor}
               />
               <Badger noNumber number={badge ? 1 : 0} />
             </TouchableOpacity>
