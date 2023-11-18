@@ -68,6 +68,7 @@ const ChatRender = ({
     lowerChat && !lowerSender
       ? getTimeFormat(time, lowerChat.time, "diff")
       : true;
+
   return (
     <View style={styles.container}>
       {!bool ? (
@@ -98,7 +99,7 @@ const ChatRender = ({
               }}
             >
               <AppText
-                size="large"
+                // size="large"
                 style={{
                   ...styles.message,
                   color: theme.mode === "dark" ? theme.color : colors.primary,
@@ -127,7 +128,7 @@ const ChatRender = ({
             </View>
           )}
           <View style={styles.reciStyle}>
-            {lowerSender && (
+            {(lowerSender || !upperChat?.read) && (
               <View style={styles.checkIcon}>
                 <Feather
                   name={notSent ? "circle" : "check-circle"}
@@ -144,9 +145,7 @@ const ChatRender = ({
                 marginBottom: 2,
               }}
             >
-              <AppText size="large" style={styles.message}>
-                {message}
-              </AppText>
+              <AppText style={styles.message}>{message}</AppText>
             </View>
           </View>
           {showTimerRight && (

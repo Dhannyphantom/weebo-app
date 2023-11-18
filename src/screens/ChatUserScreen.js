@@ -17,8 +17,11 @@ import ActivityIndicator from "../components/ActivityIndicator";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 import AppHeader from "../components/AppHeader";
+import { LoadMoreContent } from "../components/Comments";
 
 const { width, height } = Dimensions.get("window");
+
+const CHAT_COUNT = 25;
 
 const ChatUserScreen = ({ route }) => {
   const {
@@ -29,11 +32,12 @@ const ChatUserScreen = ({ route }) => {
     state: { userInfo },
   } = useContext(AuthContext);
 
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState({ results: [] });
   // chats = [{message, time, read,sender: {_id, username,gender, avatar}}]
   const [empty, setEmpty] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [chatLoaded, setChatLoaded] = useState(false);
+  const [bools, setBools] = useState({ loadMore: false });
 
   const flatRef = useRef();
   const { _id, username, avatar } = route.params.item;
@@ -42,7 +46,7 @@ const ChatUserScreen = ({ route }) => {
 
   const handleSendChatMsg = (message, chatId) => {
     chats.length < 1 && setEmpty(false);
-    const chatsArr = [...chats];
+    const chatsArr = [...chats.results];
     const senderData = {
       _id: userInfo._id,
       username: userInfo.username,
@@ -60,7 +64,7 @@ const ChatUserScreen = ({ route }) => {
 
     chatsArr[chatsArr.length] = senderObj;
 
-    setChats(chatsArr);
+    setChats({ ...chats, results: chatsArr });
   };
 
   const onSend = (text) => {
@@ -79,17 +83,25 @@ const ChatUserScreen = ({ route }) => {
       sendData,
       (resData) => {
         //tag the message sent
+        flatRef.current.scrollToEnd();
       },
       (err) => {
-        console.log("clientError", err);
+        setErrMsg("Message not sent");
       }
     );
+    flatRef.current.scrollToEnd();
   };
 
   const renderChats = ({ item }) => {
-    const findIndex = chats[0] && chats.findIndex((obj) => obj._id == item._id);
-    const lowerChat = chats[findIndex + 1] ? chats[findIndex + 1] : null;
-    const upperChat = chats[findIndex - 1] ? chats[findIndex - 1] : null;
+    const findIndex =
+      chats?.results[0] &&
+      chats?.results.findIndex((obj) => obj._id == item._id);
+    const lowerChat = chats?.results[findIndex + 1]
+      ? chats?.results[findIndex + 1]
+      : null;
+    const upperChat = chats?.results[findIndex - 1]
+      ? chats?.results[findIndex - 1]
+      : null;
 
     return (
       <ChatRender
@@ -101,47 +113,69 @@ const ChatUserScreen = ({ route }) => {
     );
   };
 
-  const handleGetDone = async (info) => {
-    if (info) {
-      setChats(info && info.chats);
-      info && info.chats.length == 0 ? setEmpty(true) : setEmpty(false);
-      await AsyncStorage.setItem(`chat_${_id}`, JSON.stringify(info?.chats));
+  const handleGetDone = async (chatz, shouldAddMore) => {
+    if (!chatz) return setChatLoaded(true);
+    if (shouldAddMore) {
+      setChats({ ...chatz, results: chatz?.results?.concat(chats?.results) });
     } else {
-      setEmpty(true);
+      setChats(chatz);
     }
-    setChatLoaded(true);
+    chatz && chatz?.results.length == 0 ? setEmpty(true) : setEmpty(false);
+    await AsyncStorage.setItem(`chat_${_id}`, JSON.stringify(chatz));
+    flatRef.current.scrollToEnd();
+  };
+
+  const handleLoadMoreChats = () => {
+    setBools({ loadMore: true });
+    getChatMessages(
+      {
+        senderId: userInfo._id,
+        recipientId: _id,
+        page: chats?.next?.page,
+        limit: 20,
+      },
+      (data) => {
+        handleGetDone(data, true);
+        flatRef?.current?.scrollToEnd();
+        setBools({ loadMore: false });
+      },
+      (err) => setErrMsg(err)
+    );
   };
 
   const fetchStoredChats = async () => {
     let user_chat = await AsyncStorage.getItem(`chat_${_id}`);
     if (user_chat) {
       user_chat = JSON.parse(user_chat);
-      setChats(user_chat);
+      // setChats({ ...user_chat, results: user_chat?.results?.slice(-25) ?? [] });
       setChatLoaded(true);
+      flatRef.current.scrollToEnd();
     }
   };
 
   const RenderChatFooter = () => {
-    return <View style={{ height: 15 }} />;
+    return <View style={{ height: height * 0.1 }} />;
   };
 
   //chatMsg useEffect
   useEffect(() => {
     getSocket().on("message", ({ sender, message, sent, chatId, time }) => {
       if (sender.username == username) {
-        // console.log("Send another event", sender);
         const id = (Math.random() * 1000).toString();
         //recipients' client
-        setChats([
+        setChats({
           ...chats,
-          {
-            _id: id,
-            sender: { ...sender, avatar },
-            read: false,
-            message,
-            time,
-          },
-        ]);
+          results: [
+            ...chats.results,
+            {
+              _id: id,
+              sender: { ...sender, avatar },
+              read: false,
+              message,
+              time,
+            },
+          ],
+        });
         // Send another event that message is read
 
         getSocket().emit("readMessage", {
@@ -152,7 +186,7 @@ const ChatUserScreen = ({ route }) => {
       } else {
         // senders' client
         // look for the message and tag is sent;
-        const chatsArr = chats.map((chatObj) => {
+        const chatsArr = chats.results.map((chatObj) => {
           if (chatObj._id == chatId) {
             return {
               ...chatObj,
@@ -163,13 +197,13 @@ const ChatUserScreen = ({ route }) => {
           }
         });
 
-        setChats(chatsArr);
+        setChats({ ...chats, results: chatsArr });
       }
     });
 
     getSocket().on("messageRead", ({ sender, recipient }) => {
       if (sender == _id) {
-        const myChats = [...chats].map((chatObj) => {
+        const myChats = [...chats.results].map((chatObj) => {
           if (!chatObj.read) {
             return {
               ...chatObj,
@@ -179,7 +213,7 @@ const ChatUserScreen = ({ route }) => {
             return chatObj;
           }
         });
-        setChats(myChats);
+        setChats({ ...chats, results: myChats });
       }
     });
 
@@ -194,14 +228,14 @@ const ChatUserScreen = ({ route }) => {
     joinRoom(userInfo._id, _id);
 
     getChatMessages(
-      userInfo._id,
-      _id,
+      { senderId: userInfo._id, recipientId: _id, page: 1, limit: CHAT_COUNT },
       (data) => {
         handleGetDone(data);
         flatRef?.current?.scrollToEnd();
       },
       (err) => setErrMsg(err)
     );
+    flatRef?.current?.scrollToEnd();
   }, []);
 
   return (
@@ -221,11 +255,22 @@ const ChatUserScreen = ({ route }) => {
         {chatLoaded ? (
           <View style={[styles.content, { backgroundColor: theme.background }]}>
             <FlatList
-              data={chats}
+              data={chats.results}
               ref={flatRef}
               keyExtractor={(item) => item._id}
               onContentSizeChange={() => flatRef.current.scrollToEnd()}
               ListFooterComponent={RenderChatFooter}
+              ListHeaderComponent={() => (
+                <>
+                  {chats.hasOwnProperty("next") && (
+                    <LoadMoreContent
+                      loading={bools.loadMore}
+                      onPress={handleLoadMoreChats}
+                      type="chats"
+                    />
+                  )}
+                </>
+              )}
               renderItem={renderChats}
             />
             <ActivityIndicator

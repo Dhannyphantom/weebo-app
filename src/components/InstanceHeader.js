@@ -428,7 +428,7 @@ const InstanceHeader = ({
             type="transparent"
             dotPress={() => setDropDown(true)}
             badge={badge}
-            iconColor={colors.white}
+            iconColor={colors.medium}
           />
         </View>
         <View

@@ -708,14 +708,23 @@ const updateSettings = (dispatch) => (newSettings) => {
 };
 
 // THIS IS CHAT MESSAGES BTW THE USER AND RECIPIENT
-const getChatMessages = (dispatch) => async (senderId, recipientId, sc, cb) => {
+const getChatMessages = (dispatch) => async (data, sc, cb) => {
+  // senderId, recipientId,
+  const { senderId, recipientId } = data;
+
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetchApi.get(`/getMessages/${senderId}/${recipientId}`, {
-      headers: {
-        "x-auth-token": token,
-      },
-    });
+    const res = await fetchApi.get(
+      `/getMessages/${senderId}/${recipientId}?page=${data.page}&limit=${data.limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+          "Cache-Control": "no-cache,no-store,must-revalidate",
+          Pragma: "no-cache",
+          Expires: 0,
+        },
+      }
+    );
     AsyncStorage.setItem("chats", JSON.stringify(res.data));
     sc && sc(res.data);
   } catch (err) {

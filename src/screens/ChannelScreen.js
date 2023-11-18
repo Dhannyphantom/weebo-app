@@ -205,6 +205,8 @@ const ChannelListComp = ({
 }) => {
   const navigation = useNavigation();
   const { subscribeChannel } = useContext(CharContext);
+  const theme = useContext(ThemeContext);
+
   const handleSubscribe = (type, id) => {
     subscribeChannel(
       type,
@@ -220,7 +222,7 @@ const ChannelListComp = ({
   };
 
   return (
-    <View style={{ marginBottom: 5 }}>
+    <View style={[styles.channelContainer, { backgroundColor: theme.lighter }]}>
       <View style={styles.header}>
         <Feather name="tv" size={18} color={colors.primary} />
         <AppText style={styles.titleText} bold>
@@ -294,7 +296,6 @@ const ChannelListComp = ({
           </AppText>
         </View>
       )}
-      {!small && <Separator h={1} />}
     </View>
   );
 };
@@ -489,7 +490,12 @@ const ChannelScreen = ({ route, navigation }) => {
   }, [showSearch]);
 
   return (
-    <Screen style={styles.container}>
+    <Screen
+      style={{
+        ...styles.container,
+        backgroundColor: theme.backgroundExtralight,
+      }}
+    >
       <AppHeader
         title="Channels"
         RightComponent={() => (
@@ -603,7 +609,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginTop: 15,
   },
-
+  channelContainer: {
+    borderRadius: 20,
+    marginBottom: 20,
+    elevation: 1,
+    paddingBottom: 14,
+  },
   content: {
     minHeight: height * 0.6,
     maxHeight: height * 0.85,
@@ -622,8 +633,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   titleText: {
-    fontSize: 14,
-    marginLeft: 3,
+    // fontSize: 14,
+    // marginLeft: 3,
+    padding: 10,
   },
   container: {
     flex: 1,
@@ -631,8 +643,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 9,
-    marginLeft: 9,
+    marginBottom: 6,
+    marginLeft: 6,
+    padding: 12,
   },
   headerCont: {
     // alignSelf: "center",
