@@ -60,8 +60,10 @@ const ChallengeScreen = ({ navigation }) => {
           title={item.title + suffixTitle}
           timer={item.expiresAt}
           instance={{
-            tag: item.tag,
-            data: item[`tag${capFirstLetter(item.tag)}`],
+            tag: item.tag ?? "characters",
+            data:
+              item[`tag${capFirstLetter(item.tag)}`] ??
+              item?.data[0]?.character,
           }}
           cards={item.challengers}
           comments={item.comments}
@@ -80,8 +82,11 @@ const ChallengeScreen = ({ navigation }) => {
           title={item.title}
           timer={item.expiresAt}
           instance={{
-            tag: item.tag,
-            data: item[`tag${capFirstLetter(item.tag)}`],
+            tag: item.tag ?? "characters",
+            data: item[`tag${capFirstLetter(item.tag)}`] ?? {
+              ...item?.data[0]?.character,
+              title: item.title,
+            },
           }}
           cards={item.data}
           comments={item.comments}

@@ -74,7 +74,7 @@ const RenderAlerts = ({
       }
     }
 
-    readNotification(notifyData, null, (err) => console.log(err));
+    readNotification(notifyData, null, (_err) => {});
   };
 
   const handleNavAlerts = () => {
@@ -152,8 +152,12 @@ const AlertScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
   const [prompt, setPrompt] = useState({ visible: false });
-  const [loadedOnce, setLoadedOnce] = useState(false);
-  const [bools, setBools] = useState({ shouldScroll: true, loadMore: true });
+  const [bools, setBools] = useState({
+    shouldScroll: true,
+    loadMore: true,
+    loadedOnce: false,
+    badgeToggle: false,
+  });
   const [guide, setGuide] = useState({ vis: false, close: false });
 
   const handleReadAll = () => {
@@ -163,23 +167,19 @@ const AlertScreen = ({ navigation }) => {
       obj.read = true;
     });
 
-    setTimeout(() => {
-      updateMe({ data: 0, prop: "notifications" });
-    }, 8000);
-    readNotification(notifyData, null, (err) => console.log(err));
+    readNotification(notifyData, null, (_err) => {});
 
     setAlertApi(copyNoti);
   };
 
   const hasReadAll = alertApi?.results?.every((obj) => obj && obj.read);
-  // const hasReadAll = false;
 
   const handleDeleteAll = () => {
-    setTimeout(() => {
-      updateMe({ data: 0, prop: "notifications" });
-    }, 8000);
+    // setTimeout(() => {
+    //   updateMe({ data: 0, prop: "notifications" });
+    // }, 8000);
     setAlertApi({ results: [] });
-    wipeNotifications(null, (errData) => console.log(errData));
+    wipeNotifications(null, (_errData) => {});
   };
 
   const handlePrompt = () => {
@@ -190,55 +190,53 @@ const AlertScreen = ({ navigation }) => {
     try {
       const syncedNoti = await AsyncStorage.getItem("notifications");
       if (syncedNoti) {
-        setAlertApi(JSON.parse(syncedNoti));
-        setLoadedOnce(true);
+        setAlertApi({ results: JSON.parse(syncedNoti) });
+        setBools({ ...bools, loadedOnce: true });
       }
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (_err) {}
   };
 
   const fetchScreenData = (type = "refresh") => {
     type === "refresh" && setRefreshing(true);
     type === "loadMore" && setBools({ ...bools, loadMore: true });
 
-    getUserData(
-      {
-        id: userInfo._id,
-        type: "get_notifications",
-        pagination: {
-          page: type === "loadMore" ? alertApi?.next?.page : 1,
-          limit:
-            type === "loadMore" ? alertApi?.next?.limit : NOTIFICATION_LENGTH,
-        },
+    const sendObj = {
+      id: userInfo._id,
+      type: "get_notifications",
+      pagination: {
+        page: type === "loadMore" ? alertApi?.next?.page : 1,
+        limit:
+          type === "loadMore" ? alertApi?.next?.limit : NOTIFICATION_LENGTH,
       },
+    };
+
+    getUserData(
+      sendObj,
       async (resData) => {
+        let newNoti = [];
         if (type === "loadMore") {
+          newNoti = alertApi.results.concat(resData.results);
           setAlertApi({
             ...resData,
-            results: alertApi.results.concat(resData.results),
+            results: newNoti,
           });
         } else {
           setAlertApi(resData);
+          newNoti = resData.results;
         }
-        setLoadedOnce(true);
-        setBools({ ...bools, loadMore: false });
-        if (resData.counter) {
-          setTimeout(() => {
-            updateMe({ prop: "notifications", data: resData.counter });
-          }, 8000);
-        }
+        setBools({ ...bools, loadMore: false, loadedOnce: true });
+        // if (resData.counter) {
+        //   setTimeout(() => {
+        //     updateMe({ prop: "notifications", data: resData.counter });
+        //   }, 8000);
+        // }
         type === "refresh" && setRefreshing(false);
-        await AsyncStorage.setItem(
-          "notifications",
-          JSON.stringify(resData[0]?.notifications ?? [])
-        );
+        await AsyncStorage.setItem("notifications", JSON.stringify(newNoti));
       },
       (err) => {
-        // console.log(err.err?.response?.data);
         type === "refresh" && setRefreshing(false);
         setErrMsg(err.msg);
-        setLoadedOnce(true);
+        setBools({ ...bools, loadedOnce: true });
       }
     );
   };
@@ -254,11 +252,16 @@ const AlertScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // FETCH
     fetchSyncedData();
     handleScreenGuide();
     fetchScreenData("load");
   }, []);
+
+  useEffect(() => {
+    if (hasReadAll && !bools.badgeToggle) {
+      updateMe({ prop: "notifications", data: 0 });
+    }
+  }, [hasReadAll]);
 
   return (
     <Screen style={styles.container}>
@@ -328,7 +331,7 @@ const AlertScreen = ({ navigation }) => {
         <ActivityIndicator
           visible={true}
           type={
-            loadedOnce && alertApi?.results && !alertApi.results[0]
+            bools.loadedOnce && alertApi?.results && !alertApi.results[0]
               ? "isEmpty"
               : "spin"
           }

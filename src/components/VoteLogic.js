@@ -24,6 +24,49 @@ import { Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("screen");
 
+const InfoComponent = ({ type, instance, timer, scorer }) => {
+  const message = type.type == "events" ? "users" : "characters";
+  const { data, tag } = instance;
+
+  return (
+    <ScrollView>
+      <View style={styles.infoContainer}>
+        <View>
+          <Image
+            source={data.cover_photo}
+            style={[
+              styles.infoImage,
+              { height: tag === "character" ? height * 0.5 : height * 0.25 },
+            ]}
+          />
+          <RenderLinearGradient
+            modalHeight={tag === "character" ? height * 0.5 : height * 0.35}
+          />
+        </View>
+        <AppText size="xlarge" bold style={styles.infoTitle}>
+          {data.title
+            ? data.title
+            : `${
+                data?.name ?? data?.name_j ?? data.name_e
+              }  ${tag} instance challenge`}
+        </AppText>
+        <View style={styles.infoContent}>
+          <AppDetail
+            icon="timer"
+            title="Timer"
+            item={`${getFormatTime(timer, null, "format").full} left`}
+          />
+          <AppDetail
+            icon="ninja"
+            title={`${message} participating`}
+            item={`${scorer.length} ${message}`}
+          />
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
 const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
   const { voteOne } = useContext(ChallContext);
   const { getComments, replyComments, commentPost } = useContext(FeedContext);
@@ -120,9 +163,7 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
           updateMe(resData.points, "points");
         }
       },
-      (err) => {
-        console.log(err);
-      }
+      (_err) => {}
     );
   };
 
@@ -242,45 +283,6 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
     );
   };
 
-  const InfoComponent = () => {
-    const message = type.type == "events" ? "users" : "characters";
-    // console.log("INSTANCE DETAILS:: ", instance);
-    const { data, tag } = instance;
-    return (
-      <ScrollView>
-        <View style={styles.infoContainer}>
-          <View>
-            <Image
-              source={data.cover_photo}
-              style={[
-                styles.infoImage,
-                { height: tag === "character" ? height * 0.5 : height * 0.25 },
-              ]}
-            />
-            <RenderLinearGradient
-              modalHeight={tag === "character" ? height * 0.5 : height * 0.35}
-            />
-          </View>
-          <AppText size="xlarge" bold style={styles.infoTitle}>
-            {data?.name || data?.name_j || data.name_e} {tag} instance challenge
-          </AppText>
-          <View style={styles.infoContent}>
-            <AppDetail
-              icon="timer"
-              title="Timer"
-              item={`${getFormatTime(timer, null, "format").full} left`}
-            />
-            <AppDetail
-              icon="ninja"
-              title={`${message} participating`}
-              item={`${scorer.length} ${message}`}
-            />
-          </View>
-        </View>
-      </ScrollView>
-    );
-  };
-
   useEffect(() => {
     checkVote();
   }, []);
@@ -317,7 +319,14 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
         visible={infoModal}
         setter={() => setInfoModal(false)}
         // modalHeight={null}
-        RenderComponent={InfoComponent}
+        RenderComponent={() => (
+          <InfoComponent
+            instance={instance}
+            scorer={scorer}
+            timer={timer}
+            type={type}
+          />
+        )}
       />
       <PopMessage
         popData={popper}
@@ -357,6 +366,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: "center",
     textTransform: "capitalize",
+    maxWidth: "90%",
   },
   pic: {
     alignItems: "center",
