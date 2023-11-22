@@ -14,11 +14,12 @@ const SelectItem = ({ item, pickItem, setPopper, check }) => {
   const index = check.findIndex((obj) => obj.name === item.name);
   const handlePickItem = () => {
     if (!item.verified) {
-      setPopper({
-        vis: true,
-        msg: "Instance not verified",
-        type: "failed",
-      });
+      setPopper &&
+        setPopper({
+          vis: true,
+          msg: "Instance not verified",
+          type: "failed",
+        });
       return;
     }
     pickItem(item);

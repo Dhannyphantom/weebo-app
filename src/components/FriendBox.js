@@ -296,6 +296,7 @@ const FriendBox = ({
   } = useContext(AuthContext);
 
   const handleInstanceTransfer = (itemId) => {
+    instanceLogic.setErrMsg(null);
     setBools({ ...bools, loading: true });
     const actionObj = {
       to: itemId,
@@ -306,8 +307,6 @@ const FriendBox = ({
       actionObj,
       (resData) => {
         updateThisInstance("manager", resData.curr_manager);
-        typeObj.instance === "character" &&
-          updateMe(resData.prev_manager, "charactersOwned");
         instanceLogic.setVisible && instanceLogic.setVisible(false);
         instanceLogic.setter && instanceLogic.setter();
         setBools({ ...bools, loading: true });

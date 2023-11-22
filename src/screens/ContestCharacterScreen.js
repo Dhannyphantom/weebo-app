@@ -26,9 +26,11 @@ const ContestCharacterScreen = ({ route, navigation }) => {
     updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
-  const myCharacter = route.params.characters;
+
   const [text, setText] = useState("");
-  const [meCharacters, setMeCharacters] = useState(myCharacter);
+  const [meCharacters, setMeCharacters] = useState(
+    route?.params?.characters ?? []
+  );
   const [searchList, setSearchList] = useState([]);
   const [errMsg, setErrMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,16 +56,17 @@ const ContestCharacterScreen = ({ route, navigation }) => {
   };
 
   const handlePick = (item) => {
+    // return console.log(item);
+
     const indexB = meCharacters.findIndex((obj) => obj._id == item._id);
     const index = challengers.findIndex((obj) => obj.name == item.name);
-    const indexA = userInfo.charactersOwned.findIndex(
-      (obj) => obj._id == item._id
-    );
-    if (index == -1 && indexB == -1 && indexA == -1) {
+    const isMine = String(item.manager._id) == String(userInfo._id);
+
+    if (index == -1 && indexB == -1 && !isMine) {
       setChallengers([...challengers, item]);
     } else if (index > -1) {
       setChallengers(challengers.filter((obj) => obj.name !== item.name));
-    } else if (indexA > -1 && indexB == -1) {
+    } else if (indexB == -1 && isMine) {
       setMeCharacters([...meCharacters, item]);
     } else if (indexB > -1) {
       setMeCharacters(meCharacters.filter((obj) => obj.name !== item.name));
@@ -239,6 +242,7 @@ const ContestCharacterScreen = ({ route, navigation }) => {
         renderItem={renderScreen}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: height * 0.1 }}
+        keyboardShouldPersistTaps="handled"
         overScrollMode="never"
       />
     </Screen>

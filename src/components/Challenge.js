@@ -407,10 +407,14 @@ const Challenge = ({
           onPress={() => handleVote("challenger")}
           style={[
             styles.scoreContainer,
-            { backgroundColor: checkC ? theme.unchange : theme.background },
+            { backgroundColor: checkC ? colors.heartLight : theme.background },
           ]}
         >
-          <AppText size="xlarge" bold>
+          <AppText
+            style={{ color: checkC ? colors.white : colors.black }}
+            size="xlarge"
+            bold
+          >
             {getFeedNumber(cScore)}
           </AppText>
         </TouchableOpacity>
@@ -425,10 +429,14 @@ const Challenge = ({
           onPress={() => handleVote("owner")}
           style={[
             styles.scoreContainer,
-            { backgroundColor: checkO ? theme.unchange : theme.background },
+            { backgroundColor: checkO ? colors.heartLight : theme.background },
           ]}
         >
-          <AppText size="xlarge" bold>
+          <AppText
+            size="xlarge"
+            style={{ color: checkO ? colors.white : colors.black }}
+            bold
+          >
             {getFeedNumber(oScore)}
           </AppText>
         </TouchableOpacity>
