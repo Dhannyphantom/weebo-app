@@ -433,7 +433,6 @@ const ChannelScreen = ({ route, navigation }) => {
   };
 
   const renderSeachResults = ({ item }) => {
-    return null;
     let unsubscribe, isMine, subscribe;
     if (item.manager._id == userInfo._id) {
       isMine = true;

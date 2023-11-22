@@ -117,7 +117,7 @@ const RenderEmptyWeebs = ({
   } = useContext(AuthContext);
 
   const message =
-    "Turns out there are no nearby weebs YET!!!. You can always check back later";
+    "No nearby weebs found. The Weebo Community is still growing...";
 
   const weeboLocatorSwitch = () => {
     setIsLoading(true);
@@ -136,7 +136,6 @@ const RenderEmptyWeebs = ({
       },
       (errData) => {
         setErrMsg(errData.data ?? errData.msg);
-        console.log(errData);
         setIsLoading(false);
       }
     );
@@ -281,8 +280,10 @@ const ConnectScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log("How many renders!!");
     const checkLocTimestamp =
-      Date.now() - userInfo?.location?.timestamp > 60 * 60 * 24 * 1000;
+      Date.now() - new Date(userInfo?.location?.timestamp) >
+      60 * 60 * 24 * 1000;
     if (
       (location && !userInfo?.location?.timestamp) ||
       (location && checkLocTimestamp)

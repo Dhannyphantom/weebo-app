@@ -600,7 +600,7 @@ const AppForm = ({
     <Screen style={styles.container}>
       <View style={styles.info}>
         <AppLogo type="icon" />
-        <AppText style={styles.title}>
+        <AppText textStyle="bold" style={styles.title}>
           Connect and have fun with your fellow weebs
         </AppText>
       </View>

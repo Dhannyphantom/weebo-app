@@ -300,7 +300,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const [activeSlide, setActiveSlide] = useState(1);
 
   const params = route.params;
-  // params = { instance}
+  // params = { instance, instanceID, ?roomID}
   const scrollX = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);

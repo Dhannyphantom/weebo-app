@@ -172,15 +172,15 @@ const RenderTags = ({ tags, translator, handleCloseModal }) => {
         navigation.navigate("Character", { item: tag[tag.name]._id });
         break;
       case "show":
-        // return console.log(tag);
         navigation.navigate("Show", { show: { _id: tag[tag.name]._id } });
         break;
       case "channel":
-        // return console.log(tag);
         navigation.navigate("ChannelPost", { id: tag[tag.name]._id });
         break;
-
-      default:
+      case "group":
+        navigation.navigate("Room", {
+          data: { instance: "group", instanceID: tag[tag.name]._id },
+        });
         break;
     }
     handleCloseModal();

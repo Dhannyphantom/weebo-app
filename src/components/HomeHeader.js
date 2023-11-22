@@ -25,6 +25,7 @@ import AppFadeIn from "./AppFadeIn";
 import { gradients } from "../constants/colors";
 import { launchGallery } from "../constants/helpers";
 import Badger from "./Badger";
+import PopMessage from "./PopMessage";
 
 const screen = Dimensions.get("window");
 
@@ -53,8 +54,8 @@ const HomeHeader = () => {
 
   const [modalVis, setModalVis] = useState(false);
   const [selectChar, setSelectChar] = useState([]);
-  const [errMsg, setErrMsg] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
+  const [popper, setPopper] = useState({ vis: false });
   const [cMode, setCMode] = useState(false);
 
   const theme = useContext(ThemeContext);
@@ -69,7 +70,7 @@ const HomeHeader = () => {
       setModalVis(false);
       const { _error, results } = await launchGallery("all", true);
       if (_error) {
-        setErrMsg(_error);
+        setPopper({ vis: true, type: "failed", msg: _error });
       } else if (results) {
         navigation.navigate("Post", {
           assets: results,
@@ -92,7 +93,6 @@ const HomeHeader = () => {
   };
 
   const handlePlusBtn = () => {
-    setErrMsg(null);
     setModalVis(true);
     setCMode(false);
     setSelectChar([]);
@@ -266,16 +266,12 @@ const HomeHeader = () => {
           />
         )}
       </View>
-      {errMsg && (
-        <AppText bold style={styles.error}>
-          {errMsg}
-        </AppText>
-      )}
       <AppFadeIn
         visible={modalVis}
         setVisible={setModalVis}
         RenderComponent={CreatePostActions}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );
 };

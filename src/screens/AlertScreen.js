@@ -64,7 +64,6 @@ const RenderAlerts = ({
           read: true,
         };
         setAlertApi(copyNoti);
-        updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
       }
     } else if (type === "delete") {
       notifyData.action = "delete";
@@ -72,7 +71,6 @@ const RenderAlerts = ({
       const deleted = alertResults.filter((obj) => obj._id != itemId);
       setAlertApi({ ...copyNoti, results: deleted });
       if (!copyNoti.results[findIndex].read) {
-        updateMe({ data: userInfo.notifications - 1, prop: "notifications" });
       }
     }
 
@@ -164,7 +162,10 @@ const AlertScreen = ({ navigation }) => {
     copyNoti.results.forEach((obj) => {
       obj.read = true;
     });
-    updateMe({ data: 0, prop: "notifications" });
+
+    setTimeout(() => {
+      updateMe({ data: 0, prop: "notifications" });
+    }, 8000);
     readNotification(notifyData, null, (err) => console.log(err));
 
     setAlertApi(copyNoti);
@@ -174,7 +175,9 @@ const AlertScreen = ({ navigation }) => {
   // const hasReadAll = false;
 
   const handleDeleteAll = () => {
-    updateMe({ data: 0, prop: "notifications" });
+    setTimeout(() => {
+      updateMe({ data: 0, prop: "notifications" });
+    }, 8000);
     setAlertApi({ results: [] });
     wipeNotifications(null, (errData) => console.log(errData));
   };
@@ -221,7 +224,9 @@ const AlertScreen = ({ navigation }) => {
         setLoadedOnce(true);
         setBools({ ...bools, loadMore: false });
         if (resData.counter) {
-          updateMe({ prop: "notifications", data: resData.counter });
+          setTimeout(() => {
+            updateMe({ prop: "notifications", data: resData.counter });
+          }, 8000);
         }
         type === "refresh" && setRefreshing(false);
         await AsyncStorage.setItem(
