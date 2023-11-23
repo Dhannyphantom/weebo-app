@@ -280,7 +280,6 @@ const ConnectScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log("How many renders!!");
     const checkLocTimestamp =
       Date.now() - new Date(userInfo?.location?.timestamp) >
       60 * 60 * 24 * 1000;

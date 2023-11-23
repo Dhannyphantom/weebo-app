@@ -34,14 +34,20 @@ const Link = ({
         {pack === "a" && (
           <MaterialCommunityIcons
             name={iconName}
-            size={12}
+            size={15}
             color={colors.primary}
           />
         )}
         {pack === "b" && (
-          <MaterialIcons name={iconName} size={12} color={colors.primary} />
+          <MaterialIcons name={iconName} size={15} color={colors.primary} />
         )}
-        <AppText bold style={styles.link}>
+        <AppText
+          bold
+          style={{
+            ...styles.link,
+            color: theme.mode === "dark" ? colors.light : colors.primary,
+          }}
+        >
           {name}
         </AppText>
       </View>

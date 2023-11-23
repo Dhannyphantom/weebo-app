@@ -25,7 +25,7 @@ const ChatFile = ({ item, setChatAction, onPress }) => {
       style={[
         styles.container,
         {
-          backgroundColor: theme.background,
+          backgroundColor: theme.backgroundLight,
           borderWidth: item.selected ? 1.5 : 0,
         },
       ]}

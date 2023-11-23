@@ -8,6 +8,7 @@ import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
+// THIS IS THE FIRST SCREEN THAT RENDERS
 
 const RequestAuth = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
