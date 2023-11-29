@@ -60,6 +60,7 @@ const hider = [
   "event",
   "manager",
   "verified",
+  "manager_histories",
   "challenge_stat",
   "instance_creator",
   "verifiedList",
@@ -68,7 +69,7 @@ const hider = [
   "name_e",
 ];
 const counter = ["characters", "groups", "followers", "posts", "challengers"];
-const LEAST_FOLLOWERS = 1;
+const LEAST_FOLLOWERS = 15;
 
 const UpdateInstance = ({ state, prop, data }) => {
   const theme = useContext(ThemeContext);

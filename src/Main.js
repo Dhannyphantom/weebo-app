@@ -28,6 +28,8 @@ const Main = () => {
   } = useContext(AuthContext);
   const [themeMode, setThemeMode] = useState(false);
 
+  // console.log(_theme);
+
   const lightTheme = {
     ...DefaultTheme,
     colors: {
@@ -70,7 +72,15 @@ const Main = () => {
       const settingsStr = await AsyncStorageLib.getItem("settings");
       if (settingsStr) {
         const settingsData = JSON.parse(settingsStr);
-        setThemeMode(settingsData[1].data[0].default);
+        const isDarkMode = settingsData[1].data[0].default;
+        setThemeMode(isDarkMode);
+
+        await NavigationBar.setButtonStyleAsync(
+          !isDarkMode ? theme.light.bar : theme.dark.bar
+        );
+        await NavigationBar.setBackgroundColorAsync(
+          !isDarkMode ? theme.light.background : theme.dark.background
+        );
       }
     }
     prepareSettings();

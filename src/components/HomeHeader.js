@@ -6,7 +6,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Context as AuthContext } from "../config/AuthContext";
 
@@ -17,53 +17,81 @@ import AppText from "./AppText";
 import SelectItem from "./SelectItem";
 import AppButton from "./AppButton";
 import AppLogo from "./AppLogo";
-import ActionMenu from "./ActionMenu";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
 import AppFadeIn from "./AppFadeIn";
 
-import { gradients } from "../constants/colors";
 import { launchGallery } from "../constants/helpers";
 import Badger from "./Badger";
 import PopMessage from "./PopMessage";
 
-const screen = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-const itemWrite = {
-  title: "Write Post",
-  bg: gradients[1].bg,
-  bg1: gradients[1].bg1,
-  icon: "pencil",
-};
-const itemPost = {
-  title: "Post Media",
-  bg: gradients[0].bg,
-  bg1: gradients[0].bg1,
-  icon: "camera",
-};
-const itemChallenge = {
-  title: "Challenge",
-  bg: "#06beb6",
-  bg1: "#48b1bf",
-  icon: "alpha-c-circle",
-  iconPack: "MCI",
+const CIRCLE_SIZE = width * 0.8;
+
+const ListItem = ({ icon, text, onPress, pos = "center" }) => {
+  const theme = useContext(ThemeContext);
+  let viewStyle = {};
+
+  switch (pos) {
+    case "center":
+      viewStyle = {
+        backgroundColor: theme.background,
+        borderRadius: 200,
+      };
+      break;
+    case "top":
+      viewStyle = {
+        position: "absolute",
+        bottom: CIRCLE_SIZE / 1.6 + 30,
+      };
+      break;
+    case "left":
+      viewStyle = {
+        position: "absolute",
+        right: CIRCLE_SIZE / 1.6 + 30,
+      };
+      break;
+    case "right":
+      viewStyle = {
+        position: "absolute",
+        left: CIRCLE_SIZE / 1.7 + 30,
+      };
+      break;
+    case "bottom":
+      viewStyle = {
+        position: "absolute",
+        top: CIRCLE_SIZE / 1.6 + 30,
+      };
+      break;
+  }
+
+  return (
+    <View style={viewStyle}>
+      <TouchableOpacity
+        style={styles.listItem}
+        activeOpacity={0.75}
+        onPress={onPress}
+      >
+        <Feather name={icon} size={25} color={colors.primary} />
+        <AppText size="large" style={styles.listItemText} textStyle="black">
+          {" "}
+          {text}{" "}
+        </AppText>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
-const HomeHeader = () => {
-  const navigation = useNavigation();
-
-  const [modalVis, setModalVis] = useState(false);
+const CreatePostActions = ({ setModalVis, setPopper }) => {
   const [selectChar, setSelectChar] = useState([]);
-  const [showSearch, setShowSearch] = useState(false);
-  const [popper, setPopper] = useState({ vis: false });
   const [cMode, setCMode] = useState(false);
 
   const theme = useContext(ThemeContext);
   const {
     state: { userInfo },
-    getUserData,
-    updateMe,
   } = useContext(AuthContext);
+  const navigation = useNavigation();
 
   const handleNav = async (type) => {
     if (type === "post") {
@@ -92,16 +120,6 @@ const HomeHeader = () => {
     }
   };
 
-  const handlePlusBtn = () => {
-    setModalVis(true);
-    setCMode(false);
-    setSelectChar([]);
-  };
-
-  const handleShowSearch = () => {
-    setShowSearch(!showSearch);
-  };
-
   const handlePick = (item) => {
     const index = selectChar.findIndex((obj) => obj.name == item.name);
     if (index < 0) {
@@ -109,6 +127,126 @@ const HomeHeader = () => {
     } else {
       setSelectChar(selectChar.filter((obj) => obj.name !== item.name));
     }
+  };
+
+  const renderMyCharacters = ({ item }) => {
+    return (
+      <View style={styles.itemCont}>
+        <SelectItem item={item} check={selectChar} pickItem={handlePick} />
+      </View>
+    );
+  };
+
+  return (
+    <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
+      <View style={[styles.links, { backgroundColor: theme.light }]}>
+        {cMode ? (
+          <View
+            style={[styles.newChallenge, { backgroundColor: theme.background }]}
+          >
+            <View>
+              <AppText style={styles.charListHead} bold>
+                Select characters
+              </AppText>
+              <Separator h={2} />
+              <View>
+                <FlatList
+                  data={userInfo?.instances?.characters}
+                  keyExtractor={(item) => item._id}
+                  ListEmptyComponent={
+                    <ActivityIndicator
+                      visible={true}
+                      type="isEmpty"
+                      text="You don't have any characters"
+                    />
+                  }
+                  renderItem={renderMyCharacters}
+                />
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              {selectChar.length > 0 && (
+                <AppButton
+                  title="NEXT"
+                  style={styles.nextBtn}
+                  bare
+                  onPress={() => {
+                    setModalVis(false);
+                    navigation.navigate("Contest", {
+                      characters: selectChar,
+                    });
+                  }}
+                />
+              )}
+              <AppButton
+                title="Cancel"
+                style={styles.nextBtn}
+                bare
+                bareRed
+                onPress={() => setCMode(false)}
+              />
+            </View>
+          </View>
+        ) : (
+          <>
+            <ListItem
+              icon="aperture"
+              text="Post"
+              pos="center"
+              onPress={() => handleNav("post")}
+            />
+            <ListItem
+              icon="award"
+              text="Challenge"
+              pos="top"
+              onPress={() => handleNav("contest")}
+            />
+            <ListItem
+              icon="edit-2"
+              text="Write"
+              pos="left"
+              onPress={() => handleNav("write")}
+            />
+            <ListItem
+              icon="monitor"
+              text="Buckets"
+              pos="bottom"
+              onPress={() => handleNav("recommendation")}
+            />
+            <ListItem
+              icon="filter"
+              text="My Posts"
+              pos="right"
+              onPress={() => handleNav("my_post")}
+            />
+          </>
+        )}
+      </View>
+    </View>
+  );
+};
+
+const HomeHeader = () => {
+  const navigation = useNavigation();
+
+  const [modalVis, setModalVis] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [popper, setPopper] = useState({ vis: false });
+
+  const theme = useContext(ThemeContext);
+  const {
+    state: { userInfo },
+    getUserData,
+    updateMe,
+  } = useContext(AuthContext);
+
+  const handlePlusBtn = () => {
+    setModalVis(true);
+  };
+
+  const handleShowSearch = () => {
+    setShowSearch(!showSearch);
   };
 
   const fetchData = () => {
@@ -123,96 +261,6 @@ const HomeHeader = () => {
         }
       );
     }
-  };
-
-  const renderMyCharacters = ({ item }) => {
-    return (
-      <View style={styles.itemCont}>
-        <SelectItem item={item} check={selectChar} pickItem={handlePick} />
-      </View>
-    );
-  };
-
-  const CreatePostActions = () => {
-    return (
-      <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
-        <View style={styles.links}>
-          {cMode ? (
-            <View style={styles.newChallenge}>
-              <View>
-                <AppText style={styles.charListHead} bold>
-                  Select characters
-                </AppText>
-                <Separator h={2} />
-                <View>
-                  <FlatList
-                    data={userInfo?.instances?.characters}
-                    keyExtractor={(item) => item._id}
-                    ListEmptyComponent={
-                      <ActivityIndicator
-                        visible={true}
-                        type="isEmpty"
-                        text="You don't have any characters"
-                      />
-                    }
-                    renderItem={renderMyCharacters}
-                  />
-                </View>
-              </View>
-
-              {selectChar.length > 0 && (
-                <AppButton
-                  title="NEXT"
-                  style={styles.nextBtn}
-                  bare
-                  onPress={() => {
-                    setModalVis(false);
-                    navigation.navigate("Contest", {
-                      characters: selectChar,
-                    });
-                  }}
-                />
-              )}
-            </View>
-          ) : (
-            <View style={{ flexDirection: "row" }}>
-              <ActionMenu
-                item={itemChallenge}
-                onPress={() => handleNav("contest")}
-                style={{
-                  width: screen.width * 0.48,
-                  height: screen.width * 0.4,
-                  marginHorizontal: 2,
-                  marginRight: 4,
-                }}
-              />
-              <View style={{ justifyContent: "center" }}>
-                <ActionMenu
-                  item={itemWrite}
-                  onPress={() => handleNav("write")}
-                  style={{
-                    width: screen.width * 0.4,
-                    height: (screen.width * 0.38) / 2.1,
-                    marginHorizontal: 2,
-                    marginVertical: 1,
-                  }}
-                />
-                <ActionMenu
-                  item={itemPost}
-                  onPress={() => handleNav("post")}
-                  style={{
-                    width: screen.width * 0.4,
-                    height: (screen.width * 0.38) / 2.1,
-                    marginVertical: 3,
-                    marginHorizontal: 2,
-                  }}
-                />
-              </View>
-            </View>
-          )}
-        </View>
-      </View>
-    );
   };
 
   useEffect(() => {
@@ -252,7 +300,7 @@ const HomeHeader = () => {
             style={[styles.buttonContainer, { backgroundColor: theme.lighter }]}
             onPress={handlePlusBtn}
           >
-            <AntDesign name="plus" size={18} color={colors.primary} />
+            <Feather name="disc" size={19} color={colors.primary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -269,7 +317,9 @@ const HomeHeader = () => {
       <AppFadeIn
         visible={modalVis}
         setVisible={setModalVis}
-        RenderComponent={CreatePostActions}
+        RenderComponent={() => (
+          <CreatePostActions setPopper={setPopper} setModalVis={setModalVis} />
+        )}
       />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
@@ -296,7 +346,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonMid: {
-    borderRadius: screen.width * 0.01,
+    borderRadius: width * 0.01,
   },
   error: {
     textAlign: "center",
@@ -319,31 +369,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalBg: {
-    borderRadius: 18,
-    padding: 15,
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalBtn: {
     alignSelf: "center",
   },
   newChallenge: {
-    width: "100%",
-    maxHeight: screen.height * 0.86,
-    minHeight: screen.height * 0.4,
+    width: width * 0.95,
+    maxHeight: height * 0.86,
+    minHeight: height * 0.5,
     justifyContent: "space-between",
+    padding: 10,
+    borderRadius: 20,
   },
   nextBtn: {
     alignSelf: "center",
     width: "60%",
   },
+  listItem: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30,
+  },
+  listItemText: {
+    maxWidth: 100,
+    textAlign: "center",
+  },
   links: {
+    width: "94%",
+    height: "94%",
+    borderRadius: 500,
     justifyContent: "center",
     alignItems: "center",
   },
   link: {
     width: "80%",
   },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
   searchBar: {
-    width: screen.width * 0.95,
+    width: width * 0.95,
     alignSelf: "center",
     marginBottom: 8,
   },
