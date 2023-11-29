@@ -464,9 +464,17 @@ const getCommentReplies = (dispatch) => async (data, sc, cb) => {
 
 // GETS HOME DATA [posts, statuses, shows, userInfo]
 const getHomeFeeds = (_dispatch) => async (query, sc, cb) => {
-  const uri = query
-    ? `/homeData?limit=${query.limit}&page=${query.page}`
-    : `/homeData?limit=15&page=1`;
+  let uri = "";
+  if (query) {
+    if (query.type === "my_post") {
+      uri = `/posts?limit=${query.limit}&page=${query.page}`;
+    } else {
+      uri = `/homeData?limit=${query.limit}&page=${query.page}`;
+    }
+  } else {
+    uri = "/homeData?limit=15&page=1";
+  }
+
   try {
     const token = await AsyncStorage.getItem("token");
     const res = await fetchApi.get(uri, {

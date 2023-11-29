@@ -83,7 +83,7 @@ const ListItem = ({ icon, text, onPress, pos = "center" }) => {
   );
 };
 
-const CreatePostActions = ({ setModalVis, setPopper }) => {
+const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
   const [selectChar, setSelectChar] = useState([]);
   const [cMode, setCMode] = useState(false);
 
@@ -117,6 +117,10 @@ const CreatePostActions = ({ setModalVis, setPopper }) => {
         toScreenData: {},
         id: null,
       });
+    } else if (type === "my_post") {
+      const fetchType = isMyPosts ? "feed" : "my_post";
+      setModalVis(false);
+      fetcher(null, true, fetchType);
     }
   };
 
@@ -145,8 +149,8 @@ const CreatePostActions = ({ setModalVis, setPopper }) => {
             style={[styles.newChallenge, { backgroundColor: theme.background }]}
           >
             <View>
-              <AppText style={styles.charListHead} bold>
-                Select characters
+              <AppText size="large" style={styles.charListHead} bold>
+                Select Characters
               </AppText>
               <Separator h={2} />
               <View>
@@ -157,7 +161,7 @@ const CreatePostActions = ({ setModalVis, setPopper }) => {
                     <ActivityIndicator
                       visible={true}
                       type="isEmpty"
-                      text="You don't have any characters"
+                      text="You're not managing any characters. Challenge one or Create new Character Instances now"
                     />
                   }
                   renderItem={renderMyCharacters}
@@ -216,7 +220,7 @@ const CreatePostActions = ({ setModalVis, setPopper }) => {
             />
             <ListItem
               icon="filter"
-              text="My Posts"
+              text={`${isMyPosts ? "All" : "My"} Posts`}
               pos="right"
               onPress={() => handleNav("my_post")}
             />
@@ -227,7 +231,7 @@ const CreatePostActions = ({ setModalVis, setPopper }) => {
   );
 };
 
-const HomeHeader = () => {
+const HomeHeader = ({ fetcher, isMyPosts }) => {
   const navigation = useNavigation();
 
   const [modalVis, setModalVis] = useState(false);
@@ -256,9 +260,7 @@ const HomeHeader = () => {
         (resData) => {
           updateMe({ data: resData, prop: "instances" });
         },
-        (err) => {
-          console.log(err);
-        }
+        (err) => {}
       );
     }
   };
@@ -318,7 +320,12 @@ const HomeHeader = () => {
         visible={modalVis}
         setVisible={setModalVis}
         RenderComponent={() => (
-          <CreatePostActions setPopper={setPopper} setModalVis={setModalVis} />
+          <CreatePostActions
+            fetcher={fetcher}
+            setPopper={setPopper}
+            isMyPosts={isMyPosts}
+            setModalVis={setModalVis}
+          />
         )}
       />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />

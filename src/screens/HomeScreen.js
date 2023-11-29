@@ -67,6 +67,7 @@ const boolsObj = {
   loadedOnce: false,
   reloadLoader: true,
   loader: false,
+  isMyPosts: false,
   showStatus: false,
 };
 
@@ -102,10 +103,6 @@ const HomeScreen = ({ navigation, route }) => {
       setBools({ ...bools, loadedOnce: true, reloadLoader: false });
       setRefreshing(false);
     });
-    // await readyHomeScreen(() => {
-    // setBools({ ...bools, loadedOnce: true, reloadLoader: false });
-    // setRefreshing(false);
-    // });
   }, []);
 
   const handleHomeScreenGuide = async (type) => {
@@ -150,22 +147,32 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  const fetchHomeData = (cb, loader) => {
+  const fetchHomeData = (cb, loader, type = "feed") => {
+    // type = "feed" || "my_post"
     setErrMsg(null);
-    loader && setBools({ ...bools, loader: true });
+    loader &&
+      setBools({
+        ...bools,
+        loader: true,
+        isMyPosts: type === "my_post",
+      });
     getHomeFeeds(
-      { page: 1, limit: 15 },
+      { page: 1, limit: 15, type },
       async (resData) => {
         // SETTERS
         setFeeds(resData.feeds);
         // !bools.loadedOnce && handleHomeScreenGuide("get");
-        loader && setBools({ ...bools, loader: false });
-        await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
+        loader &&
+          setBools({ ...bools, loader: false, isMyPosts: type === "my_post" });
+        if (type === "feed") {
+          await AsyncStorage.setItem("home_feeds", JSON.stringify(resData));
+        }
         cb && cb();
       },
       (err) => {
         setErrMsg("Error fetching feeds");
-        loader && setBools({ ...bools, loader: false });
+        loader &&
+          setBools({ ...bools, loader: false, isMyPosts: type === "my_post" });
         cb && cb();
       }
     );
@@ -216,7 +223,11 @@ const HomeScreen = ({ navigation, route }) => {
     setErrMsg(null);
     if (feeds.hasOwnProperty("next")) {
       getHomeFeeds(
-        { limit: 15, page: feeds.next.page },
+        {
+          limit: 15,
+          page: feeds.next.page,
+          type: bools.isMyPosts ? "my_post" : "feed",
+        },
         (resData) => {
           setFeeds({
             ...resData,
@@ -243,9 +254,7 @@ const HomeScreen = ({ navigation, route }) => {
         const token = await registerForPushNotificationsAsync();
         updateUserPushToken({ token, state: "registered" });
       }
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -363,7 +372,7 @@ const HomeScreen = ({ navigation, route }) => {
           backgroundColor: theme.backgroundExtralight,
         }}
       >
-        <HomeHeader />
+        <HomeHeader fetcher={fetchHomeData} isMyPosts={bools.isMyPosts} />
         {errMsg && (
           <AppText bold size="large" style={styles.error}>
             {errMsg}
