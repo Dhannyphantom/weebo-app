@@ -25,9 +25,9 @@ import { launchGallery } from "../constants/helpers";
 import Badger from "./Badger";
 import PopMessage from "./PopMessage";
 
-const { width, height } = Dimensions.get("window");
+const { width, height, scale } = Dimensions.get("window");
 
-const CIRCLE_SIZE = width * 0.8;
+const CIRCLE_SIZE = width * 0.88 + 2.5 ** scale;
 
 const ListItem = ({ icon, text, onPress, pos = "center" }) => {
   const theme = useContext(ThemeContext);
@@ -43,25 +43,26 @@ const ListItem = ({ icon, text, onPress, pos = "center" }) => {
     case "top":
       viewStyle = {
         position: "absolute",
-        bottom: CIRCLE_SIZE / 1.6 + 30,
+        bottom: CIRCLE_SIZE / 2 + width * 0.15,
+        // bottom: CIRCLE_SIZE / 1.6 + 30,
       };
       break;
     case "left":
       viewStyle = {
         position: "absolute",
-        right: CIRCLE_SIZE / 1.6 + 30,
+        right: CIRCLE_SIZE / 2 + width * 0.15,
       };
       break;
     case "right":
       viewStyle = {
         position: "absolute",
-        left: CIRCLE_SIZE / 1.7 + 30,
+        left: CIRCLE_SIZE / 2 + width * 0.15,
       };
       break;
     case "bottom":
       viewStyle = {
         position: "absolute",
-        top: CIRCLE_SIZE / 1.6 + 30,
+        top: CIRCLE_SIZE / 2 + width * 0.15,
       };
       break;
   }
@@ -121,6 +122,9 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
       const fetchType = isMyPosts ? "feed" : "my_post";
       setModalVis(false);
       fetcher(null, true, fetchType);
+    } else if (type === "recommendation") {
+      setModalVis(false);
+      navigation.navigate("Shows", { recommendations: true });
     }
   };
 
@@ -220,7 +224,7 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
             />
             <ListItem
               icon="filter"
-              text={`${isMyPosts ? "All" : "My"} Posts`}
+              text={`${isMyPosts ? "All" : "My"}\nPosts`}
               pos="right"
               onPress={() => handleNav("my_post")}
             />

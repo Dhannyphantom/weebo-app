@@ -77,6 +77,8 @@ const AppText = ({
   return (
     <Text
       {...otherProps}
+      // numberOfLines={2}
+      // ellipsizeMode="tail"
       style={[
         { color: theme.color },
         {

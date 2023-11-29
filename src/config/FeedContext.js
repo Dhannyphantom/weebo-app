@@ -30,9 +30,15 @@ const updateInstance = (dispatch) => (data) => {
 const getShows =
   (dispatch) =>
   async (type = "normal", sc, cb) => {
+    let uri = "";
+    if (type === "recommendations") {
+      uri = `/recommendations`;
+    } else {
+      uri = `/myShows/${type}`;
+    }
     try {
       const token = await AsyncStorage.getItem("token");
-      const response = await fetchApi.get(`/myShows/${type}`, {
+      const response = await fetchApi.get(uri, {
         headers: {
           "x-auth-token": token,
           "Cache-Control": "no-cache,no-store,must-revalidate",

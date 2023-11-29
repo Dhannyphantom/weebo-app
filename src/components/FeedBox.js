@@ -147,7 +147,12 @@ const FeedBox = ({
           <View />
         )}
         {!midBtn && (
-          <AppText style={styles.author} bold>
+          <AppText
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={styles.author}
+            bold
+          >
             {statMid}
           </AppText>
         )}
@@ -189,6 +194,7 @@ const styles = StyleSheet.create({
   author: {
     textTransform: "uppercase",
     minWidth: width * 0.33,
+    maxWidth: width * 0.333,
     textAlign: "center",
     color: colors.medium,
   },

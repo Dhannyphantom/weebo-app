@@ -405,7 +405,7 @@ const RenderInstanceFilter = ({ setter, updateScreenData }) => {
   );
 };
 
-const ShowGroup = ({ screen, headerTitle }) => {
+const ShowGroup = ({ screen, headerTitle, params }) => {
   const navigation = useNavigation();
   const { getShows, filterInstances, getGroups } = useContext(FeedContext);
   const { searchStuffs } = useContext(AcctContext);
@@ -422,6 +422,7 @@ const ShowGroup = ({ screen, headerTitle }) => {
   const { showSearch, firstLoad, filter } = bools;
 
   const searchRef = useRef(null);
+  const isRecommendation = params?.recommendations;
 
   const handleImagePress = (item) => {
     const viewRoomData = {
@@ -454,8 +455,9 @@ const ShowGroup = ({ screen, headerTitle }) => {
         }
       );
     } else if (screen === "show") {
+      const fetchType = isRecommendation ? "recommendations" : "all shows";
       getShows(
-        "all shows",
+        fetchType,
         (resData) => {
           setBools({ ...bools, firstLoad: true });
           setScreenData(resData);
@@ -540,7 +542,8 @@ const ShowGroup = ({ screen, headerTitle }) => {
     }
   };
 
-  const RenderSearch = () => {
+  const RenderHeaderComponents = () => {
+    if (isRecommendation) return null;
     return (
       <View style={styles.row}>
         <TouchableOpacity
@@ -557,6 +560,15 @@ const ShowGroup = ({ screen, headerTitle }) => {
             style={styles.search}
           >
             <Feather name="filter" color={colors.primary} size={18} />
+          </TouchableOpacity>
+        )}
+        {screen === "show" && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.push("Shows", { recommendations: true })}
+            style={styles.search}
+          >
+            <Feather name="monitor" color={colors.primary} size={18} />
           </TouchableOpacity>
         )}
       </View>
@@ -581,8 +593,14 @@ const ShowGroup = ({ screen, headerTitle }) => {
       <AppHeader
         style={{ marginBottom: 8 }}
         title={headerTitle}
-        RightComponent={RenderSearch}
+        RightComponent={RenderHeaderComponents}
       />
+      {isRecommendation && (
+        <AppText style={styles.subTitleText}>
+          Here are some interesing Anime/Manga recommendations you've not yet
+          followed just for you
+        </AppText>
+      )}
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
       {showSearch && (
         <>
@@ -758,6 +776,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     marginTop: 50,
+  },
+  subTitleText: {
+    textAlign: "center",
+    maxWidth: "90%",
+    alignSelf: "center",
+    marginTop: 10,
   },
   search: {
     width: width * 0.075,

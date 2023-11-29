@@ -227,14 +227,17 @@ const ChallengeScreen = ({ navigation }) => {
       <AppHeader
         title="Versus"
         icon={false}
-        RightComponent={() => (
-          <AppButton
-            title={`${!fetchMine ? "My" : "All"} Challenges`}
-            // RIcon="chevron-right"
-            naked
-            onPress={() => setFetchMine(!fetchMine)}
-          />
-        )}
+        RightComponent={() => {
+          if (!challengeInfo[0]) return null;
+          return (
+            <AppButton
+              title={`${!fetchMine ? "My" : "All"} Challenges`}
+              // RIcon="chevron-right"
+              naked
+              onPress={() => setFetchMine(!fetchMine)}
+            />
+          );
+        }}
       />
 
       {!challengeInfo[0] && !awardData[0] && loadedOnce && (
