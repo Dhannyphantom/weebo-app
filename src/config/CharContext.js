@@ -429,6 +429,25 @@ const searchChannels = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const fetchChannelSubscribers = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await channelApi.get(
+      `/subscribers?channelId=${data.channelId}&page=${data.page}&limit=${data.limit}`,
+      {
+        headers: {
+          "x-auth-token": token,
+        },
+      }
+    );
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error fetching subscribers", data: err?.response?.data });
+  }
+};
+
 const deleteChannel = (dispatch) => async (channelId, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -497,6 +516,7 @@ export const { Context, Provider } = createDataContext(
     createChannel,
     getChannels,
     subscribeChannel,
+    fetchChannelSubscribers,
     searchChannels,
     updateChannel,
     deleteChannel,

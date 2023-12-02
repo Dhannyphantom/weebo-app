@@ -324,6 +324,9 @@ const InstanceHeader = ({
   };
 
   const handleRightIconPress = () => {
+    if (isChannel) {
+      return handleRightPress();
+    }
     if (!userInfo.verified) {
       return setPopper({
         vis: true,
@@ -473,7 +476,7 @@ const InstanceHeader = ({
                 size={55}
                 color={feedbackColor}
                 onPress={handleRightIconPress}
-                disablePress={isChannel}
+                // disablePress={isChannel}
                 activeOpacity={1}
               />
             )}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Animated,
   RefreshControl,
+  FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -34,6 +35,7 @@ import AlertModal from "../components/AlertModal";
 import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
 import RenderLoadMore from "../components/RenderLoadMore";
+import FriendBox from "../components/FriendBox";
 
 const { width, height } = Dimensions.get("window");
 
@@ -42,6 +44,7 @@ const boolsObj = {
   imageLoading: false,
   loadedOnce: false,
   loadMore: true,
+  subscribers: false,
 };
 
 const deletePrompt = {
@@ -80,6 +83,60 @@ const UpdateDecription = ({ visible, description, handleDescUpdate }) => {
   );
 };
 
+const RenderSubscribers = ({ fetcher, channelId }) => {
+  const [subscribers, setSubscribers] = useState({ results: [] });
+  const [bools, setBools] = useState({
+    loading: true,
+    loadMore: false,
+    isLoading: false,
+  });
+
+  const fetchSubscribers = (type) => {
+    fetcher(
+      {
+        channelId,
+        page: type == "load" ? 1 : subscribers?.next?.page,
+        limit: 50,
+      },
+      (resData) => {
+        if (type == "more") {
+          setSubscribers({
+            ...resData,
+            results: subscribers.results.concat(resData.results),
+          });
+        } else {
+          setSubscribers(resData);
+        }
+        setBools({ ...bools, loading: false });
+      }
+    );
+  };
+
+  useEffect(() => {
+    fetchSubscribers("load");
+  }, []);
+
+  return (
+    <View style={styles.subContainer}>
+      <FriendBox
+        data={subscribers}
+        scrollLoad={{
+          loadMore: bools.loadMore,
+          isLoading: bools.isLoading,
+          onLoadMore: () => {
+            if (subscribers?.hasOwnProperty("next")) {
+              fetchSubscribers("more");
+            } else {
+              setBools({ ...bools, loadMore: false });
+            }
+          },
+        }}
+      />
+      <ActivityIndicator visible={bools.loading} absolute transparent />
+    </View>
+  );
+};
+
 const ChannelPostScreen = ({ route, navigation }) => {
   const [page, setPage] = useState({});
   const [openMedia, setOpenMedia] = useState(false);
@@ -94,8 +151,13 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   const routeId = route.params.id;
   let isSubscribed, isMine, sColor;
-  const { getAChannel, deleteChannel, updateChannel, subscribeChannel } =
-    useContext(CharContext);
+  const {
+    getAChannel,
+    fetchChannelSubscribers,
+    deleteChannel,
+    updateChannel,
+    subscribeChannel,
+  } = useContext(CharContext);
   const {
     updateMe,
     state: { userInfo },
@@ -192,6 +254,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     screenIcon: "tv",
     coverLoading: bools.imageLoading,
     handleLeftPress: () => handleSub(),
+    handleRightPress: () => setBools({ ...bools, subscribers: true }),
     leftColor: sColor,
     verified: false,
     subscribers: page?.subscribers?.length,
@@ -627,6 +690,19 @@ const ChannelPostScreen = ({ route, navigation }) => {
         RenderComponent={() => <EditChannel />}
       />
 
+      <PopDropDown
+        visible={bools.subscribers}
+        setter={() => setBools({ ...bools, subscribers: false })}
+        headerTitle="Subscribers"
+        containerStyle={{ minHeight: height * 0.6 }}
+        RenderComponent={() => (
+          <RenderSubscribers
+            fetcher={fetchChannelSubscribers}
+            channelId={page?._id}
+          />
+        )}
+      />
+
       <AppFadeIn
         visible={openMedia}
         RenderComponent={RenderInstanceMedia}
@@ -686,6 +762,9 @@ const styles = StyleSheet.create({
   link: {
     width: "90%",
     alignSelf: "center",
+  },
+  subContainer: {
+    flex: 1,
   },
   updateContainer: {
     flex: 1,
