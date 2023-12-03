@@ -1,8 +1,11 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, StyleSheet, Dimensions } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import uuid from "react-native-uuid";
 
 import { Context as AuthContext } from "../config/AuthContext";
+
+const { width, height } = Dimensions.get("screen");
 
 import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
@@ -12,84 +15,100 @@ import getFormatTime from "../constants/getFormatTime";
 import { canChallengeInstance } from "../constants/helpers";
 import Separator from "../components/Separator";
 import EventRender from "../components/EventRender";
+import ThemeContext from "../config/ThemeContext";
 
-const CharList = ({ name, icon, names, show, parentProps }) => {
-  const { character, cardState } = parentProps;
+const sortArr = [
+  "other_names",
+  "show",
+  "role",
+  "dpName",
+  "followers",
+  "favorites",
+  "gender",
+  "type",
+  "birthday",
+  "height",
+  "father",
+  "mother",
+  "brothers",
+  "sisters",
+  "lover",
+  "rival",
+  "voiceActors",
+];
 
-  if (name && !names) {
-    let prop = name.replace(/\s/g, "");
+const isStats = ["followers", "favorites"];
+const shouldFormatDate = ["birthday"];
+const renameProps = {
+  dpName: "Card display name",
+  voiceActor: "voice actors",
+  show: "Character's show/manga",
+  other_names: "Aliases",
+};
+
+const InfoDisplay = ({ type = "list", data }) => {
+  // type = 'text' | 'stat' | 'list'
+  if (!data) return null;
+  const theme = useContext(ThemeContext);
+
+  if (type === "text") {
+    const textVal = Array.isArray(data.value) ? data.value?.length : data.value;
+    // return console.log({ type, data, textVal });
+    // return null;
     return (
-      <View style={styles.charLists}>
-        <MaterialCommunityIcons name={icon} color={colors.primary} size={12} />
-        <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
-          <AppText style={{ textTransform: "uppercase" }} bold>
-            {name} :{" "}
-          </AppText>
-          {show && (
-            <AppText style={styles.infoText}>
-              {character[prop].name_j || character[prop].name_e}
+      <View style={styles.display}>
+        <View style={styles.displayIcon}>
+          <Feather name="disc" size={22} color={colors.primary} />
+        </View>
+        <View style={styles.displayInfo}>
+          <View
+            style={[styles.displayHeader, { backgroundColor: theme.light }]}
+          >
+            <AppText style={styles.displayText} textStyle="black">
+              {data.title}
             </AppText>
-          )}
-          {!show && (
-            <AppText style={styles.infoText}>
-              {name === "birthday"
-                ? getFormatTime(new Date(character[prop]), null, "month_day")
-                    .date
-                : character[prop]}
+          </View>
+          <View
+            style={[styles.displayContent, { backgroundColor: theme.light }]}
+          >
+            <AppText style={styles.displayText}>{textVal}</AppText>
+          </View>
+        </View>
+      </View>
+    );
+  } else if (type === "list") {
+    if (!data.value[0]) return null;
+    // return null;
+    return (
+      <View style={styles.displayList}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.displayIcon}>
+            <Feather name="layers" size={22} color={colors.primary} />
+          </View>
+          <View
+            style={[styles.displayHeaderList, { backgroundColor: theme.light }]}
+          >
+            <AppText style={styles.displayText} textStyle="black">
+              {data.title}
             </AppText>
-          )}
-        </AppText>
+          </View>
+        </View>
+        {data.value.map((str) => {
+          return (
+            <View
+              key={uuid.v4()}
+              style={[
+                styles.displayContentList,
+                { backgroundColor: theme.light },
+              ]}
+            >
+              <AppText style={styles.displayText}>{str}</AppText>
+            </View>
+          );
+        })}
       </View>
     );
   }
-  return (
-    <View style={styles.charLists}>
-      <MaterialCommunityIcons name={icon} color={colors.primary} size={12} />
-      <AppText style={{ marginVertical: 3, marginLeft: 6 }}>
-        <AppText style={{ textTransform: "uppercase" }} bold>
-          {" "}
-          {names} :{" "}
-        </AppText>
-        <AppText style={styles.infoText}>
-          {" "}
-          {names == "followers" ? cardState.liked : cardState.favNum}
-        </AppText>
-      </AppText>
-    </View>
-  );
-};
-
-const CharFlat = ({ name, icon, id, propKey, parentProps }) => {
-  const { character } = parentProps;
-  let prop = name.replace(/\s/g, "");
-  if (character[propKey ?? prop].length <= 0) return null;
-  return (
-    <FlatList
-      data={character[propKey ?? prop]}
-      keyExtractor={(item) => item}
-      ListHeaderComponent={
-        <View style={styles.charLists}>
-          <MaterialCommunityIcons
-            name={icon}
-            color={colors.primary}
-            size={12}
-          />
-          <AppText style={{ textTransform: "uppercase", marginLeft: 6 }} bold>
-            {" "}
-            {name} :{" "}
-          </AppText>
-        </View>
-      }
-      renderItem={({ item }) => (
-        <>
-          <AppText style={{ textTransform: "capitalize", marginLeft: 30 }}>
-            {item}
-          </AppText>
-        </>
-      )}
-      listKey={id}
-    />
-  );
 };
 
 const CharInfoScreen = ({
@@ -130,93 +149,44 @@ const CharInfoScreen = ({
   return (
     <View style={styles.info}>
       <View style={styles.charInfo}>
-        <CharList
-          parentProps={{ cardState, character }}
-          name="show"
-          show
-          icon="television"
-        />
-        <CharFlat
-          parentProps={{ character }}
-          name="Aliases"
-          propKey="other_names"
-          icon="human-male-boy"
-          id="a"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="role"
-          icon="face-agent"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          names="followers"
-          icon="account-group"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          names="favorites"
-          icon="star"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="type"
-          icon="baby-face"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="birthday"
-          icon="gift"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="gender"
-          icon="gender-male-female"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="height"
-          icon="human-male-height"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="rival"
-          icon="target-account"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="father"
-          icon="human-male"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="mother"
-          icon="human-female"
-        />
-        <CharList
-          parentProps={{ cardState, character }}
-          name="lover"
-          icon="heart"
-        />
+        {sortArr.map((key) => {
+          if (character.hasOwnProperty(key)) {
+            let val,
+              headerTitle,
+              value = character[key];
+
+            if (shouldFormatDate.includes(key)) {
+              val = getFormatTime(new Date(value), null, "month_day").date;
+            } else if (key == "show") {
+              val = value?.name_j ?? value?.name_e;
+            } else if (
+              Array.isArray(value) &&
+              !value[0] &&
+              !isStats.includes(key)
+            ) {
+              val = "None";
+            } else {
+              val = value;
+            }
+
+            if (renameProps.hasOwnProperty(key)) {
+              headerTitle = renameProps[key];
+            } else {
+              headerTitle = key;
+            }
+
+            const type =
+              Array.isArray(val) && !isStats.includes(key) ? "list" : "text";
+            const data = {
+              title: headerTitle,
+              value: val,
+            };
+
+            // return console.log({ type, key, value });
+            return <InfoDisplay key={uuid.v4()} type={type} data={data} />;
+          }
+        })}
       </View>
-      <CharFlat
-        parentProps={{ character }}
-        name="voice Actor"
-        icon="headset"
-        id="voiceActor"
-      />
-      <CharFlat
-        parentProps={{ character }}
-        name="brothers"
-        icon="human-male-boy"
-        id="a"
-      />
-      <CharFlat
-        parentProps={{ character }}
-        name="sisters"
-        icon="human-female-girl"
-        id="b"
-      />
 
       {character?.event && (
         <>
@@ -296,6 +266,71 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  display: {
+    marginBottom: 15,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  displayList: {
+    marginBottom: 15,
+    alignSelf: "flex-start",
+  },
+  displayStat: {
+    marginBottom: 15,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  displayHeader: {
+    alignSelf: "flex-start",
+    padding: 15,
+    borderRadius: 8,
+    margin: 0,
+  },
+  displayHeaderList: {
+    alignSelf: "flex-start",
+    padding: 15,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 0,
+  },
+  displayHeaderStat: {
+    // alignSelf: "flex-start",
+    padding: 15,
+    paddingLeft: 15,
+    paddingRight: 25,
+    borderRadius: 8,
+    margin: 0,
+  },
+  displayContentList: {
+    width: width * 0.8,
+    padding: 15,
+    paddingVertical: 20,
+    marginTop: -10,
+    marginLeft: 15,
+    borderRadius: 10,
+  },
+  displayContent: {
+    width: width * 0.8,
+    padding: 15,
+    marginTop: -10,
+    paddingVertical: 23,
+    borderRadius: 10,
+  },
+  displayContentStat: {
+    padding: 20,
+    paddingHorizontal: 25,
+    borderRadius: 100,
+    marginLeft: -10,
+  },
+  displayText: {
+    textTransform: "capitalize",
+  },
+  displayIcon: {
+    margin: 5,
+  },
   info: {
     padding: 12,
     bottom: 52,
@@ -313,3 +348,36 @@ const styles = StyleSheet.create({
   },
 });
 export default CharInfoScreen;
+
+/* 
+
+ {Object.entries(character).map(([key, value]) => {
+          if (!hideProps.includes(key)) {
+            let val, headerTitle;
+
+            if (shouldFormatDate.includes(key)) {
+              val = getFormatTime(new Date(value), null, "month_day").date;
+            } else if (key == "show") {
+              val = value?.name_j ?? value?.name_e;
+            } else {
+              val = value;
+            }
+
+            if (renameProps.hasOwnProperty(key)) {
+              headerTitle = renameProps[key];
+            } else {
+              headerTitle = key;
+            }
+
+            const type =
+              Array.isArray(value) && !isStats.includes(key) ? "list" : "text";
+            const data = {
+              title: headerTitle,
+              value: val,
+            };
+
+            // return console.log({ type, key, value });
+            return <InfoDisplay key={uuid.v4()} type={type} data={data} />;
+          }
+        })}
+*/
