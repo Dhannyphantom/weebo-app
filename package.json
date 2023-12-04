@@ -65,5 +65,10 @@
   "devDependencies": {
     "@babel/core": "^7.12.9"
   },
+  "resolutions": {
+    "@expo/config-plugins": "^5.0.2",
+    "@expo/prebuild-config": "^5.0.5",
+    "expo-modules-autolinking": "~1.0.0"
+  },
   "private": true
 }
