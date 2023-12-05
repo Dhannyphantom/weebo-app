@@ -5,6 +5,7 @@ const colors = {
   medium: "#707070",
   heart: "#ea4f30",
   heartLight: "#f47961",
+  //
   heartDark: "#d62f0f",
   light: "#dddddd",
   chat: "#573854",
