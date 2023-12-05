@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import { Viewport } from "@skele/components";
 import { StatusBar } from "expo-status-bar";
@@ -29,7 +22,6 @@ import PopUpModal from "../components/PopUpModal";
 import TransferInstance from "../components/TransferInstance";
 import AppButton from "../components/AppButton";
 import ShowUpload from "../components/ShowUpload";
-import InfoBox from "../components/InfoBox";
 import InstanceHeader from "../components/InstanceHeader";
 import StickyHeader from "../components/StickyHeader";
 import InstanceChallenger from "../components/InstanceChallenger";
@@ -44,6 +36,8 @@ import EventRender from "../components/EventRender";
 import AppFadeIn from "../components/AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
 import { TouchableOpacity } from "react-native";
+import { InfoDisplay } from "./CharInfoScreen";
+import { getDateObject } from "../constants/getFormatTime";
 
 const { width, height } = Dimensions.get("window");
 const dayta = showInfoProps.map((obj) => obj.prop);
@@ -52,24 +46,37 @@ for (let i = 0; i < dayta.length; i++) {
   const e = dayta[i];
   daytaObj[e] = "";
 }
-const hider = [
-  "__v",
-  "cover_photo",
-  "_id",
-  "isManga",
-  "event",
-  "manager",
-  "verified",
-  "manager_histories",
-  "challenge_stat",
-  "instance_creator",
-  "verifiedList",
+
+const sortArr = [
+  "other_names",
+  "spinoffs",
+  "creators",
+  "genres",
+  "subGenres",
+  "episodes",
+  "characters",
+  "groups",
+  "followers",
   "favorites",
-  "name_j",
-  "name_e",
+  "challengers",
+  "releaseDate",
+  "endDate",
 ];
-const counter = ["characters", "groups", "followers", "posts", "challengers"];
+const shouldFormatDate = ["releaseDate", "endDate"];
+const isStats = [
+  "characters",
+  "groups",
+  "followers",
+  "challengers",
+  "favorites",
+];
 const LEAST_FOLLOWERS = 15;
+const renameProps = {
+  other_names: "Show Aliases",
+  releaseDate: "release date",
+  endDate: "end date",
+  subGenres: "other genres",
+};
 
 const UpdateInstance = ({ state, prop, data }) => {
   const theme = useContext(ThemeContext);
@@ -224,16 +231,6 @@ const UpdateInstance = ({ state, prop, data }) => {
   );
 };
 
-const RenderPageInfos = memo(({ item, isMine, handleItemPress }) => {
-  return (
-    <InfoBox
-      item={item}
-      isMine={isMine}
-      onPress={() => handleItemPress(item)}
-    />
-  );
-});
-
 const ShowScreen = ({ route, navigation }) => {
   const { getShows, followInstance } = useContext(FeedContext);
   const { withdrawChallenge } = useContext(ChallContext);
@@ -257,7 +254,6 @@ const ShowScreen = ({ route, navigation }) => {
   );
   const [alertModal, setAlertModal] = useState({ visible: false });
   const [modalVis, setModalVis] = useState(false);
-  const [pageInfo, setPageInfo] = useState([]);
   const [challengeModal, setChallengeModal] = useState({
     vis: false,
     contest: null,
@@ -425,7 +421,6 @@ const ShowScreen = ({ route, navigation }) => {
     getShows(
       show._id,
       (data) => {
-        const dataArr = [];
         setDataState(data);
         cb && cb("success");
         if (popData) {
@@ -435,43 +430,7 @@ const ShowScreen = ({ route, navigation }) => {
             type: popData.type,
           });
         }
-        //data = {};
-        for (const key in data) {
-          let name = key;
-          let val;
 
-          if (Object.hasOwnProperty.call(data, key)) {
-            const e = data[key];
-            val = e;
-            if (hider.includes(key)) continue;
-            switch (key) {
-              case "other_names":
-                name = "other names";
-                break;
-              case "subGenres":
-                name = "other genres";
-                break;
-              case "genres":
-                name = "main genres";
-                break;
-              case "releaseDate":
-                name = "release date";
-                break;
-
-              case "startDate":
-                name = "start date";
-                break;
-
-              default:
-                break;
-            }
-
-            if (counter.includes(key)) val = e?.length?.toString();
-
-            dataArr.push({ prop: name, value: val });
-          }
-        }
-        setPageInfo(dataArr);
         isFetch && setIsLoading(false);
         isRefresh && setRefreshing(false);
         isCover && setIsCoverLoading(false);
@@ -750,27 +709,52 @@ const ShowScreen = ({ route, navigation }) => {
                   RenderInstanceContent={() => (
                     <View style={styles.content}>
                       <View style={styles.list}>
-                        <FlatList
-                          data={pageInfo}
-                          keyExtractor={(item) => item.prop}
-                          listKey={uuid.v4()}
-                          renderItem={({ item }) => (
-                            <RenderPageInfos
-                              item={item}
-                              isMine={isMine}
-                              handleItemPress={handleItemPress}
-                            />
-                          )}
-                          contentContainerStyle={{
-                            backgroundColor: "transparent",
-                          }}
-                          style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            alignItems: "center",
-                            backgroundColor: "transparent",
-                          }}
-                        />
+                        {sortArr.map((key) => {
+                          if (dataState.hasOwnProperty(key)) {
+                            let val,
+                              headerTitle,
+                              value = dataState[key];
+
+                            if (shouldFormatDate.includes(key)) {
+                              const timestamp = getDateObject(value);
+                              val = timestamp.isFuture
+                                ? "Currently airing"
+                                : `${timestamp.month} ${timestamp.year}`;
+                            } else if (
+                              Array.isArray(value) &&
+                              !value[0] &&
+                              !isStats.includes(key)
+                            ) {
+                              val = "None";
+                            } else {
+                              val = value;
+                            }
+
+                            if (renameProps.hasOwnProperty(key)) {
+                              headerTitle = renameProps[key];
+                            } else {
+                              headerTitle = key;
+                            }
+
+                            const type =
+                              Array.isArray(val) && !isStats.includes(key)
+                                ? "list"
+                                : "text";
+                            const data = {
+                              title: headerTitle,
+                              value: val,
+                            };
+
+                            // return console.log({ type, key, val });
+                            return (
+                              <InfoDisplay
+                                key={uuid.v4()}
+                                type={type}
+                                data={data}
+                              />
+                            );
+                          }
+                        })}
                       </View>
                       <View>
                         {dataState.groups && dataState?.groups[0] && (
@@ -779,7 +763,7 @@ const ShowScreen = ({ route, navigation }) => {
                             <AppText
                               style={{ marginLeft: 12 }}
                               size="large"
-                              bold
+                              textStyle="black"
                             >
                               GROUPS & ORGANIZATIONS
                             </AppText>
@@ -801,7 +785,7 @@ const ShowScreen = ({ route, navigation }) => {
                             <AppText
                               style={{ marginLeft: 18 }}
                               size="large"
-                              bold
+                              textStyle="black"
                             >
                               EVENT
                             </AppText>
@@ -819,7 +803,7 @@ const ShowScreen = ({ route, navigation }) => {
                           <>
                             <Separator h={1} />
                             <View style={styles.flatTitle}>
-                              <AppText size="large" bold>
+                              <AppText size="large" textStyle="black">
                                 CHARACTERS
                               </AppText>
                               <AppButton

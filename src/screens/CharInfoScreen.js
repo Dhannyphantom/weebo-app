@@ -46,15 +46,13 @@ const renameProps = {
   other_names: "Aliases",
 };
 
-const InfoDisplay = ({ type = "list", data }) => {
+export const InfoDisplay = ({ type = "list", data }) => {
   // type = 'text' | 'stat' | 'list'
   if (!data) return null;
   const theme = useContext(ThemeContext);
 
   if (type === "text") {
     const textVal = Array.isArray(data.value) ? data.value?.length : data.value;
-    // return console.log({ type, data, textVal });
-    // return null;
     return (
       <View style={styles.display}>
         <View style={styles.displayIcon}>
