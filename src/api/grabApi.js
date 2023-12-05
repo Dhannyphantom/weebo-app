@@ -8,5 +8,5 @@ export default axios.create({
     Pragma: "no-cache",
     Expires: 0,
   },
-  timeout: 10_000,
+  timeout: 10000,
 });
