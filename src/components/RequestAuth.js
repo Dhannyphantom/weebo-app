@@ -6,6 +6,7 @@ import AppButton from "./AppButton";
 import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "./ActivityIndicator";
 import ThemeContext from "../config/ThemeContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screen = Dimensions.get("window");
 // THIS IS THE FIRST SCREEN THAT RENDERS
@@ -14,7 +15,9 @@ const RequestAuth = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const {
     tryLocalSignin,
+    updateToken,
     clearMessage,
+
     state: { errMsg },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -24,11 +27,19 @@ const RequestAuth = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
-  const run = () => {
-    clearMessage();
-    tryLocalSignin(null, (_err) => {
-      navigation.navigate("Welcome");
-    });
+  const run = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const feeds = await AsyncStorage.getItem("home_feeds");
+    const userInfo = await AsyncStorage.getItem("userInfo");
+    if (token && feeds && userInfo) {
+      // token && feeds
+      updateToken({ token, user: JSON.parse(userInfo) });
+    } else {
+      clearMessage();
+      tryLocalSignin(null, (_err) => {
+        navigation.navigate("Welcome");
+      });
+    }
   };
 
   useEffect(() => {

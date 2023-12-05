@@ -90,6 +90,12 @@ const authReducer = (state, action) => {
       return { ...state, errMsg: action.payload };
     case "clear_error":
       return { ...state, errMsg: "" };
+    case "update_token":
+      return {
+        ...state,
+        token: action.payload.token ?? state.token,
+        userInfo: action.payload.user ?? state.userInfo,
+      };
     case "signin":
       return {
         ...state,
@@ -102,6 +108,10 @@ const authReducer = (state, action) => {
     default:
       return state;
   }
+};
+
+const updateToken = (dispatch) => (data) => {
+  dispatch({ type: "update_token", payload: data });
 };
 
 const signIn = (dispatch) => async (data, sc, cb) => {
@@ -197,34 +207,53 @@ const getMyData = (dispatch) => async (sc, cb) => {
   }
 };
 
-const tryLocalSignin = (dispatch) => async (callback, errCb) => {
-  const token = await AsyncStorage.getItem("token");
-  if (!token) return errCb && errCb();
+const tryLocalSignin =
+  (dispatch) =>
+  async (callback, errCb, type = "default") => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return errCb && errCb({ msg: "Please provide user token" });
 
-  try {
-    const user = await authApi.get("/me", {
-      headers: {
-        "x-auth-token": token,
-        "Cache-Control": "no-cache,no-store,must-revalidate",
-        Pragma: "no-cache",
-        Expires: 0,
-      },
-      timeout: 15000,
-    });
-    dispatch({ type: "signin", payload: { token, user: user.data } });
-    callback && callback(user.data);
-  } catch (err) {
-    if (!err.response) {
-      dispatch({
-        type: "add_error",
-        payload: "Please connect to the internet",
+    try {
+      const user = await authApi.get("/me", {
+        headers: {
+          "x-auth-token": token,
+          "Cache-Control": "no-cache,no-store,must-revalidate",
+          Pragma: "no-cache",
+          Expires: 0,
+        },
+        timeout: 15000,
       });
-    } else {
-      dispatch({ type: "add_error", payload: err.response.data });
-      errCb && errCb();
+      switch (type) {
+        case "default":
+          dispatch({ type: "signin", payload: { token, user: user.data } });
+          break;
+        case "user":
+          dispatch({ type: "update_token", payload: { user: user.data } });
+          break;
+      }
+      await AsyncStorage.setItem("userInfo", JSON.stringify(user.data));
+      callback && callback(user.data);
+    } catch (err) {
+      if (type === "default") {
+        if (!err.response) {
+          dispatch({
+            type: "add_error",
+            payload: "Please connect to the internet",
+          });
+        } else {
+          dispatch({ type: "add_error", payload: err.response.data });
+          errCb && errCb();
+        }
+      } else {
+        errCb &&
+          errCb({
+            err,
+            data: err?.response?.data,
+            msg: "Error fetching user data",
+          });
+      }
     }
-  }
-};
+  };
 
 const signOut = (dispatch) => async () => {
   await AsyncStorage.removeItem("token");
@@ -753,6 +782,7 @@ export const { Context, Provider } = createDataContext(
     instanceTransfer,
     addToCollection,
     clearMessage,
+    updateToken,
     getUserData,
     requestWeeb,
     getMyData,

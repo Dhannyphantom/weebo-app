@@ -80,6 +80,7 @@ const HomeScreen = ({ navigation, route }) => {
   const {
     setPushToken: updateUserPushToken,
     getSocket,
+    tryLocalSignin,
     state: { userInfo },
   } = useContext(AuthContext);
   const theme = useContext(ThemeContext);
@@ -170,7 +171,7 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (err) => {
-        setErrMsg("Error fetching feeds");
+        bools.loadedOnce && setErrMsg("Error fetching feeds");
         loader &&
           setBools({ ...bools, loader: false, isMyPosts: type === "my_post" });
         cb && cb();
@@ -186,7 +187,7 @@ const HomeScreen = ({ navigation, route }) => {
       setFeeds(feedsObj.feeds);
       setBools({ ...bools, loader: false, loadedOnce: true });
     }
-    // tryLocalSignin();
+    !bools.loadedOnce && tryLocalSignin(null, null, "user");
     fetchHomeData(cb);
   };
 
