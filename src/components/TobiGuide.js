@@ -144,8 +144,8 @@ const RenderGuide = ({ visObj, stateObj, title, setter, setVisObj }) => {
           <AppButton
             disabled={btnDisabled}
             bare
-            LIcon={indexer < stateObj.length ? "chevron-forward" : "close"}
-            title={indexer < stateObj.length ? "" : "close"}
+            LIcon={indexer < stateObj.length ? "chevron-forward" : null}
+            title={indexer < stateObj.length ? "" : "CLOSE"}
             LIconPack="I"
             style={{ marginLeft: 40 }}
             onPress={() => handleNextGuide("next")}

@@ -123,6 +123,7 @@ const RenderModalItem = ({ title, data, onPress, subTitle }) => {
 const RenderModal = ({
   data,
   countdown,
+  navigator,
   setMyComments,
   stats,
   challengeData,
@@ -156,7 +157,11 @@ const RenderModal = ({
         <Image source={data.image} style={styles.modalImage} />
         <RenderLinearGradient modalHeight={height * 0.5} />
       </View>
-      <View style={{ marginTop: 10 }}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={navigator}
+        style={{ marginTop: 10 }}
+      >
         <AppText bold size="large" style={styles.modalText}>
           {data?.fullName}
         </AppText>
@@ -164,14 +169,15 @@ const RenderModal = ({
           {data.show}
         </AppText>
         <AppText
+          bold
           style={{
             ...styles.modalText,
             color: colors.primary,
           }}
         >
-          {instance} Challenge
+          {instance} Instance Challenge
         </AppText>
-      </View>
+      </TouchableOpacity>
       <View style={{ marginTop: 15 }}>
         <RenderModalItem
           title="Comments"
@@ -314,6 +320,7 @@ const Challenge = ({
   };
 
   const navigateToInstance = () => {
+    setBools({ ...bools, modal: false });
     navigation.navigate(nav, {
       show: {
         _id: cardProps.id,
@@ -449,6 +456,7 @@ const Challenge = ({
             countdown={countdown}
             setModalVis={setModalVis}
             setLoaded={setLoaded}
+            navigator={navigateToInstance}
             stats={stats}
             setMyComments={setMyComments}
             challengeData={{ challengeID, challengeType }}

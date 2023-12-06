@@ -223,14 +223,16 @@ export const canChallengeInstance = (challenge_stat) => {
   const checker = getFormatTime(dormantTime - Date.now(), null, "format_raw");
 
   if (checker.expired) {
-    return { isExpired: true, data: checker.full };
+    return { isExpired: true, data: checker.full, msg: checker.full };
   } else {
     return {
       isExpired: false,
+      msg: checker.full,
       data: {
         vis: true,
         type: "failed",
         msg: `Instance is not accepting challenge now, check back in ${checker.full}`,
+        timer: 4,
       },
     };
   }

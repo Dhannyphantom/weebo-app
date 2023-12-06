@@ -35,6 +35,7 @@ const sortArr = [
   "lover",
   "rival",
   "voiceActors",
+  "challenge_stat",
 ];
 
 const isStats = ["followers", "favorites"];
@@ -44,6 +45,7 @@ const renameProps = {
   voiceActor: "voice actors",
   show: "Character's show/manga",
   other_names: "Aliases",
+  challenge_stat: "Challenge Dormancy",
 };
 
 export const InfoDisplay = ({ type = "list", data }) => {
@@ -156,6 +158,9 @@ const CharInfoScreen = ({
               val = getFormatTime(new Date(value), null, "month_day").date;
             } else if (key == "show") {
               val = value?.name_j ?? value?.name_e;
+            } else if (key == "challenge_stat") {
+              const { isExpired, msg } = canChallengeInstance(value);
+              val = !isExpired ? msg : "Active";
             } else if (
               Array.isArray(value) &&
               !value[0] &&

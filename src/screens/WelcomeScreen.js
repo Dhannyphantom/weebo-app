@@ -24,7 +24,7 @@ const WelcomeScreen = ({ navigation }) => {
       >
         <View style={styles.icon}>
           <AppLogo style={{ width: 100, height: 100 }} type="icon" />
-          <AppText style={styles.iconText} textStyle="black" size="xlarge">
+          <AppText style={styles.iconText} textStyle="black" size="large">
             Embrace your inner weeb
           </AppText>
         </View>

@@ -61,6 +61,7 @@ const sortArr = [
   "challengers",
   "releaseDate",
   "endDate",
+  "challenge_stat",
 ];
 const shouldFormatDate = ["releaseDate", "endDate"];
 const isStats = [
@@ -76,6 +77,7 @@ const renameProps = {
   releaseDate: "release date",
   endDate: "end date",
   subGenres: "other genres",
+  challenge_stat: "Challenge Dormancy",
 };
 
 const UpdateInstance = ({ state, prop, data }) => {
@@ -717,6 +719,10 @@ const ShowScreen = ({ route, navigation }) => {
                               val = timestamp.isFuture
                                 ? "Currently airing"
                                 : `${timestamp.month} ${timestamp.year}`;
+                            } else if (key == "challenge_stat") {
+                              const { isExpired, msg } =
+                                canChallengeInstance(value);
+                              val = !isExpired ? msg : "Active";
                             } else if (
                               Array.isArray(value) &&
                               !value[0] &&
