@@ -154,11 +154,7 @@ const ChallengeForm = ({
             </TouchableOpacity>
           )}
           {asset && asset.type === "video" && (
-            <TouchableOpacity
-              onPress={() => console.log("Yes")}
-              activeOpacity={1}
-              style={styles.vidCont}
-            >
+            <TouchableOpacity activeOpacity={1} style={styles.vidCont}>
               <PostVideo
                 source={asset}
                 style={styles.video}

@@ -260,7 +260,6 @@ const ChallengePointScreen = ({ navigation }) => {
     } else if (roundedChecker == prevChecker) {
       renderTime = false;
     }
-    //  console.log(checker)
     if (checker < 1 && itemDate.getDate() == currDate.getDate()) {
       // today
       timer = "today";
@@ -303,7 +302,6 @@ const ChallengePointScreen = ({ navigation }) => {
           updateMe({ data: resData.points, prop: "points" });
       },
       (err) => {
-        console.log("CHALLENGE POINT SCREEN", err);
         type === "refresh" && setRefreshing(false);
         setLoadedOnce(true);
       }
@@ -510,24 +508,3 @@ const styles = StyleSheet.create({
   },
 });
 export default ChallengePointScreen;
-
-/*
-  useEffect(() => {
-    const userData = {
-      action: "points",
-      actionData: +4,
-      instance: "user",
-      instanceID: userInfo._id,
-    };
-    updateUserData(
-      userData,
-      (resData) => {
-        console.log("SUCCESS", resData);
-      },
-      (err) => {
-        console.log("ERROR", err);
-      }
-    );
-  }, []);
-
-*/

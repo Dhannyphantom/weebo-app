@@ -92,7 +92,6 @@ const RenderUserCollections = ({ isMine, collections = [], item }) => {
         setBools({ ...bools, loading: false });
       },
       (err) => {
-        console.log(err);
         setErrMsg(err.data ?? err.msg);
         setBools({ ...bools, loading: false });
         // setLoading(false);
@@ -168,9 +167,7 @@ export default function MansonryList({
     }
   };
 
-  const onEndReached = () => {
-    // console.log("End Reached");
-  };
+  const onEndReached = () => {};
 
   const fetchCollections = () => {
     getUserData(
@@ -183,9 +180,7 @@ export default function MansonryList({
         // setBools({ ...bools, fetch: false });
         setMenu({ ...menu, collections: resData.my_collections });
       },
-      (errData) => {
-        console.log(errData);
-      }
+      (errData) => {}
     );
   };
 
@@ -202,17 +197,12 @@ export default function MansonryList({
       type: data.type,
     };
 
-    // return console.log(sendData);
-
     deleteMediaItem(
       sendData,
       (resData) => {
-        console.log(resData);
         handleRefresh();
       },
-      (errData) => {
-        console.log(errData);
-      }
+      (errData) => {}
     );
   };
 

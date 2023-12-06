@@ -150,7 +150,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState({});
 
   const routeId = route.params.id;
-  let isSubscribed, isMine, sColor;
+  let isSubscribed, isMine;
   const {
     getAChannel,
     fetchChannelSubscribers,
@@ -169,7 +169,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
   if (page._id) {
     isSubscribed = page.subscribers.includes(userInfo._id);
     isMine = page.manager._id === userInfo._id;
-    sColor = isSubscribed ? colors.heart : colors.medium;
   }
 
   const listItems = [
@@ -255,7 +254,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     coverLoading: bools.imageLoading,
     handleLeftPress: () => handleSub(),
     handleRightPress: () => setBools({ ...bools, subscribers: true }),
-    leftColor: sColor,
+    leftColor: isSubscribed,
     verified: false,
     subscribers: page?.subscribers?.length,
   };
@@ -332,7 +331,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
         setBools({ ...bools, imageLoading: false });
       },
       (err) => {
-        console.log(err);
         setErrMsg(err);
         setBools({ ...bools, imageLoading: false });
       }
@@ -372,7 +370,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
             navigation.navigate("Channel", { reload: true });
           },
           (errData) => {
-            console.log(errData?.err?.response?.data);
             setBools({ ...bools, imageLoading: false });
           }
         );
@@ -418,15 +415,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
     getAChannel(
       { id: routeId, page: page ?? 1, limit: 15 },
       (data) => {
-        // return console.log("CHANNEL DATA FETCHED:: ", data);
         setPage(data.channelData);
         setPosts({ ...data.posts, event: data.event });
         setBools({ ...bools, loadedOnce: true });
-        // console.log(data.posts);
         cb && cb();
       },
       (err) => {
-        // console.log(err);
         setBools({ ...bools, loadedOnce: true });
       }
     );

@@ -49,12 +49,7 @@ export default function TabList({ items = [], state, setState, onPress }) {
   }, [state]);
 
   return (
-    <Cards
-      style={{ ...styles.boxCont, backgroundColor: theme.background }}
-      // onLayout={(ev) => {
-      //   console.log("Hello::", ev?.nativeEvent?.layout);
-      // }}
-    >
+    <Cards style={{ ...styles.boxCont, backgroundColor: theme.background }}>
       {items.map((obj, idx) => {
         let sColor;
         if (state[obj.tab]) {

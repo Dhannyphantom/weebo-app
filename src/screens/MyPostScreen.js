@@ -117,7 +117,6 @@ const MyPostScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (errData) => {
-        console.log(errData);
         setIsLoading(false);
         cb && cb();
       }

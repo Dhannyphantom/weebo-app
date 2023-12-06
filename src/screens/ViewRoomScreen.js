@@ -9,8 +9,8 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import MaskedView from "@react-native-masked-view/masked-view";
-import Svg, { Rect } from "react-native-svg";
+// import MaskedView from "@react-native-masked-view/masked-view";
+// import Svg, { Rect } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -25,7 +25,6 @@ import { Context as AuthContext } from "../config/AuthContext";
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
 import AppButton from "../components/AppButton";
-import Screen from "../components/Screen";
 import SearchBar from "../components/SearchBar";
 import SearchInstance from "../components/SearchInstance";
 import colors from "../constants/colors";
@@ -47,7 +46,7 @@ import CharChallengerScreen from "./CharChallengerScreen";
 
 const { width, height } = Dimensions.get("window");
 
-const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+// const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 const ITEM_SIZE = Platform.OS === "ios" ? width * 0.72 : width * 0.74;
 const SPACING = 10;
@@ -485,6 +484,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     cover_photo: pageData?.cover_photo,
     description: null,
     coverLoading: bools.cover,
+    setCoverLoading: (bool) => setBools({ ...bools, cover: bool }),
     listItems,
     owner: pageData?.manager,
     screenIcon: "people",
@@ -500,7 +500,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
       instanceShow: pageData?.show?.name_j ?? pageData?.show?.name_e,
       instance: "group",
     },
-    leftColor: bools.followed ? colors.primary : colors.medium,
+    leftColor: bools.followed,
     name: pageData?.name,
   };
 
@@ -910,7 +910,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
                 style={{ bottom: 30 }}
                 text={`No characters in this group yet ${
                   !pageData.verified
-                    ? "\n Verify this group by clicking on the verify button"
+                    ? "\nHelp verify this group instance by clicking on the verify button"
                     : ""
                 }`}
               />

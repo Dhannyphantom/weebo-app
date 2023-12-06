@@ -214,7 +214,7 @@ const ChannelListComp = ({
       (data) => {
         addNewElement(data);
       },
-      (err) => console.log(err)
+      (err) => {}
     );
   };
   const handleImagePress = (id) => {

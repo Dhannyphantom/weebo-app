@@ -53,10 +53,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     dpName: "",
     other_names: [],
     show: "",
-    role: characterRoles[0].title,
-    type: characterTypes[0].title,
-    gender: "male",
-    height: "123cm",
+    role: "",
+    type: "",
+    gender: "",
+    height: "",
     birthday: new Date("January 1, 2000"),
     voiceActor: [],
     father: "none",
@@ -111,9 +111,6 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     group: false,
   });
   const [changeD, setChangeD] = useState(false);
-  // createName helps render the whole as a flatlist
-  const [createName, setCreateName] = useState([{ id: "1", name }]);
-  // const theme = useContext(ThemeContext);
 
   const weebo_points = cardState.character
     ? CHARACTER_WP
@@ -137,13 +134,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
 
   const handleCardPress = (pressed) => {
     pressed === "character"
-      ? (setCardState({ character: true, show: false, group: false }),
-        setCreateName([{ id: "2", name }]))
+      ? setCardState({ character: true, show: false, group: false })
       : pressed === "show"
-      ? (setCardState({ character: false, show: true, group: false }),
-        setCreateName([{ id: "3", name }]))
-      : (setCardState({ character: false, show: false, group: true }),
-        setCreateName([{ id: "4", name }]));
+      ? setCardState({ character: false, show: true, group: false })
+      : setCardState({ character: false, show: false, group: true });
   };
 
   const nav = (info) => {
@@ -190,11 +184,11 @@ const CreateInstanceScreen = ({ route, navigation }) => {
           <FlatList
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            data={createName}
+            data={[name]}
             contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             listKey="characters"
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item}
             renderItem={() => {
               return (
                 <>
@@ -202,6 +196,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     <CreateFormik
                       initialValues={characterFormInitials}
                       onSubmit={(formValues) => {
+                        setErrText(null);
                         setIsLoading(true);
                         createCharacter(
                           formValues,
@@ -296,10 +291,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
         )}
         {cardState.show && (
           <FlatList
-            data={createName}
+            data={[name]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item}
             contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             renderItem={() => (
@@ -308,6 +303,8 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                   initialValues={showFormInitials}
                   onSubmit={(formValues) => {
                     setIsLoading(true);
+                    setErrText(null);
+
                     createShow(formValues, navShow, (obj) =>
                       actionCallback(obj)
                     );
@@ -380,10 +377,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
         )}
         {cardState.group && (
           <FlatList
-            data={createName}
+            data={[name]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item}
             contentContainerStyle={{ paddingBottom: height * 0.11 }}
             overScrollMode="never"
             renderItem={({ item }) => (
@@ -393,6 +390,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                   validationSchema={groupValidationSchema}
                   onSubmit={(formValues) => {
                     setIsLoading(true);
+                    setErrText(null);
                     createGroup(
                       formValues,
                       (resData) => {

@@ -204,11 +204,9 @@ const SettingDropDown = ({ data, section, handlers }) => {
             setAlertModal({ ...alertData, visible: true });
             break;
           case "account":
-            // console.log("Account", data);
             setTermsModal({ vis: true, close: false });
             break;
           case "thumb-up":
-            // console.log("Account", data);
             setSupportModal({ vis: true, close: false });
             break;
         }
@@ -220,9 +218,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
       (resData) => {
         signOut();
       },
-      (errData) => {
-        console.log(errData);
-      }
+      (errData) => {}
     );
   };
 
@@ -388,7 +384,6 @@ const RenderSections = ({ item, section, setPopper, editSettings }) => {
         }
         break;
       case "delete_account":
-        console.log("delete account");
         break;
 
       default:

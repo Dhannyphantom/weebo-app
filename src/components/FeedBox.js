@@ -86,19 +86,6 @@ const FeedBox = ({
             {title} {title2 ? `- ${title2}` : null}
           </AppText>
         </View>
-        {false && (
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={() => console.log("DOTS")}
-            style={styles.dots}
-          >
-            <MaterialCommunityIcons
-              name="dots-horizontal"
-              size={width * 0.04}
-              color={colors.medium}
-            />
-          </TouchableOpacity>
-        )}
       </View>
       {mediaType == "image" && (
         <TouchableOpacity

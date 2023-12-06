@@ -151,7 +151,7 @@ const AppButton = ({
         )}
         {bare && (
           <TouchableOpacity
-            activeOpacity={bareWhite ? 0.85 : 0.4}
+            activeOpacity={0.85}
             onPressIn={() => handleAnimation("in")}
             onPressOut={() => handleAnimation("out")}
             onPress={onPress}

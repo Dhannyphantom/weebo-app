@@ -489,7 +489,6 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
         setBools({ ...bools, filter: false, isLoading: false });
       },
       (errData) => {
-        console.log(errData);
         setBools({ ...bools, filter: false, isLoading: false });
       }
     );
@@ -501,9 +500,7 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
       (resData) => {
         setSearchData(resData);
       },
-      (err) => {
-        console.log(err);
-      }
+      (err) => {}
     );
   };
 

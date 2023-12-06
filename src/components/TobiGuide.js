@@ -164,7 +164,6 @@ export default function TobiGuide({
   stateObj,
   ...otherProps
 }) {
-  // console.log(data);
   return (
     <AppFadeIn
       RenderComponent={() => (

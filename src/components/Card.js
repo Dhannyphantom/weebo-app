@@ -100,9 +100,10 @@ const Card = ({
           }}
         >
           <Icon
-            name="star"
+            name={isFollowing ? "star" : "staro"}
+            pack="A"
             style={styles.icon}
-            color={isFollowing ? colors.primary : colors.light}
+            color={isFollowing ? colors.primary : colors.medium}
             size={bIcon}
             disablePress
           />
@@ -200,48 +201,3 @@ const styles = StyleSheet.create({
   },
 });
 export default memo(Card);
-
-/**
- *   const handleFollowPress = () => {
-    if (isFollowing) {
-      setAlertData({
-        title: "Unfollow Character",
-        visible: true,
-        message: `Are you sure you want to unfollow ${
-          name[0].toUpperCase() + name.slice(1)
-        }`,
-        btn: "Yes",
-      });
-    } else {
-      updateCardState(true);
-      followChar({ charID, userID, route: "follow" }, null, (err) =>
-        setPopper({
-          vis: true,
-          type: "failed",
-          msg: err.msg,
-        })
-      );
-    }
-  };
-
-  const handleConfirmAlert = () => {
-    updateCardState(false);
-    followChar({ charID, userID, route: "unfollow" }, null, (err) => {
-      // console.log(err.err.response.data);
-      setPopper({
-        vis: true,
-        type: "failed",
-        msg: err.msg,
-      });
-    });
-  };
-
-    const updateCardState = (bool) => {
-    setCardState({
-      ...cardState,
-      isFollowing: bool,
-      liked: bool ? cardState.liked + 1 : cardState.liked - 1,
-    });
-  };
-
- */

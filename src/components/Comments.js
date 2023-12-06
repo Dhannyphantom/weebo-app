@@ -68,7 +68,6 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
         fetchReplies(() => cb && cb());
       },
       (err) => {
-        console.log("Error 1: ", err);
         setErrMsg(err.msg);
       }
     );
@@ -104,7 +103,7 @@ const MoreReplies = ({ data, avatar, error, reply, setReply }) => {
         setBools({ ...bools, loading: false, loadMore: false });
         cb && cb();
       },
-      (errData) => console.log(errData)
+      (errData) => {}
     );
   };
 
@@ -385,21 +384,11 @@ const Comments = ({
         finder.replies[finderIndex] = data;
         copier[finderIndex]?.replies?.push(data);
       }
-      // else {
-      //   console.log(finderIndex);
-      //   console.log(copier[finderIndex]);
-      //   // copier[finderIndex].replies.push(data);
-      // }
+
       setMyComments({ ...comments, results: copier });
     } else if (type === "dummyComment") {
       setMyComments({ ...comments, results: [...comments.results, data] });
     } else if (type === "dummyReply") {
-      // const finder = copier.find((obj) => obj._id == data.replyId);
-      // const finderIndex = finder.replies.findIndex(
-      //   (obj) => obj.pending == true && obj.reply == data.reply
-      // );
-      // copier[finderIndex]?.replies?.push(data);
-      // setMyComments({ ...comments, results: copier });
     }
     setPost && setPost({ ...post, comments: post.comments + 1 });
     cb && cb();
@@ -453,7 +442,6 @@ const Comments = ({
           cb && cb();
         },
         (err) => {
-          console.log("Error 2: ", err);
           setErrMsg(err.msg);
         }
       );
@@ -512,7 +500,6 @@ const Comments = ({
       },
       (errData) => {
         setBools({ ...bools, loadMore: false });
-        console.log(errData);
       }
     );
   };

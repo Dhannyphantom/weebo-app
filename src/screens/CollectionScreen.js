@@ -43,9 +43,7 @@ const RenameCollection = ({ name, setter, id }) => {
         }));
         setter.setRenameModal(false);
       },
-      (errData) => {
-        console.log(errData);
-      }
+      (errData) => {}
     );
   };
 
@@ -98,7 +96,6 @@ const ShareCollection = ({ setter, id }) => {
         setLoading(false);
       },
       (err_data) => {
-        console.log(err_data?.err?.response?.data);
         setLoading(false);
       }
     );
@@ -119,9 +116,7 @@ const ShareCollection = ({ setter, id }) => {
         });
         setter.setShareModal(false);
       },
-      (errData) => {
-        console.log(errData);
-      }
+      (errData) => {}
     );
   };
 
@@ -310,9 +305,7 @@ const CollectionScreen = ({ route, navigation }) => {
           (resData) => {
             navigation.goBack();
           },
-          (errData) => {
-            console.log(errData);
-          }
+          (errData) => {}
         );
         break;
 
@@ -349,7 +342,6 @@ const CollectionScreen = ({ route, navigation }) => {
         cb && cb();
       },
       (errData) => {
-        console.log(errData);
         cb && cb();
       }
     );

@@ -179,7 +179,6 @@ const CharInfoScreen = ({
               value: val,
             };
 
-            // return console.log({ type, key, value });
             return <InfoDisplay key={uuid.v4()} type={type} data={data} />;
           }
         })}
@@ -340,36 +339,3 @@ const styles = StyleSheet.create({
   },
 });
 export default CharInfoScreen;
-
-/* 
-
- {Object.entries(character).map(([key, value]) => {
-          if (!hideProps.includes(key)) {
-            let val, headerTitle;
-
-            if (shouldFormatDate.includes(key)) {
-              val = getFormatTime(new Date(value), null, "month_day").date;
-            } else if (key == "show") {
-              val = value?.name_j ?? value?.name_e;
-            } else {
-              val = value;
-            }
-
-            if (renameProps.hasOwnProperty(key)) {
-              headerTitle = renameProps[key];
-            } else {
-              headerTitle = key;
-            }
-
-            const type =
-              Array.isArray(value) && !isStats.includes(key) ? "list" : "text";
-            const data = {
-              title: headerTitle,
-              value: val,
-            };
-
-            // return console.log({ type, key, value });
-            return <InfoDisplay key={uuid.v4()} type={type} data={data} />;
-          }
-        })}
-*/

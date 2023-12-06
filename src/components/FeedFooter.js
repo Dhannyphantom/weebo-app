@@ -69,9 +69,7 @@ const FeedFooter = ({
         limit: COMMENT_COUNT,
       },
       handleDone,
-      (dErr) => {
-        console.log(dErr.err?.message);
-      }
+      (dErr) => {}
     );
   };
 

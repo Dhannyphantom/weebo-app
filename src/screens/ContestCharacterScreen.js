@@ -56,8 +56,6 @@ const ContestCharacterScreen = ({ route, navigation }) => {
   };
 
   const handlePick = (item) => {
-    // return console.log(item);
-
     const indexB = meCharacters.findIndex((obj) => obj._id == item._id);
     const index = challengers.findIndex((obj) => obj.name == item.name);
     const isMine = String(item.manager._id) == String(userInfo._id);

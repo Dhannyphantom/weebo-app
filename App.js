@@ -13,9 +13,7 @@ SplashScreen.preventAutoHideAsync();
 
 mobileAds()
   .initialize()
-  .then((adapterStatus) => {
-    // console.log("Mobile Ads Initialized", adapterStatus);
-  });
+  .then((adapterStatus) => {});
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -28,7 +26,7 @@ export default function App() {
     const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
     const mediaResult = await MediaLibrary.requestPermissionsAsync();
     if (!result.granted && !mediaResult.granted) {
-      console.log("Put an app modal here for no permission");
+      // Put an app modal here for no permission
     }
   };
 

@@ -146,7 +146,7 @@ const RenderModal = ({
         setMyComments(resData);
         setLoaded(true);
       },
-      (err) => console.log(err)
+      (err) => {}
     );
   };
 

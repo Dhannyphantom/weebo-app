@@ -177,7 +177,6 @@ const ChatScreen = ({ navigation }) => {
         type === "refresh" && setRefreshing(false);
       },
       (err) => {
-        console.log(err);
         type === "refresh" && setRefreshing(false);
       }
     );

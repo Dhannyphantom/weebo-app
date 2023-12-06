@@ -149,9 +149,7 @@ export default function PostVideo({
         });
         video?.current?.playAsync();
         // await video?.current?.presentFullscreenPlayer();
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     }
   };
 
@@ -202,14 +200,10 @@ export default function PostVideo({
         .find((obj) => obj.title === "General")
         .data.find((obj) => obj.key === "vid");
 
-      // console.log("Video settings");
-
       if (videoSettings.default) {
         try {
           video?.current?.playAsync();
-        } catch (e) {
-          console.log(e);
-        }
+        } catch (e) {}
       }
     } else {
       video?.current?.pauseAsync();
@@ -260,7 +254,6 @@ export default function PostVideo({
         ref={video}
         source={source}
         style={styles.video}
-        onError={() => console.log("Video Error")}
         resizeMode="contain"
         // usePoster
         // posterSource={{ uri: source.thumb }}

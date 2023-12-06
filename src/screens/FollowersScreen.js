@@ -60,7 +60,6 @@ const FollowersScreen = ({ navigation, route }) => {
         break;
       default:
         // setMyFollowers(userInfo.followers);
-        console.log("Provide a params type");
         break;
     }
   }, [navigation]);

@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialCommunityIcons, Fontisto } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  Fontisto,
+  Feather,
+  AntDesign,
+} from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
@@ -43,6 +48,12 @@ const Icon = ({
       >
         {name && pack === "a" && !text && (
           <MaterialCommunityIcons name={name} size={iconSize} color={color} />
+        )}
+        {name && pack === "F" && !text && (
+          <Feather name={name} size={iconSize} color={color} />
+        )}
+        {name && pack === "A" && !text && (
+          <AntDesign name={name} size={iconSize} color={color} />
         )}
         {name && pack === "b" && !text && (
           <Fontisto name={name} size={iconSize} color={color} />

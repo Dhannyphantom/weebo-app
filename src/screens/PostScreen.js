@@ -128,9 +128,7 @@ const PostScreen = ({ route, navigation }) => {
     setBools({ ...bools, isLoading: true, disablePostBtn: true });
     setErrMsg(null);
 
-    postPix(data, null, (err) => {
-      console.log(err);
-    });
+    postPix(data, null, (err) => {});
 
     setPopper({
       vis: true,

@@ -180,7 +180,6 @@ const CharacterScreen = ({ route, navigation }) => {
       badge: false,
     },
   ];
-  const leftColor = cardState.selected ? colors.heart : colors.medium;
 
   const headerData = {
     cover_photo: character.cover_photo,
@@ -196,7 +195,7 @@ const CharacterScreen = ({ route, navigation }) => {
       instance: "character",
     },
     listItems,
-    leftColor,
+    leftColor: cardState.selected,
     verified: character.verified,
     verifiedList: character.verifiedList,
     followers: character?.followers?.length,

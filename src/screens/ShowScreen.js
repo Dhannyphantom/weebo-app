@@ -130,12 +130,9 @@ const UpdateInstance = ({ state, prop, data }) => {
           instanceID: data.instanceID,
         },
         (resData) => {
-          console.log(resData);
           setBools({ ...bools, loading: false });
         },
         (errData) => {
-          console.log(errData);
-          console.log(errData.err);
           setBools({ ...bools, loading: false });
         }
       );
@@ -401,7 +398,7 @@ const ShowScreen = ({ route, navigation }) => {
     coverLoading: isCoverLoading,
     setCoverLoading: setIsCoverLoading,
     handleLeftPress: () => handleFollowShow(),
-    leftColor: isFollowed ? colors.heart : colors.medium,
+    leftColor: isFollowed,
     subscribers: null,
     verified: dataState.verified,
     verifiedList: dataState?.verifiedList,
@@ -842,6 +839,7 @@ const ShowScreen = ({ route, navigation }) => {
                                   }
                                   followers={item.followers}
                                   isFollowing={item.isFollowing}
+                                  isVerified={item.verified}
                                   avatar={item?.manager?.avatar}
                                   manager={item.manager}
                                   image={item.cover_photo}

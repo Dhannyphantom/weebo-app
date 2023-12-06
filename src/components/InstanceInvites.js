@@ -57,7 +57,6 @@ const InstanceInvites = ({ data, instance, setVisible, callback }) => {
         callback && callback();
       },
       (err) => {
-        console.log(err);
         handleLoader(data._id, false);
       }
     );

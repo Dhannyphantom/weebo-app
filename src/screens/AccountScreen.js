@@ -55,9 +55,7 @@ const InviteWeebs = ({ closeModal }) => {
         try {
           setClipper(clipStr);
           closeModal("copied");
-        } catch (err) {
-          console.log("Nope");
-        }
+        } catch (err) {}
         break;
       case "share":
         await Share.share({ message });
@@ -150,8 +148,6 @@ const AccountScreen = ({ navigation, route }) => {
           setImageLoading(false);
         },
         (err) => {
-          console.log(err?.err?.message);
-          console.log(err.err?.response?.data);
           setImageLoading(false);
         },
         null

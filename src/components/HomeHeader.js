@@ -313,7 +313,7 @@ const HomeHeader = ({ fetcher, isMyPosts }) => {
       <View>
         {showSearch && (
           <Search
-            placeholder="Search characters, shows, groups, @users"
+            placeholder="Search or Create characters, shows, groups, @users"
             showSearch={showSearch}
             setShowSearch={setShowSearch}
             style={{ ...styles.searchBar, backgroundColor: theme.lighter }}

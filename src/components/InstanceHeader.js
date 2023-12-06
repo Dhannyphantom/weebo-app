@@ -445,11 +445,12 @@ const InstanceHeader = ({
         >
           <View style={styles.icons}>
             <Icon
-              name="account-star-outline"
+              name={leftColor ? "star" : "staro"}
               activeOpacity={0.9}
+              pack="A"
               size={55}
               onPress={() => handleLeftPress && handleLeftPress()}
-              color={leftColor}
+              color={leftColor ? colors.primary : colors.medium}
             />
             <ProfilePic
               source={owner?.avatar}

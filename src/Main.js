@@ -28,8 +28,6 @@ const Main = () => {
   } = useContext(AuthContext);
   const [themeMode, setThemeMode] = useState(false);
 
-  // console.log(_theme);
-
   const lightTheme = {
     ...DefaultTheme,
     colors: {

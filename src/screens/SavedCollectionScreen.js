@@ -54,7 +54,6 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
           callBack(resData);
         },
         (err) => {
-          console.log(err);
           setLoading(false);
           setErrMsg(err);
         }

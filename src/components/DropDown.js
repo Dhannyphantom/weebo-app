@@ -46,7 +46,6 @@ const DropDown = ({
   const renderDropLists = ({ item, index }) => {
     if (!item.show) return null;
     const lastItem = index === lists.map((obj) => obj.show).lastIndexOf(true);
-    // console.log(lists.filter((obj) => obj.show).length, index);
 
     let Icon;
     switch (item.iconPack) {

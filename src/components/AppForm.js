@@ -497,7 +497,6 @@ const AppForm = ({
         cb && cb(false);
       },
       (errData) => {
-        console.log(errData);
         if (
           errData?.data?.msg?.includes("gender") ||
           errData?.data?.msg?.includes("email")

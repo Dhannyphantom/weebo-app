@@ -25,8 +25,7 @@ const chatPeopleData = [
     id: "2",
     avatar: require("../assets/female2.jpg"),
     username: "Kakaluv",
-    msg:
-      "Really Steven kun like i dont get whats wrong with you. U act like you dont care Honestyly Like its not fair or something",
+    msg: "Really Steven kun like i dont get whats wrong with you. U act like you dont care Honestyly Like its not fair or something",
     time: "2h ago",
   },
   {
@@ -59,16 +58,10 @@ const ChatPage = () => {
     return <ChatFile item={item} onPress={handleChatPress} />;
   };
 
-  const handleChatPress = (item) => {
-    console.log(item.username);
-  };
+  const handleChatPress = (item) => {};
 
-  const handlePlusPress = () => {
-    console.log("Plus pressed");
-  };
-  const handleBackPress = () => {
-    console.log("Back button pressed");
-  };
+  const handlePlusPress = () => {};
+  const handleBackPress = () => {};
 
   return (
     <View style={styles.container}>

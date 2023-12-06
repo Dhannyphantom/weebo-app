@@ -99,7 +99,6 @@ const RenderPostReports = ({ state, postId }) => {
         setBools({ ...bools, loading: false });
       },
       (errData) => {
-        console.log(errData);
         setPopper({
           vis: true,
           msg: errData.msg,
