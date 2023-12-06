@@ -534,12 +534,17 @@ const EditProfileScreen = ({ navigation, route }) => {
           ...prev,
           location: {
             ...prev.location,
-            active: resData.data,
+            active: resData.data?.active,
           },
         }));
       },
       (errData) => {
         setErrMsg(errData.data ?? errData.msg);
+        setPopper({
+          vis: true,
+          type: "failed",
+          msg: "Something went wrong!",
+        });
         setIsLoading(false);
       }
     );

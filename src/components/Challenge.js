@@ -152,7 +152,7 @@ const RenderModal = ({
   };
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: height * 0.1 }}>
       <View>
         <Image source={data.image} style={styles.modalImage} />
         <RenderLinearGradient modalHeight={height * 0.5} />

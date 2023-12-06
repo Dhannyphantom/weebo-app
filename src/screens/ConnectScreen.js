@@ -196,7 +196,7 @@ const RenderEmptyWeebs = ({
 };
 
 const ConnectScreen = ({ navigation }) => {
-  const [location] = useLocation();
+  const [location, { errMsg: errMssg }] = useLocation();
   const [weebos, setWeebos] = useState({ results: [] });
   const [modal, setModal] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
@@ -207,6 +207,8 @@ const ConnectScreen = ({ navigation }) => {
     updateUserData,
     fetchNearbyWeebs,
   } = useContext(AuthContext);
+
+  console.log("LOCATION::", { location, errMssg });
 
   const topper = useSafeAreaInsets().top;
   const lottieRef = useRef();
