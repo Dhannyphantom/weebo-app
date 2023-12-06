@@ -117,9 +117,8 @@ const CharInfoScreen = ({
   handleCharacterTransfer,
   cardState,
   setChallengeModal,
+  setPopper,
 }) => {
-  const [popper, setPopper] = useState({ vis: false });
-
   const {
     updateMe,
     state: { userInfo },
@@ -225,11 +224,6 @@ const CharInfoScreen = ({
           />
         ) : null}
       </View>
-      <PopMessage
-        popData={popper}
-        setter={() => setPopper({ vis: false })}
-        timer={0.2}
-      />
     </View>
   );
 };

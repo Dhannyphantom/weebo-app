@@ -9,7 +9,7 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventRegister } from "react-native-event-listeners";
 import {
@@ -65,7 +65,7 @@ const rewarded = RewardedAd.createForAdRequest(
 const getAdsAlert = (count, visible = false) => ({
   visible: visible,
   title: "Dark Theme",
-  message: `Watch few ads to unlock the smooth dark theme \n ${count} ads left`,
+  message: `Watch few ads to unlock the smooth dark theme\n${count} ads left`,
   btn: "YES",
   type: "ads_watched",
 });
@@ -291,11 +291,7 @@ const SettingDropDown = ({ data, section, handlers }) => {
       )}
       {data.type === "action" && (
         <View>
-          <MaterialCommunityIcons
-            name={data.options}
-            size={width * 0.04}
-            color={colors.primary}
-          />
+          <Feather name={data.icon} size={30} color={colors.primary} />
         </View>
       )}
       <PopDropDown
@@ -347,10 +343,9 @@ const RenderHeader = ({ section: { title } }) => {
   );
 };
 
-const RenderSections = ({ item, section, editSettings }) => {
+const RenderSections = ({ item, section, setPopper, editSettings }) => {
   const theme = useContext(ThemeContext);
   const [isEnabled, setIsEnabled] = useState(item.default);
-  const [popper, setPopper] = useState({ vis: false });
   const [adsManager, setAdsManager] = useState({
     count: 3,
     loaded: false,
@@ -497,13 +492,13 @@ const RenderSections = ({ item, section, editSettings }) => {
         </View>
         <AlertModal obj={alert} setVisible={setAlert} onPress={handleAlert} />
       </View>
-      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </>
   );
 };
 
 const SettingsScreen = () => {
   const [settings, setSettings] = useState([]);
+  const [popper, setPopper] = useState({ vis: false });
 
   const { updateSettings } = useContext(AuthContext);
 
@@ -511,7 +506,6 @@ const SettingsScreen = () => {
     const getSettings = await AsyncStorage.getItem("settings");
     if (getSettings) {
       setSettings(JSON.parse(getSettings));
-      // updateSettings(JSON.parse(getSettings));
       // UNCOMMENT LINE BELOW TO REFRESH SETTINGS
       // await AsyncStorage.setItem("settings", JSON.stringify(settingsData));
     } else {
@@ -546,6 +540,7 @@ const SettingsScreen = () => {
       <RenderSections
         editSettings={editSettings}
         item={item}
+        setPopper={setPopper}
         section={section}
       />
     );
@@ -566,6 +561,7 @@ const SettingsScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderSections}
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </Screen>
   );
 };

@@ -527,6 +527,7 @@ const CharacterScreen = ({ route, navigation }) => {
               handleCharacterTransfer={handleCharacterTransfer}
               cardState={cardState}
               isMine={isMine}
+              setPopper={setPopper}
               character={character}
               setChallengeModal={setChallengeModal}
             />

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import { MaterialCommunityIcons, Feather, Ionicons } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
+import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
 
@@ -33,6 +34,7 @@ const AppButton = ({
 }) => {
   const noDefault = !sec && !bare && !naked && !bareRed;
   const scaler = useRef(new Animated.Value(1)).current;
+  const theme = useContext(ThemeContext);
 
   const handleAnimation = (type) => {
     switch (type) {
@@ -104,7 +106,11 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText style={styles.btnText} size={btnTextSize} bold>
+              <AppText
+                style={styles.btnText}
+                size={btnTextSize}
+                textStyle="black"
+              >
                 {title}
               </AppText>
               {RIcon && (
@@ -130,9 +136,12 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText size={btnTextSize} style={styles.btnText} bold>
-                {" "}
-                {title}{" "}
+              <AppText
+                size={btnTextSize}
+                style={styles.btnText}
+                textStyle="black"
+              >
+                {title}
               </AppText>
               {RIcon && (
                 <RIconComp name={RIcon} size={15} color={colors.primary} />
@@ -152,7 +161,11 @@ const AppButton = ({
               style={[
                 styles.bare,
                 {
-                  backgroundColor: bareWhite ? "white" : "transparent",
+                  backgroundColor: bareWhite
+                    ? "white"
+                    : bareRed
+                    ? colors.heartLighter
+                    : colors.primaryLight,
                   borderWidth: bareWhite ? 0 : 1,
                   borderColor: bareRed ? colors.heart : colors.primary,
                 },
@@ -172,10 +185,9 @@ const AppButton = ({
                   color: bareRed ? colors.heart : colors.primary,
                 }}
                 size={btnTextSize}
-                bold
+                textStyle="black"
               >
-                {" "}
-                {title}{" "}
+                {title}
               </AppText>
               {RIcon && (
                 <RIconComp
@@ -199,9 +211,12 @@ const AppButton = ({
               {LIcon && (
                 <LIconComp name={LIcon} size={15} color={colors.primary} />
               )}
-              <AppText size={btnTextSize} style={styles.nakedText} bold>
-                {" "}
-                {title}{" "}
+              <AppText
+                size={btnTextSize}
+                style={styles.nakedText}
+                textStyle="black"
+              >
+                {title}
               </AppText>
               {RIcon && (
                 <RIconComp name={RIcon} size={15} color={colors.primary} />
@@ -248,6 +263,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    elevation: 1,
     paddingHorizontal: 30,
     paddingVertical: 14,
   },

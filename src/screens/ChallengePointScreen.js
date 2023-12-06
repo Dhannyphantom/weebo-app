@@ -28,7 +28,7 @@ const ADS_POINT = 5;
 
 export const ADS_ID = Platform.select({
   ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8881804714",
-  android: !__DEV__
+  android: __DEV__
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/3217430636",
 });

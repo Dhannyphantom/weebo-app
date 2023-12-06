@@ -1,11 +1,12 @@
 const colors = {
   primary: "#5B4EC7",
+  primaryLight: "#E8EAF6",
   accent: "#d65b2c",
   accentOld: "#ff6600",
   medium: "#707070",
   heart: "#ea4f30",
   heartLight: "#f47961",
-  //
+  heartLighter: "#ffebee",
   heartDark: "#d62f0f",
   light: "#dddddd",
   chat: "#573854",

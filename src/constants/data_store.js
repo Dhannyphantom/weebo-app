@@ -775,6 +775,7 @@ export const settingsData = [
         type: "action",
         default: null,
         options: "delete",
+        icon: "trash",
       },
 
       {
@@ -783,6 +784,7 @@ export const settingsData = [
         type: "action",
         default: "null",
         options: "account",
+        icon: "file",
       },
       {
         id: uuid.v4(),
@@ -790,6 +792,7 @@ export const settingsData = [
         type: "action",
         default: "null",
         options: "thumb-up",
+        icon: "thumbs-up",
       },
     ],
   },

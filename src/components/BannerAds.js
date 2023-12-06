@@ -16,7 +16,7 @@ const { width, height } = Dimensions.get("screen");
 
 export const BANNER_ID = Platform.select({
   ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8969273853",
-  android: !__DEV__
+  android: __DEV__
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/8969273853",
 });
