@@ -3,5 +3,4 @@ import baseURL from "./baseURL";
 
 export default axios.create({
   baseURL: `${baseURL.uri}/post`,
-  timeout: 10000,
 });

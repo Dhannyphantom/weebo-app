@@ -199,6 +199,7 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
         Expires: 0,
       },
       transformRequest: () => formData,
+      onUploadProgress: (ev) => up && up(ev),
     });
     sc && sc(res.data);
   } catch (err) {

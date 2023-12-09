@@ -237,6 +237,7 @@ const HomeScreen = ({ navigation, route }) => {
           // cb && cb();
         },
         (err) => {
+          console.log(err);
           setErrMsg("Error fetching feeds");
           // cb && cb();
         }

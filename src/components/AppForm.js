@@ -124,23 +124,12 @@ const ForgotPassword = ({ setPassModal }) => {
         PASSWORD RESET
       </AppText>
       <Separator h={1} />
-      {passMsg.error && (
-        <AppText
-          style={{
-            textAlign: "center",
-            color: colors.heart,
-            marginBottom: 5,
-          }}
-        >
-          {passMsg.error}
-        </AppText>
-      )}
+      {passMsg.error && <AppText style={styles.error}>{passMsg.error}</AppText>}
       {passMsg.success && (
         <AppText
           style={{
-            textAlign: "center",
+            ...styles.error,
             color: colors.primary,
-            marginBottom: 5,
           }}
         >
           {passMsg.success}
@@ -157,9 +146,7 @@ const ForgotPassword = ({ setPassModal }) => {
       >
         {() => (
           <>
-            <AppText style={{ margin: 15 }}>
-              Enter your registered e-mail:{" "}
-            </AppText>
+            <AppText style={{ margin: 15 }}>Enter registered email: </AppText>
             <GrowInput mLine={false} formik={{ name: "email" }} />
             {passMsg.success && (
               <>
@@ -670,14 +657,8 @@ const AppForm = ({
               {errorMessage ? (
                 <View>
                   <AppText style={styles.error}> {errorMessage} </AppText>
-                  {/* {passMsg.success && passMsg?.success?.contains("success") && (
-                    <AppText
-                      style={{ textAlign: "center", color: colors.primary }}
-                    >
-                      {passMsg.success}
-                    </AppText>
-                  )} */}
-                  {login && (
+
+                  {login && errorMessage?.includes("do not match") && (
                     <AppButton
                       title="Forgot password?"
                       style={{ alignSelf: "center" }}
@@ -689,11 +670,7 @@ const AppForm = ({
                 </View>
               ) : null}
               <View style={{ marginTop: 20 }}>
-                <SubmitButton
-                  // loading={loading}
-                  // setLoading={(bool) => setLoading(bool)}
-                  title={btnTitle}
-                />
+                <SubmitButton title={btnTitle} />
               </View>
               <AppFadeIn
                 visible={bools.authModal}
@@ -844,6 +821,7 @@ const styles = StyleSheet.create({
     color: colors.heart,
     marginVertical: 6,
     textAlign: "center",
+    maxWidth: width * 0.8,
   },
   info: {
     alignItems: "center",

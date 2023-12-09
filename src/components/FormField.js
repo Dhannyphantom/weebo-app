@@ -24,6 +24,7 @@ const FormField = ({ icon, pass, onPress, name, ...otherProps }) => {
           style={{
             color: colors.heartDark,
             marginTop: 2,
+            maxWidth: "80%",
             marginBottom: 10,
             textAlign: "center",
           }}
