@@ -9,7 +9,7 @@ const screen = Dimensions.get("window");
 const AppPickerItem = ({ text, onPress, selected = false, desc, example }) => {
   return (
     <TouchableOpacity
-      activeOpacity={0.7}
+      activeOpacity={0.45}
       style={[styles.container, selected ? styles.selected : {}]}
       onPress={onPress}
     >

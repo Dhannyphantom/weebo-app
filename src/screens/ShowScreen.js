@@ -748,7 +748,6 @@ const ShowScreen = ({ route, navigation }) => {
                               value: val,
                             };
 
-                            // return console.log({ type, key, val });
                             return (
                               <InfoDisplay
                                 key={uuid.v4()}

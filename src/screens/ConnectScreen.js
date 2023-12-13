@@ -208,8 +208,6 @@ const ConnectScreen = ({ navigation }) => {
     fetchNearbyWeebs,
   } = useContext(AuthContext);
 
-  console.log("LOCATION::", { location, errMssg });
-
   const topper = useSafeAreaInsets().top;
   const lottieRef = useRef();
   const opaciter = useRef(new Animated.Value(0)).current;

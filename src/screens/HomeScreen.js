@@ -48,6 +48,7 @@ import appConfig from "../../app.config";
 import BannerAds from "../components/BannerAds";
 import TobiGuide from "../components/TobiGuide";
 import RenderLoadMore from "../components/RenderLoadMore";
+import PopMessage from "../components/PopMessage";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
 const fbAdsPlacementID = "406752991548934_406754288215471";
@@ -74,7 +75,7 @@ const boolsObj = {
 const HomeScreen = ({ navigation, route }) => {
   const {
     getHomeFeeds,
-    state: { posts },
+    state: { posts, uploadStatus },
   } = useContext(FeedContext);
 
   const {
@@ -91,6 +92,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [bools, setBools] = useState(boolsObj);
   const [slider, setSlider] = useState(false);
   const [guide, setGuide] = useState({ vis: false, close: false });
+  const [popper, setPopper] = useState({ vis: false });
   const { loadMore, loadedOnce, showStatus } = bools;
 
   const actionFlatRef = useRef(null);
@@ -237,7 +239,6 @@ const HomeScreen = ({ navigation, route }) => {
           // cb && cb();
         },
         (err) => {
-          console.log(err);
           setErrMsg("Error fetching feeds");
           // cb && cb();
         }
@@ -311,7 +312,18 @@ const HomeScreen = ({ navigation, route }) => {
           />
 
           <ActivityIndicator
-            visible={bools.reloadLoader && !bools.loader && !showSpinner}
+            visible={
+              uploadStatus.hasStarted &&
+              !uploadStatus.error &&
+              !uploadStatus.hasFinished
+            }
+            type="loader"
+            size={0.2}
+            style={{ width, height: 25 }}
+            transparent
+          />
+          <ActivityIndicator
+            visible={bools.loader && !showSpinner}
             size={0.2}
             style={{ width, height: 25 }}
             transparent
@@ -355,15 +367,29 @@ const HomeScreen = ({ navigation, route }) => {
     }
   }, [posts]);
 
-  // For auto post reload
+  useEffect(() => {
+    if (loadedOnce && uploadStatus?.error && uploadStatus?.hasStarted) {
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Upload failed due to network error",
+        timer: 10,
+      });
+    }
+  }, [uploadStatus]);
+
+  // // For auto post reload
   useEffect(() => {
     if (bools.loadedOnce && route?.params?.reloadPosts) {
       setBools({ ...bools, reloadLoader: true });
-      fetchHomeData(() => {
-        setBools({ ...bools, reloadLoader: false });
-      }, false);
+      uploadStatus?.hasFinished &&
+        uploadStatus?.hasStarted &&
+        !uploadStatus?.error &&
+        fetchHomeData(() => {
+          setBools({ ...bools, reloadLoader: false });
+        }, false);
     }
-  }, [navigation, route]);
+  }, [navigation, route, uploadStatus]);
 
   return (
     <>
@@ -426,6 +452,7 @@ const HomeScreen = ({ navigation, route }) => {
         style={styles.activity}
         wTransparent
       />
+      <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
 
       <TobiGuide
         data={guide}

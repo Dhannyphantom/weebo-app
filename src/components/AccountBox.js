@@ -45,7 +45,7 @@ const AccountBox = ({
   const theme = useContext(ThemeContext);
 
   const info = profileData[0];
-  let imgUri, isMine, pNoun;
+  let imgUri, isMine;
 
   if (info) {
     isMine = userInfo.username === info.username;
@@ -55,14 +55,6 @@ const AccountBox = ({
       imgUri = malePlaceholder;
     } else if (!info.avatar && info.gender === "female") {
       imgUri = femalePlaceholder;
-    }
-
-    if (isMine) {
-      pNoun = "My";
-    } else if (!isMine && info.gender === "male") {
-      pNoun = "His";
-    } else if (!isMine && info.gender === "female") {
-      pNoun = "Her";
     }
   }
 
@@ -267,7 +259,7 @@ const AccountBox = ({
               ) : null}
               <View style={styles.linkCont}>
                 <Link
-                  name={`${pNoun} Posts`}
+                  name={"Posts"}
                   iconName="image-multiple"
                   onPress={() =>
                     onLink("MyPost", {
@@ -277,7 +269,7 @@ const AccountBox = ({
                   }
                 />
                 <Link
-                  name={`${pNoun} Collection`}
+                  name={"Collections"}
                   iconName="image-multiple"
                   onPress={() =>
                     onLink("Saved", {

@@ -34,6 +34,7 @@ const RequestAuth = ({ navigation }) => {
     if (token && feeds && userInfo) {
       // token && feeds
       updateToken({ token, user: JSON.parse(userInfo) });
+      tryLocalSignin();
     } else {
       clearMessage();
       tryLocalSignin(null, (_err) => {

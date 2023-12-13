@@ -86,8 +86,6 @@ const authReducer = (state, action) => {
           [action.payload.prop]: updatedData,
         },
       };
-    case "add_error":
-      return { ...state, errMsg: action.payload };
     case "clear_error":
       return { ...state, errMsg: "" };
     case "update_token":
@@ -234,34 +232,23 @@ const tryLocalSignin =
       await AsyncStorage.setItem("userInfo", JSON.stringify(user.data));
       callback && callback(user.data);
     } catch (err) {
-      if (type === "default") {
-        if (!err.response) {
-          dispatch({
-            type: "add_error",
-            payload: "Please connect to the internet",
-          });
-        } else {
-          dispatch({ type: "add_error", payload: err.response.data });
-          errCb && errCb();
-        }
-      } else {
-        errCb &&
-          errCb({
-            err,
-            data: err?.response?.data,
-            msg: "Error fetching user data",
-          });
+      if (err?.response?.data?.includes("Please sign in")) {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("userInfo");
+        dispatch({ type: "signout" });
       }
+      errCb &&
+        errCb({
+          err,
+          data: err?.response?.data,
+          msg: "Error fetching user data",
+        });
     }
   };
 
 const signOut = (dispatch) => async () => {
   await AsyncStorage.removeItem("token");
-  try {
-    // await GoogleSignin.revokeAccess();
-  } catch (err) {
-    //
-  }
+  await AsyncStorage.removeItem("userInfo");
   dispatch({ type: "signout" });
 };
 
@@ -313,7 +300,6 @@ const updateProfile = (dispatch) => async (data, sc, cb) => {
     dispatch({ type: "update_profile", payload: response.data });
     sc && sc();
   } catch (err) {
-    // dispatch({ type: "add_error", payload: err.response.data });
     cb && cb({ err, msg: "Error updating profile", data: err?.response?.data });
   }
 };

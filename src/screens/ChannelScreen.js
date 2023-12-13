@@ -57,6 +57,22 @@ const ChannelHeaderComp = ({
   channels,
   renderChannelsTwo,
 }) => {
+  const {
+    state: { userInfo },
+  } = useContext(AuthContext);
+
+  const hasSubscribedChannels = channels.find(
+    (item) =>
+      item.manager?._id != userInfo._id &&
+      item.subscribers.includes(userInfo._id)
+  );
+
+  const hasNotSubscribedChannels = channels.find(
+    (item) =>
+      item.manager?._id != userInfo._id &&
+      !item.subscribers?.includes(userInfo._id)
+  );
+
   return (
     <View>
       <TabList
@@ -71,7 +87,7 @@ const ChannelHeaderComp = ({
       <View>
         <HeaderTitle
           text="Subscribed Channels"
-          show={boxState.s && channels[0]}
+          show={boxState.s && channels[0] && hasSubscribedChannels}
         />
         <FlatList
           data={channels}
@@ -83,7 +99,20 @@ const ChannelHeaderComp = ({
           listKey="21"
         />
       </View>
-      <HeaderTitle text="All Channels" show={boxState.s && checkSubChannels} />
+      <HeaderTitle
+        text="All Channels"
+        show={boxState.s && checkSubChannels && hasNotSubscribedChannels}
+      />
+
+      <ActivityIndicator
+        visible={
+          !hasNotSubscribedChannels && !hasSubscribedChannels && boxState.s
+        }
+        type="isEmpty"
+        text={"No channels"}
+        transparent
+        style={{ width, height: height * 0.8 }}
+      />
     </View>
   );
 };
@@ -418,6 +447,7 @@ const ChannelScreen = ({ route, navigation }) => {
               {loadedOnce ? (
                 <ActivityIndicator
                   type="isEmpty"
+                  transparent
                   visible={!bools.isLoading}
                   text="No channels at the moment"
                 />

@@ -17,6 +17,14 @@ const feedReducer = (state, action) => {
       };
     case "get_shows":
       return { ...state, shows: action.payload };
+    case "update_progress":
+      return {
+        ...state,
+        uploadStatus: {
+          ...state.uploadStatus,
+          ...action.payload,
+        },
+      };
 
     default:
       return state;
@@ -170,7 +178,7 @@ const getGroups = (dispatch) => async (sc, cb) => {
   }
 };
 
-const postPix = (dispatch) => async (data, sc, cb, up) => {
+const postPix = (dispatch) => async (data, sc, cb, uploader) => {
   const formData = new FormData();
   formData.append(
     "data",
@@ -187,8 +195,22 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
     formData.append("post", imageObject);
   }
 
+  if (uploader) {
+    dispatch({
+      type: "update_progress",
+      payload: {
+        screen: uploader?.screen,
+        hasStarted: true,
+        hasFinished: false,
+        error: false,
+        err: null,
+      },
+    });
+  }
+
   try {
     const token = await AsyncStorage.getItem("token");
+
     const res = await postApi.post("/postMedia", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -199,9 +221,22 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
         Expires: 0,
       },
       transformRequest: () => formData,
-      onUploadProgress: (ev) => up && up(ev),
+
+      // onUploadProgress: (ev) => uploader && uploader.callback(ev),
     });
     sc && sc(res.data);
+    if (uploader) {
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: true,
+          error: false,
+          err: null,
+        },
+      });
+    }
   } catch (err) {
     cb &&
       cb({
@@ -209,9 +244,32 @@ const postPix = (dispatch) => async (data, sc, cb, up) => {
         data: err?.response?.data,
         msg: "Error sending post to server",
       });
+    dispatch({
+      type: "update_progress",
+      payload: {
+        screen: uploader.screen,
+        hasStarted: true,
+        hasFinished: false,
+        error: true,
+        err: err,
+      },
+    });
   }
 
   // ======================================
+};
+
+const postError = (dispatch) => async (uploader) => {
+  dispatch({
+    type: "update_progress",
+    payload: {
+      screen: uploader?.screen,
+      hasStarted: true,
+      hasFinished: false,
+      error: true,
+      err: uploader.err,
+    },
+  });
 };
 
 const commentPost = (dispatch) => async (id, type, comment, sc, cb) => {
@@ -580,9 +638,19 @@ export const { Provider, Context } = createDataContext(
     updateInstance,
     viewStatus,
     postPix,
+    postError,
     userFeedback,
   },
-  { shows: [], posts: 0, statuses: [], challengeFeeds: [], uploadStatus: {} }
+  {
+    shows: [],
+    posts: 0,
+    statuses: [],
+    challengeFeeds: [],
+    uploadStatus: {
+      screen: "Home",
+      hasStarted: false,
+      hasFinished: false,
+      error: false,
+    },
+  }
 );
-
-// uploadStatus = {posts: ""}

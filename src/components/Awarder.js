@@ -35,9 +35,7 @@ const AwardDetails = ({ data, title, isAvatar }) => {
         marginLeft: 25,
       }}
     >
-      <AppText bold size="large">
-        {title}
-      </AppText>
+      <AppText bold>{title}</AppText>
       {Array.isArray(data) ? (
         data.map((obj) => (
           <View
@@ -96,6 +94,7 @@ const AwardDetails = ({ data, title, isAvatar }) => {
     </View>
   );
 };
+
 const RenderAwardInfo = ({ data }) => {
   return (
     <View style={styles.modal}>

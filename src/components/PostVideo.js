@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Video } from "expo-av";
 import LottieView from "lottie-react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -101,10 +101,10 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
 export const RenderMediaIcon = ({ style }) => {
   return (
     <View style={[styles.playIcon, style]}>
-      <MaterialCommunityIcons
-        name="motion-play"
-        size={40}
-        style={{ margin: 10 }}
+      <AntDesign
+        name="playcircleo"
+        size={width * 0.08}
+        style={{ margin: 10, marginTop: 12 }}
         color={colors.white}
       />
     </View>

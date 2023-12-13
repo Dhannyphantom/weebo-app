@@ -36,7 +36,7 @@ const PostScreen = ({ route, navigation }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { postPix } = useContext(FeedContext);
+  const { postPix, postError } = useContext(FeedContext);
   const { searchStuffs } = useContext(AcctContext);
 
   const router = route.params;
@@ -132,14 +132,19 @@ const PostScreen = ({ route, navigation }) => {
       data,
       null,
       (err) => {
-        console.log(err);
+        // setBools({ ...bools, isLoading: false, disablePostBtn: false });
+        // postError({ screen: "Home", err });
       },
-      (progEv) => console.log(progEv)
+      {
+        screen: "Home",
+        callback: (ev) => console.log(ev),
+      }
     );
 
     setPopper({
       vis: true,
       msg: "Uploading...",
+      timer: 0.2,
       loader: true,
       type: "neutral",
       cb: () => {

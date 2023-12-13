@@ -65,8 +65,8 @@ const rewarded = RewardedAd.createForAdRequest(
 const getAdsAlert = (count, visible = false) => ({
   visible: visible,
   title: "Dark Theme",
-  message: `Watch few ads to unlock the smooth dark theme\n${count} ads left`,
-  btn: "YES",
+  message: `Watch few ads to unlock the smooth dark theme\n\n${count} ads left`,
+  btn: "WATCH",
   type: "ads_watched",
 });
 

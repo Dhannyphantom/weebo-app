@@ -1,8 +1,12 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import AppText from "./AppText";
 import ProfilePic from "./ProfilePic";
 import Spacer from "./Spacer";
+import AppFadeIn from "./AppFadeIn";
+
+import { Context as AuthContext } from "../config/AuthContext";
+import AccountBox from "./AccountBox";
 
 const Avatar = ({
   name,
@@ -16,10 +20,23 @@ const Avatar = ({
   bold,
   noAt,
 }) => {
+  const [modal, setModal] = useState(false);
+
+  const {
+    getUserData,
+    tryLocalSignin,
+    addWeeb,
+    state: { userInfo },
+  } = useContext(AuthContext);
+
   let at;
   noAt ? (at = "") : (at = "@");
   return (
-    <View style={[styles.container, style]}>
+    <TouchableOpacity
+      activeOpacity={0.75}
+      onPress={() => setModal(true)}
+      style={[styles.container, style]}
+    >
       <ProfilePic
         borderRad={borderRad}
         source={avatar}
@@ -38,7 +55,22 @@ const Avatar = ({
           {name}
         </AppText>
       </Spacer>
-    </View>
+      <AppFadeIn
+        visible={modal}
+        setVisible={setModal}
+        RenderComponent={() => (
+          <AccountBox
+            setPicModal={setModal}
+            callback={null}
+            userInfo={userInfo}
+            getUserData={getUserData}
+            tryLocalSignin={tryLocalSignin}
+            addWeeb={addWeeb}
+            userID={feederID}
+          />
+        )}
+      />
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
