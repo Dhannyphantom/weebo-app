@@ -128,7 +128,6 @@ export const CollectionCard = ({
         <View style={styles.row}>
           <AntDesign name="star" color={colors.light} size={15} />
           <AppText style={{ color: colors.light }} bold>
-            {" "}
             {item.requests?.length}
           </AppText>
         </View>

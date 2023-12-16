@@ -52,8 +52,7 @@ const RenderReplies = ({
             </View>
           ) : (
             <AppText size="xsmall" style={styles.commentDate}>
-              {" "}
-              {date}{" "}
+              {date}
             </AppText>
           )}
           {!item.pending && (
@@ -100,8 +99,7 @@ const CommentDetails = ({
         <AppText
           style={{ ...styles.commentText, backgroundColor: theme.extralight }}
         >
-          {" "}
-          {item.comment}{" "}
+          {item.comment}
         </AppText>
         <View style={styles.commentDown}>
           <Entypo name="dot-single" size={12} color={colors.medium} />
@@ -111,8 +109,7 @@ const CommentDetails = ({
             </View>
           ) : (
             <AppText size="small" style={styles.commentDate}>
-              {" "}
-              {date}{" "}
+              {date}
             </AppText>
           )}
           {!item.pending && (

@@ -65,8 +65,7 @@ const AwardDetails = ({ data, title, isAvatar }) => {
                 backgroundColor: theme.backgroundLight,
               }}
             >
-              {" "}
-              {obj.score}{" "}
+              {obj.score}
             </AppText>
           </View>
         ))

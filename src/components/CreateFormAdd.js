@@ -242,7 +242,6 @@ const CreateFormAdd = ({
     <View style={styles.container}>
       <View style={styles.headerTitle}>
         <AppText bold>
-          {" "}
           {headerA
             ? "Character's " + headerA + ":"
             : headerB
@@ -384,7 +383,7 @@ const CreateFormAdd = ({
                   </View>
                 </TouchableWithoutFeedback>
                 <AppText numberOfLines={3} bold>
-                  {item.tag}{" "}
+                  {item.tag}
                 </AppText>
               </View>
             );
@@ -481,8 +480,8 @@ const CreateFormAdd = ({
                           <AppText style={styles.errText}>
                             <AppText style={styles.errTextb}>
                               {list.slice(-list.length, -1)}
-                            </AppText>{" "}
-                            not found, please create {userInput}{" "}
+                            </AppText>
+                            not found, please create {userInput}
                             {list.slice(-list.length, -1)} before proceeding
                           </AppText>
                         </View>
@@ -547,8 +546,7 @@ const CreateFormAdd = ({
                                 marginLeft: 10,
                               }}
                             >
-                              {" "}
-                              unverified{" "}
+                              unverified
                             </AppText>
                           )}
                         </View>

@@ -306,9 +306,8 @@ const PostScreen = ({ route, navigation }) => {
           style={{ ...styles.searchTitle, textTransform: "capitalize" }}
           bold
         >
-          {item.dpName} -{" "}
+          {item.dpName} -
           <AppText style={{ color: colors.heart }} bold>
-            {" "}
             {item.name}
           </AppText>
         </AppText>

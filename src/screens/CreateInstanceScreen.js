@@ -169,7 +169,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     <Screen>
       <View style={styles.container}>
         <AppText bold>
-          {name} instance requires{" "}
+          {name} instance requires
           <AppText style={{ color: colors.primary }} bold>
             {weebo_points}WP
           </AppText>

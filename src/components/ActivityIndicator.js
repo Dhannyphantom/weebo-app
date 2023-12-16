@@ -143,7 +143,6 @@ const ActivityIndicator = ({
           />
           {text && (
             <AppText style={styles.text}>
-              {" "}
               {text}
               {" !"}
             </AppText>

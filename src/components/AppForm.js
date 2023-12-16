@@ -151,7 +151,7 @@ const ForgotPassword = ({ setPassModal }) => {
             {passMsg.success && (
               <>
                 <AppText style={{ margin: 15 }}>
-                  Enter Verification Code:{" "}
+                  Enter Verification Code:
                 </AppText>
                 <GrowInput
                   keyboardType="number-pad"
@@ -692,8 +692,7 @@ const AppForm = ({
       </View>
       {/* FORM END */}
       <AppText bold style={{ marginTop: 25 }}>
-        {" "}
-        &bull;&bull;&bull; OR &bull;&bull;&bull;{" "}
+        &bull;&bull;&bull; OR &bull;&bull;&bull;
       </AppText>
       <View style={styles.icons}>
         <Oauth name="Google" icon="google" onPress={googleSignIn} />
@@ -710,7 +709,7 @@ const AppForm = ({
         onPress={() => navigation.navigate(navTo)}
       >
         <AppText>
-          {b === "up" ? "Don't" : "Already"} have an account?{" "}
+          {b === "up" ? "Don't" : "Already"} have an account?
           <AppText style={styles.link}>Sign {b}</AppText>
         </AppText>
       </TouchableOpacity>

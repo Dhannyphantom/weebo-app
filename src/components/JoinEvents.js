@@ -86,10 +86,10 @@ const JoinEvents = ({
         </AppText>
         <Separator h={1} />
         <AppText style={{ textAlign: "center", marginBottom: 15 }}>
-          Will require{" "}
+          Will require
           <AppText style={{ color: colors.primary }} bold>
             10WP
-          </AppText>{" "}
+          </AppText>
           to join
         </AppText>
         {errMsg && <AppText style={styles.error}> {errMsg}</AppText>}

@@ -143,7 +143,7 @@ const UpdateInstance = ({ state, prop, data }) => {
     return (
       <View style={styles.updateAiring}>
         <AppText size="xlarge" bold style={styles.updateTitle}>
-          {data.instanceName} {data.instance} Instance Currently Airing{" "}
+          {data.instanceName} {data.instance} Instance Currently Airing
         </AppText>
         <View style={styles.updateAiringStatus}>
           <Animated.View

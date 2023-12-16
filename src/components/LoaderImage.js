@@ -48,7 +48,7 @@ const LoaderImage = ({
         resizeMode="cover"
       />
 
-      {isVideoImage && <RenderMediaIcon />}
+      {isVideoImage && <RenderMediaIcon duration={image.durationMillis} />}
 
       {!isVideoImage && (
         <Image

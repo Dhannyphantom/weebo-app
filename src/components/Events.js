@@ -59,8 +59,7 @@ const DateItem = ({ data }) => {
   return (
     <View style={[styles.dateItem, { backgroundColor: theme.background }]}>
       <AppText size="xlarge" bold style={styles.dateText}>
-        {" "}
-        {data}{" "}
+        {data}
       </AppText>
     </View>
   );
@@ -248,8 +247,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           <Pressable onPress={() => handleTime("time")} style={styles.dateTime}>
             <DateItem data={timeObj.hr} />
             <AppText size="xlarge" bold>
-              {" "}
-              :{" "}
+              :
             </AppText>
             <DateItem data={timeObj.min} />
             <Spacer ml={10}>
@@ -283,8 +281,8 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           limitY={50}
         />
         <AppText style={{ textAlign: "center" }}>
-          Will require{" "}
-          <AppText style={{ color: colors.primary }}>{cpCalculator}WP</AppText>{" "}
+          Will require
+          <AppText style={{ color: colors.primary }}>{cpCalculator}WP</AppText>
         </AppText>
         <AppText style={styles.subTitles} bold>
           My Reference:

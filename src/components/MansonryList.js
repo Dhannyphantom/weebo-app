@@ -16,6 +16,7 @@ import AppFadeIn from "./AppFadeIn";
 import { RenderCollections } from "../screens/SavedCollectionScreen";
 import PopMessage from "./PopMessage";
 import ActivityIndicator from "./ActivityIndicator";
+import { RenderMediaIcon } from "./PostVideo";
 
 const { width, height } = Dimensions.get("window");
 
@@ -40,18 +41,6 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
         onPress={handlePress}
       >
         <LoaderImage image={item} isVideoImage={isVideoImage} />
-        {isVideoImage && (
-          <View style={styles.videoImage}>
-            <MaterialCommunityIcons
-              name="play-circle"
-              size={width * 0.055}
-              color="white"
-            />
-            <AppText style={styles.vidTime} bold>
-              {getVideoTime(64858)}
-            </AppText>
-          </View>
-        )}
       </TouchableOpacity>
     </>
   );
@@ -342,9 +331,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: colors.greenDark,
   },
-  vidTime: {
-    color: colors.white,
-    marginLeft: 4,
+  mediaIcon: {
+    position: "relative",
+    top: 0,
+    left: 0,
+    padding: 6,
   },
   videoImage: {
     position: "absolute",

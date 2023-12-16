@@ -228,8 +228,7 @@ const ChatScreen = ({ navigation }) => {
             {bools.selection ? (
               <>
                 <AppText style={{ color: colors.light }} bold>
-                  {" "}
-                  {chatSelected}{" "}
+                  {chatSelected}
                 </AppText>
                 <AppText style={{ color: colors.light }}>Selected</AppText>
                 <TouchableOpacity

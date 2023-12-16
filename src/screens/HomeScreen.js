@@ -319,7 +319,7 @@ const HomeScreen = ({ navigation, route }) => {
             }
             type="loader"
             size={0.2}
-            style={{ width, height: 25 }}
+            style={{ width, height: 25, margin: 10 }}
             transparent
           />
           <ActivityIndicator
@@ -328,7 +328,6 @@ const HomeScreen = ({ navigation, route }) => {
             style={{ width, height: 25 }}
             transparent
           />
-
           {showStatus && <Separator h={1} />}
         </View>
         <ActivityIndicator

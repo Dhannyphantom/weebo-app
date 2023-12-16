@@ -25,7 +25,7 @@ const Challengers = ({ item, isMine, clickable, onPress }) => {
             style={{ width: "40%" }}
           />
           <AppText size="small" style={styles.type} bold>
-            {item.type}{" "}
+            {item.type}
           </AppText>
           {item.pending ? (
             <AppText style={styles.pending}>Pending</AppText>

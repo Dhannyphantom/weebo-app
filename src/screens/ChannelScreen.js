@@ -61,16 +61,24 @@ const ChannelHeaderComp = ({
     state: { userInfo },
   } = useContext(AuthContext);
 
-  const hasSubscribedChannels = channels.find(
-    (item) =>
-      item.manager?._id != userInfo._id &&
-      item.subscribers.includes(userInfo._id)
+  const hasSubscribedChannels = Boolean(
+    channels.find(
+      (item) =>
+        item.manager?._id != userInfo._id &&
+        item.subscribers.includes(userInfo._id)
+    )
   );
 
-  const hasNotSubscribedChannels = channels.find(
-    (item) =>
-      item.manager?._id != userInfo._id &&
-      !item.subscribers?.includes(userInfo._id)
+  const hasNotSubscribedChannels = Boolean(
+    channels.find(
+      (item) =>
+        item.manager?._id != userInfo._id &&
+        !item.subscribers?.includes(userInfo._id)
+    )
+  );
+
+  const isAChannelManager = Boolean(
+    channels.find((item) => item.manager?._id == userInfo._id)
   );
 
   return (
@@ -110,6 +118,13 @@ const ChannelHeaderComp = ({
         }
         type="isEmpty"
         text={"No channels"}
+        transparent
+        style={{ width, height: height * 0.8 }}
+      />
+      <ActivityIndicator
+        visible={boxState.m && !isAChannelManager}
+        type="isEmpty"
+        text={"You don't have any channel. Create one now"}
         transparent
         style={{ width, height: height * 0.8 }}
       />
@@ -321,7 +336,7 @@ const ChannelListComp = ({
             />
           )}
           <AppText style={styles.statsItem}>
-            <AppText bold>{item.subscribers.length}</AppText> subscribers{" "}
+            <AppText bold>{item.subscribers.length}</AppText> subscribers
           </AppText>
         </View>
       )}

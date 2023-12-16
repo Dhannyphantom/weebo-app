@@ -730,7 +730,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
         <>
           <View style={styles.rowWide}>
             <AppText style={{ ...styles.title }} size="large" bold>
-              Select Invalid Info ({capFirstLetter(data?.name, true)}{" "}
+              Select Invalid Info ({capFirstLetter(data?.name, true)}
               {capFirstLetter(data?.instance)})
             </AppText>
             <TouchableOpacity
@@ -757,11 +757,10 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
                   size="large"
                   bold
                 >
-                  {data?.name} -{" "}
+                  {data?.name} -
                 </AppText>
                 <AppText size="large" style={{ color: colors.primary }} bold>
-                  {" "}
-                  {data.instance}{" "}
+                  {data.instance}
                 </AppText>
               </View>
             </>

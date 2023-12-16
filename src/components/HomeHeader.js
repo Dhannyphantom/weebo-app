@@ -76,8 +76,7 @@ const ListItem = ({ icon, text, onPress, pos = "center" }) => {
       >
         <Feather name={icon} size={25} color={colors.primary} />
         <AppText size="large" style={styles.listItemText} textStyle="black">
-          {" "}
-          {text}{" "}
+          {text}
         </AppText>
       </TouchableOpacity>
     </View>

@@ -122,7 +122,7 @@ export const RenderVerifyInfo = ({
         {Number(totalPercentile).toFixed(2)}%
       </AppText>
       <AppText style={styles.verifyModalSubtext}>
-        {capFirstLetter(vInstance)} will be deleted if not verified in{" "}
+        {capFirstLetter(vInstance)} will be deleted if not verified in
         {countdown}
       </AppText>
     </View>

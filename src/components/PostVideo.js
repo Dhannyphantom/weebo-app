@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Video } from "expo-av";
 import LottieView from "lottie-react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,8 +19,10 @@ import colors from "../constants/colors";
 import pause_play from "../../assets/animations/play_pause_white.json";
 import heartPop from "../../assets/animations/heartPop.json";
 import ActivityIndicator from "./ActivityIndicator";
+import AppText from "./AppText";
+import getVideoTime from "../constants/getVideoTime";
 
-const { width, height } = Dimensions.get("screen");
+const { width, height, scale } = Dimensions.get("screen");
 const ViewportAwareVideo = Viewport.Aware(TouchableOpacity);
 
 const LOTTIE_SIZE = width * 0.35;
@@ -98,15 +100,20 @@ const RenderLottie = ({ vis, type = "play", loaded }) => {
   );
 };
 
-export const RenderMediaIcon = ({ style }) => {
+export const RenderMediaIcon = ({ style, size, duration }) => {
   return (
     <View style={[styles.playIcon, style]}>
-      <AntDesign
-        name="playcircleo"
-        size={width * 0.08}
+      <Feather
+        name="play-circle"
+        size={size ?? 22}
         style={{ margin: 10, marginTop: 12 }}
         color={colors.white}
       />
+      {duration && (
+        <AppText style={styles.vidTime} bold>
+          {getVideoTime(duration)}
+        </AppText>
+      )}
     </View>
   );
 };
@@ -312,6 +319,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
+    flexDirection: "row",
+    alignItems: "center",
   },
   poster: {
     width: "100%",
@@ -321,5 +330,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 16,
+  },
+  vidTime: {
+    color: colors.white,
+    right: 8,
   },
 });

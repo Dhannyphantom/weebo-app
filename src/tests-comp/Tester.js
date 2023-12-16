@@ -12,8 +12,7 @@ export default function Tester() {
       <AppText> Hello world</AppText>
       <Image source={imgUrl} style={{ width: 200, height: 450 }} />
       <AppText size="xlarge" bold>
-        {" "}
-        {JSON.stringify(colors, null, 5)}{" "}
+        {JSON.stringify(colors, null, 5)}
       </AppText>
     </View>
   );

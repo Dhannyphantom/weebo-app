@@ -127,8 +127,7 @@ const FeedBox = ({
               color: rightColored ? colors.primary : theme.color,
             }}
           >
-            {" "}
-            {statLeft}{" "}
+            {statLeft}
           </AppText>
         ) : (
           <View />
