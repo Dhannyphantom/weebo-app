@@ -23,6 +23,7 @@ const ActivityIndicator = ({
   type = "spin",
   style,
   text,
+  textStyle = {},
   size = 0.4,
   absolute,
   bTransparent,
@@ -161,7 +162,9 @@ const ActivityIndicator = ({
             style={{ width: width * size, height: width * size }}
             loop
           />
-          {text && <AppText style={styles.text}> {text} </AppText>}
+          {text && (
+            <AppText style={{ ...styles.text, ...textStyle }}> {text} </AppText>
+          )}
         </>
       )}
       {type === "emptyComment" && (

@@ -66,7 +66,7 @@ const { width, height } = Dimensions.get("window");
 const boolsObj = {
   loadMore: true,
   loadedOnce: false,
-  reloadLoader: true,
+  initialLoader: true,
   loader: false,
   isMyPosts: false,
   showStatus: false,
@@ -103,7 +103,7 @@ const HomeScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     fetchHomeData(() => {
-      setBools({ ...bools, loadedOnce: true, reloadLoader: false });
+      setBools({ ...bools, loadedOnce: true, initialLoader: false });
       setRefreshing(false);
     });
   }, []);
@@ -311,19 +311,25 @@ const HomeScreen = ({ navigation, route }) => {
             setter={() => setBools({ ...bools, showStatus: false })}
           />
 
+          {uploadStatus?.screen == "Home" &&
+            uploadStatus?.hasStarted &&
+            !uploadStatus?.hasFinished &&
+            !uploadStatus?.error && (
+              <View style={styles.row}>
+                <ActivityIndicator
+                  visible
+                  type="loader"
+                  size={0.2}
+                  style={styles.activityUpload}
+                  transparent
+                />
+                <AppText size="xsmall" textStyle="black">
+                  Uploading Media...
+                </AppText>
+              </View>
+            )}
           <ActivityIndicator
-            visible={
-              uploadStatus.hasStarted &&
-              !uploadStatus.error &&
-              !uploadStatus.hasFinished
-            }
-            type="loader"
-            size={0.2}
-            style={{ width, height: 25, margin: 10 }}
-            transparent
-          />
-          <ActivityIndicator
-            visible={bools.loader && !showSpinner}
+            visible={bools.initialLoader && !showSpinner}
             size={0.2}
             style={{ width, height: 25 }}
             transparent
@@ -344,7 +350,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     async function prepare() {
       await readyHomeScreen(() => {
-        setBools({ ...bools, loadedOnce: true, reloadLoader: false });
+        setBools({ ...bools, loadedOnce: true, initialLoader: false });
       });
       // await notificationHandler();
       getSocket().emit("login", { userId: userInfo._id });
@@ -380,12 +386,16 @@ const HomeScreen = ({ navigation, route }) => {
   // // For auto post reload
   useEffect(() => {
     if (bools.loadedOnce && route?.params?.reloadPosts) {
-      setBools({ ...bools, reloadLoader: true });
       uploadStatus?.hasFinished &&
         uploadStatus?.hasStarted &&
         !uploadStatus?.error &&
         fetchHomeData(() => {
-          setBools({ ...bools, reloadLoader: false });
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Media Uploaded!",
+            timer: 1.5,
+          });
         }, false);
     }
   }, [navigation, route, uploadStatus]);
@@ -449,6 +459,7 @@ const HomeScreen = ({ navigation, route }) => {
       <ActivityIndicator
         visible={bools.loader}
         style={styles.activity}
+        absolute
         wTransparent
       />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
@@ -527,6 +538,13 @@ const styles = StyleSheet.create({
     width,
     height,
   },
+  activityUpload: {
+    flex: 0,
+    width: 35,
+    height: 25,
+    marginVertical: 10,
+    marginHorizontal: 5,
+  },
   actionFooter: {
     marginLeft: 50,
   },
@@ -540,7 +558,11 @@ const styles = StyleSheet.create({
     color: colors.heartDark,
     marginBottom: 25,
   },
-
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+  },
   statusHeader: {
     flex: 1,
     justifyContent: "center",

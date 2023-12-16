@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Dimensions } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 
 import ActivityIndicator from "./ActivityIndicator";
 import { RenderMediaIcon } from "./PostVideo";
+
+const { height } = Dimensions.get("screen");
 
 const LoaderImage = ({
   image,
@@ -32,7 +34,8 @@ const LoaderImage = ({
         ...styles.container,
         backgroundColor: theme.extralight,
         borderRadius: full ? 1 : 12,
-        aspectRatio: noAspect ? null : image?.width / image?.height,
+        aspectRatio:
+          noAspect || isVideoImage ? null : image?.width / image?.height,
         ...style,
       }}
     >
@@ -43,6 +46,7 @@ const LoaderImage = ({
           ...styles.image,
           borderRadius: full ? 1 : 12,
           ...imageStyle,
+          height: isVideoImage ? Math.min(image?.height, height * 0.65) : null,
         }}
         blurRadius={isVideoImage ? 5 : 12}
         resizeMode="cover"

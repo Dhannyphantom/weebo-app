@@ -484,20 +484,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   const RenderInstanceMedia = () => {
     return (
-      <View
-        style={{
-          width: width * 0.5,
-          backgroundColor: theme.background,
-          borderRadius: width * 0.03,
-          justifyContent: "center",
-          paddingVertical: width * 0.04,
-        }}
-      >
+      <View style={{ ...styles.modal, backgroundColor: theme.background }}>
         <View>
           <TouchableOpacity
             onPress={() => handleCoverChange("cover")}
             activeOpacity={0.8}
-            style={{ alignSelf: "center" }}
+            style={styles.modalItem}
           >
             <Feather name="user" size={width * 0.1} color={colors.primary} />
             <AppText style={{ textAlign: "center" }} bold>
@@ -509,11 +501,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-around",
-              marginVertical: width * 0.05,
+              marginVertical: width * 0.065,
             }}
           >
             <TouchableOpacity
               onPress={() => handleUploadBtn("write")}
+              style={styles.modalItem}
               activeOpacity={0.8}
             >
               <Ionicons
@@ -530,6 +523,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={() => handleUploadBtn("upload")}
               activeOpacity={0.8}
+              style={styles.modalItem}
             >
               <Ionicons
                 name="camera-outline"
@@ -545,7 +539,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
           {/*  */}
           <TouchableOpacity
             activeOpacity={0.8}
-            style={{ alignSelf: "center" }}
+            style={styles.modalItem}
             onPress={handleUploadStaus}
           >
             <Ionicons
@@ -749,6 +743,17 @@ const styles = StyleSheet.create({
 
   headerBoxCont: {
     flexDirection: "row",
+    alignItems: "center",
+  },
+  modal: {
+    width: width * 0.68,
+    borderRadius: width * 0.03,
+    justifyContent: "center",
+    paddingVertical: width * 0.04,
+  },
+  modalItem: {
+    alignSelf: "center",
+    justifyContent: "center",
     alignItems: "center",
   },
   newEventBtn: {},

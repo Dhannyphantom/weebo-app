@@ -211,7 +211,7 @@ export default function RenderStoryList({
           )}
           <View style={styles.viewersContainer}>
             <View style={styles.viewersHeader}>
-              <AntDesign name="eyeo" size={35} color={colors.white} />
+              <AntDesign name="eyeo" size={20} color={colors.white} />
               <AppText bold size="large" style={styles.viewersCount}>
                 {getFeedNumber(bools.views)}
               </AppText>
@@ -223,7 +223,7 @@ export default function RenderStoryList({
             >
               <AntDesign
                 name={bools.liked ? "heart" : "hearto"}
-                size={35}
+                size={20}
                 color={bools.liked ? colors.heart : colors.white}
               />
               <AppText bold size="large" style={styles.viewersCount}>

@@ -398,7 +398,6 @@ const styles = StyleSheet.create({
   },
   nextBtn: {
     alignSelf: "center",
-    width: "60%",
   },
   listItem: {
     justifyContent: "center",

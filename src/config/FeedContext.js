@@ -179,11 +179,18 @@ const getGroups = (dispatch) => async (sc, cb) => {
 };
 
 const postPix = (dispatch) => async (data, sc, cb, uploader) => {
+  // ==============================NEW CODE =====================////
+
   const formData = new FormData();
   formData.append(
     "data",
-    JSON.stringify({ ...data, mediaInfoPath: "post", bucket: "posts" })
+    JSON.stringify({
+      ...data,
+      mediaInfoPath: "post",
+      bucket: "posts",
+    })
   );
+
   for (let i = 0; i < data.post.length; i++) {
     const e = data.post[i].uri;
     const imageObject = {
@@ -195,37 +202,19 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
     formData.append("post", imageObject);
   }
 
-  if (uploader) {
-    dispatch({
-      type: "update_progress",
-      payload: {
-        screen: uploader?.screen,
-        hasStarted: true,
-        hasFinished: false,
-        error: false,
-        err: null,
-      },
-    });
-  }
-
-  try {
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await postApi.post("/postMedia", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "x-auth-token": token,
-        Accept: "application/json",
-        "Cache-Control": "no-cache,no-store,must-revalidate",
-        Pragma: "no-cache",
-        Expires: 0,
-      },
-      transformRequest: () => formData,
-
-      // onUploadProgress: (ev) => uploader && uploader.callback(ev),
-    });
-    sc && sc(res.data);
-    if (uploader) {
+  const token = await AsyncStorage.getItem("token");
+  fetch(`${baseURL.uri}/post/mediaPoster`, {
+    method: "POST",
+    body: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-auth-token": token,
+      Accept: "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      sc && sc(data);
       dispatch({
         type: "update_progress",
         payload: {
@@ -236,27 +225,36 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
           err: null,
         },
       });
-    }
-  } catch (err) {
-    cb &&
-      cb({
-        err,
-        data: err?.response?.data,
-        msg: "Error sending post to server",
+    })
+    .catch((err) => {
+      cb &&
+        cb({
+          err,
+          data: err?.response?.data,
+          msg: "Error sending post to server",
+        });
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: false,
+          error: true,
+          err: err,
+        },
       });
-    dispatch({
-      type: "update_progress",
-      payload: {
-        screen: uploader.screen,
-        hasStarted: true,
-        hasFinished: false,
-        error: true,
-        err: err,
-      },
     });
-  }
 
-  // ======================================
+  dispatch({
+    type: "update_progress",
+    payload: {
+      screen: uploader?.screen,
+      hasStarted: true,
+      hasFinished: false,
+      error: false,
+      err: null,
+    },
+  });
 };
 
 const postError = (dispatch) => async (uploader) => {
