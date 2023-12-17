@@ -112,18 +112,23 @@ const ShowUpload = ({ visObj, setVisible }) => {
     statusUploader(
       sendData,
       (resData) => {
-        setIsLoading(false);
-        setVisible(true);
+        // setIsLoading(false);
+        // setVisible(true);
       },
       (err) => {
-        setPopData({
-          vis: true,
-          type: "failed",
-          msg: err.msg + ", try again",
-        });
-        setIsLoading(false);
+        // setPopData({
+        //   vis: true,
+        //   type: "failed",
+        //   msg: err.msg + ", try again",
+        // });
+        // setIsLoading(false);
+      },
+      {
+        screen: data?.instance,
       }
     );
+    setIsLoading(false);
+    setVisible(false);
   };
 
   const handlePanelMenu = (type) => {

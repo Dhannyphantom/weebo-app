@@ -22,6 +22,7 @@ import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
 import ThemeContext from "../config/ThemeContext";
 import { capFirstLetter, getFeedNumber } from "../constants/helpers";
+import { MediaUploadStatus } from "../screens/HomeScreen";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
@@ -149,12 +150,17 @@ const InstanceHeader = ({
     verifiedList,
     subscribers,
     screenIcon,
+    fetcher,
+    screenAlias,
     feedback,
     namePosition = "center",
     leftColor,
     name,
   } = instanceData;
-  const { userFeedback } = useContext(FeedContext);
+  const {
+    userFeedback,
+    state: { uploadStatus },
+  } = useContext(FeedContext);
   const [dropDown, setDropDown] = useState(false);
   const [fBackModal, setFBackModal] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
@@ -390,6 +396,25 @@ const InstanceHeader = ({
     checkFeedBack();
   }, []);
 
+  // // For auto post reload
+  useEffect(() => {
+    if (
+      uploadStatus?.hasFinished &&
+      uploadStatus?.hasStarted &&
+      !uploadStatus?.error
+    ) {
+      fetcher &&
+        fetcher(() => {
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Media Uploaded!",
+            timer: 1.5,
+          });
+        });
+    }
+  }, [uploadStatus]);
+
   return (
     <>
       <View style={styles.container}>
@@ -502,6 +527,8 @@ const InstanceHeader = ({
               </View>
             )}
             <Separator h={2} />
+            {/* PUT ACTIVITYINDICATOR */}
+            <MediaUploadStatus screen={screenAlias} status={uploadStatus} />
             <AppText
               style={{
                 textAlign: "center",
@@ -627,6 +654,11 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 20,
     // marginLeft: 10,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
   },
   textCont: {
     bottom: 52,

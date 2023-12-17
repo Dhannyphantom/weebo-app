@@ -447,7 +447,7 @@ const followInstance = (dispatch) => async (data, sc, cb) => {
   }
 };
 
-const statusUploader = (dispatch) => async (data, sc, cb) => {
+const statusUploader = (dispatch) => async (data, sc, cb, uploader) => {
   const formData = new FormData();
   formData.append(
     "data",
@@ -480,11 +480,31 @@ const statusUploader = (dispatch) => async (data, sc, cb) => {
     .then((res) => res.json())
     .then((data) => {
       sc && sc(data);
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: true,
+          error: false,
+          err: null,
+        },
+      });
     })
     .catch((err) => {
       cb && cb({ err, msg: "Error uploading story, try again" });
     });
   // ======================================
+  dispatch({
+    type: "update_progress",
+    payload: {
+      screen: uploader?.screen,
+      hasStarted: true,
+      hasFinished: false,
+      error: false,
+      err: null,
+    },
+  });
 };
 
 const getStatuses = (dispatch) => async (sc, cb) => {

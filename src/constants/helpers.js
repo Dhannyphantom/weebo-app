@@ -60,13 +60,22 @@ export const launchGallery = async (
       MediaType = ImagePicker.MediaTypeOptions.All;
       break;
   }
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: MediaType,
-    allowsEditing: editing,
-    allowsMultipleSelection: multiple,
-    aspect,
-    quality: 1,
-  });
+
+  let result;
+  try {
+    result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: MediaType,
+      allowsEditing: editing,
+      allowsMultipleSelection: multiple,
+      aspect,
+      quality: 1,
+    });
+  } catch (pickerErr) {
+    return {
+      _error: "Operation failed, Try again",
+      results: null,
+    };
+  }
 
   if (result.canceled) {
     return {

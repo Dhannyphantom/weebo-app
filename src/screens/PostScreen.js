@@ -36,7 +36,7 @@ const PostScreen = ({ route, navigation }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { postPix, postError } = useContext(FeedContext);
+  const { postPix } = useContext(FeedContext);
   const { searchStuffs } = useContext(AcctContext);
 
   const router = route.params;
@@ -81,6 +81,7 @@ const PostScreen = ({ route, navigation }) => {
     const data = color.find((item) => item.active === true);
     return data;
   };
+  const fromScreen = router?.toScreen;
 
   const textObj = {
     text: input,
@@ -132,11 +133,11 @@ const PostScreen = ({ route, navigation }) => {
       data,
       null,
       (err) => {
-        // setBools({ ...bools, isLoading: false, disablePostBtn: false });
-        // postError({ screen: "Home", err });
+        // Maybe save upload data to AsyncStorage and
+        // try re-uploading
       },
       {
-        screen: "Home",
+        screen: fromScreen,
         callback: (ev) => console.log(ev),
       }
     );
@@ -150,8 +151,8 @@ const PostScreen = ({ route, navigation }) => {
       cb: () => {
         // NAVIGATE USER AWAY FROM SCREEN;
         setBools({ ...bools, isLoading: false, disablePostBtn: false });
-        router.toScreen
-          ? navigation.navigate(router.toScreen, {
+        fromScreen
+          ? navigation.navigate(fromScreen, {
               reloadPosts: true,
               ...router.toScreenData,
             })

@@ -72,6 +72,37 @@ const boolsObj = {
   showStatus: false,
 };
 
+export const MediaUploadStatus = ({ status, screen }) => {
+  const compareScreen = Array.isArray(screen)
+    ? screen.includes(status?.screen)
+    : status?.screen == screen;
+
+  const checkBool =
+    compareScreen &&
+    status?.hasStarted &&
+    !status?.hasFinished &&
+    !status?.error;
+
+  return (
+    <>
+      {checkBool && (
+        <View style={styles.row}>
+          <ActivityIndicator
+            visible
+            type="loader"
+            size={0.2}
+            style={styles.activityUpload}
+            transparent
+          />
+          <AppText size="xsmall" textStyle="black">
+            Uploading Media...
+          </AppText>
+        </View>
+      )}
+    </>
+  );
+};
+
 const HomeScreen = ({ navigation, route }) => {
   const {
     getHomeFeeds,
@@ -311,23 +342,7 @@ const HomeScreen = ({ navigation, route }) => {
             setter={() => setBools({ ...bools, showStatus: false })}
           />
 
-          {uploadStatus?.screen == "Home" &&
-            uploadStatus?.hasStarted &&
-            !uploadStatus?.hasFinished &&
-            !uploadStatus?.error && (
-              <View style={styles.row}>
-                <ActivityIndicator
-                  visible
-                  type="loader"
-                  size={0.2}
-                  style={styles.activityUpload}
-                  transparent
-                />
-                <AppText size="xsmall" textStyle="black">
-                  Uploading Media...
-                </AppText>
-              </View>
-            )}
+          <MediaUploadStatus status={uploadStatus} screen="Home" />
           <ActivityIndicator
             visible={bools.initialLoader && !showSpinner}
             size={0.2}

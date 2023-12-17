@@ -103,6 +103,7 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
         navigation.navigate("Post", {
           assets: results,
           toScreen: "Home",
+          screenAlias: ["Home"],
           toScreenData: {},
         });
       }
@@ -114,6 +115,7 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
       navigation.navigate("Post", {
         write: true,
         toScreen: "Home",
+        screenAlias: ["Home"],
         toScreenData: {},
         id: null,
       });

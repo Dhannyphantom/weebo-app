@@ -13,6 +13,7 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
+import { Context as FeedContext } from "../config/FeedContext";
 
 import colors from "../constants/colors";
 import ActivityIndicator from "../components/ActivityIndicator";
@@ -36,6 +37,7 @@ import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
 import RenderLoadMore from "../components/RenderLoadMore";
 import FriendBox from "../components/FriendBox";
+import { MediaUploadStatus } from "./HomeScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -159,6 +161,9 @@ const ChannelPostScreen = ({ route, navigation }) => {
     subscribeChannel,
   } = useContext(CharContext);
   const {
+    state: { uploadStatus },
+  } = useContext(FeedContext);
+  const {
     updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -242,6 +247,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     description: page.description,
     cover_photo: page.cover_photo,
     owner: page.manager,
+    screenAlias: ["ChannelPost", "channel"],
     listItems,
     feedback: {
       instanceID: "1",
@@ -275,6 +281,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
           assets: results,
           type: "channel",
           toScreen: "ChannelPost",
+          screenAlias: ["ChannelPost", "channel"],
           toScreenData: { id: page?._id },
           id: page._id,
           name: page.name,
@@ -285,6 +292,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         name: page.name,
         type: "channel",
         toScreen: "ChannelPost",
+        screenAlias: ["ChannelPost", "channel"],
         toScreenData: { id: page?._id },
         write: true,
         id: page._id,
@@ -417,11 +425,11 @@ const ChannelPostScreen = ({ route, navigation }) => {
       (data) => {
         setPage(data.channelData);
         setPosts({ ...data.posts, event: data.event });
-        setBools({ ...bools, loadedOnce: true });
+        !bools.loadedOnce && setBools({ ...bools, loadedOnce: true });
         cb && cb();
       },
       (err) => {
-        setBools({ ...bools, loadedOnce: true });
+        !bools.loadedOnce && setBools({ ...bools, loadedOnce: true });
       }
     );
   };
@@ -440,6 +448,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     if (bool) {
       setPopper({ vis: true, type: "success", msg: "Story uploaded" });
     }
+    setOpenMedia(false);
     setShowUpload({ vis: false, data: null });
   };
 
@@ -596,13 +605,31 @@ const ChannelPostScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    if (bools.loadedOnce && route.params.reloadPosts) {
-      setBools({ ...bools, reloadLoader: true });
-      handleGetChannel(() => {
-        setBools({ ...bools, reloadLoader: false });
+    if (bools.loadedOnce && uploadStatus?.error && uploadStatus?.hasStarted) {
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Upload failed due to network error",
+        timer: 10,
       });
     }
-  }, [navigation, route]);
+  }, [uploadStatus]);
+
+  useEffect(() => {
+    if (bools.loadedOnce && route?.params?.reloadPosts) {
+      uploadStatus?.hasFinished &&
+        uploadStatus?.hasStarted &&
+        !uploadStatus?.error &&
+        handleGetChannel(() => {
+          setPopper({
+            vis: true,
+            type: "success",
+            msg: "Media Uploaded!",
+            timer: 3,
+          });
+        });
+    }
+  }, [navigation, route, uploadStatus]);
 
   return (
     <View
@@ -622,12 +649,6 @@ const ChannelPostScreen = ({ route, navigation }) => {
                   borderBottom
                   scrollY={scrollY}
                   instanceData={headerObj}
-                />
-                <ActivityIndicator
-                  visible={bools.reloadLoader}
-                  size={0.2}
-                  style={{ width, bottom: 50, height: 25 }}
-                  transparent
                 />
               </>
             }
@@ -758,6 +779,11 @@ const styles = StyleSheet.create({
   },
   newEventBtn: {},
 
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+  },
   link: {
     width: "90%",
     alignSelf: "center",

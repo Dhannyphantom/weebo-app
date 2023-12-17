@@ -44,6 +44,8 @@ const MyPostScreen = ({ navigation, route }) => {
         assets: results,
         type: fromScreen,
         id: params?.info?.id,
+        screenAlias: ["MyPost"],
+        fromScreen: "MyPost",
         name: params?.info.name,
       });
     }
