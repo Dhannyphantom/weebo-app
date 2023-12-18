@@ -215,16 +215,28 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
     .then((res) => res.json())
     .then((data) => {
       sc && sc(data);
-      dispatch({
-        type: "update_progress",
-        payload: {
-          screen: uploader.screen,
-          hasStarted: true,
-          hasFinished: true,
-          error: false,
-          err: null,
-        },
-      });
+      // dispatch({
+      //   type: "update_progress",
+      //   payload: {
+      //     screen: uploader.screen,
+      //     hasStarted: true,
+      //     hasFinished: true,
+      //     error: false,
+      //     err: null,
+      //   },
+      // });
+      setTimeout(() => {
+        dispatch({
+          type: "update_progress",
+          payload: {
+            screen: uploader.screen,
+            hasStarted: true,
+            hasFinished: true,
+            error: false,
+            err: null,
+          },
+        });
+      }, 45000);
     })
     .catch((err) => {
       cb &&
@@ -480,16 +492,18 @@ const statusUploader = (dispatch) => async (data, sc, cb, uploader) => {
     .then((res) => res.json())
     .then((data) => {
       sc && sc(data);
-      dispatch({
-        type: "update_progress",
-        payload: {
-          screen: uploader.screen,
-          hasStarted: true,
-          hasFinished: true,
-          error: false,
-          err: null,
-        },
-      });
+      setTimeout(() => {
+        dispatch({
+          type: "update_progress",
+          payload: {
+            screen: uploader.screen,
+            hasStarted: true,
+            hasFinished: true,
+            error: false,
+            err: null,
+          },
+        });
+      }, 45000);
     })
     .catch((err) => {
       cb && cb({ err, msg: "Error uploading story, try again" });

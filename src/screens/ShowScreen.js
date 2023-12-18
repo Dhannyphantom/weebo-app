@@ -406,7 +406,8 @@ const ShowScreen = ({ route, navigation }) => {
     verifiedList: dataState?.verifiedList,
     followers: dataState?.followers?.length,
     handleRightPress: null,
-    fetcher: (cb) => getMyShows("fetch", cb),
+    // fetcher: (cb) => getMyShows("fetch", cb),
+    screenAlias: [`show@${dataState?._id}`],
   };
 
   const getMyShows = (type, cb, popData) => {

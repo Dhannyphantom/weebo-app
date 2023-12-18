@@ -241,13 +241,16 @@ const ChannelPostScreen = ({ route, navigation }) => {
     },
   ];
 
+  const screenAlias = `channel@${page?._id}`;
+
   const headerObj = {
     _id: page._id,
     name: page.name,
     description: page.description,
     cover_photo: page.cover_photo,
     owner: page.manager,
-    screenAlias: ["ChannelPost", "channel"],
+    screenAlias,
+    // screenAlias: ["ChannelPost", "channel"],
     listItems,
     feedback: {
       instanceID: "1",
@@ -281,7 +284,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
           assets: results,
           type: "channel",
           toScreen: "ChannelPost",
-          screenAlias: ["ChannelPost", "channel"],
+          screenAlias,
           toScreenData: { id: page?._id },
           id: page._id,
           name: page.name,
@@ -292,7 +295,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         name: page.name,
         type: "channel",
         toScreen: "ChannelPost",
-        screenAlias: ["ChannelPost", "channel"],
+        screenAlias,
         toScreenData: { id: page?._id },
         write: true,
         id: page._id,

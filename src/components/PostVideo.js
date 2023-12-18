@@ -334,5 +334,7 @@ const styles = StyleSheet.create({
   vidTime: {
     color: colors.white,
     right: 8,
+    textShadowColor: "#000",
+    textShadowRadius: 1,
   },
 });

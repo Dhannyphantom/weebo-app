@@ -204,6 +204,7 @@ const CharacterScreen = ({ route, navigation }) => {
     badge: Boolean(isChallenger || isInvited),
     owner: character?.manager,
     handleLeftPress: () => handleFollowPress(),
+    screenAlias: `character@${character?._id}`,
     handleRightPress: null,
   };
 
@@ -212,6 +213,7 @@ const CharacterScreen = ({ route, navigation }) => {
       setPopper({ vis: true, type: "success", msg: "Story uploaded" });
     }
     setShowUpload({ vis: false, data: null });
+    setOpenMedia(false);
   };
 
   const handleFetchCharacter = (type = "cover", cb, popData) => {

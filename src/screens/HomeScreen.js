@@ -95,7 +95,7 @@ export const MediaUploadStatus = ({ status, screen }) => {
             transparent
           />
           <AppText size="xsmall" textStyle="black">
-            Uploading Media...
+            Uploading media...
           </AppText>
         </View>
       )}
@@ -126,7 +126,6 @@ const HomeScreen = ({ navigation, route }) => {
   const [popper, setPopper] = useState({ vis: false });
   const { loadMore, loadedOnce, showStatus } = bools;
 
-  const actionFlatRef = useRef(null);
   const notificationListener = useRef();
   const responseListener = useRef();
   const showSpinner = ((feeds && !feeds?.results[0]) || !feeds) && !showStatus;
@@ -333,7 +332,6 @@ const HomeScreen = ({ navigation, route }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={renderActions}
             overScrollMode="never"
-            ref={actionFlatRef}
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
@@ -424,7 +422,11 @@ const HomeScreen = ({ navigation, route }) => {
           backgroundColor: theme.backgroundExtralight,
         }}
       >
-        <HomeHeader fetcher={fetchHomeData} isMyPosts={bools.isMyPosts} />
+        <HomeHeader
+          fetcher={fetchHomeData}
+          // scroller={() => feedFlatRef?.current?.scrollToEnd()}
+          isMyPosts={bools.isMyPosts}
+        />
         {errMsg && (
           <AppText bold size="large" style={styles.error}>
             {errMsg}
@@ -439,6 +441,7 @@ const HomeScreen = ({ navigation, route }) => {
                 data={feeds?.results}
                 ListHeaderComponent={RenderPageHeader}
                 keyboardShouldPersistTaps="handled"
+                // ref={feedFlatRef}
                 renderToHardwareTextureAndroid
                 ListFooterComponent={() => (
                   <RenderLoadMore

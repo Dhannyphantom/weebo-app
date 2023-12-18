@@ -236,7 +236,7 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
   );
 };
 
-const HomeHeader = ({ fetcher, isMyPosts }) => {
+const HomeHeader = ({ fetcher, scroller, isMyPosts }) => {
   const navigation = useNavigation();
 
   const [modalVis, setModalVis] = useState(false);
@@ -277,15 +277,9 @@ const HomeHeader = ({ fetcher, isMyPosts }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topper}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            marginLeft: 7,
-          }}
-        >
+        <TouchableOpacity activeOpacity={1}>
           <AppLogo />
-        </View>
+        </TouchableOpacity>
         <View style={styles.headerIcons}>
           <TouchableOpacity
             activeOpacity={0.75}

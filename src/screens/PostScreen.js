@@ -41,6 +41,7 @@ const PostScreen = ({ route, navigation }) => {
 
   const router = route.params;
   const writer = route.params.write;
+
   // write = {id , write(bool)}
   const assets = writer
     ? null
@@ -137,7 +138,7 @@ const PostScreen = ({ route, navigation }) => {
         // try re-uploading
       },
       {
-        screen: fromScreen,
+        screen: router?.screenAlias,
         callback: (ev) => console.log(ev),
       }
     );

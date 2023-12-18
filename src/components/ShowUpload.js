@@ -124,7 +124,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
         // setIsLoading(false);
       },
       {
-        screen: data?.instance,
+        screen: `${data?.instance}@${data.instanceID}`,
       }
     );
     setIsLoading(false);
