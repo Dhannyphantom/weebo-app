@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   Animated,
   RefreshControl,
-  FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import uuid from "react-native-uuid";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -37,7 +37,6 @@ import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
 import RenderLoadMore from "../components/RenderLoadMore";
 import FriendBox from "../components/FriendBox";
-import { MediaUploadStatus } from "./HomeScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -47,6 +46,7 @@ const boolsObj = {
   loadedOnce: false,
   loadMore: true,
   subscribers: false,
+  hash: uuid.v4(),
 };
 
 const deletePrompt = {
@@ -270,7 +270,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   const handleUploadBtn = async (type) => {
     if (type === "upload") {
-      const { _error, results } = await launchGallery("all");
+      const { _error, results } = await launchGallery("all", true);
 
       if (_error) {
         return setPopper({
@@ -284,6 +284,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
           assets: results,
           type: "channel",
           toScreen: "ChannelPost",
+          hash: bools.hash,
           screenAlias,
           toScreenData: { id: page?._id },
           id: page._id,
@@ -296,6 +297,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         type: "channel",
         toScreen: "ChannelPost",
         screenAlias,
+        hash: bools.hash,
         toScreenData: { id: page?._id },
         write: true,
         id: page._id,
@@ -613,6 +615,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
         vis: true,
         type: "failed",
         msg: "Upload failed due to network error",
+        cb: () => setBools({ ...bools, hash: uuid.v4() }),
         timer: 10,
       });
     }
@@ -622,6 +625,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     if (bools.loadedOnce && route?.params?.reloadPosts) {
       uploadStatus?.hasFinished &&
         uploadStatus?.hasStarted &&
+        uploadStatus?.hash == bools.hash &&
         !uploadStatus?.error &&
         handleGetChannel(() => {
           setPopper({
@@ -629,6 +633,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
             type: "success",
             msg: "Media Uploaded!",
             timer: 3,
+            cb: () => setBools({ ...bools, hash: uuid.v4() }),
           });
         });
     }
@@ -687,7 +692,14 @@ const ChannelPostScreen = ({ route, navigation }) => {
       ) : (
         <ActivityIndicator type="spin" visible={true} />
       )}
-      <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+      <ShowUpload
+        visObj={showUpload}
+        setVisible={handleStatusVisibility}
+        hash={{
+          value: bools.hash,
+          setter: () => setBools({ ...bools, hash: uuid.v4() }),
+        }}
+      />
       <PopDropDown
         visible={popModal.modal}
         setter={() => setPopModal({ topper: false, modal: false })}

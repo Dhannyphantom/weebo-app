@@ -13,6 +13,8 @@ import networkAnim from "../../assets/animations/network-1.json";
 import emptyLoader from "../../assets/animations/nice.json";
 import ThemeContext from "../config/ThemeContext";
 import testAnim from "../../assets/animations/searching_animation.json";
+import uploadProgress from "../../assets/animations/progress.json";
+import AnimatedLottieView from "lottie-react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,13 +25,18 @@ const ActivityIndicator = ({
   type = "spin",
   style,
   text,
+  autoPlay = true,
   textStyle = {},
   size = 0.4,
   absolute,
   bTransparent,
   ComponentRenderer,
+  lottieStyles = {},
   transparent,
+  onAnimationFinish,
+  speed,
   wTransparent,
+  progress,
 }) => {
   if (!visible) return null;
   const theme = useContext(ThemeContext);
@@ -182,13 +189,50 @@ const ActivityIndicator = ({
           {text && <AppText style={styles.text}> {text} </AppText>}
         </>
       )}
+      {type === "upload" && (
+        <>
+          <AnimatedLottieView
+            source={uploadProgress}
+            // colorFilters={[]}
+            progress={progress}
+            autoPlay={autoPlay}
+            style={{
+              width: width * size,
+              height: width * size,
+              ...lottieStyles,
+            }}
+            loop={false}
+            speed={speed}
+            onAnimationFinish={onAnimationFinish}
+          />
+          {/* <LottieView
+            source={uploadProgress}
+            // colorFilters={[]}
+            ref={ref}
+            progress={progress}
+            autoPlay={autoPlay}
+            style={{
+              width: width * size,
+              height: width * size,
+              ...lottieStyles,
+            }}
+            loop={false}
+            speed={speed}
+            onAnimationFinish={onAnimationFinish}
+          /> */}
+          {text && <AppText style={styles.text}> {text} </AppText>}
+        </>
+      )}
       {type === "search" && (
         <>
           <LottieView
             source={testAnim}
             colorFilters={[]}
             autoPlay
-            style={{ width: width * size, height: width * size }}
+            style={{
+              width: width * size,
+              height: width * size,
+            }}
             loop
           />
           {text && <AppText style={styles.text}> {text} </AppText>}
@@ -198,6 +242,8 @@ const ActivityIndicator = ({
     </View>
   );
 };
+
+export default ActivityIndicator;
 
 const styles = StyleSheet.create({
   absolute: {
@@ -225,5 +271,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default ActivityIndicator;

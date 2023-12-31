@@ -52,7 +52,8 @@ const Card = ({
           style={[
             styles.imageContainer,
             {
-              backgroundColor: theme.backgroundExtralight,
+              backgroundColor: theme.lighter,
+              // backgroundColor: theme.backgroundExtralight,
               borderRadius: borderRadius ? borderRadius : 8,
             },
           ]}

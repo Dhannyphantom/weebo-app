@@ -244,7 +244,10 @@ const ShowScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCoverLoading, setIsCoverLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-  const [bools, setBools] = useState({ updateInstance: false });
+  const [bools, setBools] = useState({
+    updateInstance: false,
+    hash: uuid.v4(),
+  });
   const [transfer, setTransfer] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
 
@@ -916,7 +919,13 @@ const ShowScreen = ({ route, navigation }) => {
         setVisible={setAlertModal}
         onPress={handleOkAlert}
       />
-      <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+      <ShowUpload
+        visObj={showUpload}
+        setVisible={handleStatusVisibility}
+        hash={{
+          value: bools.hash,
+        }}
+      />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </View>
   );

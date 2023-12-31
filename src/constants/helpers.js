@@ -2,6 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import vidMaxChecker from "./vidMaxChecker";
 import { INSTANCE_FREE_PERIOD } from "./data_store";
@@ -55,7 +56,6 @@ export const launchGallery = async (
     case "video":
       MediaType = ImagePicker.MediaTypeOptions.Videos;
       break;
-
     default:
       MediaType = ImagePicker.MediaTypeOptions.All;
       break;
@@ -244,5 +244,19 @@ export const canChallengeInstance = (challenge_stat) => {
         timer: 4,
       },
     };
+  }
+};
+
+export const collectionStore = async (collectionArr) => {
+  const checker = await AsyncStorage.getItem("my_collections");
+
+  if (collectionArr) {
+    await AsyncStorage.setItem("my_collections", JSON.stringify(collectionArr));
+  } else {
+    if (!checker) {
+      return { collections: null };
+    } else {
+      return { collections: JSON.parse(checker) };
+    }
   }
 };

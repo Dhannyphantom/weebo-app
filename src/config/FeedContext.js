@@ -215,28 +215,17 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
     .then((res) => res.json())
     .then((data) => {
       sc && sc(data);
-      // dispatch({
-      //   type: "update_progress",
-      //   payload: {
-      //     screen: uploader.screen,
-      //     hasStarted: true,
-      //     hasFinished: true,
-      //     error: false,
-      //     err: null,
-      //   },
-      // });
-      setTimeout(() => {
-        dispatch({
-          type: "update_progress",
-          payload: {
-            screen: uploader.screen,
-            hasStarted: true,
-            hasFinished: true,
-            error: false,
-            err: null,
-          },
-        });
-      }, 45000);
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: true,
+          error: false,
+          err: null,
+          hash: uploader?.hash,
+        },
+      });
     })
     .catch((err) => {
       cb &&
@@ -252,6 +241,7 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
           hasStarted: true,
           hasFinished: false,
           error: true,
+          hash: uploader?.hash,
           err: err,
         },
       });
@@ -264,6 +254,7 @@ const postPix = (dispatch) => async (data, sc, cb, uploader) => {
       hasStarted: true,
       hasFinished: false,
       error: false,
+      hash: uploader?.hash,
       err: null,
     },
   });
@@ -492,21 +483,31 @@ const statusUploader = (dispatch) => async (data, sc, cb, uploader) => {
     .then((res) => res.json())
     .then((data) => {
       sc && sc(data);
-      setTimeout(() => {
-        dispatch({
-          type: "update_progress",
-          payload: {
-            screen: uploader.screen,
-            hasStarted: true,
-            hasFinished: true,
-            error: false,
-            err: null,
-          },
-        });
-      }, 45000);
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: true,
+          hash: uploader?.hash,
+          error: false,
+          err: null,
+        },
+      });
     })
     .catch((err) => {
       cb && cb({ err, msg: "Error uploading story, try again" });
+      dispatch({
+        type: "update_progress",
+        payload: {
+          screen: uploader.screen,
+          hasStarted: true,
+          hasFinished: true,
+          hash: uploader?.hash,
+          error: true,
+          err: err,
+        },
+      });
     });
   // ======================================
   dispatch({
@@ -516,6 +517,7 @@ const statusUploader = (dispatch) => async (data, sc, cb, uploader) => {
       hasStarted: true,
       hasFinished: false,
       error: false,
+      hash: uploader?.hash,
       err: null,
     },
   });
@@ -683,6 +685,8 @@ export const { Provider, Context } = createDataContext(
       hasStarted: false,
       hasFinished: false,
       error: false,
+      hash: null,
+      err: null,
     },
   }
 );

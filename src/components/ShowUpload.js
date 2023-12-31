@@ -25,7 +25,7 @@ import PopMessage from "./PopMessage";
 
 const { width } = Dimensions.get("window");
 
-const ShowUpload = ({ visObj, setVisible }) => {
+const ShowUpload = ({ visObj, setVisible, hash }) => {
   // data = {uri, type, height, width }
   const { vis, data } = visObj;
   if (!data) return null;
@@ -111,20 +111,13 @@ const ShowUpload = ({ visObj, setVisible }) => {
 
     statusUploader(
       sendData,
-      (resData) => {
-        // setIsLoading(false);
-        // setVisible(true);
-      },
+      (resData) => {},
       (err) => {
-        // setPopData({
-        //   vis: true,
-        //   type: "failed",
-        //   msg: err.msg + ", try again",
-        // });
-        // setIsLoading(false);
+        //  Re-upload option to the user
       },
       {
         screen: `${data?.instance}@${data.instanceID}`,
+        hash: hash.value,
       }
     );
     setIsLoading(false);
@@ -367,6 +360,7 @@ const ShowUpload = ({ visObj, setVisible }) => {
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",

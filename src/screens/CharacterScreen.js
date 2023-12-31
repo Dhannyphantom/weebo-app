@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import uuid from "react-native-uuid";
 
 import AppText from "../components/AppText";
 import colors from "../constants/colors";
@@ -89,6 +90,7 @@ const CharacterScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState({ loader: true, err: false });
   const [transfer, setTransfer] = useState(false);
   const [alertModal, setAlertModal] = useState({ visible: false });
+  const [bools, setBools] = useState({ hash: uuid.v4() });
   const [challengerArr, setChallengerArr] = useState(
     character.challengers ?? []
   );
@@ -687,7 +689,13 @@ const CharacterScreen = ({ route, navigation }) => {
           fetchInstance={handleFetchCharacter}
           setter={() => setChallengeModal({ vis: null, contest: null })}
         />
-        <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+        <ShowUpload
+          visObj={showUpload}
+          hash={{
+            value: bools.hash,
+          }}
+          setVisible={handleStatusVisibility}
+        />
         <AlertModal
           obj={alertModal}
           setVisible={setAlertModal}

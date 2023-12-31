@@ -37,7 +37,12 @@ const ListItem = ({ icon, text, onPress, pos = "center" }) => {
     case "center":
       viewStyle = {
         backgroundColor: theme.background,
-        borderRadius: 200,
+        borderRadius: 100,
+        // borderRadius: 200,
+        width: 130,
+        height: 130,
+        justifyContent: "center",
+        alignItems: "center",
       };
       break;
     case "top":
@@ -83,7 +88,13 @@ const ListItem = ({ icon, text, onPress, pos = "center" }) => {
   );
 };
 
-const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
+const CreatePostActions = ({
+  setModalVis,
+  setPopper,
+  screenHash,
+  fetcher,
+  isMyPosts,
+}) => {
   const [selectChar, setSelectChar] = useState([]);
   const [cMode, setCMode] = useState(false);
 
@@ -96,15 +107,24 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
   const handleNav = async (type) => {
     if (type === "post") {
       setModalVis(false);
-      const { _error, results } = await launchGallery("all", true);
+      const { _error, results } = await launchGallery("all");
       if (_error) {
         setPopper({ vis: true, type: "failed", msg: _error });
       } else if (results) {
         navigation.navigate("Post", {
           assets: results,
           toScreen: "Home",
-          screenAlias: ["Home"],
+          screenAlias: "Home",
+          hash: screenHash,
           toScreenData: {},
+
+          /** 
+           * 
+           *  
+          type: "channel",
+          id: page._id,
+          name: page.name,
+           */
         });
       }
     } else if (type === "contest") {
@@ -115,7 +135,8 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
       navigation.navigate("Post", {
         write: true,
         toScreen: "Home",
-        screenAlias: ["Home"],
+        screenAlias: "Home",
+        hash: screenHash,
         toScreenData: {},
         id: null,
       });
@@ -236,7 +257,7 @@ const CreatePostActions = ({ setModalVis, setPopper, fetcher, isMyPosts }) => {
   );
 };
 
-const HomeHeader = ({ fetcher, scroller, isMyPosts }) => {
+const HomeHeader = ({ fetcher, screenHash, isMyPosts }) => {
   const navigation = useNavigation();
 
   const [modalVis, setModalVis] = useState(false);
@@ -323,6 +344,7 @@ const HomeHeader = ({ fetcher, scroller, isMyPosts }) => {
             fetcher={fetcher}
             setPopper={setPopper}
             isMyPosts={isMyPosts}
+            screenHash={screenHash}
             setModalVis={setModalVis}
           />
         )}
@@ -398,6 +420,7 @@ const styles = StyleSheet.create({
   listItem: {
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
     padding: 30,
   },
   listItemText: {

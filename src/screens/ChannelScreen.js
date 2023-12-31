@@ -117,14 +117,14 @@ const ChannelHeaderComp = ({
           !hasNotSubscribedChannels && !hasSubscribedChannels && boxState.s
         }
         type="isEmpty"
-        text={"No channels"}
+        text={"No channels found"}
         transparent
         style={{ width, height: height * 0.8 }}
       />
       <ActivityIndicator
         visible={boxState.m && !isAChannelManager}
         type="isEmpty"
-        text={"You don't have any channel. Create one now"}
+        text={"You don't have any channel.\nCreate one now"}
         transparent
         style={{ width, height: height * 0.8 }}
       />

@@ -30,7 +30,17 @@ import SearchInstance from "../components/SearchInstance";
 import ThemeContext from "../config/ThemeContext";
 import { postColors as colorSet } from "../constants/colors";
 import { launchGallery } from "../constants/helpers";
+import AlertModal from "../components/AlertModal";
 const screen = Dimensions.get("window");
+
+const removeImagePrompt = {
+  visible: true,
+  title: "Remove Media",
+  message: "Are sure you want to remove this media?",
+  btn: "REMOVE",
+  type: "remove_media",
+  data: {},
+};
 
 const PostScreen = ({ route, navigation }) => {
   const {
@@ -68,6 +78,7 @@ const PostScreen = ({ route, navigation }) => {
   const [color, setColor] = useState(colorSet);
   const [input, setInput] = useState("");
   const [media, setMedia] = useState(writer ? [] : assets);
+  const [prompt, setPrompt] = useState({ visible: false });
   const flatt = useRef();
   const searchInputRef = useRef(null);
   const mainFlatListRef = useRef(null);
@@ -90,20 +101,6 @@ const PostScreen = ({ route, navigation }) => {
     tColor: getBgColor().text,
   };
 
-  const data = {
-    title: writer ? textObj : text.trim(),
-    type: writer ? "text" : assetType,
-    post: media,
-    instancePost: router.type
-      ? {
-          id: router.id,
-          type: router.type,
-        }
-      : null,
-    meta: media, // was flax b4
-    tags: tagged,
-  };
-
   let tagTitle;
 
   !tagged[0] && !bools.showTag
@@ -113,6 +110,13 @@ const PostScreen = ({ route, navigation }) => {
     : (tagTitle = "Show");
 
   const handlePost = () => {
+    const data = {
+      title: writer ? textObj : text.trim(),
+      type: writer ? "text" : assetType,
+      post: media,
+      // meta: media, // was flax b4
+      tags: tagged,
+    };
     if (!tagged[0]) return setErrMsg("Please add at least a tag");
     setBools({ ...bools, showTag: false });
     if (!userInfo.verified) {
@@ -139,27 +143,37 @@ const PostScreen = ({ route, navigation }) => {
       },
       {
         screen: router?.screenAlias,
+        hash: router?.hash,
         callback: (ev) => console.log(ev),
       }
     );
 
-    setPopper({
-      vis: true,
-      msg: "Uploading...",
-      timer: 0.2,
-      loader: true,
-      type: "neutral",
-      cb: () => {
-        // NAVIGATE USER AWAY FROM SCREEN;
-        setBools({ ...bools, isLoading: false, disablePostBtn: false });
-        fromScreen
-          ? navigation.navigate(fromScreen, {
-              reloadPosts: true,
-              ...router.toScreenData,
-            })
-          : navigation.goBack();
-      },
-    });
+    //     // NAVIGATE USER AWAY FROM SCREEN;
+    setBools({ ...bools, isLoading: false, disablePostBtn: false });
+    fromScreen
+      ? navigation.navigate(fromScreen, {
+          reloadPosts: true,
+          ...router.toScreenData,
+        })
+      : navigation.goBack();
+
+    // setPopper({
+    //   vis: true,
+    //   msg: "Uploading...",
+    //   timer: 0.2,
+    //   loader: true,
+    //   type: "neutral",
+    //   cb: () => {
+    //     // NAVIGATE USER AWAY FROM SCREEN;
+    //     setBools({ ...bools, isLoading: false, disablePostBtn: false });
+    //     fromScreen
+    //       ? navigation.navigate(fromScreen, {
+    //           reloadPosts: true,
+    //           ...router.toScreenData,
+    //         })
+    //       : navigation.goBack();
+    //   },
+    // });
   };
 
   const handleAddMore = async () => {
@@ -256,12 +270,25 @@ const PostScreen = ({ route, navigation }) => {
     setColor(oldArr);
   };
 
+  const handlePrompt = () => {
+    switch (prompt?.type) {
+      case "remove_media":
+        handleRemoveImage(prompt?.data);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const renderAddMores = ({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => handleChangeImage(item)}
-        onLongPress={() => handleRemoveImage(item)}
+        onLongPress={() =>
+          !!media[1] ? setPrompt({ ...removeImagePrompt, data: item }) : null
+        }
       >
         <Image source={{ uri: item.uri }} style={styles.sm_img} />
       </TouchableOpacity>
@@ -566,6 +593,7 @@ const PostScreen = ({ route, navigation }) => {
           );
         }}
       />
+      <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompt} />
       <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
     </Screen>
   );

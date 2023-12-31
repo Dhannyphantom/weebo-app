@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import ActivityIndicator from "./ActivityIndicator";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import uuid from "react-native-uuid";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -22,7 +23,7 @@ import colors from "../constants/colors";
 import getTimestamp from "../constants/getTimestamp";
 import ThemeContext from "../config/ThemeContext";
 import { capFirstLetter, getFeedNumber } from "../constants/helpers";
-import { MediaUploadStatus } from "../screens/HomeScreen";
+import MediaUploadStatus from "./MediaUploadStatus";
 
 const { width } = Dimensions.get("window");
 const TIMER = 60 * 60 * 24 * 7 * 4; // 4 WEEKS
@@ -163,6 +164,7 @@ const InstanceHeader = ({
   } = useContext(FeedContext);
   const [dropDown, setDropDown] = useState(false);
   const [fBackModal, setFBackModal] = useState(false);
+  const [bools, setBools] = useState({ hash: uuid.v4(), loadedOnce: false });
   const [popper, setPopper] = useState({ vis: false });
   const [fBack, setFBack] = useState(0);
   const [verifyModal, setVerifyModal] = useState(false);
@@ -323,6 +325,7 @@ const InstanceHeader = ({
     } else {
       setFBack(0);
     }
+    setBools({ ...bools, loadedOnce: true });
   };
 
   const handleUnverifyPress = () => {
@@ -401,6 +404,7 @@ const InstanceHeader = ({
     if (
       uploadStatus?.hasFinished &&
       uploadStatus?.hasStarted &&
+      uploadStatus?.hash == bools.hash &&
       !uploadStatus?.error
     ) {
       fetcher &&
@@ -409,9 +413,20 @@ const InstanceHeader = ({
             vis: true,
             type: "success",
             msg: "Media Uploaded!",
+            cb: () => setBools({ ...bools, hash: uuid.v4() }),
             timer: 1.5,
           });
         });
+    }
+
+    if (bools.loadedOnce && uploadStatus?.error && uploadStatus?.hasStarted) {
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Upload failed due to network error",
+        cb: () => setBools({ ...bools, hash: uuid.v4() }),
+        timer: 10,
+      });
     }
   }, [uploadStatus]);
 

@@ -26,7 +26,7 @@ import ActivityIndicator from "./ActivityIndicator";
 import PopMessage from "./PopMessage";
 import ThemeContext from "../config/ThemeContext";
 import { CollectionCard } from "../screens/SavedCollectionScreen";
-import { downloadMedia } from "../constants/helpers";
+import { collectionStore, downloadMedia } from "../constants/helpers";
 import AppFadeIn from "./AppFadeIn";
 import { useNavigation } from "@react-navigation/native";
 
@@ -240,12 +240,15 @@ const RenderCollection = ({
   const {
     addToCollection,
     updateMe,
+    getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
 
   const [isNewCollLoading, setIsNewCollLoading] = useState(false);
   const [collectionData, setCollectionData] = useState(userInfo.my_collections);
   const [errMsg, setErrMsg] = useState(null);
+
+  // console.log({ collectionData, mColl: userInfo.my_collections });
 
   let collBtnText = "New Collection";
 
@@ -330,6 +333,25 @@ const RenderCollection = ({
       setShowText(true);
     }
   };
+
+  const handleFetchCollections = () => {
+    !isNewCollLoading && setIsNewCollLoading(true);
+    getUserData(
+      {
+        type: "get_collections",
+        id: userInfo._id,
+      },
+      async (resData) => {
+        setCollectionData(resData.my_collections);
+        setIsNewCollLoading(false);
+        //  await collectionStore(resData.my_collections)
+      }
+    );
+  };
+
+  useEffect(() => {
+    handleFetchCollections();
+  }, []);
 
   return (
     <>

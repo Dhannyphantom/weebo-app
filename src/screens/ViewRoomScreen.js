@@ -56,6 +56,8 @@ const boolsObj = {
   cover: false,
   followed: false,
   transfer: false,
+  loadedOnce: false,
+  hash: uuid.v4(),
   myCharacters: false,
 };
 const popObj = {
@@ -277,7 +279,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
   const {
     state: { userInfo },
   } = useContext(AuthContext);
-  const { followInstance } = useContext(FeedContext);
+  const {
+    followInstance,
+    state: { uploadStatus },
+  } = useContext(FeedContext);
   const { withdrawChallenge } = useContext(ChallContext);
 
   const [pageData, setPageData] = useState({});
@@ -627,7 +632,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     }
   };
 
-  const fetchRoomCharacters = (type) => {
+  const fetchRoomCharacters = (type, cb) => {
     type === "refresh" && setRefreshing(true);
 
     roomCharacters(
@@ -642,10 +647,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
           ],
         });
         type === "refresh" && setRefreshing(false);
+        !bools.loadedOnce && setBools({ ...bools, loadedOnce: true });
+        cb && cb();
       },
       (err) => {
         setErrMsg(err?.response?.data);
         type === "refresh" && setRefreshing(false);
+        !bools.loadedOnce && setBools({ ...bools, loadedOnce: true });
       }
     );
   };
@@ -848,6 +856,39 @@ const ViewRoomScreen = ({ navigation, route }) => {
     }
   };
 
+  // FOR AUTO POSTS RELOAD
+  useEffect(() => {
+    if (bools.loadedOnce && uploadStatus?.error && uploadStatus?.hasStarted) {
+      setPopper({
+        vis: true,
+        type: "failed",
+        msg: "Upload failed due to network error",
+        cb: () => setBools({ ...bools, hash: uuid.v4() }),
+        timer: 10,
+      });
+    }
+  }, [uploadStatus]);
+
+  useEffect(() => {
+    if (
+      bools.loadedOnce &&
+      uploadStatus?.hasFinished &&
+      uploadStatus?.hasStarted &&
+      uploadStatus?.hash == bools.hash &&
+      !uploadStatus?.error
+    ) {
+      fetchRoomCharacters("load", () => {
+        setPopper({
+          vis: true,
+          type: "success",
+          msg: "Media Uploaded!",
+          timer: 3,
+          cb: () => setBools({ ...bools, hash: uuid.v4() }),
+        });
+      });
+    }
+  }, [navigation, route, uploadStatus]);
+
   useEffect(() => {
     fetchRoomCharacters("load");
   }, [navigation]);
@@ -1022,7 +1063,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
           }}
         />
 
-        <ShowUpload visObj={showUpload} setVisible={handleStatusVisibility} />
+        <ShowUpload
+          visObj={showUpload}
+          setVisible={handleStatusVisibility}
+          hash={{
+            value: bools.hash,
+          }}
+        />
         <TransferInstance
           visible={bools.transfer}
           instance="group"

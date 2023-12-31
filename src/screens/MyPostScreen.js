@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
+import uuid from "react-native-uuid";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import { Context as FeedContext } from "../config/FeedContext";
@@ -13,8 +14,8 @@ import ThemeContext from "../config/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import TabList from "../components/TabList";
 import { launchGallery } from "../constants/helpers";
-import { MediaUploadStatus } from "./HomeScreen";
 import PopMessage from "../components/PopMessage";
+import MediaUploadStatus from "../components/MediaUploadStatus";
 
 const MyPostScreen = ({ navigation, route }) => {
   const {
@@ -38,6 +39,9 @@ const MyPostScreen = ({ navigation, route }) => {
     loadedOnce: false,
     isLoading: true,
     isPostEmpty: true,
+    isLoadedTagged: false,
+    hash: uuid.v4(),
+    isTaggedEmpty: true,
   });
 
   const params = route.params;
@@ -57,6 +61,7 @@ const MyPostScreen = ({ navigation, route }) => {
         type: fromScreen,
         id: params?.info?.id,
         screenAlias,
+        hash: bools.hash,
         fromScreen: "MyPost",
         name: params?.info.name,
       });
@@ -76,21 +81,25 @@ const MyPostScreen = ({ navigation, route }) => {
 
   const onChangeTab = (type) => {
     if (type === "posts") {
-      setTab({ posts: true, tagged: false });
+      if (bools.loadedOnce) {
+        setTab({ posts: true, tagged: false });
+      } else {
+        // fetch posts
+      }
     } else if (type === "tagged") {
       setTab({ posts: false, tagged: true });
-      if (!taggedMedia[0]) {
+      if (!bools.isLoadedTagged) {
         setBools({ ...bools, isLoading: true });
         getInstancePosts(
           { id: params?.info?.id, instance: fromScreen, type: "tagged" },
           (resData) => {
             setTaggedMedia(resData);
             setCount({ ...count, tagged: resData.length });
-
             setBools({
               ...bools,
               isLoading: false,
-              isPostEmpty: resData[0] ? false : true,
+              isLoadedTagged: true,
+              isTaggedEmpty: resData[0] ? false : true,
             });
           },
           (errData) => {
@@ -183,6 +192,7 @@ const MyPostScreen = ({ navigation, route }) => {
         vis: true,
         type: "failed",
         msg: "Upload failed due to network error",
+        cb: () => setBools({ ...bools, hash: uuid.v4() }),
         timer: 10,
       });
     }
@@ -193,12 +203,14 @@ const MyPostScreen = ({ navigation, route }) => {
     if (uploadStatus?.screen === screenAlias && loadedOnce) {
       uploadStatus?.hasFinished &&
         uploadStatus?.hasStarted &&
+        uploadStatus?.hash == bools.hash &&
         !uploadStatus?.error &&
         fetchScreenData(() => {
           setPopper({
             vis: true,
             type: "success",
             msg: "Media Uploaded!",
+            cb: () => setBools({ ...bools, hash: uuid.v4() }),
             timer: 1.5,
           });
         });

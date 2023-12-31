@@ -17,6 +17,7 @@ import { setButtonStyleAsync } from "expo-navigation-bar";
 import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
+import uuid from "react-native-uuid";
 // import * as Notifications from "expo-notifications";
 // import { NativeAdsManager } from "react-native-fbads";
 // import NativeAds from "../components/NativeAds";
@@ -49,6 +50,7 @@ import BannerAds from "../components/BannerAds";
 import TobiGuide from "../components/TobiGuide";
 import RenderLoadMore from "../components/RenderLoadMore";
 import PopMessage from "../components/PopMessage";
+import MediaUploadStatus from "../components/MediaUploadStatus";
 
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
 const fbAdsPlacementID = "406752991548934_406754288215471";
@@ -69,38 +71,8 @@ const boolsObj = {
   initialLoader: true,
   loader: false,
   isMyPosts: false,
+  hash: uuid.v4(),
   showStatus: false,
-};
-
-export const MediaUploadStatus = ({ status, screen }) => {
-  const compareScreen = Array.isArray(screen)
-    ? screen.includes(status?.screen)
-    : status?.screen == screen;
-
-  const checkBool =
-    compareScreen &&
-    status?.hasStarted &&
-    !status?.hasFinished &&
-    !status?.error;
-
-  return (
-    <>
-      {checkBool && (
-        <View style={styles.row}>
-          <ActivityIndicator
-            visible
-            type="loader"
-            size={0.2}
-            style={styles.activityUpload}
-            transparent
-          />
-          <AppText size="xsmall" textStyle="black">
-            Uploading media...
-          </AppText>
-        </View>
-      )}
-    </>
-  );
 };
 
 const HomeScreen = ({ navigation, route }) => {
@@ -391,6 +363,7 @@ const HomeScreen = ({ navigation, route }) => {
         vis: true,
         type: "failed",
         msg: "Upload failed due to network error",
+        cb: () => setBools({ ...bools, hash: uuid.v4() }),
         timer: 10,
       });
     }
@@ -401,12 +374,14 @@ const HomeScreen = ({ navigation, route }) => {
     if (bools.loadedOnce && route?.params?.reloadPosts) {
       uploadStatus?.hasFinished &&
         uploadStatus?.hasStarted &&
+        uploadStatus?.hash == bools.hash &&
         !uploadStatus?.error &&
         fetchHomeData(() => {
           setPopper({
             vis: true,
             type: "success",
             msg: "Media Uploaded!",
+            cb: () => setBools({ ...bools, hash: uuid.v4() }),
             timer: 1.5,
           });
         }, false);
@@ -424,7 +399,7 @@ const HomeScreen = ({ navigation, route }) => {
       >
         <HomeHeader
           fetcher={fetchHomeData}
-          // scroller={() => feedFlatRef?.current?.scrollToEnd()}
+          screenHash={bools.hash}
           isMyPosts={bools.isMyPosts}
         />
         {errMsg && (
@@ -575,11 +550,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     color: colors.heartDark,
     marginBottom: 25,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
   },
   statusHeader: {
     flex: 1,

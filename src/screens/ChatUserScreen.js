@@ -83,13 +83,13 @@ const ChatUserScreen = ({ route }) => {
       sendData,
       (resData) => {
         //tag the message sent
-        flatRef.current.scrollToEnd();
+        flatRef?.current?.scrollToEnd();
       },
       (err) => {
         setErrMsg("Message not sent");
       }
     );
-    flatRef.current.scrollToEnd();
+    flatRef?.current?.scrollToEnd();
   };
 
   const renderChats = ({ item }) => {
@@ -122,7 +122,7 @@ const ChatUserScreen = ({ route }) => {
     }
     chatz && chatz?.results.length == 0 ? setEmpty(true) : setEmpty(false);
     await AsyncStorage.setItem(`chat_${_id}`, JSON.stringify(chatz));
-    flatRef.current.scrollToEnd();
+    flatRef?.current?.scrollToEnd();
   };
 
   const handleLoadMoreChats = () => {
@@ -149,7 +149,7 @@ const ChatUserScreen = ({ route }) => {
       user_chat = JSON.parse(user_chat);
       // setChats({ ...user_chat, results: user_chat?.results?.slice(-25) ?? [] });
       setChatLoaded(true);
-      flatRef.current.scrollToEnd();
+      flatRef?.current?.scrollToEnd();
     }
   };
 
@@ -258,7 +258,7 @@ const ChatUserScreen = ({ route }) => {
               data={chats.results}
               ref={flatRef}
               keyExtractor={(item) => item._id}
-              onContentSizeChange={() => flatRef.current.scrollToEnd()}
+              onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
               ListFooterComponent={RenderChatFooter}
               ListHeaderComponent={() => (
                 <>
