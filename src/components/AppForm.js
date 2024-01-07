@@ -710,7 +710,7 @@ const AppForm = ({
       >
         <AppText>
           {b === "up" ? "Don't" : "Already"} have an account?
-          <AppText style={styles.link}>Sign {b}</AppText>
+          <AppText style={styles.link}> Sign {b}</AppText>
         </AppText>
       </TouchableOpacity>
       {loading && (

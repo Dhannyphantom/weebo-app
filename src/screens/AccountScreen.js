@@ -236,7 +236,8 @@ const AccountScreen = ({ navigation, route }) => {
           {!isProfileCompleted && !isEmailVerified ? " and " : null}
           {!isEmailVerified ? "Verify your email" : null} to earn
           <AppText bold style={{ color: colors.primary }}>
-            80WP
+            {" "}
+            100WP{" "}
           </AppText>
           more
         </AppText>

@@ -151,11 +151,15 @@ const RenderEmailPop = ({ vis, setPopper, setEmailPop }) => {
           setIsLoading(false);
         },
         (err) => {
-          const myMsg = err.includes("EREFUSED")
-            ? "Bad internet connection"
-            : err.includes("TIMEOUT")
-            ? "Poor connection, please try again"
-            : "Something went wrong!";
+          let myMsg;
+          myMsg =
+            typeof err === "string"
+              ? err?.includes("EREFUSED")
+                ? "Bad internet connection"
+                : err?.includes("TIMEOUT")
+                ? "Poor connection, please try again"
+                : "Something went wrong!"
+              : err?.msg;
           setMailText({ text: myMsg, show: true, type: "bad" });
           setIsLoading(false);
         }
@@ -607,7 +611,7 @@ const EditProfileScreen = ({ navigation, route }) => {
                   />
                   <FormCountryPicker />
                   <CreateForm
-                    headerZ="city/town"
+                    headerZ="current city/town"
                     name="city"
                     mutable={
                       formInitials.city.length > 1 ? formInitials.city : "city"
