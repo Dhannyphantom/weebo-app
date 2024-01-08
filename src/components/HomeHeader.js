@@ -257,7 +257,7 @@ const CreatePostActions = ({
   );
 };
 
-const HomeHeader = ({ fetcher, screenHash, isMyPosts }) => {
+const HomeHeader = ({ fetcher, scrollTop, screenHash, isMyPosts }) => {
   const navigation = useNavigation();
 
   const [modalVis, setModalVis] = useState(false);
@@ -298,7 +298,7 @@ const HomeHeader = ({ fetcher, screenHash, isMyPosts }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topper}>
-        <TouchableOpacity activeOpacity={1}>
+        <TouchableOpacity onPress={scrollTop} activeOpacity={1}>
           <AppLogo />
         </TouchableOpacity>
         <View style={styles.headerIcons}>

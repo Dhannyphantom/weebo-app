@@ -424,12 +424,20 @@ const ChannelPostScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleGetChannel = (cb, page) => {
+  const handleGetChannel = (cb, page, shouldConcat) => {
     getAChannel(
       { id: routeId, page: page ?? 1, limit: 15 },
       (data) => {
+        if (shouldConcat) {
+          setPosts({
+            ...data.posts,
+            results: posts?.results?.concat(data.posts.results),
+            event: data.event,
+          });
+        } else {
+          setPosts({ ...data.posts, event: data.event });
+        }
         setPage(data.channelData);
-        setPosts({ ...data.posts, event: data.event });
         !bools.loadedOnce && setBools({ ...bools, loadedOnce: true });
         cb && cb();
       },
@@ -441,7 +449,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
 
   const handleEndReached = (cb) => {
     if (posts.hasOwnProperty("next")) {
-      handleGetChannel(cb, posts.next.page);
+      handleGetChannel(cb, posts.next.page, true);
     } else {
       if (bools.loadMore) {
         setBools({ ...bools, loadMore: false });

@@ -100,6 +100,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const notificationListener = useRef();
   const responseListener = useRef();
+  const feedFlatRef = useRef();
   const showSpinner = ((feeds && !feeds?.results[0]) || !feeds) && !showStatus;
 
   const onRefresh = useCallback(async () => {
@@ -226,7 +227,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const handleEndReached = (cb) => {
     setErrMsg(null);
-    if (feeds.hasOwnProperty("next")) {
+    if (feeds?.hasOwnProperty("next")) {
       getHomeFeeds(
         {
           limit: 15,
@@ -400,6 +401,9 @@ const HomeScreen = ({ navigation, route }) => {
         <HomeHeader
           fetcher={fetchHomeData}
           screenHash={bools.hash}
+          // scrollTop={() => {
+          //   feedFlatRef?.current?.scrollToIndex(1);
+          // }}
           isMyPosts={bools.isMyPosts}
         />
         {errMsg && (
@@ -407,42 +411,38 @@ const HomeScreen = ({ navigation, route }) => {
             {errMsg}
           </AppText>
         )}
-        {!feeds?.results[0] ? (
-          <RenderPageHeader />
-        ) : (
-          <>
-            <Viewport.Tracker>
-              <FlatList
-                data={feeds?.results}
-                ListHeaderComponent={RenderPageHeader}
-                keyboardShouldPersistTaps="handled"
-                // ref={feedFlatRef}
-                renderToHardwareTextureAndroid
-                ListFooterComponent={() => (
-                  <RenderLoadMore
-                    loader={loadMore}
-                    hasNext={feeds.hasOwnProperty("next")}
-                  />
-                )}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: height * 0.1 }}
-                refreshControl={
-                  <RefreshControl
-                    progressBackgroundColor={theme.extralight}
-                    colors={[colors.primary]}
-                    tintColor={colors.primary}
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-                onEndReached={handleEndReached}
-                onEndReachedThreshold={20}
-                keyExtractor={keyExtractor}
-                renderItem={renderHome}
+        {!feeds?.results[0] && <RenderPageHeader />}
+
+        <Viewport.Tracker>
+          <FlatList
+            data={feeds?.results}
+            ListHeaderComponent={RenderPageHeader}
+            keyboardShouldPersistTaps="handled"
+            ref={feedFlatRef}
+            renderToHardwareTextureAndroid
+            ListFooterComponent={() => (
+              <RenderLoadMore
+                loader={loadMore}
+                hasNext={feeds?.hasOwnProperty("next")}
               />
-            </Viewport.Tracker>
-          </>
-        )}
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: height * 0.1 }}
+            refreshControl={
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={20}
+            keyExtractor={keyExtractor}
+            renderItem={renderHome}
+          />
+        </Viewport.Tracker>
       </Screen>
       <AppSlider
         visible={slider}
