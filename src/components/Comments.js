@@ -7,7 +7,6 @@ import {
   Platform,
   FlatList,
   TouchableOpacity,
-  TextInput,
 } from "react-native";
 import colors from "../constants/colors";
 import ActivityIndicator from "./ActivityIndicator";
