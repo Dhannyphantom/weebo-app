@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Device from "expo-device";
 import {
   RewardedAd,
   RewardedAdEventType,
@@ -27,8 +28,10 @@ const { width, height } = Dimensions.get("window");
 const ADS_POINT = 5;
 
 export const ADS_ID = Platform.select({
-  ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8881804714",
-  android: __DEV__
+  ios: Device.isDevice
+    ? TestIds.REWARDED
+    : "ca-app-pub-3603875446667492/8881804714",
+  android: Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/3217430636",
 });

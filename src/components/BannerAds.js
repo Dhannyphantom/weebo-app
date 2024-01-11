@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Device from "expo-device";
 import ThemeContext from "../config/ThemeContext";
 import {
   MobileAds,
@@ -15,8 +16,10 @@ import ActivityIndicator from "./ActivityIndicator";
 const { width, height } = Dimensions.get("screen");
 
 export const BANNER_ID = Platform.select({
-  ios: __DEV__ ? TestIds.REWARDED : "ca-app-pub-3603875446667492/8969273853",
-  android: __DEV__
+  ios: Device.isDevice
+    ? TestIds.REWARDED
+    : "ca-app-pub-3603875446667492/8969273853",
+  android: Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/8969273853",
 });
