@@ -3,9 +3,7 @@ import { View, StyleSheet } from "react-native";
 import ShowGroup from "../components/ShowGroup";
 
 const ShowsScreen = ({ route: { params } }) => {
-  const headerTitle = params?.recommendations
-    ? "Anime/Manga Bucket Lists"
-    : "Shows";
+  const headerTitle = params?.recommendations ? "Anime/Manga Panel" : "Shows";
 
   return (
     <View style={styles.container}>

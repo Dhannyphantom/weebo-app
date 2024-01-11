@@ -411,38 +411,40 @@ const HomeScreen = ({ navigation, route }) => {
             {errMsg}
           </AppText>
         )}
-        {!feeds?.results[0] && <RenderPageHeader />}
-
-        <Viewport.Tracker>
-          <FlatList
-            data={feeds?.results}
-            ListHeaderComponent={RenderPageHeader}
-            keyboardShouldPersistTaps="handled"
-            ref={feedFlatRef}
-            renderToHardwareTextureAndroid
-            ListFooterComponent={() => (
-              <RenderLoadMore
-                loader={loadMore}
-                hasNext={feeds?.hasOwnProperty("next")}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: height * 0.1 }}
-            refreshControl={
-              <RefreshControl
-                progressBackgroundColor={theme.extralight}
-                colors={[colors.primary]}
-                tintColor={colors.primary}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={20}
-            keyExtractor={keyExtractor}
-            renderItem={renderHome}
-          />
-        </Viewport.Tracker>
+        {!feeds?.results[0] ? (
+          <RenderPageHeader />
+        ) : (
+          <Viewport.Tracker>
+            <FlatList
+              data={feeds?.results}
+              ListHeaderComponent={RenderPageHeader}
+              keyboardShouldPersistTaps="handled"
+              ref={feedFlatRef}
+              renderToHardwareTextureAndroid
+              ListFooterComponent={() => (
+                <RenderLoadMore
+                  loader={loadMore}
+                  hasNext={feeds?.hasOwnProperty("next")}
+                />
+              )}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: height * 0.1 }}
+              refreshControl={
+                <RefreshControl
+                  progressBackgroundColor={theme.extralight}
+                  colors={[colors.primary]}
+                  tintColor={colors.primary}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={20}
+              keyExtractor={keyExtractor}
+              renderItem={renderHome}
+            />
+          </Viewport.Tracker>
+        )}
       </Screen>
       <AppSlider
         visible={slider}

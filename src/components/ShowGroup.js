@@ -594,8 +594,8 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
       />
       {isRecommendation && (
         <AppText style={styles.subTitleText}>
-          Here are some interesing Anime/Manga recommendations you've not yet
-          followed just for you
+          Anime/Manga recommendations, Trending Instances personalized just for
+          you
         </AppText>
       )}
       {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}

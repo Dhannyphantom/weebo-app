@@ -240,7 +240,7 @@ const CreatePostActions = ({
             />
             <ListItem
               icon="monitor"
-              text="Buckets"
+              text="Panel"
               pos="bottom"
               onPress={() => handleNav("recommendation")}
             />

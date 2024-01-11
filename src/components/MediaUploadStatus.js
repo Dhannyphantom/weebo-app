@@ -86,7 +86,7 @@ const MediaUploadStatus = ({ status, screen }) => {
           />
           <AppText
             size="xsmall"
-            style={{ color: colors.medium, marginTop: 4 }}
+            style={{ color: colors.medium, marginTop: 8 }}
             textStyle="black"
           >
             Uploading media...
@@ -101,8 +101,9 @@ export default MediaUploadStatus;
 
 const styles = StyleSheet.create({
   row: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginVertical: 12,
+    maxHeight: 30,
   },
 });
