@@ -101,16 +101,9 @@ export default MediaUploadStatus;
 
 const styles = StyleSheet.create({
   row: {
-<<<<<<< HEAD
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 12,
     maxHeight: 30,
-=======
-    // flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 12,
->>>>>>> 58e0ac4c1858a384692d12a1fcbabdf65e817023
   },
 });
