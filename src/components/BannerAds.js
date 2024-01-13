@@ -4,7 +4,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Device from "expo-device";
 import ThemeContext from "../config/ThemeContext";
 import {
-  MobileAds,
   BannerAd,
   BannerAdSize,
   TestIds,
@@ -16,10 +15,10 @@ import ActivityIndicator from "./ActivityIndicator";
 const { width, height } = Dimensions.get("screen");
 
 export const BANNER_ID = Platform.select({
-  ios: Device.isDevice
+  ios: !Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/8969273853",
-  android: Device.isDevice
+  android: !Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/8969273853",
 });

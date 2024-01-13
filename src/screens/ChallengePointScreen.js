@@ -28,10 +28,10 @@ const { width, height } = Dimensions.get("window");
 const ADS_POINT = 5;
 
 export const ADS_ID = Platform.select({
-  ios: Device.isDevice
+  ios: !Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/8881804714",
-  android: Device.isDevice
+  android: !Device.isDevice
     ? TestIds.REWARDED
     : "ca-app-pub-3603875446667492/3217430636",
 });
