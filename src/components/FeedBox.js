@@ -50,7 +50,8 @@ const FeedBox = ({
 
   if (border) {
     borderProps.borderWidth = 3;
-    borderProps.borderColor = colors.primary;
+    borderProps.borderColor =
+      theme.mode == "light" ? colors.primary : theme.unchange;
   }
 
   const handleMediaPress = () => {

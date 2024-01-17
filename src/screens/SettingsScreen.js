@@ -461,7 +461,10 @@ const RenderSections = ({ item, section, setPopper, editSettings }) => {
   return (
     <>
       <View
-        style={[styles.itemContainer, { backgroundColor: theme.background }]}
+        style={[
+          styles.itemContainer,
+          { backgroundColor: theme.background, borderColor: theme.unchange },
+        ]}
       >
         <View style={styles.eachItem}>
           <AppText> {item.name} </AppText>

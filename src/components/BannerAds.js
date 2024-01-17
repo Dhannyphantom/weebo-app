@@ -15,12 +15,12 @@ import ActivityIndicator from "./ActivityIndicator";
 const { width, height } = Dimensions.get("screen");
 
 export const BANNER_ID = Platform.select({
-  ios: !Device.isDevice
-    ? TestIds.REWARDED
-    : "ca-app-pub-3603875446667492/8969273853",
-  android: !Device.isDevice
-    ? TestIds.REWARDED
-    : "ca-app-pub-3603875446667492/8969273853",
+  ios: Device.isDevice
+    ? "ca-app-pub-3603875446667492/8969273853"
+    : TestIds.BANNER,
+  android: Device.isDevice
+    ? "ca-app-pub-3603875446667492/8969273853"
+    : TestIds.BANNER,
 });
 
 const bannerTypes = [
@@ -69,7 +69,7 @@ export default function BannerAds() {
         {
           backgroundColor: theme.white,
           borderWidth: actions.loadFail ? 3 : 0,
-          borderColor: "#ddd",
+          borderColor: theme.unchange,
         },
       ]}
     >

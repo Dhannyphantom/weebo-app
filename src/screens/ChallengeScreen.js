@@ -96,9 +96,9 @@ const ChallengeScreen = ({ navigation }) => {
         />
       );
     } else {
-      const isCharacter = item.character ? true : false;
-      const isShow = item.show ? true : false;
-      const isGroup = item.group ? true : false;
+      const isCharacter = !!item.character;
+      const isShow = !!item.show;
+      const isGroup = !!item.group;
 
       let coverImage, name, title, id, followers, nav, fullName;
       if (isCharacter) {

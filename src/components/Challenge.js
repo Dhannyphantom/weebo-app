@@ -64,7 +64,7 @@ const RenderFeed = ({
         {type === "image" && (
           <TouchableOpacity
             activeOpacity={0.92}
-            style={{ height: height * 0.3 }}
+            style={styles.feedContainer}
             onPress={() => handleShowMedia(media)}
           >
             <LoaderImage style={styles.imageStyle} noAspect image={media} />
@@ -497,9 +497,11 @@ const styles = StyleSheet.create({
     maxWidth: "85%",
     marginLeft: 12,
   },
-  feedcontainer: {
+  feedContainer: {
     justifyContent: "center",
+    alignItems: "center",
     padding: 10,
+    height: height * 0.3,
   },
   challengebox: {
     flexDirection: "row",
@@ -519,7 +521,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   imageStyle: {
-    width: width / 2.1,
+    width: "100%",
+    height: "100%",
     padding: 10,
     elevation: 2,
   },

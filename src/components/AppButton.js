@@ -162,10 +162,10 @@ const AppButton = ({
                 styles.bare,
                 {
                   backgroundColor: bareWhite
-                    ? "white"
+                    ? theme.unchange
                     : bareRed
                     ? colors.heartLighter
-                    : colors.primaryLight,
+                    : theme.extralight,
                   borderWidth: bareWhite ? 0 : 1,
                   borderColor: bareRed ? colors.heart : colors.primary,
                 },
@@ -182,7 +182,11 @@ const AppButton = ({
               <AppText
                 style={{
                   ...styles.bareText,
-                  color: bareRed ? colors.heart : colors.primary,
+                  color: bareRed
+                    ? colors.heart
+                    : theme.mode == "light"
+                    ? colors.primary
+                    : colors.light,
                 }}
                 size={btnTextSize}
                 textStyle="black"

@@ -46,10 +46,16 @@ const FeedRender = ({ item, user }) => {
   const handleLike = () => {
     if (post.liked) {
       setPost({ ...post, likes: post.likes - 1, liked: false });
-      likePost(item._id, "unlike", (err) => setErrMsg(err));
+      likePost(item._id, "unlike", (err) => {
+        setErrMsg(err);
+        setPost({ ...post, likes: post.likes + 1, liked: false });
+      });
     } else {
       setPost({ ...post, likes: post.likes + 1, liked: true });
-      likePost(item._id, "like", (err) => setErrMsg(err));
+      likePost(item._id, "like", (err) => {
+        setErrMsg(err);
+        setPost({ ...post, likes: post.likes - 1, liked: true });
+      });
     }
   };
 

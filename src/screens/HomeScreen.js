@@ -176,7 +176,8 @@ const HomeScreen = ({ navigation, route }) => {
         cb && cb();
       },
       (err) => {
-        bools.loadedOnce && setErrMsg("Error fetching feeds");
+        bools.loadedOnce &&
+          setErrMsg("Error fetching feeds, check internet connection");
         loader &&
           setBools({ ...bools, loader: false, isMyPosts: type === "my_post" });
         cb && cb();
@@ -439,7 +440,7 @@ const HomeScreen = ({ navigation, route }) => {
                 />
               }
               onEndReached={handleEndReached}
-              onEndReachedThreshold={20}
+              onEndReachedThreshold={70}
               keyExtractor={keyExtractor}
               renderItem={renderHome}
             />

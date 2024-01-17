@@ -28,15 +28,21 @@ const LoaderImage = ({
     setLoadedOnce(true);
   };
 
+  const contStyle = {
+    ...styles.container,
+    backgroundColor: theme.extralight,
+    borderRadius: full ? 1 : 12,
+    ...style,
+  };
+
+  if (noAspect === true || !isVideoImage) {
+    contStyle.aspectRatio = image?.width / image?.height;
+  }
+
   return (
     <View
       style={{
-        ...styles.container,
-        backgroundColor: theme.extralight,
-        borderRadius: full ? 1 : 12,
-        aspectRatio:
-          noAspect || isVideoImage ? null : image?.width / image?.height,
-        ...style,
+        ...contStyle,
       }}
     >
       <Image
