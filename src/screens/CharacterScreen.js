@@ -304,6 +304,24 @@ const CharacterScreen = ({ route, navigation }) => {
     setTransfer(true);
   };
 
+  const handleNewPost = async () => {
+    // LIMIT INSTANCE POSTS
+    const { results } = await launchGallery("all");
+    if (results) {
+      navigation.navigate("Post", {
+        assets: results,
+        type: "character",
+        id: charID,
+        // id: params?.info?.id,
+        screenAlias: ["Character"],
+        hash: bools.hash,
+        fromScreen: "Character",
+        name: character?.name,
+      });
+    }
+    setOpenMedia(false);
+  };
+
   const updateThisInstance = (prop, val) => {
     const oldCharObj = { ...character };
     oldCharObj[prop] = val;
@@ -577,6 +595,25 @@ const CharacterScreen = ({ route, navigation }) => {
             </AppText>
           </TouchableOpacity>
         </View>
+        {isMine && (
+          <View style={{ marginTop: 25 }}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={{ alignSelf: "center", alignItems: "center" }}
+              onPress={handleNewPost}
+            >
+              <Ionicons
+                name="camera-outline"
+                size={width * 0.1}
+                color={colors.primary}
+              />
+
+              <AppText style={{ textAlign: "center" }} bold>
+                New Post
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
