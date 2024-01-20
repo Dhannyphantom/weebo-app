@@ -86,6 +86,7 @@ const RenderPostReports = ({ state, postId }) => {
   ];
 
   const handleReportPost = (complaints) => {
+    if (text.length < 2) return;
     setBools({ ...bools, loading: true });
     postReport(
       { ...complaints, postId },
