@@ -24,12 +24,23 @@ import schemas from "../constants/yupSchema";
 import Separator from "../components/Separator";
 import ActivityIndicator from "../components/ActivityIndicator";
 import TabList from "../components/TabList";
+import AlertModal from "../components/AlertModal";
 
 const {
   characterValidationSchema,
   showValidationschema,
   groupValidationSchema,
 } = schemas;
+
+const beforeLeavePrompt = {
+  visible: false,
+  title: "Leave Screen",
+  message:
+    "Are sure you want to leave screen?\nAll screen changes are not saved!",
+  btn: "LEAVE",
+  type: "leave_screen",
+  data: {},
+};
 const { width, height } = Dimensions.get("window");
 
 const CHARACTER_WP = 150;
@@ -111,6 +122,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     group: false,
   });
   const [changeD, setChangeD] = useState(false);
+  const [prompt, setPrompt] = useState(beforeLeavePrompt);
 
   const weebo_points = cardState.character
     ? CHARACTER_WP
@@ -155,6 +167,15 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     navigation.replace("Show", { show: info.show, toScreen: "Home" });
   };
 
+  const handlePrompts = () => {
+    switch (prompt.type) {
+      case "leave_screen":
+        navigation.dispatch(prompt.data);
+        break;
+      default:
+        break;
+    }
+  };
   useEffect(() => {
     navigation.addListener("focus", () => {
       setIsLoading(false);
@@ -162,6 +183,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     });
     navigation.addListener("blur", () => {
       Keyboard.dismiss();
+    });
+    navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      setPrompt({ ...beforeLeavePrompt, visible: true, data: e.data.action });
     });
   }, [navigation]);
 
@@ -435,6 +460,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
           <ActivityIndicator visible={true} type="spin" wTransparent />
         )}
       </View>
+      <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompts} />
     </Screen>
   );
 };
