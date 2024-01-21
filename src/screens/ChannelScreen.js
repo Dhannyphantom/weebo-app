@@ -282,7 +282,7 @@ const ChannelListComp = ({
           <LoaderImage
             image={item.cover_photo}
             borderRadius={width * 0.03}
-            noAspect
+            setAspectRatio={false}
             style={small ? styles.imageTwo : styles.image}
           />
           <View style={styles.imageBg}></View>

@@ -161,6 +161,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
               <FeedImage
                 showMediaFunc={modalActions?.showMediaFunc}
                 image={item}
+                setAspectRatio={true}
                 style={{ width }}
                 disableTouch
                 handleLike={modalActions?.handleLike}

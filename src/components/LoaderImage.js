@@ -5,7 +5,7 @@ import ThemeContext from "../config/ThemeContext";
 import ActivityIndicator from "./ActivityIndicator";
 import { RenderMediaIcon } from "./PostVideo";
 
-const { height } = Dimensions.get("screen");
+const { height, width } = Dimensions.get("screen");
 
 const LoaderImage = ({
   image,
@@ -16,7 +16,7 @@ const LoaderImage = ({
   containerStyle,
   borderRadius,
   loading = false,
-  noAspect,
+  setAspectRatio = true,
   ...otherProps
 }) => {
   const [isLoading, setIsLoading] = useState(isVideoImage ? false : true);
@@ -35,16 +35,14 @@ const LoaderImage = ({
     ...style,
   };
 
-  if (noAspect === true || !isVideoImage) {
+  if (setAspectRatio && !isVideoImage) {
     contStyle.aspectRatio = image?.width / image?.height;
+    delete contStyle.height;
+    delete contStyle.width;
   }
 
   return (
-    <View
-      style={{
-        ...contStyle,
-      }}
-    >
+    <View style={contStyle}>
       <Image
         source={{ uri: image?.thumb }}
         {...otherProps}
@@ -108,7 +106,9 @@ const styles = StyleSheet.create({
     top: 0,
   },
   container: {
-    backgroundColor: "#e1e4e8",
+    width: "100%",
+    height: "100%",
+    borderRadius: 13,
   },
 
   image: {

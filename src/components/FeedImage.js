@@ -22,10 +22,11 @@ const FeedImage = ({
   showMediaFunc,
   disableTouch = false,
   dbDisabled,
+  setAspectRatio = false,
   full,
   liked,
   style = {
-    width: screen.width * 0.9,
+    width: screen.width * 0.19,
     padding: 5,
     maxHeight: screen.height * 0.75,
   },
@@ -81,10 +82,15 @@ const FeedImage = ({
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleImagePress}
-        style={[style, { aspectRatio: image.width / image.height }]}
+        style={style}
+        // style={[style, { aspectRatio: image.width / image.height }]}
         disabled={disableTouch}
       >
-        <LoaderImage image={image} full={full} />
+        <LoaderImage
+          image={image}
+          full={full}
+          setAspectRatio={setAspectRatio}
+        />
         <Animated.View
           style={{
             ...styles.heartPop,

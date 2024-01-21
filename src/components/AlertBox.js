@@ -42,14 +42,14 @@ const AlertBox = ({
   let username = user && user.username;
   let avatar = user && user.avatar;
   let _id = user && user._id;
-  let border, owner, ownerImage, nameStyles, atSymbol;
+  let border, nameStyles, atSymbol;
   active
     ? (border = { borderColor: colors.primary, borderWidth: 2 })
-    : (border = { borderColor: "#ddd", borderWidth: 2 });
+    : (border = { borderColor: theme.unchange, borderWidth: 2 });
   if (!character && !user) {
-    owner = username = "WEEBO";
+    username = "WEEBO";
     atSymbol = noAt = true;
-    ownerImage = avatar = appLogo;
+    avatar = appLogo;
     nameStyles = { ...styles.name, color: colors.primary };
   } else {
     nameStyles = styles.name;

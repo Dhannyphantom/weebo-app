@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, FlatList, Animated, Dimensions } from "react-native";
 import FeedImage from "./FeedImage";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 const SLIDER_WIDTH = width;
 const SLIDER_CONTAINER_WIDTH = width * 0.9;
 const SLIDER_MARGIN = width * 0.05;
@@ -32,15 +32,18 @@ const AppCarousel = ({
       <Animated.View
         style={{
           width: full ? SLIDER_WIDTH : SLIDER_CONTAINER_WIDTH,
-          alignItems: "center",
           marginRight: !addMargin ? SLIDER_MARGIN : 0,
+          alignItems: "center",
           justifyContent: "center",
+          height: height * 0.55,
+          borderRadius: 15,
         }}
       >
         <FeedImage
           translator={translator}
           feed={feed}
           showMediaFunc={showMediaFunc}
+          setAspectRatio={false}
           image={item}
           style={full ? { width: width } : { width: SLIDER_CONTAINER_WIDTH }}
           handleLike={handleLike}

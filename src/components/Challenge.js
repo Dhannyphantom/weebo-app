@@ -67,7 +67,11 @@ const RenderFeed = ({
             style={styles.feedContainer}
             onPress={() => handleShowMedia(media)}
           >
-            <LoaderImage style={styles.imageStyle} noAspect image={media} />
+            <LoaderImage
+              style={styles.imageStyle}
+              setAspectRatio={false}
+              image={media}
+            />
           </TouchableOpacity>
         )}
         {type === "video" && (
