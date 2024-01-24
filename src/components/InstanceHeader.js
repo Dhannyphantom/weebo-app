@@ -558,7 +558,7 @@ const InstanceHeader = ({
               <View style={styles.nameContainer}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Fontisto
-                    name={name}
+                    name={name === "others" ? "genderless" : name}
                     color={colors.primary}
                     size={width * 0.035}
                   />

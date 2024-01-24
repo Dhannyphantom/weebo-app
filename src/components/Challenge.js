@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Text,
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -394,19 +393,6 @@ const Challenge = ({
           name={name2}
           type={type}
         />
-        {/* <View style={styles.versusContainer}>
-          <Text style={styles.versusText}>V</Text>
-          <Text
-            style={{
-              ...styles.versusText,
-              position: "absolute",
-              top: 25,
-              left: 20,
-            }}
-          >
-            S
-          </Text>
-        </View> */}
       </View>
       <TouchableOpacity
         activeOpacity={0.9}
@@ -588,19 +574,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     backgroundColor: "black",
-    width: width / 2.15,
+    width: width * 0.48,
+    alignSelf: "center",
     height: (width / 2.5) * 2,
-  },
-  versusContainer: {
-    position: "absolute",
-    top: (height * 0.3) / 2 - 25,
-    left: width / 2 - 25,
-  },
-  versusText: {
-    fontFamily: "fonter",
-    fontSize: 80,
-    width: 45,
-    color: colors.primary,
+    marginBottom: 20,
   },
 });
 export default Challenge;

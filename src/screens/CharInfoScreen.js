@@ -141,7 +141,6 @@ const CharInfoScreen = ({
     if (!isExpired) {
       return setPopper(data);
     }
-
     setChallengeModal({ vis: true, contest: { mode: "start" } });
   };
 
