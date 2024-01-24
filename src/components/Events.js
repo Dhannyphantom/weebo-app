@@ -26,7 +26,7 @@ import AppButton from "./AppButton";
 import PopMessage from "./PopMessage";
 import PostVideo from "./PostVideo";
 import ActivityIndicator from "./ActivityIndicator";
-import vidMaxChecker from "../constants/vidMaxChecker";
+// import vidMaxChecker from "../constants/vidMaxChecker";
 import TabList from "./TabList";
 import { RenderCoverUpload } from "./CoverUpload";
 import { launchGallery } from "../constants/helpers";
@@ -80,7 +80,6 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [popper, setPopper] = useState({ vis: false });
   const [errMsg, setErrMsg] = useState(null);
-  //
   const [date, setDate] = useState(INITIAL_DATE);
   const [mode, setMode] = useState("date");
   const [showDate, setShowDate] = useState(false);

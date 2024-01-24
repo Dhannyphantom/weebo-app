@@ -992,7 +992,7 @@ export const gender_droplist = [
 
 // export const INSTANCE_FREE_PERIOD = 1000; // 7 DAYS
 export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
-export const EVENT_FOLLOWERS = 15; // 7 DAYS
+export const EVENT_FOLLOWERS = 0;
 
 export const buymeacoffeeLink = "https://www.buymeacoffee.com/weeboapp";
 

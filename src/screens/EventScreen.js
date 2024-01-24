@@ -15,7 +15,7 @@ const EventScreen = ({ route, navigation }) => {
   return (
     <Screen style={styles.container}>
       <StatusBar style="dark" />
-      <AppHeader title="New Event" />
+      <AppHeader title="Create Event" />
       <Events
         instance={instance}
         closer={closer}

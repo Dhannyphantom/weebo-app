@@ -144,7 +144,8 @@ const PostScreen = ({ route, navigation }) => {
       {
         screen: router?.screenAlias,
         hash: router?.hash,
-        callback: (ev) => console.log(ev),
+        callback: (_ev) => {},
+        // callback: (_ev) => {},
       }
     );
 

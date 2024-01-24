@@ -249,8 +249,6 @@ const RenderCollection = ({
   const [collectionData, setCollectionData] = useState(userInfo.my_collections);
   const [errMsg, setErrMsg] = useState(null);
 
-  // console.log({ collectionData, mColl: userInfo.my_collections });
-
   let collBtnText = "New Collection";
 
   if (collectionText.length > 1) {

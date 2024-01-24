@@ -124,8 +124,12 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   };
 
   const prepareNavBar = async () => {
-    await NavigationBar.setBackgroundColorAsync("#00000000");
+    await NavigationBar.setBackgroundColorAsync("#00000");
     await NavigationBar.setButtonStyleAsync("light");
+  };
+
+  const handleShowModal = async () => {
+    await prepareNavBar();
   };
 
   useEffect(() => {
@@ -139,6 +143,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
         visible={isVisible}
         onRequestClose={handleCloseModal}
         statusBarTranslucent
+        onShow={handleShowModal}
         transparent={assetType !== "video"}
         animationType="fade"
       >
