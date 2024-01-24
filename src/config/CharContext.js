@@ -245,7 +245,11 @@ const instanceUpdater = (dispatch) => async (data, sc, cb) => {
   const formData = new FormData();
   formData.append(
     "data",
-    JSON.stringify({ ...data, bucket: `${data.instance}s` })
+    JSON.stringify({
+      ...data,
+      bucket: `${data.instance}s`,
+      mediaInfoPath: "actionData",
+    })
   );
   if (data.media) {
     const imageObject = {

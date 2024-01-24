@@ -49,7 +49,10 @@ const startInstanceChallenge = (dispatch) => async (data, sc, cb) => {
     formData.append("media", imageObject);
   }
 
-  formData.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
+  formData.append(
+    "data",
+    JSON.stringify({ ...data, bucket: "challenges", mediaInfoPath: "media" })
+  );
 
   try {
     const token = await AsyncStorage.getItem("token");
@@ -85,7 +88,10 @@ const acceptInstanceChallenge = (dispatch) => async (data, sc, cb) => {
     formData.append("media", imageObject);
   }
 
-  formData.append("data", JSON.stringify({ ...data, bucket: "challenges" }));
+  formData.append(
+    "data",
+    JSON.stringify({ ...data, bucket: "challenges", mediaInfoPath: "media" })
+  );
 
   try {
     const token = await AsyncStorage.getItem("token");

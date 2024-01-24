@@ -96,6 +96,7 @@ const Challenger = ({
             width: asset.width,
             height: asset.height,
             type: asset.type,
+            durationMillis: asset.duration,
           }
         : null,
       data: info_data,
@@ -117,7 +118,7 @@ const Challenger = ({
         setter();
       },
       (errData) => {
-        parentError.setErrMsg(errData?.data ?? errData.msg);
+        parentError.setErrMsg(errData?.data?.err ?? errData.msg);
         setLoading(false);
       }
     );
@@ -153,12 +154,14 @@ const Challenger = ({
             width: asset?.width,
             height: asset?.height,
             type: asset?.type,
+            durationMillis: asset?.duration,
           }
         : null,
       contest: {
         user: data?.contest?.user?._id,
         challengerId: data?.contest?._id,
       },
+      mediaInfoPath: "media",
       instance: data.instance,
       instanceID: data.id,
       type: asset.type,
