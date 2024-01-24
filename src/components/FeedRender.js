@@ -28,13 +28,14 @@ const FeedRender = ({ item, user }) => {
   const [activeSlide, setActiveSlide] = useState(1);
 
   const [post, setPost] = useState({
-    likes: item.likes.length,
-    comments: item.commentCount ?? "000",
+    likes: 1001,
+    comments: item.commentCount,
     views: item.views.length,
     viewed: false,
     liked: false,
     video: false,
     active: 1,
+    postAdded: 0,
     loading: false,
   });
 
@@ -45,16 +46,16 @@ const FeedRender = ({ item, user }) => {
 
   const handleLike = () => {
     if (post.liked) {
-      setPost({ ...post, likes: post.likes - 1, liked: false });
+      setPost({ ...post, likes: post.likes - 1, postAdded: -1, liked: false });
       likePost(item._id, "unlike", (err) => {
         setErrMsg(err);
-        setPost({ ...post, likes: post.likes + 1, liked: false });
+        setPost({ ...post, likes: post.likes + 1, postAdded: 0, liked: false });
       });
     } else {
-      setPost({ ...post, likes: post.likes + 1, liked: true });
+      setPost({ ...post, likes: post.likes + 1, postAdded: 1, liked: true });
       likePost(item._id, "like", (err) => {
         setErrMsg(err);
-        setPost({ ...post, likes: post.likes - 1, liked: true });
+        setPost({ ...post, likes: post.likes - 1, postAdded: 0, liked: true });
       });
     }
   };
@@ -72,13 +73,26 @@ const FeedRender = ({ item, user }) => {
   };
 
   useEffect(() => {
-    if (item.views.includes(user)) {
-      setPost({ ...post, viewed: true });
-    }
-
-    if (item.likes.includes(user)) {
-      setPost({ ...post, liked: true });
-    }
+    // if (item.views.includes(user)) {
+    //   setPost({
+    //     ...post,
+    //     viewed: true,
+    //     likes: item.likes.length + post.postAdded,
+    //   });
+    // }
+    // if (item.likes.includes(user)) {
+    //   setPost({
+    //     ...post,
+    //     liked: true,
+    //     likes: item.likes.length + post.postAdded,
+    //   });
+    // }
+    setPost({
+      ...post,
+      liked: item.likes.includes(user),
+      viewed: item.views.includes(user),
+      likes: item.likes.length + post.postAdded,
+    });
   }, [item]);
 
   return (
@@ -91,6 +105,7 @@ const FeedRender = ({ item, user }) => {
         feedId={item._id}
         // followers={item.user.followers.length}
       />
+
       <FeedText
         title={item.title}
         type={item.type}

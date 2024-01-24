@@ -20,6 +20,7 @@ const FeedFooter = ({
   post,
   setPost,
   postUser,
+  likes,
   handleLike,
   tags,
   errMsg,
@@ -116,16 +117,22 @@ const FeedFooter = ({
         () => {
           updatePosts();
           setPost({ ...post, loading: false });
-          // setPost(false);
         },
         (err) => {
           setErrMsg(err);
-          setPost(false);
+          setPost({ ...post, loading: false });
         }
       );
     }
     setAction(false);
   };
+
+  // useEffect(() => {
+  //   setPost({
+  //     ...post,
+  //     likes: likes.length + post.postAdded,
+  //   });
+  // }, [likes]);
 
   return (
     <>
