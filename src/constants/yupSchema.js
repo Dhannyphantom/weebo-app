@@ -230,7 +230,7 @@ const showValidationschema = Yup.object().shape({
   genres: Yup.array()
     .label("Genres")
     .of(Yup.string().min(3).lowercase().trim())
-    .min(2, "Genres list shouldn't be less than two"),
+    .min(1, "Genres list shouldn't be less than one"),
   subGenres: Yup.array()
     .label("Sub genres")
     .of(Yup.string().min(3).lowercase().trim())

@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get("window");
 
 const BOX_WIDTH = width * 0.88;
 
-const AlertModal = ({ obj, setVisible, onPress, verifyPrompt }) => {
+const AlertModal = ({ obj, setVisible, onPress, verifyPrompt, oneButton }) => {
   // obj has a title, btn,  message, visible
   /*
 const obj = {
@@ -103,18 +103,20 @@ const obj = {
                 />
               </View>
             ) : (
-              <View style={{ marginTop: 25 }}>
-                <AppButton
-                  title={obj.btn}
-                  onPress={() => {
-                    onPress();
-                    onDiscard();
-                  }}
-                  bare
-                  style={{ marginBottom: 5 }}
-                />
-                <AppButton title="DISCARD" onPress={onDiscard} />
-              </View>
+              !oneButton && (
+                <View style={{ marginTop: 25 }}>
+                  <AppButton
+                    title={obj.btn}
+                    onPress={() => {
+                      onPress();
+                      onDiscard();
+                    }}
+                    bare
+                    style={{ marginBottom: 5 }}
+                  />
+                  <AppButton title="DISCARD" onPress={onDiscard} />
+                </View>
+              )
             )}
           </View>
         </Animated.View>

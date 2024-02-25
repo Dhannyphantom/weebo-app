@@ -10,10 +10,12 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useFormikContext } from "formik";
+import uuid from "react-native-uuid";
 
 import AppText from "./AppText";
 import AppPickerItem from "./AppPickerItem";
 import Separator from "./Separator";
+import { RenderGenres } from "./ShowGroup";
 import colors from "../constants/colors";
 import grabApi from "../api/grabApi";
 import ThemeContext from "../config/ThemeContext";
@@ -39,7 +41,11 @@ const CreateFormAdd = ({
 }) => {
   const { errors, setFieldValue, touched, values } = useFormikContext();
 
-  const [dropDown, setDropDown] = useState({ modal: false, close: false });
+  const [dropDown, setDropDown] = useState({
+    modal: false,
+    close: false,
+    data: [],
+  });
   const [selectedList, setSelectedList] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [userInput, setUserInput] = useState("");
@@ -122,19 +128,15 @@ const CreateFormAdd = ({
     }
   };
 
-  const handleDropdown = (title) => {
-    if (title.length < 2) {
-      return;
-    }
+  const handleDropdown = (dropData) => {
+    if (dropData?.length < 1) return;
+    // if (title.length < 2) {
+    //   return;
+    // }
 
-    const search = selectedList.find((obj) => obj.tag === title);
-    if (!search && selectedList.length < 3) {
-      setSelectedList([
-        ...selectedList,
-        { id: Math.random() * 100000, tag: title },
-      ]);
-      onPush(title);
-    }
+    setSelectedList(dropData.map((item) => ({ id: uuid.v4(), tag: item })));
+    // setSelectedList([...selectedList, { id: uuid.v4(), tag: title }]);
+    setFieldValue(name, dropData);
   };
 
   const resetSearch = () => {
@@ -296,49 +298,44 @@ const CreateFormAdd = ({
           </TouchableOpacity>
         )}
         {/*   CHANGES - Try to make type 2 logic into a different componenet */}
-        {type2 && (
-          <TouchableOpacity
-            style={styles.dropDownCont}
-            onPress={() => setDropDown({ modal: true, close: false })}
-          >
-            <AppText style={styles.dropDownText}>Pick genres</AppText>
-            <View style={styles.chevron}>
-              <MaterialCommunityIcons
-                name="chevron-down"
-                color={colors.medium}
-                size={16}
-              />
-            </View>
-          </TouchableOpacity>
-        )}
+        {/* {type2 && (
+        
+        )} */}
         {type2 && (
           <>
+            <TouchableOpacity
+              style={styles.dropDownCont}
+              onPress={() => setDropDown({ modal: true, close: false })}
+            >
+              <AppText style={styles.dropDownText}>Pick genres</AppText>
+              <View style={styles.chevron}>
+                <MaterialCommunityIcons
+                  name="chevron-down"
+                  color={colors.medium}
+                  size={16}
+                />
+              </View>
+            </TouchableOpacity>
+
             <PopDropDown
               setter={() => setDropDown({ modal: false, close: false })}
               visible={dropDown.modal}
-              close={dropDown.close}
+              // close={dropDown.close}
+              closer={() => dropDown.close}
               headerTitle={headerA || headerB || headerC || headerD || headerE}
               RenderComponent={() => (
-                <View style={styles.modalContainer}>
-                  <FlatList
-                    data={dropDownA}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingBottom: 15 }}
-                    renderItem={({ item }) => (
-                      <AppPickerItem
-                        text={item.title}
-                        desc={item.discription}
-                        example={item.example}
-                        onPress={() => {
-                          setDropDown({ modal: false, close: true });
-                          handleDropdown(item.title);
-                        }}
-                      />
-                    )}
-                    numColumns={numColumns}
-                    listKey="dropDown"
-                  />
-                </View>
+                <RenderGenres
+                  data={dropDownA}
+                  type={name}
+                  selectedArr={selectedList.map((item) => item.tag)}
+                  returnArray
+                  name={name}
+                  setter={() => setDropDown({ modal: true, close: "close" })}
+                  handleSelect={(item) => {
+                    setDropDown({ modal: false, close: "close" });
+                    handleDropdown(item.val);
+                  }}
+                />
               )}
             />
           </>
@@ -462,44 +459,47 @@ const CreateFormAdd = ({
                         </View>
                       </TouchableWithoutFeedback>
                     </View>
-                  ) : searchRes.length < 1 && typeof searchRes !== "string" ? (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginRight: 12,
-                      }}
-                    >
-                      {userInput.length > 3 ? (
-                        <View
-                          style={{
-                            padding: 10,
-                            justifyContent: "center",
-                          }}
-                        >
-                          <AppText style={styles.errText}>
-                            <AppText style={styles.errTextb}>
-                              {list.slice(-list.length, -1)}
-                            </AppText>
-                            not found, please create {userInput}
-                            {list.slice(-list.length, -1)} before proceeding
-                          </AppText>
-                        </View>
-                      ) : null}
-                      {userInput.length > 3 ? (
-                        <TouchableOpacity
-                          onPress={handleNavigation}
-                          style={styles.searchAdd}
-                        >
-                          <MaterialCommunityIcons
-                            name="arrow-right-bold-circle"
-                            size={17}
-                            color={colors.primary}
-                          />
-                        </TouchableOpacity>
-                      ) : null}
-                    </View>
-                  ) : null}
+                  ) : (
+                    searchRes.length < 1 &&
+                    typeof searchRes !== "string" && (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          marginRight: 12,
+                        }}
+                      >
+                        {userInput.length > 3 ? (
+                          <>
+                            <View
+                              style={{
+                                padding: 10,
+                                justifyContent: "center",
+                              }}
+                            >
+                              <AppText style={styles.errText}>
+                                <AppText style={styles.errTextb}>
+                                  {list.slice(-list.length, -1)}
+                                </AppText>
+                                not found, please create {userInput}
+                                {list.slice(-list.length, -1)} before proceeding
+                              </AppText>
+                            </View>
+                            <TouchableOpacity
+                              onPress={handleNavigation}
+                              style={styles.searchAdd}
+                            >
+                              <MaterialCommunityIcons
+                                name="arrow-right-bold-circle"
+                                size={17}
+                                color={colors.primary}
+                              />
+                            </TouchableOpacity>
+                          </>
+                        ) : null}
+                      </View>
+                    )
+                  )}
                 </View>
               }
               keyExtractor={(item) => item._id}
@@ -649,7 +649,6 @@ const styles = StyleSheet.create({
   },
   modalOuter: {
     flex: 0.43,
-    // top: screen.height * 0.25,
     backgroundColor: "rgba(0,0,0,0.09)",
   },
   input: {
@@ -669,6 +668,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     flex: 1,
+    marginBottom: 25,
   },
   tagTextCont: {
     flexDirection: "row",

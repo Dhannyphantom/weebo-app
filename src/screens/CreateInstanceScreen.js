@@ -9,6 +9,7 @@ import CoverUpload from "../components/CoverUpload";
 import CreateFormik from "../components/CreateFormik";
 import SubmitButton from "../components/SubmitButton";
 import CreateFormArray from "../components/CreateFormArray";
+import { CommonActions } from "@react-navigation/native";
 
 import { Context as CharContext } from "../config/CharContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -38,7 +39,8 @@ const beforeLeavePrompt = {
   message:
     "Are sure you want to leave screen?\nAll screen changes are not saved!",
   btn: "LEAVE",
-  type: "leave_screen",
+  type: "",
+  // type: "leave_screen",
   data: {},
 };
 const { width, height } = Dimensions.get("window");
@@ -91,13 +93,13 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     name_e: "none",
     other_names: [],
     spinoffs: [],
-    creators: "",
+    creators: "Jin mori, Kory Baggs",
     manager: userInfo._id,
     releaseDate: "",
     endDate: "Currently airing",
-    genres: [],
-    subGenres: [],
-    episodes: 0,
+    genres: ["Action"],
+    subGenres: ["Psychology", "Sci-Fi"],
+    episodes: 210,
     cover_photo: {
       uri: "",
       width: 0,
@@ -122,6 +124,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     group: false,
   });
   const [changeD, setChangeD] = useState(false);
+  const [screenData, setScreenData] = useState({ leave: false, data: {} });
   const [prompt, setPrompt] = useState(beforeLeavePrompt);
 
   const weebo_points = cardState.character
@@ -152,19 +155,16 @@ const CreateInstanceScreen = ({ route, navigation }) => {
       : setCardState({ character: false, show: false, group: true });
   };
 
-  const nav = (info) => {
-    //TODO:: ONLY UPDATE SPECIFIC FIELDS
-    // characterCreated(info.user);
-    updateMe({ data: info.points, prop: "points" });
-    navigation.replace("Character", {
-      item: info.characterID,
-      toScreen: "Home",
-    });
-  };
-
-  const navShow = (info) => {
-    updateMe({ data: info.points, prop: "points" });
-    navigation.replace("Show", { show: info.show, toScreen: "Home" });
+  const handleNavigation = (name, params) => {
+    setScreenData({ leave: false, data: { name, params } });
+    // setPrompt({
+    //   ...prompt,
+    //   type: "auto_nav",
+    //   // message: "Instance created successfully",
+    //   // btn: "GOTO INSTANCE",
+    //   // visible: false,
+    //   data: { name, params },
+    // });
   };
 
   const handlePrompts = () => {
@@ -176,6 +176,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
         break;
     }
   };
+
   useEffect(() => {
     navigation.addListener("focus", () => {
       setIsLoading(false);
@@ -184,17 +185,47 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     navigation.addListener("blur", () => {
       Keyboard.dismiss();
     });
-    navigation.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-      setPrompt({ ...beforeLeavePrompt, visible: true, data: e.data.action });
+    const navSubs = navigation.addListener("beforeRemove", (e) => {
+      if (prompt.type === "auto_nav") {
+        return console.log("Auto navigated!");
+      } else {
+        console.log(prompt);
+        e.preventDefault();
+        setPrompt({
+          ...prompt,
+          type: "leave_screen",
+          visible: true,
+          data: e.data.action,
+        });
+      }
     });
-  }, [navigation]);
+
+    return () => {
+      navSubs;
+    };
+  }, [navigation, prompt, screenData]);
+
+  useEffect(() => {
+    // if (prompt.type === "auto_nav") {
+    //   navigation.dispatch((state) => {
+    //     const routes = [
+    //       ...state.routes.slice(0, -1),
+    //       { name: prompt.data?.name, params: prompt?.data?.params },
+    //     ];
+    //     return CommonActions.reset({
+    //       ...state,
+    //       routes,
+    //       index: routes.length - 1,
+    //     });
+    //   });
+    // }
+  }, [prompt]);
 
   return (
     <Screen>
       <View style={styles.container}>
         <AppText bold>
-          {name} instance requires
+          {name} instance requires{" "}
           <AppText style={{ color: colors.primary }} bold>
             {weebo_points}WP
           </AppText>
@@ -225,7 +256,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         setIsLoading(true);
                         createCharacter(
                           formValues,
-                          (data) => nav(data),
+                          (data) => handleNavigation("Character", data),
                           (obj) => actionCallback(obj)
                         );
                       }}
@@ -304,6 +335,9 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       ) : null}
                       <SubmitButton
                         title="Upload Character"
+                        onPress={() =>
+                          setPrompt({ ...prompt, type: "auto_nav" })
+                        }
                         bared
                         style={styles.uploadBtn}
                       />
@@ -330,8 +364,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     setIsLoading(true);
                     setErrText(null);
 
-                    createShow(formValues, navShow, (obj) =>
-                      actionCallback(obj)
+                    createShow(
+                      formValues,
+                      (params) => handleNavigation("Show", params),
+                      (obj) => actionCallback(obj)
                     );
                   }}
                   validationSchema={showValidationschema}
@@ -392,6 +428,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                   ) : null}
                   <SubmitButton
                     title="Upload Show"
+                    onPress={() => setPrompt({ ...prompt, type: "auto_nav" })}
                     bared
                     style={styles.uploadBtn}
                   />
@@ -420,7 +457,11 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       formValues,
                       (resData) => {
                         updateMe({ data: resData.points, prop: "points" });
-                        navigation.goBack();
+
+                        handleNavigation("Room", {
+                          instance: "group",
+                          instanceID: resData.group._id,
+                        });
                       },
                       (obj) => actionCallback(obj)
                     );
@@ -446,6 +487,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
 
                   <SubmitButton
                     title="Upload Group"
+                    onPress={() => setPrompt({ ...prompt, type: "auto_nav" })}
                     bared
                     style={styles.uploadBtn}
                   />
@@ -460,7 +502,12 @@ const CreateInstanceScreen = ({ route, navigation }) => {
           <ActivityIndicator visible={true} type="spin" wTransparent />
         )}
       </View>
-      <AlertModal obj={prompt} setVisible={setPrompt} onPress={handlePrompts} />
+      <AlertModal
+        obj={prompt}
+        setVisible={setPrompt}
+        oneButton={prompt?.oneButton}
+        onPress={handlePrompts}
+      />
     </Screen>
   );
 };

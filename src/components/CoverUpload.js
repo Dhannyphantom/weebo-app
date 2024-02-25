@@ -51,6 +51,10 @@ export const RenderCoverUpload = ({
               color={theme.medium}
             />
             <AppText>Upload {type} media</AppText>
+            <AppText>
+              {show ? "Landscape" : "Portrait"} image that fully represent
+              instance
+            </AppText>
           </View>
         )}
         {coverImage && (

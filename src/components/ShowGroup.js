@@ -68,16 +68,17 @@ export const RenderGenres = ({
   selectedArr,
   type,
   name,
+  returnArray = false,
   setter,
 }) => {
-  const [selected, setSelected] = useState(selectedArr ? selectedArr : []);
+  const [selected, setSelected] = useState(selectedArr ?? []);
 
   const onSelectGenre = (title) => {
     if (selected.includes(title)) {
       // remove
       setSelected((prev) => prev.filter((eachTitle) => eachTitle !== title));
     } else {
-      if (selected.length > 2) return;
+      if (selected.length > 7) return;
       // add
       const selectedSets = new Set([...selected, title]);
       setSelected([...selectedSets]);
@@ -86,7 +87,11 @@ export const RenderGenres = ({
 
   const saveSelectedGenre = () => {
     // handleSelect({ type, name, val: item.title });
-    handleSelect({ type, name, val: selected.join(", ") });
+    handleSelect({
+      type,
+      name,
+      val: returnArray ? selected : selected.join(", "),
+    });
     setter();
   };
 
@@ -100,11 +105,11 @@ export const RenderGenres = ({
       />
       <FlatList
         data={data}
-        extraData={selected}
+        // extraData={selected}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 15 }}
         renderItem={({ item }) => {
-          const isSelected = selected.includes(item.title);
+          const isSelected = selected?.includes(item?.title);
           return (
             <AppPickerItem
               text={item.title}

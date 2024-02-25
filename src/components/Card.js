@@ -192,9 +192,10 @@ const styles = StyleSheet.create({
     right: 0,
   },
   title: {
-    // marginTop: 15,
-    marginBottom: 2,
+    marginTop: 12,
+    // marginBottom: 4,
     textTransform: "capitalize",
+    maxWidth: "90%",
   },
   subTitle: {
     textTransform: "capitalize",

@@ -620,22 +620,6 @@ const ShowScreen = ({ route, navigation }) => {
     getMyShows("refresh");
   };
 
-  const handleItemPress = (item) => {
-    switch (item.prop) {
-      case "challengers":
-        setModalVis(true);
-        break;
-      case "posts":
-        navigateToPosts();
-        break;
-      case "endDate":
-        isMine && setBools({ ...bools, updateInstance: true });
-        break;
-      default:
-        break;
-    }
-  };
-
   useEffect(() => {
     getMyShows("fetch");
   }, []);

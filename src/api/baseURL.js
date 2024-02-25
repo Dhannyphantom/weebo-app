@@ -1,5 +1,5 @@
 export default {
   uri: "http://192.168.43.236:9001",
-  // uri: "http://10.255.230.82:9001",
+  // uri: "http://10.1.17.137:9001",
   // uri: "https://weebo-server.onrender.com",
 };

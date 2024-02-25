@@ -7,6 +7,7 @@ const SubmitButton = ({
   setLoading,
   disabled,
   title,
+  onPress,
   bared,
   style,
   extraData,
@@ -20,7 +21,10 @@ const SubmitButton = ({
       title={title}
       disabled={disabled}
       style={style}
-      onPress={(formValue) => handleSubmit(formValue, extraData)}
+      onPress={(formValue) => {
+        onPress && onPress();
+        handleSubmit(formValue, extraData);
+      }}
       {...otherProps}
     />
   );

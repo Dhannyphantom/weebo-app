@@ -17,11 +17,7 @@ const CreateFormArray = ({
     <FieldArray
       name={name}
       render={(filedArrayProps) => {
-        const {
-          form: { values },
-          push,
-          remove,
-        } = filedArrayProps;
+        const { push, remove } = filedArrayProps;
         return (
           <CreateFormAdd
             type1={type1}
