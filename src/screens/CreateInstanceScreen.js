@@ -157,14 +157,14 @@ const CreateInstanceScreen = ({ route, navigation }) => {
 
   const handleNavigation = (name, params) => {
     setScreenData({ leave: false, data: { name, params } });
-    // setPrompt({
-    //   ...prompt,
-    //   type: "auto_nav",
-    //   // message: "Instance created successfully",
-    //   // btn: "GOTO INSTANCE",
-    //   // visible: false,
-    //   data: { name, params },
-    // });
+    setPrompt({
+      ...prompt,
+      type: "auto_nav",
+      // message: "Instance created successfully",
+      // btn: "GOTO INSTANCE",
+      // visible: false,
+      data: { name, params },
+    });
   };
 
   const handlePrompts = () => {
@@ -186,10 +186,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
       Keyboard.dismiss();
     });
     const navSubs = navigation.addListener("beforeRemove", (e) => {
-      if (prompt.type === "auto_nav") {
-        return console.log("Auto navigated!");
-      } else {
-        console.log(prompt);
+      if (prompt.type !== "auto_nav") {
         e.preventDefault();
         setPrompt({
           ...prompt,
@@ -206,19 +203,19 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   }, [navigation, prompt, screenData]);
 
   useEffect(() => {
-    // if (prompt.type === "auto_nav") {
-    //   navigation.dispatch((state) => {
-    //     const routes = [
-    //       ...state.routes.slice(0, -1),
-    //       { name: prompt.data?.name, params: prompt?.data?.params },
-    //     ];
-    //     return CommonActions.reset({
-    //       ...state,
-    //       routes,
-    //       index: routes.length - 1,
-    //     });
-    //   });
-    // }
+    if (prompt.type === "auto_nav") {
+      navigation.dispatch((state) => {
+        const routes = [
+          ...state.routes.slice(0, -1),
+          { name: prompt.data?.name, params: prompt?.data?.params },
+        ];
+        return CommonActions.reset({
+          ...state,
+          routes,
+          index: routes.length - 1,
+        });
+      });
+    }
   }, [prompt]);
 
   return (

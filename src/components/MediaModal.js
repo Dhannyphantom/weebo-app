@@ -10,6 +10,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as NavigationBar from "expo-navigation-bar";
 import Constants from "expo-constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 import uuid from "react-native-uuid";
 
 import { Context as FeedContext } from "../config/FeedContext";
@@ -124,8 +125,8 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   };
 
   const prepareNavBar = async () => {
-    await NavigationBar.setBackgroundColorAsync("#00000");
-    await NavigationBar.setButtonStyleAsync("light");
+    // await NavigationBar.setBackgroundColorAsync("#00000");
+    // await NavigationBar.setButtonStyleAsync("light");
   };
 
   const handleShowModal = async () => {
@@ -137,7 +138,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
   }, []);
 
   return (
-    <>
+    <SafeAreaView mode="margin">
       <StatusBar style="inverted" />
       <Modal
         visible={isVisible}
@@ -176,7 +177,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
             </Animated.View>
           ) : assetType === "video" ? (
             <Animated.View
-              panHandlers={{ ...mediaMoverResponder.panHandlers }}
+              {...mediaMoverResponder.panHandlers}
               style={{
                 ...styles.vidCont,
                 transform: [{ translateY: mediaTranslator }],
@@ -219,7 +220,7 @@ const MediaModal = ({ modalObject, setVisible, modalActions }) => {
           ) : null}
         </Animated.View>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
