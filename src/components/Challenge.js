@@ -523,6 +523,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     padding: 12,
+    marginTop: 15,
     flexDirection: "row",
     justifyContent: "space-between",
   },

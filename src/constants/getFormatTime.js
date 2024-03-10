@@ -177,6 +177,14 @@ export default (time, time2, type) => {
       date: `${months[timer.getMonth()].full} ${timer.getDate()}`,
       ongoing,
     };
+  } else if (type && type === "month_year") {
+    const ongoing = timer > currentTimer;
+    return {
+      date: ongoing
+        ? "Currently airing"
+        : `${months[timer.getMonth()].full} ${timer.getFullYear()}`,
+      ongoing,
+    };
   } else {
     if (tHr > 12) {
       hr = tHr % 12 === 0 ? 12 : tHr % 12;

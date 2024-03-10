@@ -40,6 +40,8 @@ import { capFirstLetter, launchGallery } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("screen");
 
+const dateTimerProps = ["birthday", "releaseDate", "endDate"];
+
 const Challenger = ({
   data,
   setLoading,
@@ -432,10 +434,12 @@ const InfoDatetime = ({ modal, setModal, onPress }) => {
 const InfoProps = ({ item, state }) => {
   const theme = useContext(ThemeContext);
 
+  const timerType = ["endDate", "releaseDate"] ? "month_year" : "month_day";
+
   const [selected, setSelected] = useState(item.selected);
   const [info, setInfo] = useState(
-    item.key === "birthday"
-      ? getFormatTime(item.value, null, "month_day").date
+    dateTimerProps.includes(item.key)
+      ? getFormatTime(item.value, null, timerType).date
       : String(item.value)
   );
 
@@ -559,7 +563,9 @@ const InfoProps = ({ item, state }) => {
                   return (
                     <View>
                       <AppText style={styles.pickerText}>
-                        Pick characters that are not members of this group
+                        {item.characters[0]
+                          ? "Pick characters that are not members of this group"
+                          : "No character found"}
                       </AppText>
                     </View>
                   );
@@ -733,7 +739,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
         <>
           <View style={styles.rowWide}>
             <AppText style={{ ...styles.title }} size="large" bold>
-              Select Invalid Info ({capFirstLetter(data?.name, true)}
+              Select Invalid Info ({capFirstLetter(data?.name, true)}{" "}
               {capFirstLetter(data?.instance)})
             </AppText>
             <TouchableOpacity
@@ -751,8 +757,9 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
           {showInfo && (
             <>
               <AppText style={styles.title}>
-                Choose and select info properties that you're sure are wrong or
-                incomplete information
+                Choose and select info properties that you're sure are invalid
+                or incomplete, and REMEMBER to save changes for each info
+                updated!
               </AppText>
               <View style={[styles.row, styles.instance]}>
                 <AppText
@@ -760,7 +767,7 @@ const ChallengeMedia = ({ asset, loading: loader, data, setAsset }) => {
                   size="large"
                   bold
                 >
-                  {data?.name} -
+                  {data?.name}{" "}
                 </AppText>
                 <AppText size="large" style={{ color: colors.primary }} bold>
                   {data.instance}
@@ -983,6 +990,7 @@ const styles = StyleSheet.create({
   pickerText: {
     textAlign: "center",
     width: "85%",
+    marginBottom: 8,
     alignSelf: "center",
   },
   row: {
@@ -1001,6 +1009,8 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     maxWidth: width * 0.85,
+    alignSelf: "center",
+    marginBottom: 8,
   },
   video: {
     position: "absolute",
