@@ -66,10 +66,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     dpName: "",
     other_names: [],
     show: "",
-    role: "",
-    type: "",
-    gender: "",
-    height: "",
+    role: "Protagonist / Main Character",
+    type: "kamidere",
+    gender: "male",
+    height: "195cm",
     birthday: new Date("January 1, 2000"),
     voiceActor: [],
     father: "none",
@@ -139,7 +139,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   };
 
   const actionCallback = (obj) => {
-    setErrText(obj?.data ?? obj?.msg);
+    setErrText(`${obj?.data ?? obj?.msg}, Please try again`);
     setIsLoading(false);
   };
 
@@ -156,7 +156,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   };
 
   const handleNavigation = (name, params) => {
-    setScreenData({ leave: false, data: { name, params } });
+    setScreenData({ leave: true, data: { name, params } });
     setPrompt({
       ...prompt,
       type: "auto_nav",
@@ -186,7 +186,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
       Keyboard.dismiss();
     });
     const navSubs = navigation.addListener("beforeRemove", (e) => {
-      if (prompt.type !== "auto_nav") {
+      if (!screenData.leave) {
         e.preventDefault();
         setPrompt({
           ...prompt,
@@ -194,6 +194,8 @@ const CreateInstanceScreen = ({ route, navigation }) => {
           visible: true,
           data: e.data.action,
         });
+      } else {
+        console.log("Navigate to other screen");
       }
     });
 
@@ -203,7 +205,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   }, [navigation, prompt, screenData]);
 
   useEffect(() => {
-    if (prompt.type === "auto_nav") {
+    if (prompt.type === "auto_nav" && screenData.leave) {
       navigation.dispatch((state) => {
         const routes = [
           ...state.routes.slice(0, -1),

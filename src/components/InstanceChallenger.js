@@ -400,14 +400,22 @@ const InfoDropDown = ({ modal, setModal, item: data, onPress }) => {
   );
 };
 
-const InfoDatetime = ({ modal, setModal, onPress }) => {
+const InfoDatetime = ({ modal, item, setModal, onPress }) => {
   if (!modal.datetime) return null;
 
-  const [date, setDate] = useState(new Date("January 1, 2000"));
+  const [date, setDate] = useState(
+    dateTimerProps.includes(item.key)
+      ? new Date(item.value)
+      : new Date("January 1, 2000")
+  );
+
+  const timerType = ["endDate", "releaseDate"].includes(item.key)
+    ? "month_year"
+    : "month_day";
 
   const handleDate = (e, selectedDate) => {
     if (e.type !== "dismissed") {
-      const timer = getFormatTime(selectedDate, null, "month_day");
+      const timer = getFormatTime(selectedDate, null, timerType);
       const new_date = timer.ongoing ? "Currently airing" : timer.date;
 
       setDate(selectedDate);
@@ -434,12 +442,16 @@ const InfoDatetime = ({ modal, setModal, onPress }) => {
 const InfoProps = ({ item, state }) => {
   const theme = useContext(ThemeContext);
 
-  const timerType = ["endDate", "releaseDate"] ? "month_year" : "month_day";
+  const timerType = ["endDate", "releaseDate"].includes(item.key)
+    ? "month_year"
+    : "month_day";
 
   const [selected, setSelected] = useState(item.selected);
   const [info, setInfo] = useState(
     dateTimerProps.includes(item.key)
-      ? getFormatTime(item.value, null, timerType).date
+      ? item.value.includes(" ")
+        ? item.value
+        : getFormatTime(item.value, null, timerType).date
       : String(item.value)
   );
 
@@ -646,6 +658,7 @@ const InfoProps = ({ item, state }) => {
       />
       <InfoDatetime
         modal={modal}
+        item={item}
         setModal={setModal}
         onPress={(val) => setInfo(val)}
       />

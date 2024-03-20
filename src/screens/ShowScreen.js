@@ -1,5 +1,12 @@
 import React, { memo, useContext, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { Viewport } from "@skele/components";
 import { StatusBar } from "expo-status-bar";
 import uuid from "react-native-uuid";
@@ -35,7 +42,6 @@ import {
 import EventRender from "../components/EventRender";
 import AppFadeIn from "../components/AppFadeIn";
 import ThemeContext from "../config/ThemeContext";
-import { TouchableOpacity } from "react-native";
 import { InfoDisplay } from "./CharInfoScreen";
 import { getDateObject } from "../constants/getFormatTime";
 
