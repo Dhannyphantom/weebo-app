@@ -72,14 +72,9 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     height: "195cm",
     birthday: new Date("January 1, 2000"),
     voiceActor: [],
-    father: "none",
-    mother: "none",
-    sisters: [],
-    brothers: [],
     creator: userInfo._id,
     manager: userInfo._id,
-    lover: "none",
-    rival: "none",
+    affiliations: [],
     groups: [],
     cover_photo: {
       uri: "",
@@ -311,16 +306,11 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         name="voiceActor"
                         type1
                       />
-                      <CreateForm headerA="father" name="father" />
-                      <CreateForm headerA="mother" name="mother" />
-                      <CreateFormArray headerA="sister" name="sisters" type1 />
                       <CreateFormArray
-                        headerA="brother"
-                        name="brothers"
+                        headerA="other relations / affiliations"
+                        name="affiliations"
                         type1
                       />
-                      <CreateForm headerA="lover" name="lover" />
-                      <CreateForm headerA="rival" name="rival" />
                       {/* /// DISPLAY NAME */}
                       <CreateFormArray
                         headerA="card display name (use first name or common name)"

@@ -159,12 +159,9 @@ const characterValidationSchema = Yup.object().shape({
     .matches(/[0-9]+.+[0-9]cm/, "Height should be in cm e.g 182.0cm")
     .label("Height"),
   birthday: Yup.date().max(new Date()).label("Birthday"),
-  // birthday: Yup.string().required().lowercase().trim().min(3).label("Birthday"),
   voiceActor: Yup.array()
     .label("Voice actors")
     .of(Yup.string().min(2).lowercase().trim()),
-  father: Yup.string().min(3).lowercase().trim().label("Father"),
-  mother: Yup.string().min(3).lowercase().trim().label("Mother"),
   gender: Yup.string()
     .lowercase()
     .trim()
@@ -175,14 +172,9 @@ const characterValidationSchema = Yup.object().shape({
       "Gender should either be a male, female or others"
     )
     .label("Gender"),
-  sisters: Yup.array()
-    .label("Sister")
+  affiliations: Yup.array()
+    .label("affiliations")
     .of(Yup.string().min(2).lowercase().trim()),
-  brothers: Yup.array()
-    .label("Brother")
-    .of(Yup.string().min(2).lowercase().trim()),
-  lover: Yup.string().min(3).label("Lover").lowercase().trim(),
-  rival: Yup.string().min(3).label("Rival").lowercase().trim(),
   cover_photo: Yup.object()
     .shape({
       uri: Yup.string().max(255),

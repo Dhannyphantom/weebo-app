@@ -25,8 +25,6 @@ const screen = Dimensions.get("window");
 
 const checkPropArr = [
   "groups",
-  "brothers",
-  "sisters",
   "other_names",
   "genres",
   "subGenres",

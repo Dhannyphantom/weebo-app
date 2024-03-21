@@ -28,12 +28,6 @@ const sortArr = [
   "type",
   "birthday",
   "height",
-  "father",
-  "mother",
-  "brothers",
-  "sisters",
-  "lover",
-  "rival",
   "voiceActors",
   "challenge_stat",
 ];

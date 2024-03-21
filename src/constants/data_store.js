@@ -78,44 +78,14 @@ export const charPropInfos = [
   },
   {
     id: "8",
-    name: "Rival",
-    prop: "rival",
+    name: "Other Relations / Affiliations e.g Father, Rival",
+    prop: "affiliations",
     selected: false,
   },
   {
     id: "9",
     name: "Voice Actors",
     prop: "voiceActor",
-    selected: false,
-  },
-  {
-    id: "10",
-    name: "Father",
-    prop: "father",
-    selected: false,
-  },
-  {
-    id: "11",
-    name: "Mother",
-    prop: "mother",
-    selected: false,
-  },
-  {
-    id: "57856",
-    name: "Brothers",
-    prop: "brothers",
-    selected: false,
-  },
-  {
-    id: "45",
-    name: "Sisters",
-    prop: "sisters",
-    selected: false,
-  },
-  {
-    id: "14",
-    name: "Lover",
-    prop: "lover",
     selected: false,
   },
 ];
