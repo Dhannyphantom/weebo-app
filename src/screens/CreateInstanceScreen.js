@@ -307,9 +307,9 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         type1
                       />
                       <CreateFormArray
-                        headerA="other relations / affiliations"
+                        placeholder="other relations / affiliations"
                         name="affiliations"
-                        type1
+                        formType="addInput"
                       />
                       {/* /// DISPLAY NAME */}
                       <CreateFormArray

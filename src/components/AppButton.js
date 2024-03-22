@@ -25,6 +25,7 @@ const AppButton = ({
   style,
   title,
   bare,
+  btnColor = colors.primary,
   disabled,
   btnTextSize,
   bareWhite,

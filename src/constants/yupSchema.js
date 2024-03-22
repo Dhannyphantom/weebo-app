@@ -173,6 +173,12 @@ const characterValidationSchema = Yup.object().shape({
     )
     .label("Gender"),
   affiliations: Yup.array()
+    .of(
+      Yup.object().shape({
+        title: Yup.string().max(255),
+        name: Yup.string().max(255),
+      })
+    )
     .label("affiliations")
     .of(Yup.string().min(2).lowercase().trim()),
   cover_photo: Yup.object()

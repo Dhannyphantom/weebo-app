@@ -13,7 +13,6 @@ import { useFormikContext } from "formik";
 import uuid from "react-native-uuid";
 
 import AppText from "./AppText";
-import AppPickerItem from "./AppPickerItem";
 import Separator from "./Separator";
 import { RenderGenres } from "./ShowGroup";
 import colors from "../constants/colors";
@@ -31,7 +30,6 @@ const CreateFormAdd = ({
   typeTagUpdate,
   list,
   dropDownA = [],
-  numColumns = 3,
   headerE,
   type1,
   handleChange,
