@@ -58,10 +58,19 @@ export const RenderVerifyInfo = ({
           justifyContent: "center",
         }}
       >
-        <AppText style={styles.verifyModalTitle} size="large" bold>
-          {vName} verification stats
-        </AppText>
-        <TouchableOpacity activeOpacity={1} onPress={() => setToggle(!toggle)}>
+        <View style={{ flex: 0.9 }}>
+          <AppText style={styles.verifyModalTitle} size="large" bold>
+            verification stats
+          </AppText>
+          <AppText style={styles.verifyModalTitle} size="large" bold>
+            {vName}
+          </AppText>
+        </View>
+        <TouchableOpacity
+          style={{ flex: 0.12 }}
+          activeOpacity={1}
+          onPress={() => setToggle(!toggle)}
+        >
           <Ionicons
             name="information-circle-outline"
             size={30}

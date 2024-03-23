@@ -179,8 +179,15 @@ const characterValidationSchema = Yup.object().shape({
         name: Yup.string().max(255),
       })
     )
-    .label("affiliations")
-    .of(Yup.string().min(2).lowercase().trim()),
+    .label("affiliations"),
+  other_infos: Yup.array()
+    .of(
+      Yup.object().shape({
+        title: Yup.string().max(255),
+        name: Yup.string().max(255),
+      })
+    )
+    .label("other features"),
   cover_photo: Yup.object()
     .shape({
       uri: Yup.string().max(255),
@@ -210,6 +217,14 @@ const showValidationschema = Yup.object().shape({
     .label("Aliases or other names")
     .of(Yup.string().min(3).lowercase().trim())
     .notRequired(),
+  other_infos: Yup.array()
+    .of(
+      Yup.object().shape({
+        title: Yup.string().max(255),
+        name: Yup.string().max(255),
+      })
+    )
+    .label("other features"),
   manager: Yup.string().notRequired(),
   spinoffs: Yup.array()
     .of(Yup.string().min(3).lowercase().trim())
@@ -266,7 +281,14 @@ const groupValidationSchema = Yup.object().shape({
     .trim()
     .lowercase()
     .label("Leader"),
-
+  other_infos: Yup.array()
+    .of(
+      Yup.object().shape({
+        title: Yup.string().max(255),
+        name: Yup.string().max(255),
+      })
+    )
+    .label("other features"),
   cover_photo: Yup.object()
     .shape({
       uri: Yup.string().max(255),

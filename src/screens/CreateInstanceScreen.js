@@ -75,6 +75,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     creator: userInfo._id,
     manager: userInfo._id,
     affiliations: [],
+    other_infos: [],
     groups: [],
     cover_photo: {
       uri: "",
@@ -92,7 +93,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     manager: userInfo._id,
     releaseDate: "",
     endDate: "Currently airing",
-    genres: ["Action"],
+    genres: ["Action", "Adventure"],
     subGenres: ["Psychology", "Sci-Fi"],
     episodes: 210,
     cover_photo: {
@@ -247,6 +248,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       initialValues={characterFormInitials}
                       onSubmit={(formValues) => {
                         setErrText(null);
+                        return console.log("Stopper:: ", formValues);
                         setIsLoading(true);
                         createCharacter(
                           formValues,
@@ -307,8 +309,13 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         type1
                       />
                       <CreateFormArray
-                        placeholder="other relations / affiliations"
+                        placeHolderTitle="other relations e.g Father, Daughter etc"
                         name="affiliations"
+                        formType="addInput"
+                      />
+                      <CreateFormArray
+                        placeHolderTitle="any other feature e.g Special moves, Ninjutsu etc"
+                        name="other_infos"
                         formType="addInput"
                       />
                       {/* /// DISPLAY NAME */}

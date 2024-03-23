@@ -25,7 +25,7 @@ const AppButton = ({
   style,
   title,
   bare,
-  btnColor = colors.primary,
+  btnColor,
   disabled,
   btnTextSize,
   bareWhite,
@@ -207,24 +207,36 @@ const AppButton = ({
         {naked && (
           <TouchableOpacity
             disabled={disabled}
-            activeOpacity={0.4}
+            activeOpacity={0.65}
             onPressIn={() => handleAnimation("in")}
             onPressOut={() => handleAnimation("out")}
             onPress={onPress}
           >
             <View style={[styles.naked, style]}>
               {LIcon && (
-                <LIconComp name={LIcon} size={15} color={colors.primary} />
+                <LIconComp
+                  name={LIcon}
+                  size={15}
+                  color={btnColor ?? colors.primary}
+                />
               )}
               <AppText
                 size={btnTextSize}
-                style={styles.nakedText}
+                style={{
+                  ...styles.nakedText,
+                  color: btnColor ?? colors.primary,
+                }}
                 textStyle="black"
               >
                 {title}
               </AppText>
               {RIcon && (
-                <RIconComp name={RIcon} size={15} color={colors.primary} />
+                <RIconComp
+                  name={RIcon}
+                  // name="edit-outline"
+                  size={15}
+                  color={btnColor ?? colors.primary}
+                />
               )}
             </View>
           </TouchableOpacity>
@@ -290,7 +302,6 @@ const styles = StyleSheet.create({
   },
   nakedText: {
     textTransform: "uppercase",
-    color: colors.primary,
   },
 });
 export default AppButton;
