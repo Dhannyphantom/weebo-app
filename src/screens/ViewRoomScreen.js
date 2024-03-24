@@ -940,6 +940,13 @@ const ViewRoomScreen = ({ navigation, route }) => {
       />
       <RenderPageFooter />
       <ActivityIndicator visible={isLoading} style={styles.activity} />
+      <ActivityIndicator
+        visible={Boolean(errMsg)}
+        type="isEmpty"
+        absolute
+        transparent
+        text={errMsg}
+      />
       {pageData?.characters?.length <= 2 && (
         <View style={{ position: "absolute", top: 0, width }}>
           <InstanceHeader
