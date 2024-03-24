@@ -940,31 +940,36 @@ const ViewRoomScreen = ({ navigation, route }) => {
       />
       <RenderPageFooter />
       <ActivityIndicator visible={isLoading} style={styles.activity} />
-      <ActivityIndicator
-        visible={Boolean(errMsg)}
-        type="isEmpty"
-        absolute
-        transparent
-        text={errMsg}
-      />
+
       {pageData?.characters?.length <= 2 && (
-        <View style={{ position: "absolute", top: 0, width }}>
-          <InstanceHeader
-            instanceData={headerData}
-            RenderInstanceContent={() => (
-              <ActivityIndicator
-                visible
-                type="isEmpty"
-                style={{ bottom: 30 }}
-                text={`No characters in this group yet ${
-                  !pageData.verified
-                    ? "\nHelp verify this group instance by clicking on the verify button"
-                    : ""
-                }`}
+        <>
+          {params.instance == "group" && (
+            <View style={{ position: "absolute", top: 0, width }}>
+              <InstanceHeader
+                instanceData={headerData}
+                RenderInstanceContent={() => (
+                  <ActivityIndicator
+                    visible
+                    type="isEmpty"
+                    style={{ bottom: 30 }}
+                    text={`No characters in this group yet ${
+                      !pageData.verified
+                        ? "\nHelp verify this group instance by clicking on the verify button"
+                        : ""
+                    }`}
+                  />
+                )}
               />
-            )}
+            </View>
+          )}
+          <ActivityIndicator
+            visible={params.instance != "group"}
+            type="isEmpty"
+            absolute
+            transparent
+            text="No verified characters for this instance"
           />
-        </View>
+        </>
       )}
       {showSearch && (
         <View

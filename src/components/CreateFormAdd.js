@@ -479,9 +479,9 @@ const CreateFormAdd = ({
                               <AppText style={styles.errText}>
                                 {capFirstLetter(userInput)}{" "}
                                 {list.slice(-list.length, -1)} not found, please
-                                create {userInput}{" "}
-                                {list.slice(-list.length, -1)} instance first
-                                before proceeding
+                                try entering the full official name or create{" "}
+                                {userInput} {list.slice(-list.length, -1)}{" "}
+                                instance first before proceeding
                               </AppText>
                             </View>
                             {/* <TouchableOpacity
@@ -566,9 +566,7 @@ const CreateFormAdd = ({
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 11,
-  },
+  container: {},
 
   closeIcon: {
     height: "100%",
@@ -663,7 +661,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     flex: 1,
-    marginBottom: 25,
+    marginBottom: 15,
   },
   tagTextCont: {
     flexDirection: "row",

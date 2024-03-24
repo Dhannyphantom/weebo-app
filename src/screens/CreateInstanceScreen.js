@@ -107,6 +107,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     name,
     show: "",
     leader: "",
+    other_infos: [],
     cover_photo: {
       uri: "",
       width: 0,
@@ -474,12 +475,24 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     headerF="leader/founder's full name"
                     name="leader"
                   />
+                  <CreateFormArray
+                    placeHolderTitle="other features e.g Motto"
+                    name="other_infos"
+                    formType="addInput"
+                  />
                   {/* <CreateForm headerE="theme song" name="song" /> */}
                   <CoverUpload type="group" show name="cover_photo" />
 
                   {errText ? (
                     <AppText style={styles.errText}>{errText}</AppText>
                   ) : null}
+                  <AppText style={styles.infoText}>
+                    <AppText style={{ color: colors.medium }} bold>
+                      INFO:
+                    </AppText>{" "}
+                    Member characters can be added later on when this Group
+                    Instance is verified by the Weebo community
+                  </AppText>
 
                   <SubmitButton
                     title="Upload Group"
@@ -539,6 +552,13 @@ const styles = StyleSheet.create({
     color: "red",
     marginVertical: 30,
     alignSelf: "center",
+  },
+  infoText: {
+    textAlign: "center",
+    maxWidth: "85%",
+    alignSelf: "center",
+    marginVertical: 12,
+    color: colors.medium,
   },
   select: {
     alignItems: "center",

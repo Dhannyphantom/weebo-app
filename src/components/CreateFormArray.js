@@ -247,20 +247,20 @@ const CreateFormArray = ({
   dropdown,
   ...otherProps
 }) => {
-  return (
-    <FieldArray
-      name={name}
-      render={(filedArrayProps) => {
-        const { push, remove } = filedArrayProps;
-        if (formType == "addInput") {
-          return (
-            <AddPropInfoField
-              name={name}
-              {...otherProps}
-              placeHolderTitle={placeHolderTitle}
-            />
-          );
-        } else {
+  if (formType == "addInput") {
+    return (
+      <AddPropInfoField
+        name={name}
+        {...otherProps}
+        placeHolderTitle={placeHolderTitle}
+      />
+    );
+  } else {
+    return (
+      <FieldArray
+        name={name}
+        render={(filedArrayProps) => {
+          const { push, remove } = filedArrayProps;
           return (
             <CreateFormAdd
               type1={type1}
@@ -276,10 +276,10 @@ const CreateFormArray = ({
               {...otherProps}
             />
           );
-        }
-      }}
-    />
-  );
+        }}
+      />
+    );
+  }
 };
 
 const styles = StyleSheet.create({
