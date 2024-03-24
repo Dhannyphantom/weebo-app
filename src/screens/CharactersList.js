@@ -18,6 +18,7 @@ import colors from "../constants/colors";
 import TabList from "../components/TabList";
 import Shows from "../components/Shows";
 import GroupCard from "../components/GroupCard";
+import { getFeedNumber } from "../constants/helpers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -80,15 +81,15 @@ const CharactersList = ({ route, navigation }) => {
   const tabItems = [
     {
       tab: "characters",
-      name: `characters (${instances?.characters?.length})`,
+      name: `characters ${getFeedNumber(instances?.characters?.length)}`,
     },
     {
       tab: "shows",
-      name: `shows (${instances?.shows?.length})`,
+      name: `shows ${getFeedNumber(instances?.shows?.length)}`,
     },
     {
       tab: "groups",
-      name: `groups (${instances?.groups?.length})`,
+      name: `groups ${getFeedNumber(instances?.groups?.length)}`,
     },
   ];
 

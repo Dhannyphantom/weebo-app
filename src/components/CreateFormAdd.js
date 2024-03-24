@@ -19,6 +19,7 @@ import colors from "../constants/colors";
 import grabApi from "../api/grabApi";
 import ThemeContext from "../config/ThemeContext";
 import PopDropDown from "./PopDropDown";
+import { capFirstLetter } from "../constants/helpers";
 const screen = Dimensions.get("window");
 
 const CreateFormAdd = ({
@@ -476,14 +477,14 @@ const CreateFormAdd = ({
                               }}
                             >
                               <AppText style={styles.errText}>
-                                <AppText style={styles.errTextb}>
-                                  {list.slice(-list.length, -1)}
-                                </AppText>
-                                not found, please create {userInput}
-                                {list.slice(-list.length, -1)} before proceeding
+                                {capFirstLetter(userInput)}{" "}
+                                {list.slice(-list.length, -1)} not found, please
+                                create {userInput}{" "}
+                                {list.slice(-list.length, -1)} instance first
+                                before proceeding
                               </AppText>
                             </View>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                               onPress={handleNavigation}
                               style={styles.searchAdd}
                             >
@@ -492,7 +493,7 @@ const CreateFormAdd = ({
                                 size={17}
                                 color={colors.primary}
                               />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                           </>
                         ) : null}
                       </View>
@@ -584,10 +585,6 @@ const styles = StyleSheet.create({
     color: "red",
     marginLeft: 10,
     fontSize: 10,
-  },
-  errTextb: {
-    fontSize: 10,
-    textTransform: "capitalize",
   },
   headerTitle: {
     flexDirection: "row",

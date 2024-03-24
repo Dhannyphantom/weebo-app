@@ -248,7 +248,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       initialValues={characterFormInitials}
                       onSubmit={(formValues) => {
                         setErrText(null);
-                        return console.log("Stopper:: ", formValues);
+                        // return console.log("Stopper:: ", formValues);
                         setIsLoading(true);
                         createCharacter(
                           formValues,
