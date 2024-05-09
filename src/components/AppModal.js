@@ -6,6 +6,7 @@ import {
   View,
   Dimensions,
   FlatList,
+  ScrollView,
   Animated,
   Easing,
   Keyboard,
@@ -221,7 +222,7 @@ const RenderTags = ({ tags, translator, handleCloseModal }) => {
         />
       </TouchableOpacity>
       <View style={[styles.tags, { backgroundColor: theme.background }]}>
-        {tags.map((item) => renderTagItems({ item }))}
+        <ScrollView>{tags.map((item) => renderTagItems({ item }))}</ScrollView>
       </View>
     </Animated.View>
   );
@@ -838,7 +839,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     borderRadius: 12,
     alignSelf: "center",
-    maxHeight: height * 0.5,
+    maxHeight: height * 0.4,
     paddingBottom: 0,
   },
   tagContainer: {

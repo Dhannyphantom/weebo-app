@@ -36,6 +36,7 @@ import InstanceChallenger from "../components/InstanceChallenger";
 import { showInfoProps } from "../constants/data_store";
 import {
   canChallengeInstance,
+  capCapitalize,
   capFirstLetter,
   launchGallery,
 } from "../constants/helpers";
@@ -408,7 +409,21 @@ const ShowScreen = ({ route, navigation }) => {
     listItems,
     coverLoading: isCoverLoading,
     setCoverLoading: setIsCoverLoading,
-    handleLeftPress: () => handleFollowShow(),
+    handleLeftPress: () =>
+      isMine
+        ? () => {
+            setAlertModal({
+              visible: true,
+              title: "Unfollow Instance",
+              message: `Are sure you want to unfollow ${capCapitalize(
+                dataState.name
+              )} Instance?\nYou will lose all management rights!`,
+              btn: "UNFOLLOW",
+              type: "unfollow_instance",
+              data: {},
+            });
+          }
+        : handleFollowShow(),
     leftColor: isFollowed,
     subscribers: null,
     verified: dataState.verified,
@@ -494,13 +509,18 @@ const ShowScreen = ({ route, navigation }) => {
   };
 
   const handleOkAlert = () => {
-    if (alertModal.type === "followC") {
-      //follow show
-      // followChar({ charID, userID }, "follow", () => follows(true));
-    } else if (alertModal.type === "unfollowC") {
-      // unfollow show
-      // followChar({ charID, userID }, "unfollow", () => follows(false));
+    switch (alertModal.type) {
+      case "unfollow_instance":
+        handleFollowShow();
+        break;
     }
+    // if (alertModal.type === "followC") {
+    //   //follow show
+    //   // followChar({ charID, userID }, "follow", () => follows(true));
+    // } else if (alertModal.type === "unfollowC") {
+    //   // unfollow show
+    //   // followChar({ charID, userID }, "unfollow", () => follows(false));
+    // }
   };
 
   const checkIsVerified = (type) => {

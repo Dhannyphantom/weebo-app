@@ -41,6 +41,20 @@ export const capFirstLetter = (str, all) => {
   }
 };
 
+export const capCapitalize = (str) => {
+  let capitalized = capFirstLetter(str);
+  for (let i = 0; i < str.length; i++) {
+    const letter = capitalized[i];
+    if (letter === " " && capitalized[i + 1]) {
+      capitalized =
+        capitalized.slice(0, i + 1) +
+        capitalized[i + 1].toUpperCase() +
+        capitalized.slice(i + 2);
+    }
+  }
+  return capitalized;
+};
+
 export const launchGallery = async (
   type = "all",
   editing = false,

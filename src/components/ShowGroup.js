@@ -466,9 +466,11 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
         (resData) => {
           setBools({ ...bools, firstLoad: true });
           setScreenData(resData);
+          if (bool) setRefreshing(false);
         },
         (err) => {
           setErrMsg(err);
+          if (bool) setRefreshing(false);
         }
       );
     }

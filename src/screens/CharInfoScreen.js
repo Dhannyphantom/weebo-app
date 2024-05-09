@@ -27,8 +27,10 @@ const sortArr = [
   "gender",
   "type",
   "birthday",
+  "affiliations",
   "height",
   "voiceActors",
+  "other_infos",
   "challenge_stat",
 ];
 
@@ -38,6 +40,8 @@ const renameProps = {
   dpName: "Card display name",
   voiceActor: "voice actors",
   show: "Character's show/manga",
+  other_infos: "other features / info",
+  affiliations: "affiliations / relations",
   other_names: "Aliases",
   challenge_stat: "Challenge Dormancy",
 };
@@ -97,6 +101,42 @@ export const InfoDisplay = ({ type = "list", data }) => {
               ]}
             >
               <AppText style={styles.displayText}>{str}</AppText>
+            </View>
+          );
+        })}
+      </View>
+    );
+  } else if (type === "props") {
+    if (!data.value[0]) return null;
+    return (
+      <View style={styles.displayList}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.displayIcon}>
+            <Feather name="layers" size={22} color={colors.primary} />
+          </View>
+          <View
+            style={[styles.displayHeaderList, { backgroundColor: theme.light }]}
+          >
+            <AppText style={styles.displayText} textStyle="black">
+              {data.title}
+            </AppText>
+          </View>
+        </View>
+        {data.value.map((obj) => {
+          return (
+            <View
+              key={uuid.v4()}
+              style={[
+                styles.displayContentList,
+                { backgroundColor: theme.light },
+              ]}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <AppText bold style={styles.displayTextTitle}>
+                  {obj.title}:{" "}
+                </AppText>
+                <AppText style={styles.displayTextValue}>{obj.name}</AppText>
+              </View>
             </View>
           );
         })}
@@ -170,8 +210,11 @@ const CharInfoScreen = ({
               headerTitle = key;
             }
 
-            const type =
-              Array.isArray(val) && !isStats.includes(key) ? "list" : "text";
+            const type = ["affiliations", "other_infos"].includes(key)
+              ? "props"
+              : Array.isArray(val) && !isStats.includes(key)
+              ? "list"
+              : "text";
             const data = {
               title: headerTitle,
               value: val,
@@ -316,6 +359,14 @@ const styles = StyleSheet.create({
   },
   displayText: {
     textTransform: "capitalize",
+  },
+  displayTextTitle: {
+    textTransform: "capitalize",
+    maxWidth: "35%",
+  },
+  displayTextValue: {
+    textTransform: "capitalize",
+    maxWidth: "60%",
   },
   displayIcon: {
     margin: 5,

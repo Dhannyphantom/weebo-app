@@ -943,7 +943,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
       {pageData?.characters?.length <= 2 && (
         <>
-          {params.instance == "group" && (
+          {params?.data?.instance == "group" && (
             <View style={{ position: "absolute", top: 0, width }}>
               <InstanceHeader
                 instanceData={headerData}
@@ -963,7 +963,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
             </View>
           )}
           <ActivityIndicator
-            visible={params.instance != "group"}
+            visible={params?.data?.instance != "group"}
             type="isEmpty"
             absolute
             transparent

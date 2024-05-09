@@ -262,7 +262,7 @@ const ChannelPostScreen = ({ route, navigation }) => {
     screenIcon: "tv",
     coverLoading: bools.imageLoading,
     handleLeftPress: () => handleSub(),
-    handleRightPress: () => setBools({ ...bools, subscribers: true }),
+    handleRightPress: () => isMine && setBools({ ...bools, subscribers: true }),
     leftColor: isSubscribed,
     verified: false,
     subscribers: page?.subscribers?.length,
