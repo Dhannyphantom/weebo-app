@@ -12,11 +12,10 @@ import colors from "../constants/colors";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import LoaderImage from "./LoaderImage";
-import PostVideo, { RenderMediaIcon } from "./PostVideo";
+import { RenderMediaIcon } from "./PostVideo";
 import MediaModal from "./MediaModal";
 import ThemeContext from "../config/ThemeContext";
 import { Image } from "react-native";
-import Spacer from "./Spacer";
 
 const { width, height } = Dimensions.get("window");
 
@@ -83,7 +82,7 @@ const FeedBox = ({
           {pack === "a" && (
             <AntDesign name={icon} size={18} color={colors.primary} />
           )}
-          <AppText size="large" style={styles.title} bold>
+          <AppText size="medium" style={styles.title} bold>
             {title} {title2 ? `- ${title2}` : null}
           </AppText>
         </View>
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginBottom: 7,
     marginLeft: 6,
-    width: "95%",
+    maxWidth: "85%",
     color: colors.primary,
   },
   thumb: {

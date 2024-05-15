@@ -104,10 +104,10 @@ const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
   }
 
   let title2;
-  if (item.tagChannel) title2 = item.tagChannel.name;
-  if (item.tagGroup) title2 = item.tagGroup.name;
-  if (item.tagCharacter) title2 = item.tagCharacter.name;
-  if (item.tagShow) title2 = item.tagShow.name;
+  if (item.tagChannel) title2 = item.tagChannel.name + " channel";
+  if (item.tagGroup) title2 = item.tagGroup.name + " group";
+  if (item.tagCharacter) title2 = item.tagCharacter.name + "character";
+  if (item.tagShow) title2 = item.tagShow.name + " show";
 
   useEffect(() => {
     setChallengerNum(item.challengers?.length);

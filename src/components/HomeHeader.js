@@ -167,6 +167,8 @@ const CreatePostActions = ({
     );
   };
 
+  // console.log(userInfo?.instances?.characters);
+
   return (
     <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
       <View style={[styles.links, { backgroundColor: theme.light }]}>

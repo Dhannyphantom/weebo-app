@@ -33,6 +33,9 @@ const AppText = ({
     case "xxxsmall":
       scaledSize = 6.5;
       break;
+    case "medium":
+      scaledSize = 16;
+      break;
     case "large":
       scaledSize = 18;
       break;
