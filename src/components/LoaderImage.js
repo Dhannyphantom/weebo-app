@@ -109,11 +109,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 13,
+    overflow: "hidden",
   },
 
   image: {
     height: "100%",
     width: "100%",
+    overflow: "hidden",
   },
   imageOverlay: {
     position: "absolute",

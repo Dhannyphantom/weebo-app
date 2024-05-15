@@ -51,9 +51,9 @@ export const RenderVerifyInfo = ({
 
   return (
     <View style={[styles.verifyModal, { backgroundColor: theme.background }]}>
-      <View>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
         <TouchableOpacity
-          style={{ padding: 12 }}
+          style={{ padding: 5 }}
           activeOpacity={1}
           onPress={() => setToggle(!toggle)}
         >
@@ -63,16 +63,16 @@ export const RenderVerifyInfo = ({
             color={colors.light}
           />
         </TouchableOpacity>
+        <View style={{ flex: 0.9 }}>
+          <AppText style={styles.verifyModalTitle} size="large" bold>
+            verification stats
+          </AppText>
+          <AppText style={styles.verifyModalTitle} size="large" bold>
+            {vName}
+          </AppText>
+        </View>
       </View>
 
-      <View style={{ flex: 1 }}>
-        <AppText style={styles.verifyModalTitle} size="large" bold>
-          verification stats
-        </AppText>
-        <AppText style={styles.verifyModalTitle} size="large" bold>
-          {vName}
-        </AppText>
-      </View>
       {toggle && (
         <AppText size="small" style={styles.info}>
           For verification, will require either 1000 followers, OR 1000 +ve
@@ -657,9 +657,8 @@ const styles = StyleSheet.create({
   info: {
     textAlign: "center",
     alignSelf: "center",
-    marginTop: 10,
     maxWidth: "94%",
-    paddingBottom: 10,
+    margin: 15,
   },
   name: {
     marginLeft: 6,
@@ -722,8 +721,7 @@ const styles = StyleSheet.create({
   },
   verifyModal: {
     width: width * 0.9,
-    height: width * 0.5,
-    backgroundColor: colors.white,
+    minHeight: width * 0.3,
     padding: 10,
     borderRadius: width * 0.02,
   },
@@ -733,7 +731,8 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   verifyModalContent: {
-    flex: 0.9,
+    // flex: 0.9,
+    marginVertical: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",

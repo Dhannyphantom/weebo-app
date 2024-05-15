@@ -1,8 +1,23 @@
 import React, { useContext } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import colors from "../constants/colors";
 import AppButton from "./AppButton";
 import ThemeContext from "../config/ThemeContext";
+import AppText from "./AppText";
+
+const TouchButton = ({ text, onPress }) => {
+  return (
+    <TouchableOpacity
+      style={styles.btnStyle}
+      activeOpacity={0.9}
+      onPress={onPress}
+    >
+      <AppText style={styles.btnText} size="xlarge" textStyle="black">
+        {text}
+      </AppText>
+    </TouchableOpacity>
+  );
+};
 
 const SelectNumber = ({ num, style, setNum, limitY = 7, limitX = 0 }) => {
   const theme = useContext(ThemeContext);
@@ -34,12 +49,13 @@ const SelectNumber = ({ num, style, setNum, limitY = 7, limitX = 0 }) => {
 
   return (
     <View style={[styles.container, style]}>
-      <AppButton
+      {/* <AppButton
         title="-"
         btnTextSize={"xlarge"}
         bare
         onPress={handleDecrement}
-      />
+      /> */}
+      <TouchButton text="-" onPress={handleDecrement} />
       <View
         style={[styles.inputContainer, { backgroundColor: theme.extralight }]}
       >
@@ -55,11 +71,27 @@ const SelectNumber = ({ num, style, setNum, limitY = 7, limitX = 0 }) => {
           value={`${num}`}
         />
       </View>
-      <AppButton title="+" bare onPress={handleIncrement} />
+      <TouchButton text="+" onPress={handleIncrement} />
     </View>
   );
 };
 const styles = StyleSheet.create({
+  btnStyle: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  btnText: {
+    color: colors.primary,
+    padding: 0,
+    margin: 0,
+    paddingBottom: 2,
+  },
   container: {
     flexDirection: "row",
     justifyContent: "space-around",

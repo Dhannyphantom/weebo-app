@@ -35,15 +35,16 @@ const AppCarousel = ({
           marginRight: !addMargin ? SLIDER_MARGIN : 0,
           alignItems: "center",
           justifyContent: "center",
-          height: height * 0.55,
-          borderRadius: 15,
+          maxHeight: height * 0.6,
+          borderRadius: 12,
+          overflow: "hidden",
         }}
       >
         <FeedImage
           translator={translator}
           feed={feed}
           showMediaFunc={showMediaFunc}
-          setAspectRatio={false}
+          setAspectRatio={true}
           image={item}
           style={full ? { width: width } : { width: SLIDER_CONTAINER_WIDTH }}
           handleLike={handleLike}

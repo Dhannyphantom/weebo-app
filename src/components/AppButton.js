@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: screen.width * 0.03,
     // padding: 12,
-    paddingHorizontal: 30,
-    paddingVertical: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     elevation: 2,
     shadowRadius: 6,
     shadowColor: "black",
@@ -264,8 +264,8 @@ const styles = StyleSheet.create({
   accent: {
     backgroundColor: colors.accent,
     borderRadius: screen.width * 0.03,
-    paddingHorizontal: 30,
-    paddingVertical: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   btnText: {
     textTransform: "uppercase",
@@ -281,8 +281,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     elevation: 1,
-    paddingHorizontal: 30,
-    paddingVertical: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   bareText: {
     color: colors.primary,

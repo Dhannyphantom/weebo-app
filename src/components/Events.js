@@ -280,7 +280,7 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           limitY={50}
         />
         <AppText style={{ textAlign: "center" }}>
-          Will require
+          Will require{" "}
           <AppText style={{ color: colors.primary }}>{cpCalculator}WP</AppText>
         </AppText>
         <AppText style={styles.subTitles} bold>

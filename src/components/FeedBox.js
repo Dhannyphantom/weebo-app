@@ -92,13 +92,9 @@ const FeedBox = ({
         <TouchableOpacity
           activeOpacity={onPress ? 0.96 : 1}
           onPress={handleMediaPress}
-          style={{
-            ...styles.bgImage,
-            aspectRatio: image.width / image.height,
-            borderRadius: image.width * 0.02,
-          }}
+          style={styles.bgImage}
         >
-          <LoaderImage image={image} />
+          <LoaderImage setAspectRatio={true} image={image} />
         </TouchableOpacity>
       )}
       {mediaType == "video" && (
@@ -186,10 +182,11 @@ const styles = StyleSheet.create({
     color: colors.medium,
   },
   bgImage: {
-    flex: 1,
-    width: "93%",
-    maxHeight: height * 0.6,
+    width: "95%",
     alignSelf: "center",
+    borderRadius: 10,
+    maxHeight: height * 0.5,
+    overflow: "hidden",
   },
   dots: {
     padding: 8,
