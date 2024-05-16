@@ -28,10 +28,12 @@ const LoaderImage = ({
     setLoadedOnce(true);
   };
 
+  const bRadius = borderRadius ? borderRadius : full ? 1 : 12;
+
   const contStyle = {
     ...styles.container,
     backgroundColor: theme.extralight,
-    borderRadius: full ? 1 : 12,
+    borderRadius: bRadius,
     ...style,
   };
 
@@ -48,7 +50,7 @@ const LoaderImage = ({
         {...otherProps}
         style={{
           ...styles.image,
-          borderRadius: full ? 1 : 12,
+          borderRadius: bRadius,
           ...imageStyle,
           height: isVideoImage ? Math.min(image?.height, height * 0.65) : null,
         }}
@@ -65,7 +67,7 @@ const LoaderImage = ({
           style={{
             ...styles.image,
             ...styles.imageOverlay,
-            borderRadius: full ? 1 : 12,
+            borderRadius: bRadius,
             ...imageStyle,
           }}
           onLoadEnd={handleLoadEnd}
@@ -80,7 +82,7 @@ const LoaderImage = ({
         type="loader"
         style={{
           ...styles.activity,
-          borderRadius: full ? 1 : 12,
+          borderRadius: bRadius,
         }}
         transparent
       />
@@ -89,7 +91,7 @@ const LoaderImage = ({
         type="spin"
         style={{
           ...styles.activity,
-          borderRadius: full ? 1 : 12,
+          borderRadius: bRadius,
         }}
         wTransparent
       />
@@ -108,7 +110,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    borderRadius: 13,
     overflow: "hidden",
   },
 

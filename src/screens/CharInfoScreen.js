@@ -76,7 +76,6 @@ export const InfoDisplay = ({ type = "list", data }) => {
     );
   } else if (type === "list") {
     if (!data.value[0]) return null;
-    // return null;
     return (
       <View style={styles.displayList}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -122,24 +121,37 @@ export const InfoDisplay = ({ type = "list", data }) => {
             </AppText>
           </View>
         </View>
-        {data.value.map((obj) => {
-          return (
-            <View
-              key={uuid.v4()}
-              style={[
-                styles.displayContentList,
-                { backgroundColor: theme.light },
-              ]}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <AppText bold style={styles.displayTextTitle}>
-                  {obj.title}:{" "}
-                </AppText>
-                <AppText style={styles.displayTextValue}>{obj.name}</AppText>
+        {Array.isArray(data.value) ? (
+          data.value.map((obj) => {
+            return (
+              <View
+                key={uuid.v4()}
+                style={[
+                  styles.displayContentList,
+                  { backgroundColor: theme.light },
+                ]}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <AppText bold style={styles.displayTextTitle}>
+                    {obj.title}:{" "}
+                  </AppText>
+                  <AppText style={styles.displayTextValue}>{obj.name}</AppText>
+                </View>
               </View>
+            );
+          })
+        ) : (
+          <View
+            style={[
+              styles.displayContentList,
+              { backgroundColor: theme.light },
+            ]}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <AppText style={styles.displayTextValue}>{data.value}</AppText>
             </View>
-          );
-        })}
+          </View>
+        )}
       </View>
     );
   }

@@ -305,6 +305,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
 
   const params = route.params;
   // params = { instance, instanceID, ?roomID}
+
   const scrollX = useRef(new Animated.Value(0)).current;
   const searchRef = useRef(null);
   const theme = useContext(ThemeContext);

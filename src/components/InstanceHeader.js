@@ -444,7 +444,7 @@ const InstanceHeader = ({
               : 1.5,
           }}
         >
-          <LoaderImage image={cover_photo} borderRadius={60} />
+          <LoaderImage image={cover_photo} borderRadius={4} />
           <View
             style={{
               position: "absolute",

@@ -121,7 +121,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     group: false,
   });
   const [changeD, setChangeD] = useState(false);
-  const [screenData, setScreenData] = useState({ leave: false, data: {} });
+  // const [screenData, setScreenData] = useState({ leave: false, data: {} });
   const [prompt, setPrompt] = useState(beforeLeavePrompt);
 
   const weebo_points = cardState.character
@@ -153,15 +153,16 @@ const CreateInstanceScreen = ({ route, navigation }) => {
   };
 
   const handleNavigation = (name, params) => {
-    setScreenData({ leave: true, data: { name, params } });
-    setPrompt({
-      ...prompt,
-      type: "auto_nav",
-      // message: "Instance created successfully",
-      // btn: "GOTO INSTANCE",
-      // visible: false,
-      data: { name, params },
-    });
+    navigation.replace(name, params);
+    // setScreenData({ leave: true, data: { name, params } });
+    // setPrompt({
+    //   ...prompt,
+    //   type: "auto_nav",
+    //   // message: "Instance created successfully",
+    //   // btn: "GOTO INSTANCE",
+    //   // visible: false,
+    //   data: { name, params },
+    // });
   };
 
   const handlePrompts = () => {
@@ -182,40 +183,40 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     navigation.addListener("blur", () => {
       Keyboard.dismiss();
     });
-    const navSubs = navigation.addListener("beforeRemove", (e) => {
-      if (!screenData.leave) {
-        e.preventDefault();
-        setPrompt({
-          ...prompt,
-          type: "leave_screen",
-          visible: true,
-          data: e.data.action,
-        });
-      } else {
-        console.log("Navigate to other screen");
-      }
-    });
+    // const navSubs = navigation.addListener("beforeRemove", (e) => {
+    //   if (!screenData.leave) {
+    //     e.preventDefault();
+    //     setPrompt({
+    //       ...prompt,
+    //       type: "leave_screen",
+    //       visible: true,
+    //       data: e.data.action,
+    //     });
+    //   } else {
+    //     log("Navigate to other screen");
+    //   }
+    // });
 
-    return () => {
-      navSubs;
-    };
-  }, [navigation, prompt, screenData]);
+    // return () => {
+    //   navSubs;
+    // };
+  }, [navigation, prompt]);
 
-  useEffect(() => {
-    if (prompt.type === "auto_nav" && screenData.leave) {
-      navigation.dispatch((state) => {
-        const routes = [
-          ...state.routes.slice(0, -1),
-          { name: prompt.data?.name, params: prompt?.data?.params },
-        ];
-        return CommonActions.reset({
-          ...state,
-          routes,
-          index: routes.length - 1,
-        });
-      });
-    }
-  }, [prompt]);
+  // useEffect(() => {
+  //   if (prompt.type === "auto_nav" && screenData.leave) {
+  //     navigation.dispatch((state) => {
+  //       const routes = [
+  //         ...state.routes.slice(0, -1),
+  //         { name: prompt.data?.name, params: prompt?.data?.params },
+  //       ];
+  //       return CommonActions.reset({
+  //         ...state,
+  //         routes,
+  //         index: routes.length - 1,
+  //       });
+  //     });
+  //   }
+  // }, [prompt]);
 
   return (
     <Screen>
@@ -249,11 +250,13 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       initialValues={characterFormInitials}
                       onSubmit={(formValues) => {
                         setErrText(null);
-                        // return console.log("Stopper:: ", formValues);
                         setIsLoading(true);
                         createCharacter(
                           formValues,
-                          (data) => handleNavigation("Character", data),
+                          (data) =>
+                            handleNavigation("Character", {
+                              item: data.characterID,
+                            }),
                           (obj) => actionCallback(obj)
                         );
                       }}
@@ -456,8 +459,10 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         updateMe({ data: resData.points, prop: "points" });
 
                         handleNavigation("Room", {
-                          instance: "group",
-                          instanceID: resData.group._id,
+                          data: {
+                            instance: "group",
+                            instanceID: resData.group._id,
+                          },
                         });
                       },
                       (obj) => actionCallback(obj)

@@ -149,7 +149,6 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
           }
         });
         setFields(newFieldsArr);
-        // return console.log(newFieldsArr);
         setFieldValue(
           name,
           newFieldsArr.map((fieldItm) => ({
