@@ -11,6 +11,7 @@ import {
 
 import AppText from "./AppText";
 import ActivityIndicator from "./ActivityIndicator";
+import { ads_keywords } from "../constants/data_store";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -48,6 +49,7 @@ export default function BannerAds() {
   }
 
   const onAdFailedToLoad = (error) => {
+    console.log(error);
     if (!actions.loadFail) {
       setActions({ ...actions, loadFail: true, loadedOnce: true });
     }
@@ -95,7 +97,7 @@ export default function BannerAds() {
           unitId={BANNER_ID}
           size={actions.bannerSize}
           requestOptions={{
-            keywords: ["comics", "anime", "manga", "toon"],
+            keywords: ads_keywords,
           }}
           onAdFailedToLoad={onAdFailedToLoad}
           onAdOpened={() => setActions({ ...actions, loadFail: false })}

@@ -880,6 +880,7 @@ export const ads_keywords = [
   "culture",
   "toon",
   "animation",
+  "game",
 ];
 
 export const ADS_INTERVAL = 10;
