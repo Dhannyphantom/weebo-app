@@ -4,16 +4,23 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import Main from "./src/Main";
 import { View } from "react-native";
+import Main from "./src/Main";
 import mobileAds from "react-native-google-mobile-ads";
-// import Tester from "./src/tests-comp/Tester";
+// // import Tester from "./src/tests-comp/Tester";
 
 SplashScreen.preventAutoHideAsync();
 
 mobileAds()
   .initialize()
   .then((adapterStatus) => {});
+
+//       <View onLayout={onLayoutRootView} />
+//       <Main />
+//       {/* <Tester /> */}
+//     </>
+//   );
+// }
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -60,10 +67,8 @@ export default function App() {
   }
 
   return (
-    <>
-      <View onLayout={onLayoutRootView} />
+    <View onLayout={onLayoutRootView}>
       <Main />
-      {/* <Tester /> */}
-    </>
+    </View>
   );
 }

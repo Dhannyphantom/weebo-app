@@ -5,17 +5,12 @@ module.exports = {
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
+    userInterfaceStyle: "light",
     splash: {
       image: "./assets/splash.png",
       resizeMode: "cover",
       backgroundColor: "#5B4EC7",
-      // #8176D8
     },
-    updates: {
-      fallbackToCacheTimeout: 0,
-    },
-    assetBundlePatterns: ["**/*"],
-    // ...
     android: {
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       adaptiveIcon: {
@@ -47,6 +42,9 @@ module.exports = {
       },
       // ...
     },
+    web: {
+      favicon: "./assets/favicon.png",
+    },
     plugins: [
       [
         "react-native-fbsdk-next",
@@ -61,6 +59,7 @@ module.exports = {
             "This identifier will be used to deliver personalized ads to you.",
         },
       ],
+      "react-native-fbads",
       "@react-native-google-signin/google-signin",
     ],
     extra: {
@@ -69,8 +68,11 @@ module.exports = {
       },
     },
   },
+
   "react-native-google-mobile-ads": {
     android_app_id: "ca-app-pub-3603875446667492~4709489944",
     ios_app_id: "ca-app-pub-3603875446667492~7241419988",
+    user_tracking_usage_description:
+      "This identifier will be used to deliver personalized ads to you.",
   },
 };

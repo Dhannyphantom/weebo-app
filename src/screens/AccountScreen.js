@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import Clipboard, { useClipboard } from "@react-native-community/clipboard";
+// import Clipboard, { useClipboard } from "@react-native-community/clipboard";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -39,7 +39,7 @@ const modalShow = {
 
 const InviteWeebs = ({ closeModal }) => {
   const theme = useContext(ThemeContext);
-  const [clipStr, setClipper] = useClipboard();
+  // const [clipStr, setClipper] = useClipboard();
   const {
     // sendInvite,
     state: {
@@ -54,7 +54,7 @@ const InviteWeebs = ({ closeModal }) => {
       case "link":
         // USE EXPO CLIPBOARD PACKAGE
         try {
-          setClipper(clipStr);
+          // setClipper(clipStr);
           closeModal("copied");
         } catch (err) {}
         break;
