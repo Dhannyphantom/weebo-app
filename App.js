@@ -7,6 +7,7 @@ import * as MediaLibrary from "expo-media-library";
 import { View } from "react-native";
 import Main from "./src/Main";
 import mobileAds from "react-native-google-mobile-ads";
+import Entry from "./src/Entry";
 // // import Tester from "./src/tests-comp/Tester";
 
 SplashScreen.preventAutoHideAsync();
@@ -68,6 +69,7 @@ export default function App() {
 
   return (
     <View onLayout={onLayoutRootView}>
+      {/* <Entry /> */}
       <Main />
     </View>
   );

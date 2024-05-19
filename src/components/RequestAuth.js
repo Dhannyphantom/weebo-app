@@ -51,7 +51,8 @@ const RequestAuth = ({ navigation }) => {
     return () => {
       unsubscribe;
     };
-  }, []);
+  }, [navigation]);
+
   if (errMsg)
     return (
       <View style={styles.container}>
