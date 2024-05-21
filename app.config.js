@@ -4,7 +4,7 @@ module.exports = {
     slug: "weebo",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/icon512.png",
     userInterfaceStyle: "light",
     splash: {
       image: "./assets/splash.png",
