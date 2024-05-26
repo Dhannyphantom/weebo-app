@@ -397,7 +397,7 @@ const ShowScreen = ({ route, navigation }) => {
     cover_photo: dataState?.cover_photo,
     owner: dataState?.manager,
     badge: Boolean(isChallenger),
-    screenIcon: "ios-tv",
+    screenIcon: "tv",
     feedback: {
       instanceID: dataState?._id,
       finder: dataState?.verifiedList?.find((obj) => obj.user == userInfo._id),

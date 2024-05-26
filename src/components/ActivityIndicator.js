@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import React, { forwardRef, useContext, useRef } from "react";
+import { StyleSheet, View, Dimensions, Animated } from "react-native";
 import LottieView from "lottie-react-native";
 import colors from "../constants/colors";
 import AppText from "./AppText";
+const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
 // FILES
 import loaderAnim from "../../assets/animations/two_dotted_spinner.json";
@@ -14,7 +15,6 @@ import emptyLoader from "../../assets/animations/nice.json";
 import ThemeContext from "../config/ThemeContext";
 import testAnim from "../../assets/animations/searching_animation.json";
 import uploadProgress from "../../assets/animations/progress.json";
-import AnimatedLottieView from "lottie-react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -89,7 +89,6 @@ const ActivityIndicator = ({
           loop
         />
       )}
-
       {type === "empty" ||
         (type === "isEmpty" && (
           <>
@@ -135,7 +134,6 @@ const ActivityIndicator = ({
             </AppText>
           </>
         ))}
-
       {type === "network" && (
         <>
           <LottieView
@@ -205,21 +203,7 @@ const ActivityIndicator = ({
             speed={speed}
             onAnimationFinish={onAnimationFinish}
           />
-          {/* <LottieView
-            source={uploadProgress}
-            // colorFilters={[]}
-            ref={ref}
-            progress={progress}
-            autoPlay={autoPlay}
-            style={{
-              width: width * size,
-              height: width * size,
-              ...lottieStyles,
-            }}
-            loop={false}
-            speed={speed}
-            onAnimationFinish={onAnimationFinish}
-          /> */}
+
           {text && <AppText style={styles.text}> {text} </AppText>}
         </>
       )}

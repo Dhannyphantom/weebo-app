@@ -1,7 +1,6 @@
 import { useFormikContext } from "formik";
 import React, { forwardRef, useContext, useState } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { View, StyleSheet, Dimensions, TextInput } from "react-native";
 import ThemeContext from "../config/ThemeContext";
 import colors from "../constants/colors";
 import AppText from "./AppText";

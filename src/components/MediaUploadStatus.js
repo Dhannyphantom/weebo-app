@@ -61,10 +61,14 @@ const MediaUploadStatus = ({ status, screen }) => {
         duration: 2000,
         useNativeDriver: true,
       }).start(() => {
-        onAnimationFinish();
+        setTimeout(() => {
+          onAnimationFinish();
+        }, 1000);
       });
     }
   }, [status]);
+
+  // console.log("Lottie progress: ", lottieProg);
 
   return (
     <>
@@ -82,7 +86,7 @@ const MediaUploadStatus = ({ status, screen }) => {
             }}
             type="upload"
             // speed={speed}
-            size={0.2}
+            size={1.1}
           />
           <AppText
             size="xsmall"

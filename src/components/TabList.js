@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     flexDirection: "row",
     flex: 1,
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "center",
   },
   boxText: {

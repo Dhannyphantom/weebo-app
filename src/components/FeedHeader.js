@@ -71,7 +71,7 @@ const FeedHeader = ({
               onPress={() => navigation.navigate("Show", { show })}
               style={[styles.left, styles.showHeader]}
             >
-              <Ionicons name="ios-tv" size={20} color={colors.primary} />
+              <Ionicons name="tv" size={20} color={colors.primary} />
               <AppText
                 style={{ ...styles.headText, textTransform: "capitalize" }}
                 bold
