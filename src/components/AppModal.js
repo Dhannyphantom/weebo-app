@@ -760,7 +760,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   box: {
-    flex: 1,
+    // flex: 1,
   },
   close: {
     width: 50,
@@ -773,9 +773,10 @@ const styles = StyleSheet.create({
   },
 
   caption: {
-    width: "97%",
-    height: "30%",
-    padding: 20,
+    position: "relative",
+    width: "95%",
+    // maxHeight: "30%",
+    paddingVertical: 8,
     borderRadius: 20,
   },
   captionTwo: {
