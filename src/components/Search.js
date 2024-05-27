@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   notFoundContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 10,
+    minHeight: 80,
   },
   notFoundText: {
     marginBottom: 5,

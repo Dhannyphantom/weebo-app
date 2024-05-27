@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontFamily: "sans-regular",
     flex: 1,
     height: "100%",
-    textTransform: "capitalize",
+    // textTransform: "capitalize",
     paddingVertical: 15,
   },
   search: {

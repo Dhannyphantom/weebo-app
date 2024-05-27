@@ -33,6 +33,7 @@ import AppFadeIn from "../components/AppFadeIn";
 import InstanceChallenger from "../components/InstanceChallenger";
 import { launchGallery } from "../constants/helpers";
 import StickyHeader from "../components/StickyHeader";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,6 +55,7 @@ const CharacterScreen = ({ route, navigation }) => {
     useContext(CharContext);
   const { getShows } = useContext(FeedContext);
   const { withdrawChallenge } = useContext(ChallContext);
+  const theme = useContext(ThemeContext);
 
   const characterID = route.params.item;
 

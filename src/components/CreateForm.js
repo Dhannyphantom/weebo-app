@@ -53,9 +53,10 @@ const CreateForm = ({
     text: `Select ${headerA || headerB}`,
     multiples: [],
   });
+
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(
-    dateTime2 ? new Date("January 1, 2000") : new Date()
+    dateTime2 ? new Date(2000, 0, 1) : new Date()
   );
   const [height, setHeight] = useState("");
   const [myDate, setMydate] = useState("Currently airing");
@@ -91,12 +92,12 @@ const CreateForm = ({
   const tM = today.getMonth();
   const tD = today.getDate();
 
-  let dateDisplay = dateTime2 ? `${months[m]} ${d}` : `${months[m]} ${y}`;
-
   useEffect(() => {
     if (curr && y == tY && m == tM) {
       setFieldValue(name, myDate);
     } else {
+      let dateDisplay = dateTime2 ? `${months[m]} ${d}` : `${months[m]} ${y}`;
+
       setMydate(dateDisplay);
     }
   }, []);
@@ -123,6 +124,7 @@ const CreateForm = ({
         // show dates
         dateDisplay = `${months[m]} ${y}`;
       }
+
       setDate(datePick);
       setMydate(dateDisplay);
       setFieldValue(name, datePick);
@@ -249,7 +251,7 @@ const CreateForm = ({
             </View>
           </TouchableOpacity>
         ) : null}
-        {dateTime ? (
+        {dateTime && (
           <TouchableOpacity
             style={styles.dropDownCont}
             onPress={() => setShow(true)}
@@ -272,7 +274,7 @@ const CreateForm = ({
               />
             )}
           </TouchableOpacity>
-        ) : null}
+        )}
       </View>
       {errors[name] && touched[name] && (
         <AppText style={styles.error}> {errors[name]} </AppText>

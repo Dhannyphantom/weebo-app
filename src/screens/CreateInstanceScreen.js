@@ -70,7 +70,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
     type: "kamidere",
     gender: "male",
     height: "195cm",
-    birthday: new Date("January 1, 2000"),
+    birthday: new Date(2002, 3, 18),
     voiceActor: [],
     creator: userInfo._id,
     manager: userInfo._id,

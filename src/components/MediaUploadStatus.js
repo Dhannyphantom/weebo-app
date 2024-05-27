@@ -63,7 +63,7 @@ const MediaUploadStatus = ({ status, screen }) => {
       }).start(() => {
         setTimeout(() => {
           onAnimationFinish();
-        }, 1000);
+        }, 600);
       });
     }
   }, [status]);
