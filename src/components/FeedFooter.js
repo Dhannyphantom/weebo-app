@@ -21,6 +21,7 @@ const FeedFooter = ({
   setPost,
   postUser,
   likes,
+  textInfo,
   handleLike,
   tags,
   errMsg,
@@ -211,7 +212,7 @@ const FeedFooter = ({
         <AppModal
           action={action}
           setAction={setAction}
-          placeholder={title}
+          placeholder={isText ? textInfo?.text : title}
           setError={setErrMsg}
           isMine={isMine}
           postUris={postUris}

@@ -167,12 +167,12 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         });
         setFields(editedFieldsArr);
 
-        return console.log(
-          editedFieldsArr.map((fieldItm) => ({
-            title: fieldItm.title,
-            name: fieldItm.name,
-          }))
-        );
+        // return console.log(
+        //   editedFieldsArr.map((fieldItm) => ({
+        //     title: fieldItm.title,
+        //     name: fieldItm.name,
+        //   }))
+        // );
         setFieldValue(
           name,
           editedFieldsArr.map((fieldItm) => ({

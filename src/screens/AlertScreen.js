@@ -24,6 +24,7 @@ import TobiGuide from "../components/TobiGuide";
 import { alertGuide } from "../constants/data_store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoadMoreContent } from "../components/Comments";
+import ThemeContext from "../config/ThemeContext";
 
 const { height } = Dimensions.get("window");
 
@@ -149,6 +150,8 @@ const AlertScreen = ({ navigation }) => {
     updateMe,
     state: { userInfo },
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
+
   const [alertApi, setAlertApi] = useState({ results: [] });
   const [refreshing, setRefreshing] = useState(false);
   const [errMsg, setErrMsg] = useState(null);

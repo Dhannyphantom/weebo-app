@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
   headText: {
     marginLeft: 7,
     maxWidth: "95%",
+    textTransform: "capitalize",
   },
   left: {
     flexDirection: "row",

@@ -170,6 +170,7 @@ const FeedRender = ({ item, user }) => {
         likes={item.likes}
         id={item._id}
         title={item.title}
+        textInfo={item.textInfo}
         type={item.type}
         errMsg={errMsg}
         setErrMsg={setErrMsg}

@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import uuid from "react-native-uuid";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { Context as AuthContext } from "../config/AuthContext";
@@ -506,6 +507,13 @@ const AppModal = ({
       setBools({ ...bools, loading: false });
     } else if (str === "report") {
       setBools({ ...bools, report: true });
+    } else if (str === "copy_text") {
+      await Clipboard.setStringAsync(text);
+      setPopData({
+        vis: true,
+        type: "success",
+        msg: "Text copied successfully!",
+      });
     } else if (close) {
       if (str === "delete") return onPress(str);
       Animated.parallel([

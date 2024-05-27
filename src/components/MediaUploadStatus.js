@@ -68,8 +68,6 @@ const MediaUploadStatus = ({ status, screen }) => {
     }
   }, [status]);
 
-  // console.log("Lottie progress: ", lottieProg);
-
   return (
     <>
       {bools.vis && (

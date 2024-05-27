@@ -9,7 +9,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-// import Clipboard, { useClipboard } from "@react-native-community/clipboard";
+import * as Clipboard from "expo-clipboard";
 import { StatusBar } from "expo-status-bar";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -53,9 +53,9 @@ const InviteWeebs = ({ closeModal }) => {
   const handleInvites = async (type) => {
     switch (type) {
       case "link":
-        // USE EXPO CLIPBOARD PACKAGE
         try {
           // setClipper(clipStr);
+          await Clipboard.setStringAsync(message);
           closeModal("copied");
         } catch (err) {}
         break;

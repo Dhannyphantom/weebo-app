@@ -49,7 +49,6 @@ export default function BannerAds() {
   }
 
   const onAdFailedToLoad = (error) => {
-    console.log(error);
     if (!actions.loadFail) {
       setActions({ ...actions, loadFail: true, loadedOnce: true });
     }

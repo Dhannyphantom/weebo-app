@@ -147,7 +147,8 @@ const AlertBox = ({
             />
             <AppText style={styles.challengeText}>{messageText}</AppText>
             <AppText style={styles.date}>
-              {getFormatTime(date, null, "date")} {getFormatTime(date).time}
+              {date}
+              {/* {getFormatTime(date, null, "date")} {getFormatTime(date).time} */}
             </AppText>
           </Cards>
         </TouchableOpacity>
