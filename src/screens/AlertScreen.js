@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
@@ -298,7 +299,15 @@ const AlertScreen = ({ navigation }) => {
             data={alertApi.results}
             scrollEnabled={bools.shouldScroll}
             keyExtractor={(item) => item._id}
-            refreshing={refreshing}
+            refreshControl={
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={fetchScreenData}
+              />
+            }
             ListFooterComponent={() => {
               if (Boolean(alertApi?.next?.page)) {
                 return (
@@ -310,7 +319,6 @@ const AlertScreen = ({ navigation }) => {
                 );
               }
             }}
-            onRefresh={fetchScreenData}
             renderItem={({ item }) => (
               <MemoizedAlerts
                 item={item}

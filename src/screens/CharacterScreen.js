@@ -5,6 +5,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Animated,
+  RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -644,12 +645,19 @@ const CharacterScreen = ({ route, navigation }) => {
               keyExtractor={(item, index) => item + index}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
-              refreshing={refreshing}
               onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: true }
               )}
-              onRefresh={handleScreenRefresh}
+              refreshControl={
+                <RefreshControl
+                  progressBackgroundColor={theme.extralight}
+                  colors={[colors.primary]}
+                  tintColor={colors.primary}
+                  refreshing={refreshing}
+                  onRefresh={handleScreenRefresh}
+                />
+              }
               contentContainerStyle={{ paddingBottom: height * 0.05 }}
               overScrollMode="never"
               renderItem={renderPage}

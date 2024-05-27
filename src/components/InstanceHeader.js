@@ -211,7 +211,7 @@ const InstanceHeader = ({
           instanceName
         )} an organization or a group, team, squad and the likes in ${capFirstLetter(
           instanceShow
-        )}`
+        )}?`
       : null;
 
   const isChannel = instance == "channel";

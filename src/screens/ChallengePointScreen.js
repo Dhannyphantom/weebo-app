@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, Dimensions, FlatList, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  Platform,
+  RefreshControl,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Device from "expo-device";
 import {
@@ -440,8 +447,15 @@ const ChallengePointScreen = ({ navigation }) => {
           </View>
         }
         overScrollMode="never"
-        refreshing={refreshing}
-        onRefresh={fetchScreenData}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={fetchScreenData}
+          />
+        }
         contentContainerStyle={{ paddingBottom: height * 0.1 }}
       />
       <PopMessage

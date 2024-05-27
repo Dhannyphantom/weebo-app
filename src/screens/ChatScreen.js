@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
@@ -296,8 +297,15 @@ const ChatScreen = ({ navigation }) => {
                 }
                 overScrollMode="never"
                 showsVerticalScrollIndicator={false}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
+                refreshControl={
+                  <RefreshControl
+                    progressBackgroundColor={theme.extralight}
+                    colors={[colors.primary]}
+                    tintColor={colors.primary}
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
                 renderItem={renderChatPeople}
               />
             ) : (

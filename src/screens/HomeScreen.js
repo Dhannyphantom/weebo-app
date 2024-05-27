@@ -306,8 +306,15 @@ const HomeScreen = ({ navigation, route }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={renderActions}
             overScrollMode="never"
-            refreshing={refreshing}
-            onRefresh={onRefresh}
+            refreshControl={
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           />
           <StatusRender
             show={showStatus}

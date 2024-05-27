@@ -6,6 +6,7 @@ import {
   Share,
   FlatList,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 // import Clipboard, { useClipboard } from "@react-native-community/clipboard";
@@ -266,8 +267,15 @@ const AccountScreen = ({ navigation, route }) => {
       <FlatList
         data={account}
         extraData={userInfo}
-        refreshing={refreshing}
-        onRefresh={handleScreenRefresh}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={handleScreenRefresh}
+          />
+        }
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={RenderHeader}

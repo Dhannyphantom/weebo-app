@@ -8,6 +8,8 @@ import {
   Animated,
   Image,
   TouchableOpacity,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
 // import MaskedView from "@react-native-masked-view/masked-view";
 // import Svg, { Rect } from "react-native-svg";
@@ -923,8 +925,15 @@ const ViewRoomScreen = ({ navigation, route }) => {
             Math.round(nativeEvent.contentOffset.x / (ITEM_SIZE + SPACING)) + 1;
           setActiveSlide(xRad);
         }}
-        refreshing={refreshing}
-        onRefresh={() => fetchRoomCharacters("refresh")}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={() => fetchRoomCharacters("refresh")}
+          />
+        }
         decelerationRate={0}
         bounces={false}
         renderToHardwareTextureAndroid
@@ -945,23 +954,35 @@ const ViewRoomScreen = ({ navigation, route }) => {
       {pageData?.characters?.length <= 2 && (
         <>
           {params?.data?.instance == "group" && (
-            <View style={{ position: "absolute", top: 0, width }}>
-              <InstanceHeader
-                instanceData={headerData}
-                RenderInstanceContent={() => (
-                  <ActivityIndicator
-                    visible
-                    type="isEmpty"
-                    style={{ bottom: 30 }}
-                    text={`No characters in this group yet ${
-                      !pageData.verified
-                        ? "\nHelp verify this group instance by clicking on the verify button"
-                        : ""
-                    }`}
-                  />
-                )}
-              />
-            </View>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  progressBackgroundColor={theme.extralight}
+                  colors={[colors.primary]}
+                  tintColor={colors.primary}
+                  refreshing={refreshing}
+                  onRefresh={() => fetchRoomCharacters("refresh")}
+                />
+              }
+            >
+              <View style={{ position: "absolute", top: 0, width }}>
+                <InstanceHeader
+                  instanceData={headerData}
+                  RenderInstanceContent={() => (
+                    <ActivityIndicator
+                      visible
+                      type="isEmpty"
+                      style={{ bottom: 30 }}
+                      text={`No characters in this group yet ${
+                        !pageData.verified
+                          ? "\nHelp verify this group instance by clicking on the verify button"
+                          : ""
+                      }`}
+                    />
+                  )}
+                />
+              </View>
+            </ScrollView>
           )}
           <ActivityIndicator
             visible={params?.data?.instance != "group"}
@@ -1017,6 +1038,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
           )}
         </View>
       )}
+      {/* POP UPS */}
       <>
         <PopMessage
           popData={popper}

@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Animated,
+  RefreshControl,
 } from "react-native";
 import { Viewport } from "@skele/components";
 import { StatusBar } from "expo-status-bar";
@@ -246,6 +247,7 @@ const ShowScreen = ({ route, navigation }) => {
     state: { userInfo },
     updateMe,
   } = useContext(AuthContext);
+  const theme = useContext(ThemeContext);
 
   const [dataState, setDataState] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -879,9 +881,16 @@ const ShowScreen = ({ route, navigation }) => {
                 />
               );
             }}
-            refreshing={refreshing}
             contentContainerStyle={{ paddingBottom: height * 0.08 }}
-            onRefresh={handleScreenRefresh}
+            refreshControl={
+              <RefreshControl
+                progressBackgroundColor={theme.extralight}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+                refreshing={refreshing}
+                onRefresh={handleScreenRefresh}
+              />
+            }
             overScrollMode="never"
             keyExtractor={(item, index) => item + index}
           />

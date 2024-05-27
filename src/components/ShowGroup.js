@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -642,8 +643,15 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 15, paddingBottom: height * 0.08 }}
-        refreshing={refreshing}
-        onRefresh={() => fetchScreenData(true)}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={() => fetchScreenData(true)}
+          />
+        }
         ListEmptyComponent={
           <ActivityIndicator
             visible={true}

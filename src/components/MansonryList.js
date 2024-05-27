@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MasonryList from "@react-native-seoul/masonry-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ThemeContext from "../config/ThemeContext";
@@ -250,10 +256,17 @@ export default function MansonryList({
             mediaType={media[0].type}
           />
         )}
-        refreshing={refreshing}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={theme.extralight}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
         ListEmptyComponent={() => <RenderEmptyList />}
         ListHeaderComponent={ListHeader && <ListHeader />}
-        onRefresh={onRefresh}
         onEndReachedThreshold={0.1}
         onEndReached={onEndReached}
       />
