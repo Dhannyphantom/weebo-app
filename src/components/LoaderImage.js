@@ -52,7 +52,7 @@ const LoaderImage = ({
           ...styles.image,
           borderRadius: bRadius,
           ...imageStyle,
-          height: isVideoImage ? Math.min(image?.height, height * 0.65) : null,
+          height: isVideoImage ? Math.min(image?.height, height * 0.45) : null,
         }}
         blurRadius={isVideoImage ? 5 : 12}
         resizeMode="cover"

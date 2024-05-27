@@ -7,7 +7,6 @@ import {
   View,
 } from "react-native";
 import MasonryList from "@react-native-seoul/masonry-list";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ThemeContext from "../config/ThemeContext";
 
 import { Context as AuthContext } from "../config/AuthContext";
@@ -16,13 +15,12 @@ import LoaderImage from "./LoaderImage";
 import MediaModal from "./MediaModal";
 import AppText from "./AppText";
 import colors from "../constants/colors";
-import getVideoTime from "../constants/getVideoTime";
 import DropDown from "./DropDown";
 import AppFadeIn from "./AppFadeIn";
 import { RenderCollections } from "../screens/SavedCollectionScreen";
 import PopMessage from "./PopMessage";
 import ActivityIndicator from "./ActivityIndicator";
-import { RenderMediaIcon } from "./PostVideo";
+// import { RenderMediaIcon } from "./PostVideo";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,7 +39,10 @@ const MansonryItem = ({ item, openMenu, setDisplayMedia }) => {
   return (
     <>
       <TouchableOpacity
-        style={[styles.itemContainer, { backgroundColor: theme.white }]}
+        style={[
+          styles.itemContainer,
+          { backgroundColor: theme.white, maxHeight: height * 0.45 },
+        ]}
         activeOpacity={1}
         onLongPress={() => openMenu(item)}
         onPress={handlePress}
