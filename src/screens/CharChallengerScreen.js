@@ -4,6 +4,7 @@ import AppText from "../components/AppText";
 import BallIcon from "../components/BallIcon";
 import Challengers from "../components/Challengers";
 import Separator from "../components/Separator";
+import { capCapitalize, capFirstLetter } from "../constants/helpers";
 
 const CharChallengerScreen = ({
   isMine,
@@ -42,7 +43,7 @@ const CharChallengerScreen = ({
       <View style={styles.ballIcons}>
         {challLength <= 0 ? (
           <AppText style={styles.noChallengerText}>
-            {name[0].toUpperCase() + name.slice(1)} has not been challenged yet!
+            {capCapitalize(name)} has not been challenged yet!
           </AppText>
         ) : (
           <AppText size="xlarge" bold>

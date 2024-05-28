@@ -55,10 +55,12 @@ const AppCarousel = ({
     );
   };
 
+  // Array.isArray(data) && console.log(data);
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={data.sort((a, b) => a.width / a.height - b.width / b.height)}
         keyExtractor={(item) => item._id}
         renderItem={renderAppCarousel}
         onScroll={({ nativeEvent }) => handleCarouselScroll(nativeEvent)}

@@ -42,7 +42,7 @@ const FloatIcons = ({ data }) => {
 
   const handleTogglePress = (val) => {
     val && setModal(val);
-    return setToggle(!toggle);
+    setToggle(!toggle);
   };
 
   useEffect(() => {

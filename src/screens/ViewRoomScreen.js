@@ -444,7 +444,7 @@ const ViewRoomScreen = ({ navigation, route }) => {
     {
       id: "9806792",
       icon: "format-list-text",
-      name: "See Invites",
+      name: "Invites",
       show: showInviteIcon,
       onPress: () => setPopModal({ ...popModal, vis: true, invites: true }),
     },
@@ -954,35 +954,40 @@ const ViewRoomScreen = ({ navigation, route }) => {
       {pageData?.characters?.length <= 2 && (
         <>
           {params?.data?.instance == "group" && (
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  progressBackgroundColor={theme.extralight}
-                  colors={[colors.primary]}
-                  tintColor={colors.primary}
-                  refreshing={refreshing}
-                  onRefresh={() => fetchRoomCharacters("refresh")}
-                />
-              }
-            >
-              <View style={{ position: "absolute", top: 0, width }}>
-                <InstanceHeader
-                  instanceData={headerData}
-                  RenderInstanceContent={() => (
-                    <ActivityIndicator
-                      visible
-                      type="isEmpty"
-                      style={{ bottom: 30 }}
-                      text={`No characters in this group yet ${
-                        !pageData.verified
-                          ? "\nHelp verify this group instance by clicking on the verify button"
-                          : ""
-                      }`}
+            <>
+              <FlatList
+                data={["Group"]}
+                style={{ flex: 1, position: "absolute" }}
+                refreshControl={
+                  <RefreshControl
+                    progressBackgroundColor={theme.extralight}
+                    colors={[colors.primary]}
+                    tintColor={colors.primary}
+                    refreshing={refreshing}
+                    onRefresh={() => fetchRoomCharacters("refresh")}
+                  />
+                }
+                renderItem={() => (
+                  <View style={{ position: "relative", top: 0, width }}>
+                    <InstanceHeader
+                      instanceData={headerData}
+                      RenderInstanceContent={() => (
+                        <ActivityIndicator
+                          visible
+                          type="isEmpty"
+                          style={{ bottom: 30 }}
+                          text={`No characters in this group yet ${
+                            !pageData.verified
+                              ? "\nHelp verify this group instance by clicking on the verify button"
+                              : ""
+                          }`}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </View>
-            </ScrollView>
+                  </View>
+                )}
+              />
+            </>
           )}
           <ActivityIndicator
             visible={params?.data?.instance != "group"}
