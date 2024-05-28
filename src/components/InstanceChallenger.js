@@ -27,6 +27,7 @@ import Separator from "./Separator";
 import colors from "../constants/colors";
 import PopMessage from "./PopMessage";
 import AppPickerItem from "./AppPickerItem";
+import { AddPropInfoFieldNonFormik } from "./CreateFormArray";
 import {
   challenger_info_lookup,
   characterRoles,
@@ -120,6 +121,7 @@ const Challenger = ({
         setter();
       },
       (errData) => {
+        console.log({ errData });
         parentError.setErrMsg(errData?.data?.err ?? errData.msg);
         setLoading(false);
       }
@@ -445,6 +447,7 @@ const InfoProps = ({ item, state }) => {
   const timerType = ["endDate", "releaseDate"].includes(item.key)
     ? "month_year"
     : "month_day";
+  const isMoreInfo = ["affiliations", "other_infos"].includes(item.key);
 
   const [selected, setSelected] = useState(item.selected);
   const [info, setInfo] = useState(
@@ -452,12 +455,16 @@ const InfoProps = ({ item, state }) => {
       ? item.value.includes(" ")
         ? item.value
         : getFormatTime(item.value, null, timerType).date
+      : isMoreInfo
+      ? item.value
       : String(item.value)
   );
 
   const [modal, setModal] = useState(false); // will be modified for datetime picker also
 
-  const shouldShowBtn = info !== String(item.value);
+  const shouldShowBtn = isMoreInfo
+    ? info !== item.value
+    : info !== String(item.value);
   const isDropDown = challenger_info_lookup.dropdown.includes(item.key);
   const isDatetime = challenger_info_lookup.datetime.includes(item.key);
   const isListItem = ["genres", "subGenres"].includes(item.key);
@@ -537,7 +544,7 @@ const InfoProps = ({ item, state }) => {
         style={[styles.info, { backgroundColor: theme.extralight }]}
       >
         <View style={styles.infoTitle}>
-          <AppText size="large" bold>
+          <AppText style={{ maxWidth: "85%" }} size="large" bold>
             {capFirstLetter(item.title)}
           </AppText>
           <MaterialCommunityIcons
@@ -616,6 +623,14 @@ const InfoProps = ({ item, state }) => {
                     </View>
                   );
                 }}
+              />
+            </View>
+          ) : isMoreInfo ? (
+            <View>
+              <AddPropInfoFieldNonFormik
+                dataState={{ fields: info, setFields: setInfo }}
+                placeHolderTitle={item.title}
+                name={item.key}
               />
             </View>
           ) : (

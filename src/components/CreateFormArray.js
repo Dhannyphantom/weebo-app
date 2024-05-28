@@ -20,7 +20,7 @@ const PropInfoField = ({
   const [fieldInfo, setFieldInfo] = useState({
     title: data.title,
     name: data.name,
-    id: data.id,
+    _id: data._id,
   });
 
   const [bools, setBools] = useState({
@@ -46,7 +46,7 @@ const PropInfoField = ({
         break;
 
       case "remove":
-        handleInfoFieldAction(fieldInfo.id, "remove");
+        handleInfoFieldAction(fieldInfo._id, "remove");
         break;
     }
   };
@@ -101,6 +101,135 @@ const PropInfoField = ({
   );
 };
 
+export const AddPropInfoFieldNonFormik = ({
+  name,
+  placeHolderTitle,
+  dataState,
+}) => {
+  const { fields, setFields } = dataState;
+
+  const theme = useContext(ThemeContext);
+
+  const onAddNewField = () => {
+    // Check if there is an object with no details
+    if (fields[0]) {
+      // an item is present
+      const checker = fields.find(
+        (obj) => obj.title.length < 1 && obj.name.length < 1
+      );
+      if (!checker) {
+        // then add new fields
+        setFields([...fields, { title: "", name: "", _id: uuid.v4() }]);
+      }
+    } else {
+      // add new fields
+      setFields([...fields, { title: "", name: "", _id: uuid.v4() }]);
+    }
+  };
+
+  const handleInfoFieldAction = (fieldData, type) => {
+    switch (type) {
+      case "remove":
+        // Remove field also from FormData
+        const newFields = fields.filter(
+          (fieldItem) => fieldItem._id !== fieldData
+        );
+        setFields(newFields);
+        // setFieldValue(
+        //   name,
+        //   newFields.map((fieldItm) => ({
+        //     title: fieldItm.title,
+        //     name: fieldItm.name,
+        //   }))
+        // );
+        break;
+      case "save":
+        const newFieldsArr = fields.map((fieldItem) => {
+          if (fieldItem._id == fieldData._id) {
+            return fieldData;
+          } else {
+            return fieldItem;
+          }
+        });
+        setFields(newFieldsArr);
+        // setFieldValue(
+        //   name,
+        //   newFieldsArr.map((fieldItm) => ({
+        //     title: fieldItm.title,
+        //     name: fieldItm.name,
+        //   }))
+        // );
+        break;
+      case "edit":
+        const editedFieldsArr = fields.map((fieldItem) => {
+          if (fieldItem._id == fieldData._id) {
+            return fieldData;
+          } else {
+            return fieldItem;
+          }
+        });
+        setFields(editedFieldsArr);
+
+        // setFieldValue(
+        //   name,
+        //   editedFieldsArr.map((fieldItm) => ({
+        //     title: fieldItm.title,
+        //     name: fieldItm.name,
+        //   }))
+        // );
+        break;
+      case "add":
+        setFields([...fields, fieldData]);
+        break;
+    }
+  };
+
+  const handleCheckValueChange = (fieldData) => {
+    const checker = [...fields].some(
+      (fieldObj) =>
+        fieldObj.title.toLowerCase() === fieldData.title.toLowerCase() &&
+        fieldObj.name.toLowerCase() === fieldData.name.toLowerCase()
+    );
+    return Boolean(checker);
+  };
+
+  const renderFields = fields.map((fieldObj) => {
+    return (
+      <PropInfoField
+        data={fieldObj}
+        key={fieldObj._id}
+        fieldName={name}
+        handleCheckValueChange={handleCheckValueChange}
+        handleInfoFieldAction={handleInfoFieldAction}
+      />
+    );
+  });
+
+  return (
+    <View>
+      <View style={styles.fieldHeader}>
+        <AppText
+          bold
+          style={{ ...styles.fieldTitle, backgroundColor: theme.extralight }}
+        >
+          {capFirstLetter(placeHolderTitle)}
+        </AppText>
+        <TouchableOpacity
+          style={{ padding: 10 }}
+          activeOpacity={1}
+          onPress={onAddNewField}
+        >
+          <MaterialCommunityIcons
+            name="plus-box-multiple"
+            size={22}
+            color={colors.primary}
+          />
+        </TouchableOpacity>
+      </View>
+      <View>{renderFields}</View>
+    </View>
+  );
+};
 const AddPropInfoField = ({ name, placeHolderTitle }) => {
   const [fields, setFields] = useState([]);
 
@@ -129,7 +258,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
       case "remove":
         // Remove field also from FormData
         const newFields = fields.filter(
-          (fieldItem) => fieldItem.id !== fieldData
+          (fieldItem) => fieldItem._id !== fieldData
         );
         setFields(newFields);
         setFieldValue(
@@ -142,7 +271,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         break;
       case "save":
         const newFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem.id == fieldData.id) {
+          if (fieldItem._id == fieldData._id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -159,7 +288,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         break;
       case "edit":
         const editedFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem.id == fieldData.id) {
+          if (fieldItem._id == fieldData._id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -167,12 +296,12 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         });
         setFields(editedFieldsArr);
 
-        return console.log(
-          editedFieldsArr.map((fieldItm) => ({
-            title: fieldItm.title,
-            name: fieldItm.name,
-          }))
-        );
+        // return console.log(
+        //   editedFieldsArr.map((fieldItm) => ({
+        //     title: fieldItm.title,
+        //     name: fieldItm.name,
+        //   }))
+        // );
         setFieldValue(
           name,
           editedFieldsArr.map((fieldItm) => ({
@@ -200,7 +329,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
     return (
       <PropInfoField
         data={fieldObj}
-        key={fieldObj.id}
+        key={fieldObj._id}
         fieldName={name}
         handleCheckValueChange={handleCheckValueChange}
         handleInfoFieldAction={handleInfoFieldAction}
