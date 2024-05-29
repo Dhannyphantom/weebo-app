@@ -20,7 +20,7 @@ const PropInfoField = ({
   const [fieldInfo, setFieldInfo] = useState({
     title: data.title,
     name: data.name,
-    _id: data._id,
+    id: data.id,
   });
 
   const [bools, setBools] = useState({
@@ -46,7 +46,7 @@ const PropInfoField = ({
         break;
 
       case "remove":
-        handleInfoFieldAction(fieldInfo._id, "remove");
+        handleInfoFieldAction(fieldInfo.id, "remove");
         break;
     }
   };
@@ -119,11 +119,11 @@ export const AddPropInfoFieldNonFormik = ({
       );
       if (!checker) {
         // then add new fields
-        setFields([...fields, { title: "", name: "", _id: uuid.v4() }]);
+        setFields([...fields, { title: "", name: "", id: uuid.v4() }]);
       }
     } else {
       // add new fields
-      setFields([...fields, { title: "", name: "", _id: uuid.v4() }]);
+      setFields([...fields, { title: "", name: "", id: uuid.v4() }]);
     }
   };
 
@@ -132,7 +132,7 @@ export const AddPropInfoFieldNonFormik = ({
       case "remove":
         // Remove field also from FormData
         const newFields = fields.filter(
-          (fieldItem) => fieldItem._id !== fieldData
+          (fieldItem) => fieldItem.id !== fieldData
         );
         setFields(newFields);
         // setFieldValue(
@@ -145,7 +145,7 @@ export const AddPropInfoFieldNonFormik = ({
         break;
       case "save":
         const newFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem._id == fieldData._id) {
+          if (fieldItem.id == fieldData.id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -162,7 +162,7 @@ export const AddPropInfoFieldNonFormik = ({
         break;
       case "edit":
         const editedFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem._id == fieldData._id) {
+          if (fieldItem.id == fieldData.id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -197,7 +197,7 @@ export const AddPropInfoFieldNonFormik = ({
     return (
       <PropInfoField
         data={fieldObj}
-        key={fieldObj._id}
+        key={fieldObj.id ?? fieldObj?._id}
         fieldName={name}
         handleCheckValueChange={handleCheckValueChange}
         handleInfoFieldAction={handleInfoFieldAction}
@@ -258,7 +258,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
       case "remove":
         // Remove field also from FormData
         const newFields = fields.filter(
-          (fieldItem) => fieldItem._id !== fieldData
+          (fieldItem) => fieldItem.id !== fieldData
         );
         setFields(newFields);
         setFieldValue(
@@ -271,7 +271,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         break;
       case "save":
         const newFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem._id == fieldData._id) {
+          if (fieldItem.id == fieldData.id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -288,7 +288,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
         break;
       case "edit":
         const editedFieldsArr = fields.map((fieldItem) => {
-          if (fieldItem._id == fieldData._id) {
+          if (fieldItem.id == fieldData.id) {
             return fieldData;
           } else {
             return fieldItem;
@@ -329,7 +329,7 @@ const AddPropInfoField = ({ name, placeHolderTitle }) => {
     return (
       <PropInfoField
         data={fieldObj}
-        key={fieldObj._id}
+        key={fieldObj.id}
         fieldName={name}
         handleCheckValueChange={handleCheckValueChange}
         handleInfoFieldAction={handleInfoFieldAction}

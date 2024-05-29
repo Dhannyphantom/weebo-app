@@ -778,6 +778,7 @@ const styles = StyleSheet.create({
     // maxHeight: "30%",
     paddingVertical: 8,
     borderRadius: 20,
+    elevation: 2,
   },
   captionTwo: {
     width: "97%",
