@@ -30,6 +30,7 @@ const RenderInfoDetails = ({ info }) => {
   const theme = useContext(ThemeContext);
   return (
     <View style={styles.info} key={uuid.v4()}>
+      {/* <AppText>Jerome wants credit</AppText> */}
       <AppText
         style={{
           ...styles.title,
@@ -39,7 +40,30 @@ const RenderInfoDetails = ({ info }) => {
       >
         {info.title}
       </AppText>
-      <AppText style={styles.value}>{info.value ?? ""}</AppText>
+      {info.props[0] ? (
+        <>
+          {info.props.map((propInfo) => (
+            <View key={propInfo._id} style={styles.infoProps}>
+              <AppText
+                style={{
+                  ...styles.title,
+                  color:
+                    theme.mode === "light" ? colors.medium : colors.primary,
+                }}
+                size="small"
+                textStyle="black"
+              >
+                {propInfo.title}:{" "}
+                <AppText size="small" style={styles.value}>
+                  {propInfo.name ?? ""}
+                </AppText>
+              </AppText>
+            </View>
+          ))}
+        </>
+      ) : (
+        <AppText style={styles.value}>{info.value ?? ""}</AppText>
+      )}
     </View>
   );
 };
@@ -247,6 +271,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { marginBottom: 15 },
+  infoProps: {
+    // flexDirection: "row",
+    marginTop: 5,
+    alignSelf: "center",
+  },
   textCont: {
     width: width,
     alignSelf: "center",

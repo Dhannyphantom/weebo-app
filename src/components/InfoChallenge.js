@@ -22,7 +22,30 @@ export const RenderInfoDetails = ({ info }) => {
       >
         {info.title}
       </AppText>
-      <AppText style={styles.value}>{info.value ?? ""}</AppText>
+      {info.props[0] ? (
+        <>
+          {info.props.map((propInfo) => (
+            <View key={propInfo._id} style={styles.infoProps}>
+              <AppText
+                style={{
+                  ...styles.title,
+                  color:
+                    theme.mode === "light" ? colors.medium : colors.primary,
+                }}
+                size="small"
+                textStyle="black"
+              >
+                {propInfo.title}:{" "}
+                <AppText size="small" style={styles.value}>
+                  {propInfo.name ?? ""}
+                </AppText>
+              </AppText>
+            </View>
+          ))}
+        </>
+      ) : (
+        <AppText style={styles.value}>{info.value ?? ""}</AppText>
+      )}
     </View>
   );
 };
@@ -72,13 +95,26 @@ const styles = StyleSheet.create({
     // flex: 1,
     borderRadius: width * 0.022,
     elevation: 2,
+    shadowRadius: 6,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      width: 1.5,
+      height: 3,
+    },
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    padding: 10,
+    padding: 6,
   },
-  info: { marginBottom: 15 },
+  info: { marginBottom: 12 },
+  infoProps: {
+    // flexDirection: "row",
+    marginTop: 5,
+    alignSelf: "center",
+    // paddingHorizontal: 20,
+  },
   mainText: {
     textAlign: "center",
   },
@@ -89,7 +125,7 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     textAlign: "center",
     alignSelf: "center",
-    lineHeight: 32,
+    lineHeight: 20,
   },
   value: {
     textTransform: "capitalize",

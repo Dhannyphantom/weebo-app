@@ -313,7 +313,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                         type1
                       />
                       <CreateFormArray
-                        placeHolderTitle="other relations e.g Father, Daughter etc"
+                        placeHolderTitle="relations e.g Father, Mentor etc"
                         name="affiliations"
                         formType="addInput"
                       />

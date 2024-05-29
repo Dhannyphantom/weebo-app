@@ -180,8 +180,10 @@ const ChallengeScreen = ({ navigation }) => {
       getChallenges(
         (resData) => {
           setChallengeInfo(resData);
+          console.log({ resData });
         },
         (errData) => {
+          console.log({ errData });
           setLoadedOnce(true);
         }
       );

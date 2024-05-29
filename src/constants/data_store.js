@@ -78,7 +78,7 @@ export const charPropInfos = [
   },
   {
     id: "8",
-    name: "Other Relations / Affiliations e.g Father, Rival",
+    name: "Relations / Affiliations e.g Father, Rival",
     prop: "affiliations",
     selected: false,
   },
