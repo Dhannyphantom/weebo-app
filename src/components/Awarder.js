@@ -168,11 +168,11 @@ const Awarder = ({ item }) => {
           {c_types.includes(item.c_type) ? (
             <View style={styles.headerA}>
               <ProfilePic
+                source={instance_winner?.user?.avatar}
                 userID={instance_winner?.user?._id}
                 border={1}
                 gender={instance_winner?.user?.gender}
                 borderColor={colors.white}
-                source={instance_winner?.user?.avatar}
                 size={50}
               />
               <View style={{ marginLeft: 5 }}>
@@ -191,7 +191,7 @@ const Awarder = ({ item }) => {
                 userID={instance_winner?.user?._id}
                 border={1}
                 borderColor={colors.white}
-                source={instance_winner?.user?.avatar?.uri}
+                source={instance_winner?.user?.avatar}
                 size={50}
               />
               <AppText style={{ color: colors.white }}>
@@ -240,6 +240,7 @@ const Awarder = ({ item }) => {
     </>
   );
 };
+
 const styles = StyleSheet.create({
   body: { flex: 1, alignItems: "center", justifyContent: "center" },
   container: {

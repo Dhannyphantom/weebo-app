@@ -48,7 +48,7 @@ const InviteWeebs = ({ closeModal }) => {
     },
   } = useContext(AuthContext);
 
-  const message = `Hi, I'm ${username}\nJoin our Weebo Community now by downloading our app using this link. \n\n${baseURL.uri}/users/invite_weebs?user?=${username}&identifier=${_id}`;
+  const message = `Hi, I'm ${username}\nJoin our Weebo Community now by downloading our app using this link. \n\n${baseURL.online}/users/invite_weebs?user?=${username}&identifier=${_id}`;
 
   const handleInvites = async (type) => {
     switch (type) {
