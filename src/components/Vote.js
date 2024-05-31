@@ -84,7 +84,13 @@ const Vote = ({ cardInfo, type = "characters", score, onPress, color }) => {
                 style={[styles.infoContainer, { backgroundColor: theme.white }]}
               >
                 {!showStat ? (
-                  <AppText style={styles.infoText} size="large" bold>
+                  <AppText
+                    numberOfLines={6}
+                    ellipsizeMode="tail"
+                    style={styles.infoText}
+                    size="large"
+                    bold
+                  >
                     {cardInfo.info}
                   </AppText>
                 ) : (

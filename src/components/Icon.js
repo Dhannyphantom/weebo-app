@@ -15,6 +15,7 @@ const Icon = ({
   name,
   text,
   color = "#000",
+  bgColor,
   topText,
   style,
   pack = "a",
@@ -40,7 +41,7 @@ const Icon = ({
           {
             width: size,
             height: size,
-            backgroundColor: theme.background,
+            backgroundColor: bgColor ?? theme.background,
             borderRadius: size / borRadius,
           },
           style,

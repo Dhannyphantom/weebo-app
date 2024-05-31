@@ -892,6 +892,20 @@ export const alertGuide = [
     text: "You can swipe notifications for more actions",
   },
 ];
+
+export const challengeGuide = [
+  {
+    id: uuid.v4(),
+    icon: "circle-multiple-outline",
+    text: "Double click on challenge media or text to display user's stats",
+  },
+  {
+    id: uuid.v4(),
+    icon: "alpha-w-circle",
+    text: "You spend 2WP per challenge when reacting to challenges",
+  },
+];
+
 export const homeGuide = [
   {
     id: uuid.v4(),

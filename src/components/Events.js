@@ -29,7 +29,7 @@ import ActivityIndicator from "./ActivityIndicator";
 // import vidMaxChecker from "../constants/vidMaxChecker";
 import TabList from "./TabList";
 import { RenderCoverUpload } from "./CoverUpload";
-import { launchGallery } from "../constants/helpers";
+import { capCapitalize, launchGallery } from "../constants/helpers";
 import ThemeContext from "../config/ThemeContext";
 import Spacer from "./Spacer";
 import { EVENT_FOLLOWERS } from "../constants/data_store";
@@ -46,10 +46,11 @@ const typeFalsy = {
   video: false,
   text: false,
 };
+
 const tabItems = [
   { tab: "image", name: "Image" },
   { tab: "video", name: "Video" },
-  { tab: "text", name: "Text" },
+  { tab: "text", name: "QUESTION" },
 ];
 
 const INITIAL_DATE = new Date(Date.now() + 1000 * 60 * 60);
@@ -65,7 +66,13 @@ const DateItem = ({ data }) => {
   );
 };
 
-const Events = ({ closer, instance, instanceID, followersCount }) => {
+const Events = ({
+  closer,
+  instance,
+  instanceName,
+  instanceID,
+  followersCount,
+}) => {
   const { handleNewEvents } = useContext(AcctContext);
   const { updateMe } = useContext(AuthContext);
 
@@ -90,12 +97,21 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
   const showVideo = asset && type.video && asset.type == "video";
   const followersMsg = `Your followers or subscribers not up to ${EVENT_FOLLOWERS}.`;
 
+  const textPlaceholder =
+    activeTabName === "Image"
+      ? `E.g ${capCapitalize(instanceName)} wallpaper challenge`
+      : activeTabName === "Video"
+      ? `E.g ${capCapitalize(instanceName)} best moment clips`
+      : `E.g Which ${instance} would win against ${capCapitalize(
+          instanceName
+        )} in a 1v1 match?`;
+
   const handleChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     if (selectedDate < INITIAL_DATE)
       return setPopper({
         type: "failed",
-        msg: "Invalid time and date selected",
+        msg: "Please increase the time and date selected",
         vis: true,
       });
     setShowDate(false);
@@ -229,11 +245,11 @@ const Events = ({ closer, instance, instanceID, followersCount }) => {
           text={title}
           mLine={false}
           setText={setTitle}
-          placeholder="Event title e.g Wallpaper challenge"
+          placeholder={textPlaceholder}
         />
 
         <AppText style={styles.subTitles} bold>
-          Schedule Event Day-time:
+          Schedule Event Date-time:
         </AppText>
         <View
           style={[styles.dateContainer, { backgroundColor: theme.extralight }]}

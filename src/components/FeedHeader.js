@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginLeft: 4,
     color: colors.primary,
-    maxWidth: "95%",
+    maxWidth: "100%",
+    marginVertical: 8,
   },
 });
 export default FeedHeader;

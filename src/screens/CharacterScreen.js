@@ -167,6 +167,7 @@ const CharacterScreen = ({ route, navigation }) => {
         navigation.navigate("Event", {
           instance: "character",
           instanceID: character?._id,
+          instanceName: character?.name,
           followers: character?.followers?.length,
         }),
       icon: "plus",

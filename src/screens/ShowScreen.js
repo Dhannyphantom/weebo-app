@@ -369,6 +369,10 @@ const ShowScreen = ({ route, navigation }) => {
         navigation.navigate("Event", {
           instance: "show",
           instanceID: dataState._id,
+          instanceName: dataState?.name_j ?? dataState?.name_e,
+          followers: Array.isArray(dataState?.followers)
+            ? dataState?.followers?.length
+            : dataState?.followers,
         });
       },
       selected: true,

@@ -245,11 +245,12 @@ const styles = StyleSheet.create({
   container: {
     margin: 5,
     marginTop: 15,
-    marginRight: 20,
-    borderRadius: 18,
+    marginRight: 15,
+    borderRadius: 12,
+    overflow: "hidden",
   },
   image: {
-    borderRadius: 18,
+    borderRadius: 12,
   },
   headerA: { flexDirection: "row", alignItems: "center", margin: 5 },
   headerB: { alignSelf: "center", marginTop: 5, alignItems: "center" },

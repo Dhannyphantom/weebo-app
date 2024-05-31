@@ -14,7 +14,7 @@ import ProfilePic from "./ProfilePic";
 import ThemeContext from "../config/ThemeContext";
 
 const screen = Dimensions.get("window");
-export const INPUT_HEIGHT = 65;
+export const INPUT_HEIGHT = 50;
 
 const CommentBar = (
   {
@@ -108,13 +108,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingLeft: 11,
-    elevation: 15,
+    elevation: 4,
   },
   emoji: {
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
     width: 30,
+    paddingLeft: 6,
+    marginRight: 4,
     height: "100%",
   },
   input: {

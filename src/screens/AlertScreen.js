@@ -8,6 +8,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import AlertBox from "../components/AlertBox";
@@ -22,7 +23,6 @@ import AlertModal from "../components/AlertModal";
 import { useNavigation } from "@react-navigation/native";
 import TobiGuide from "../components/TobiGuide";
 import { alertGuide } from "../constants/data_store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoadMoreContent } from "../components/Comments";
 import ThemeContext from "../config/ThemeContext";
 

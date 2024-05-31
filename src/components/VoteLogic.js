@@ -21,6 +21,8 @@ import { COMMENT_COUNT } from "./FeedFooter";
 import PopDropDown from "./PopDropDown";
 import { RenderLinearGradient } from "../screens/ViewRoomScreen";
 import { Dimensions } from "react-native";
+import Avatar from "./Avatar";
+import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -48,7 +50,7 @@ const InfoComponent = ({ type, instance, timer, scorer }) => {
             ? data.title
             : `${
                 data?.name ?? data?.name_j ?? data.name_e
-              }  ${tag} instance challenge`}
+              } ${tag} instance challenge`}
         </AppText>
         <View style={styles.infoContent}>
           <AppDetail
@@ -88,6 +90,7 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
 
   const finder = scorer.find((obj) => obj.selected === true);
   const commentType = type.type == "events" ? "three" : "one";
+  const theme = useContext(ThemeContext);
 
   const checkVote = () => {
     setScorer(cards);
@@ -254,27 +257,30 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
     return (
       <View style={styles.voteHeader}>
         <Icon
-          size={55}
+          size={40}
           activeOpacity={1}
           color={colors.medium}
-          iconSize={16}
+          bgColor={theme.backgroundExtralight}
+          iconSize={12}
           name="more-v-a"
           pack="b"
           onPress={() => setInfoModal(true)}
         />
         <View style={styles.pic}>
           <ProfilePic source={user.avatar} userID={user._id} size={35} />
-          <AppText style={styles.username} bold>
+          {/* <Avatar avatar={user.avatar} noAt feederID={user?._id} /> */}
+          {/* <AppText style={styles.username} bold>
             @{user.username}
-          </AppText>
+          </AppText> */}
         </View>
         <Icon
           activeOpacity={1}
           name="comment"
           color={colors.medium}
+          bgColor={theme.backgroundExtralight}
           pack="b"
-          iconSize={15}
-          size={55}
+          iconSize={12}
+          size={40}
           // text={`${myComments.length.toString()}`}
           textStyle={styles.textIcon}
           onPress={handleComments}
@@ -288,8 +294,14 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundExtralight },
+      ]}
+    >
       <FeedHeader challenge={title} />
+      <Separator h={2} />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -340,7 +352,10 @@ const VoteLogic = ({ title, type, timer, cards, user, voteId, instance }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 4,
+    marginTop: 10,
+    elevation: 3,
+    backgroundColor: colors.extraLight,
+    borderRadius: 20,
   },
   errText: {
     textAlign: "center",
@@ -366,6 +381,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: "center",
     textTransform: "capitalize",
+    alignSelf: "center",
     maxWidth: "90%",
   },
   pic: {
@@ -373,7 +389,7 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
   spacer: {
-    padding: 10,
+    paddingHorizontal: 15,
   },
   username: {
     marginTop: 6,

@@ -5,19 +5,25 @@ import { StatusBar } from "expo-status-bar";
 import AppHeader from "../components/AppHeader";
 import Events from "../components/Events";
 import Screen from "../components/Screen";
+import { capCapitalize, capFirstLetter } from "../constants/helpers";
 
 const EventScreen = ({ route, navigation }) => {
   const data = route.params;
-  const { instance, instanceID, followers } = data;
+  const { instance, instanceID, instanceName, followers } = data;
   const closer = () => {
     navigation.pop();
   };
   return (
     <Screen style={styles.container}>
       <StatusBar style="dark" />
-      <AppHeader title="Create Event" />
+      <AppHeader
+        title={`${capCapitalize(instanceName)} ${capFirstLetter(
+          instance
+        )} Event`}
+      />
       <Events
         instance={instance}
+        instanceName={instanceName}
         closer={closer}
         followersCount={followers}
         instanceID={instanceID}

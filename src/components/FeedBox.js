@@ -83,7 +83,7 @@ const FeedBox = ({
             <AntDesign name={icon} size={18} color={colors.primary} />
           )}
           <AppText size="medium" style={styles.title} bold>
-            {title} {title2 ? `- ${title2}` : null}
+            {title} {title2 ? `-- ${title2}` : null}
           </AppText>
         </View>
       </View>

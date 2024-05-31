@@ -106,7 +106,7 @@ const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
   let title2;
   if (item.tagChannel) title2 = item.tagChannel.name + " channel";
   if (item.tagGroup) title2 = item.tagGroup.name + " group";
-  if (item.tagCharacter) title2 = item.tagCharacter.name + "character";
+  if (item.tagCharacter) title2 = item.tagCharacter.name + " character";
   if (item.tagShow) title2 = item.tagShow.name + " show";
 
   useEffect(() => {
@@ -141,6 +141,7 @@ const RenderEvents = ({ item, userID, isFollowing, handleJoinEvent }) => {
         visible={joinData?.vis}
         setter={handleCloseEventModal}
         joinData={joinData}
+        titles={{ title: item.title, subTitle: title2 }}
         setJoiner={setJoiner}
         challengerState={{ challengerNum, setChallengerNum }}
         // handleJoinEventCb={handleCallback}

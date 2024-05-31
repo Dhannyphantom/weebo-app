@@ -41,6 +41,7 @@ const FormikGrowInput = (
         <TextInput
           style={[styles.input, { color: theme.color }, style]}
           placeholder={placeholder}
+          // placeholderTextColor={colors.greenDark}
           placeholderTextColor={theme.color}
           maxLength={80}
           ref={ref}

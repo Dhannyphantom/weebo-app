@@ -468,6 +468,10 @@ const ViewRoomScreen = ({ navigation, route }) => {
         navigation.navigate("Event", {
           instance: "group",
           instanceID: pageData?._id,
+          instanceName: pageData?.name,
+          followers: Array.isArray(pageData?.followers)
+            ? pageData?.followers?.length
+            : pageData?.followers,
         });
         onCloseModal();
       },

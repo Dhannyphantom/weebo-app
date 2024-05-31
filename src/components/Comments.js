@@ -232,7 +232,7 @@ const CommentComponent = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={85}
+      keyboardVerticalOffset={INPUT_HEIGHT}
       style={styles.content}
     >
       {hasLoaded ? (
@@ -286,7 +286,7 @@ const CommentComponent = ({
 
 const RenderEmptyComments = () => {
   return (
-    <View style={{ width, height: height * 0.8, backgroundColor: "blue" }}>
+    <View style={{ width, height: height * 0.9 }}>
       <ActivityIndicator
         visible
         type="emptyComment"

@@ -61,6 +61,7 @@ const PropInfoField = ({
     <View style={styles.fieldInputWrapper}>
       <View style={styles.fieldContainer}>
         <TextInput
+          autoCapitalize
           placeholder="New field title"
           style={[
             styles.inputTitle,
@@ -70,6 +71,7 @@ const PropInfoField = ({
           value={fieldInfo.title}
         />
         <TextInput
+          autoCapitalize
           placeholder="New field name"
           style={[
             styles.inputName,
@@ -82,8 +84,8 @@ const PropInfoField = ({
       <View style={styles.fieldActionBtns}>
         {bools.shouldShowEditBtn && (
           <AppButton
-            title={bools.isAdded ? "EDIT" : "SAVE"}
-            LIcon={bools.isAdded ? "book-edit-outline" : "plus"}
+            title={bools.isAdded ? "EDIT" : "DONE"}
+            // LIcon={bools.isAdded ? "book-edit-outline" : "plus"}
             btnColor={bools.isAdded ? colors.warningLight : colors.primary}
             onPress={() => handleFieldActions(bools.isAdded ? "edit" : "save")}
             naked
@@ -92,7 +94,7 @@ const PropInfoField = ({
         <AppButton
           title="REMOVE"
           btnColor={colors.heartLight}
-          LIcon="minus"
+          // LIcon="minus"
           onPress={() => handleFieldActions("remove")}
           naked
         />
@@ -450,7 +452,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     padding: 8,
     borderWidth: 1,
-    textTransform: "capitalize",
+    // textTransform: "capitalize",
     borderColor: "#ddd",
     borderRadius: 9,
     overflow: "hidden",
@@ -460,7 +462,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontFamily: "sans-regular",
     width: "80%",
-    textTransform: "capitalize",
+    // textTransform: "capitalize",
     minHeight: 55,
     maxHeight: 100,
     padding: 8,

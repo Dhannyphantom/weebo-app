@@ -8,6 +8,7 @@ import {
 } from "react-native";
 // import * as FacebookAds from "expo-ads-facebook";
 import { StatusBar } from "expo-status-bar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AntDesign } from "@expo/vector-icons";
 
@@ -24,6 +25,8 @@ import AppText from "../components/AppText";
 import colors from "../constants/colors";
 import ThemeContext from "../config/ThemeContext";
 import { capFirstLetter } from "../constants/helpers";
+import TobiGuide from "../components/TobiGuide";
+import { challengeGuide } from "../constants/data_store";
 // import NativeAds, { fb_adsManager } from "../components/NativeAds";
 
 const { width, height } = Dimensions.get("window");
@@ -42,6 +45,7 @@ const ChallengeScreen = ({ navigation }) => {
   const [refreshingEmpty, setRefreshingEmpty] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [fetchMine, setFetchMine] = useState(false);
+  const [guide, setGuide] = useState({ vis: false, close: false });
 
   const theme = useContext(ThemeContext);
 
@@ -172,6 +176,16 @@ const ChallengeScreen = ({ navigation }) => {
     }
   };
 
+  const handleScreenGuide = async () => {
+    const tobiGuidesArr = JSON.parse(await AsyncStorage.getItem("tobi_guides"));
+    if (!tobiGuidesArr.includes("challenge_guide")) {
+      setGuide({ ...guide, vis: true });
+
+      tobiGuidesArr.push("challenge_guide");
+      await AsyncStorage.setItem("tobi_guides", JSON.stringify(tobiGuidesArr));
+    }
+  };
+
   const handleRefresh = (cb, type) => {
     type === "list" && setRefreshing(true);
     type === "empty" && setRefreshingEmpty(true);
@@ -180,7 +194,6 @@ const ChallengeScreen = ({ navigation }) => {
       getChallenges(
         (resData) => {
           setChallengeInfo(resData);
-          console.log({ resData });
         },
         (errData) => {
           console.log({ errData });
@@ -220,6 +233,7 @@ const ChallengeScreen = ({ navigation }) => {
   useEffect(() => {
     handleRefresh(() => {
       setLoadedOnce(true);
+      handleScreenGuide();
     }, "list");
   }, [fetchMine]);
 
@@ -322,6 +336,13 @@ const ChallengeScreen = ({ navigation }) => {
           text="No new challenges"
         />
       )}
+
+      <TobiGuide
+        data={guide}
+        setData={setGuide}
+        title="Challenge Tips"
+        stateObj={challengeGuide}
+      />
     </Screen>
   );
 };
