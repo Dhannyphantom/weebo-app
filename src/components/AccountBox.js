@@ -251,7 +251,7 @@ const AccountBox = ({
               ) : status === "requested" ? (
                 <AppButton
                   icon="plus"
-                  title="Unrequest"
+                  title="Undo Request"
                   onPress={() => handleAddWeeb("unrequest")}
                   bare
                   style={styles.followBtn}

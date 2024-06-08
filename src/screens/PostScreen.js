@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
 import Avatar from "../components/Avatar";
 import Screen from "../components/Screen";
@@ -137,9 +138,14 @@ const PostScreen = ({ route, navigation }) => {
     postPix(
       data,
       null,
-      (err) => {
+      async (err) => {
         // Maybe save upload data to AsyncStorage and
         // try re-uploading
+        await AsyncStorageLib.setItem(
+          "failed_upload",
+          JSON.stringify({ data, url: "postPix", context: "FeedContext", err })
+        );
+        console.log("Upload failed");
       },
       {
         screen: router?.screenAlias,

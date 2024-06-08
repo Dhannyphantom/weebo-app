@@ -704,6 +704,14 @@ const joinRoom = (dispatch) => (sender, recipient) => {
   socket.emit("join", { sender, recipient });
 };
 
+const changeOnlineStatus =
+  (dispatch) =>
+  ({ userId, status }) => {
+    // sender && recipient == IDs
+    console.log({ userId });
+    socket.emit("status", { userId, status });
+  };
+
 const sendMessage = (dispatch) => (data, sc, cb) => {
   try {
     socket.emit("message", data, (result) => {
@@ -770,6 +778,7 @@ export const { Context, Provider } = createDataContext(
     clearMessage,
     updateToken,
     getUserData,
+    changeOnlineStatus,
     requestWeeb,
     getMyData,
     readNotification,

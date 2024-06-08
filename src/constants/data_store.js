@@ -909,6 +909,11 @@ export const challengeGuide = [
 export const homeGuide = [
   {
     id: uuid.v4(),
+    icon: "account-search",
+    text: "Search and follow your favorite anime shows and characters to see their feeds",
+  },
+  {
+    id: uuid.v4(),
     icon: "heart-multiple-outline",
     text: "Double click on a post to like the post",
   },

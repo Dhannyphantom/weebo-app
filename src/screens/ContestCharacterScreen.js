@@ -116,7 +116,7 @@ const ContestCharacterScreen = ({ route, navigation }) => {
       data,
       () => {
         updateMe(userInfo.points - CONTEST_CP, "points");
-        navigation.navigate("ChallengeStack");
+        navigation.replace("ChallengeStack");
       },
       (err) => {
         setErrMsg(err);

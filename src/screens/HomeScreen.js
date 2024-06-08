@@ -84,6 +84,7 @@ const HomeScreen = ({ navigation, route }) => {
   const {
     setPushToken: updateUserPushToken,
     getSocket,
+    changeOnlineStatus,
     tryLocalSignin,
     state: { userInfo },
   } = useContext(AuthContext);
@@ -351,6 +352,7 @@ const HomeScreen = ({ navigation, route }) => {
     }
 
     prepare();
+    changeOnlineStatus({ userId: userInfo._id, status: "online" });
     return () => {
       Notifications.removeNotificationSubscription(
         notificationListener.current

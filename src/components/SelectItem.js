@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
   },
   div: {
     width: screen.width * 0.95,
+    paddingHorizontal: 6,
   },
   itemName: {
     textTransform: "capitalize",

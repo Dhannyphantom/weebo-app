@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   FlatList,
+  Platform,
   View,
   Dimensions,
   KeyboardAvoidingView,
@@ -147,7 +148,7 @@ const ChatUserScreen = ({ route }) => {
     let user_chat = await AsyncStorage.getItem(`chat_${_id}`);
     if (user_chat) {
       user_chat = JSON.parse(user_chat);
-      // setChats({ ...user_chat, results: user_chat?.results?.slice(-25) ?? [] });
+      setChats({ ...user_chat, results: user_chat?.results?.slice(-25) ?? [] });
       setChatLoaded(true);
       flatRef?.current?.scrollToEnd();
     }
@@ -221,6 +222,8 @@ const ChatUserScreen = ({ route }) => {
       getSocket().off();
     };
   });
+
+  console.log(errMsg);
 
   //TODO:: - try caching chats and getting them locally
   useEffect(() => {

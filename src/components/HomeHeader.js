@@ -182,6 +182,7 @@ const CreatePostActions = ({
               <View>
                 <FlatList
                   data={userInfo?.instances?.characters}
+                  extraData={cMode}
                   keyExtractor={(item) => item._id}
                   ListEmptyComponent={
                     <ActivityIndicator
