@@ -121,7 +121,6 @@ const Challenger = ({
         setter();
       },
       (errData) => {
-        console.log({ errData });
         parentError.setErrMsg(errData?.data?.err ?? errData.msg);
         setLoading(false);
       }

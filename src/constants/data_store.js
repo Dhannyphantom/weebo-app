@@ -922,6 +922,11 @@ export const homeGuide = [
     icon: "play",
     text: "Press and hold on a video post to display fullscreen",
   },
+  {
+    id: uuid.v4(),
+    icon: "pen",
+    text: "Don't forget to add your feedback about the app by clicking on the faded floating pen icon",
+  },
 ];
 
 export const app_policy = [

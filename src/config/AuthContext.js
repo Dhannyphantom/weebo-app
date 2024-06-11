@@ -520,6 +520,22 @@ const sendAppFeedback = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const getAppFeedback = (dispatch) => async (sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.get("/appFeedback", {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb &&
+      cb({ err, msg: "Error fetching feedback", data: err?.response?.data });
+  }
+};
+
 const mailVerifier = (dispatch) => async (mailData, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -723,7 +739,6 @@ const changeOnlineStatus =
   (dispatch) =>
   ({ userId, status }) => {
     // sender && recipient == IDs
-    console.log({ userId });
     socket.emit("status", { userId, status });
   };
 
@@ -790,6 +805,7 @@ export const { Context, Provider } = createDataContext(
     addWeeb,
     instanceTransfer,
     sendAppFeedback,
+    getAppFeedback,
     addToCollection,
     clearMessage,
     updateToken,

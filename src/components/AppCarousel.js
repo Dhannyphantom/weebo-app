@@ -55,8 +55,6 @@ const AppCarousel = ({
     );
   };
 
-  // Array.isArray(data) && console.log(data);
-
   return (
     <View style={styles.container}>
       <FlatList

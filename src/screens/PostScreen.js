@@ -145,7 +145,6 @@ const PostScreen = ({ route, navigation }) => {
           "failed_upload",
           JSON.stringify({ data, url: "postPix", context: "FeedContext", err })
         );
-        console.log("Upload failed");
       },
       {
         screen: router?.screenAlias,

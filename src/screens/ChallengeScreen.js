@@ -196,7 +196,6 @@ const ChallengeScreen = ({ navigation }) => {
           setChallengeInfo(resData);
         },
         (errData) => {
-          console.log({ errData });
           setLoadedOnce(true);
         }
       );

@@ -223,8 +223,6 @@ const ChatUserScreen = ({ route }) => {
     };
   });
 
-  console.log(errMsg);
-
   //TODO:: - try caching chats and getting them locally
   useEffect(() => {
     fetchStoredChats();

@@ -4,11 +4,12 @@ import {
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useContext, useState } from "react";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import uuid from "react-native-uuid";
+import Animated, { BounceInDown } from "react-native-reanimated";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import colors from "../constants/colors";
@@ -17,72 +18,133 @@ import AppFadeIn from "./AppFadeIn";
 import AppText from "./AppText";
 import CommentBar from "./CommentBar";
 import getFormatTime from "../constants/getFormatTime";
+import ActivityIndicator from "./ActivityIndicator";
 
 const { height, width } = Dimensions.get("screen");
 
-const data = [
-  {
-    id: "1",
-    isSystem: false,
-    user: "dhan",
-    message: "I think the UI is great!",
-    date: new Date().toISOString(),
-    read: false,
-    delivered: false,
-  },
-  {
-    id: "2",
-    isSystem: true,
-    user: "",
-    message: "Thanks for the feedback. Get back to you shortly!",
-    date: new Date().toISOString(),
-    read: false,
-    delivered: false,
-  },
-];
-
 const ChatBubble = ({ item }) => {
   return (
-    <View style={styles.feedBubbleContainer}>
+    <Animated.View
+      entering={BounceInDown.duration(1000)}
+      style={styles.feedBubbleContainer}
+    >
       <View
-        style={[
-          styles.feedBubble,
-          {
-            alignSelf: item.isSystem ? "flex-start" : "flex-end",
-            backgroundColor: item.isSystem ? colors.light : colors.primary,
-          },
-        ]}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          alignSelf: item.isSystem ? "flex-start" : "flex-end",
+        }}
       >
-        <AppText style={{ color: item.isSystem ? colors.black : colors.white }}>
-          {" "}
-          {item.message}{" "}
-        </AppText>
+        <View
+          style={[
+            styles.feedBubble,
+            {
+              backgroundColor: item.error
+                ? colors.heartDark
+                : item.isSystem
+                ? colors.light
+                : colors.primary,
+            },
+          ]}
+        >
+          <AppText
+            style={{ color: item.isSystem ? colors.black : colors.white }}
+          >
+            {" "}
+            {item.message}{" "}
+          </AppText>
+        </View>
+        {!item.isSystem && (
+          <Feather
+            name={item.read ? "check-circle" : "circle"}
+            size={16}
+            color={item.delivered ? colors.primary : colors.medium}
+          />
+        )}
       </View>
       <AppText
         size="small"
-        style={{ alignSelf: item.isSystem ? "flex-start" : "flex-end" }}
+        style={{
+          ...styles.feedBubbleDate,
+          alignSelf: item.isSystem ? "flex-start" : "flex-end",
+        }}
       >
         {" "}
         {getFormatTime(item.date).fullTime}{" "}
       </AppText>
-    </View>
+    </Animated.View>
   );
 };
 
-const RenderFeedBack = () => {
+const RenderFeedBack = ({ setter }) => {
   const theme = useContext(ThemeContext);
   const {
     sendAppFeedback,
+    getAppFeedback,
     state: { userInfo },
   } = useContext(AuthContext);
+  const flatRef = useRef();
+
+  const [feedData, setFeedData] = useState([]);
+  const [bools, setBools] = useState({ loading: true });
 
   const renderFeedChats = ({ item }) => {
     return <ChatBubble item={item} />;
   };
 
   const handleSendFeedback = (text) => {
-    sendAppFeedback({ message: text, date: new Date() });
+    if (text === "cancel_op") return setter(true);
+    // optimistic update
+    const feedId = uuid.v4();
+    const feedObj = {
+      _id: feedId,
+      message: text,
+      date: new Date(),
+      isSystem: false,
+      read: false,
+      delivered: false,
+    };
+
+    setFeedData([...feedData, feedObj]);
+    sendAppFeedback(
+      { message: text, date: new Date() },
+      (resData) => {
+        // AI feedback
+        feedObj.delivered = true;
+        feedObj.read = true;
+
+        setFeedData([...feedData, feedObj, resData.message]);
+        flatRef?.current?.scrollToEnd();
+      },
+      (err) => {
+        setFeedData(
+          feedData.map((feedItem) => {
+            if (feedItem._id == feedId) {
+              return {
+                ...feedItem,
+                error: true,
+              };
+            } else {
+              return feedItem;
+            }
+          })
+        );
+      }
+    );
+    flatRef?.current?.scrollToEnd();
   };
+
+  useEffect(() => {
+    getAppFeedback(
+      (resData) => {
+        setBools({ ...bools, loading: false });
+        setFeedData(resData.messages);
+      },
+      (err) => {
+        setBools({ ...bools, loading: false });
+      }
+    );
+  }, [setter]);
 
   return (
     <KeyboardAvoidingView
@@ -96,8 +158,21 @@ const RenderFeedBack = () => {
 
         <View style={{ flex: 1, marginTop: 20 }}>
           <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
+            data={feedData}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            ref={flatRef}
+            onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
+            ListEmptyComponent={() => (
+              <ActivityIndicator
+                visible
+                size={0.45}
+                type="isEmpty"
+                text={
+                  "Your feedback is very valuable to us.\nLet us know about your app experience!"
+                }
+              />
+            )}
             renderItem={renderFeedChats}
           />
         </View>
@@ -105,11 +180,13 @@ const RenderFeedBack = () => {
         <View style={styles.feedbackFooter}>
           <CommentBar
             style={{ width: "100%" }}
-            placeholder="Enter your feedback"
+            placeholder="Tell us experience..."
             onSend={handleSendFeedback}
             avatar={userInfo.avatar}
+            cancelIcon
           />
         </View>
+        <ActivityIndicator visible={bools.loading} absolute />
       </View>
     </KeyboardAvoidingView>
   );
@@ -117,6 +194,7 @@ const RenderFeedBack = () => {
 
 const GetFeedbacks = () => {
   const [modal, setModal] = useState(false);
+  const [bools, setBools] = useState({ closeModal: { close: false } });
   const theme = useContext(ThemeContext);
   return (
     <>
@@ -128,10 +206,18 @@ const GetFeedbacks = () => {
       </Pressable>
       <AppFadeIn
         visible={modal}
-        RenderComponent={RenderFeedBack}
+        RenderComponent={() => (
+          <RenderFeedBack
+            setter={(val) => {
+              setBools({ ...bools, closeModal: { close: val } });
+              setModal(false);
+            }}
+          />
+        )}
+        setVisible={setModal}
+        closeModal={bools.closeModal.close}
         disableTouchModal
         disableCloseModal
-        setVisible={setModal}
       />
     </>
   );
@@ -146,12 +232,13 @@ const styles = StyleSheet.create({
     right: 10,
     padding: 10,
     borderRadius: 100,
-    opacity: 0.4,
+    opacity: 0.5,
   },
   feedback: {
-    width: width * 0.9,
+    width: width * 0.95,
     height: height * 0.5,
     borderRadius: 20,
+    overflow: "hidden",
   },
   feedbackTitle: {
     textAlign: "center",
@@ -164,10 +251,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginBottom: 10,
   },
+  feedBubbleDate: {
+    marginHorizontal: 12,
+  },
   feedBubble: {
     backgroundColor: colors.primary,
-    padding: 12,
+    padding: 20,
     borderRadius: 100,
     marginBottom: 3,
+    marginRight: 5,
+    maxWidth: "90%",
   },
 });

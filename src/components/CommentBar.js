@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Cards from "./Cards";
 import colors from "../constants/colors";
@@ -28,6 +28,7 @@ const CommentBar = (
     parentState = false,
     type,
     style,
+    cancelIcon,
   },
   ref
 ) => {
@@ -36,6 +37,8 @@ const CommentBar = (
   const theme = useContext(ThemeContext);
 
   const handleSend = () => {
+    if (!parentState && text.length < 1 && cancelIcon)
+      return onSend("cancel_op");
     if (!parentState && text.length < 1) return;
     if (parentState && commentText.length < 1) return;
     onSend(parentState ? commentText : text);
@@ -86,11 +89,15 @@ const CommentBar = (
           style={styles.sendBtn}
           onPress={handleSend}
         >
-          <Feather
-            name="send"
-            size={26}
-            color={type === "send" ? colors.primary : colors.primary}
-          />
+          {cancelIcon && !text[1] ? (
+            <MaterialCommunityIcons
+              name={cancelIcon ? "cancel" : ""}
+              size={26}
+              color={colors.heartDark}
+            />
+          ) : (
+            <Feather name="send" size={26} color={colors.primary} />
+          )}
         </TouchableOpacity>
       </Cards>
     </>
