@@ -24,9 +24,10 @@ const CommentBar = (
     onFocus,
     placeholder = "Type your comments...",
     commentText,
-    parentState = false,
     setCommentText,
+    parentState = false,
     type,
+    style,
   },
   ref
 ) => {
@@ -43,7 +44,9 @@ const CommentBar = (
 
   return (
     <>
-      <Cards style={{ ...styles.container, height: Math.max(35, height) }}>
+      <Cards
+        style={{ ...styles.container, height: Math.max(35, height), ...style }}
+      >
         <View style={styles.avatarCont}>
           <ProfilePic
             source={avatar}

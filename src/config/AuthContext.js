@@ -505,6 +505,21 @@ const deleteMediaItem = (dispatch) => async (data, sc, cb) => {
   }
 };
 
+const sendAppFeedback = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await authApi.post("/appFeedback", data, {
+      headers: {
+        "x-auth-token": token,
+      },
+    });
+
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error sending feedback", data: err?.response?.data });
+  }
+};
+
 const mailVerifier = (dispatch) => async (mailData, sc, cb) => {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -774,6 +789,7 @@ export const { Context, Provider } = createDataContext(
     tryLocalSignin,
     addWeeb,
     instanceTransfer,
+    sendAppFeedback,
     addToCollection,
     clearMessage,
     updateToken,

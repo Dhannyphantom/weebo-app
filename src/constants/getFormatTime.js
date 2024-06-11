@@ -206,6 +206,7 @@ export default (time, time2, type) => {
       hr,
       min,
       post,
+      fullTime: `${tDay} ${months[tMonth].short}, ${tYear} ${convDate}`,
     };
   }
 };

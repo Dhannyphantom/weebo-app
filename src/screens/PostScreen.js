@@ -398,7 +398,11 @@ const PostScreen = ({ route, navigation }) => {
           return (
             <View style={styles.container}>
               <View style={styles.avatar}>
-                <Avatar avatar={userInfo.avatar} name={userInfo.username} />
+                <Avatar
+                  avatar={userInfo.avatar}
+                  feederID={userInfo._id}
+                  name={userInfo.username}
+                />
               </View>
               {!writer && (
                 <View style={{ flex: 1 }}>
