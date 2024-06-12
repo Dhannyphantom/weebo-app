@@ -9,7 +9,14 @@ import {
 import { Ionicons, Feather } from "@expo/vector-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import uuid from "react-native-uuid";
-import Animated, { BounceInDown } from "react-native-reanimated";
+import Animated, {
+  BounceInDown,
+  scrollTo,
+  useAnimatedRef,
+  useDerivedValue,
+  useScrollViewOffset,
+  useSharedValue,
+} from "react-native-reanimated";
 
 import { Context as AuthContext } from "../config/AuthContext";
 import colors from "../constants/colors";
@@ -22,10 +29,12 @@ import ActivityIndicator from "./ActivityIndicator";
 
 const { height, width } = Dimensions.get("screen");
 
-const ChatBubble = ({ item, index }) => {
+const ChatBubble = ({ item, shouldDelay }) => {
   return (
     <Animated.View
-      entering={BounceInDown.duration(1000)}
+      entering={BounceInDown.duration(1000).delay(
+        shouldDelay && item.isSystem ? 5500 : 0
+      )}
       style={styles.feedBubbleContainer}
     >
       <View
@@ -83,17 +92,25 @@ const RenderFeedBack = ({ setter }) => {
     getAppFeedback,
     state: { userInfo },
   } = useContext(AuthContext);
-  const flatRef = useRef();
+  const flatRef = useAnimatedRef();
+
+  const scrollY = useSharedValue(0);
+
+  useDerivedValue(() => {
+    scrollTo(flatRef, 0, scrollY.value, true);
+  });
+  const scrollOffset = useScrollViewOffset(flatRef);
 
   const [feedData, setFeedData] = useState([]);
-  const [bools, setBools] = useState({ loading: true });
+  const [bools, setBools] = useState({ loading: true, delayAI: false });
 
   const renderFeedChats = ({ item, index }) => {
-    return <ChatBubble item={item} index={index} />;
+    return <ChatBubble item={item} shouldDelay={bools.delayAI} />;
   };
 
   const handleSendFeedback = (text) => {
     if (text === "cancel_op") return setter(true);
+    setBools({ ...bools, delayAI: true });
     // optimistic update
     const feedId = uuid.v4();
     const feedObj = {
@@ -114,7 +131,7 @@ const RenderFeedBack = ({ setter }) => {
         feedObj.read = true;
 
         setFeedData([...feedData, feedObj, resData.message]);
-        flatRef?.current?.scrollToEnd();
+        // flatRef?.current?.scrollToEnd();
       },
       (err) => {
         setFeedData(
@@ -131,7 +148,7 @@ const RenderFeedBack = ({ setter }) => {
         );
       }
     );
-    flatRef?.current?.scrollToEnd();
+    // flatRef?.current?.scrollToEnd();
   };
 
   useEffect(() => {
@@ -157,12 +174,12 @@ const RenderFeedBack = ({ setter }) => {
         </AppText>
 
         <View style={{ flex: 1, marginTop: 20 }}>
-          <FlatList
+          <Animated.FlatList
             data={feedData}
             keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingBottom: 20 }}
             ref={flatRef}
-            onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
+            // onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
             ListEmptyComponent={() => (
               <ActivityIndicator
                 visible

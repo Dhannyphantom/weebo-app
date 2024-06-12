@@ -366,8 +366,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   btn: {
-    // marginRight: 12,
-    // backgroundColor: "red",
     padding: 10,
     marginLeft: 5,
   },

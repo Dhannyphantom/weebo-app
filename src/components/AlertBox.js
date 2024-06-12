@@ -2,13 +2,18 @@ import React, { memo, useContext, useRef } from "react";
 import {
   StyleSheet,
   View,
-  Animated,
+  Animated as NativeAnimated,
   Dimensions,
   TouchableOpacity,
 } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, {
+  FadeOutRight,
+  LightSpeedOutRight,
+  LinearTransition,
+} from "react-native-reanimated";
 
 import getFormatTime from "../constants/getFormatTime";
 import ActivityIndicator from "./ActivityIndicator";
@@ -22,6 +27,7 @@ import appLogo from "../../assets/favicon.png";
 import ThemeContext from "../config/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 const AlertBox = ({
   active,
@@ -70,7 +76,7 @@ const AlertBox = ({
       outputRange: [-15, -25, 0, -5],
     });
     return (
-      <Animated.View
+      <NativeAnimated.View
         style={{ ...styles.rightBgCont, transform: [{ translateX: trans }] }}
       >
         {!isLoading && (
@@ -120,7 +126,7 @@ const AlertBox = ({
           visible={isLoading}
           style={styles.activity}
         />
-      </Animated.View>
+      </NativeAnimated.View>
     );
   };
 
@@ -133,7 +139,12 @@ const AlertBox = ({
         // onSwipeableOpen={onSwipeableOpen}
         renderRightActions={renderRightActions}
       >
-        <TouchableOpacity onPress={onPress} activeOpacity={0.65}>
+        <AnimatedTouchable
+          // exiting={LightSpeedOutRight}
+          onPress={onPress}
+          layout={LinearTransition.duration(5000)}
+          activeOpacity={0.65}
+        >
           <Cards style={{ ...styles.container, ...border }}>
             <Avatar
               avatar={avatar}
@@ -151,7 +162,7 @@ const AlertBox = ({
               {/* {getFormatTime(date, null, "date")} {getFormatTime(date).time} */}
             </AppText>
           </Cards>
-        </TouchableOpacity>
+        </AnimatedTouchable>
       </Swipeable>
     </GestureHandlerRootView>
   );
