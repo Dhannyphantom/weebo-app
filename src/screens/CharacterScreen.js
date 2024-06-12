@@ -292,8 +292,10 @@ const CharacterScreen = ({ route, navigation }) => {
           type: "failed",
         })
       );
+      setPopper({ vis: true, msg: "Instance followed", type: "success" });
     } else if (alertModal.type === "unfollowC") {
       updateCardState(false);
+      setPopper({ vis: true, msg: "Instance unfollowed", type: "success" });
       followChar({ charID, userID, route: "unfollow" }, null, (err) =>
         setPopper({
           vis: true,
@@ -410,6 +412,7 @@ const CharacterScreen = ({ route, navigation }) => {
       });
     } else {
       updateCardState(true);
+      setPopper({ vis: true, msg: "Instance followed", type: "success" });
       followChar({ charID, userID, route: "follow" }, null, (err) => {
         setPopper({
           vis: true,

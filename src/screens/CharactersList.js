@@ -162,6 +162,7 @@ const CharactersList = ({ route, navigation }) => {
                               show={item?.show?.name_j ?? item?.show?.name_e}
                               followers={item.followers}
                               isFollowing={item.isFollowing}
+                              isVerified={item.verified}
                               avatar={item.manager && item.manager.avatar}
                               owner={item.manager}
                               image={item.cover_photo}

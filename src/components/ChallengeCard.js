@@ -27,9 +27,9 @@ const ChallengeCard = ({ series, seriesChar, large, ...otherProps }) => {
     return (
       <View style={styles.container}>
         <Card
-          style={{ ...styles.card, width: series ? width * 0.5 : 140 }}
+          style={{ ...styles.card, width: series ? width * 0.62 : 140 }}
           btmStyle={{ ...styles.btmContainer, width: series ? 220 : 140 }}
-          mIcon={series ? CARD_WIDTH / 4.5 : CARD_WIDTH / 5}
+          mIcon={series ? CARD_WIDTH / 4 : CARD_WIDTH / 5}
           subTitleStyle={styles.subTitle}
           bIcon={series ? CARD_WIDTH / 6 : CARD_WIDTH / 8}
           btmPadding={20}

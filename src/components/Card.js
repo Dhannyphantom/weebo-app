@@ -101,12 +101,17 @@ const Card = ({
           }}
         >
           <Icon
-            name={isFollowing ? "star" : "staro"}
+            name={isFollowing ? "user" : "adduser"}
             pack="A"
-            style={styles.icon}
-            color={isFollowing ? colors.primary : colors.medium}
+            color={isFollowing ? colors.white : colors.medium}
             size={bIcon}
             disablePress
+            style={{
+              ...styles.icon,
+              backgroundColor: isFollowing
+                ? colors.heartLight
+                : theme.background,
+            }}
           />
           <Icon
             text={`${cardFollowers}`}

@@ -4,6 +4,7 @@ import {
   MaterialCommunityIcons,
   Fontisto,
   Feather,
+  Ionicons,
   AntDesign,
 } from "@expo/vector-icons";
 import AppText from "./AppText";
@@ -55,6 +56,9 @@ const Icon = ({
         )}
         {name && pack === "A" && !text && (
           <AntDesign name={name} size={iconSize} color={color} />
+        )}
+        {name && pack === "I" && !text && (
+          <Ionicons name={name} size={iconSize} color={color} />
         )}
         {name && pack === "b" && !text && (
           <Fontisto name={name} size={iconSize} color={color} />

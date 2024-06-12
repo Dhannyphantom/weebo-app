@@ -35,10 +35,8 @@ const ChatUserScreen = ({ route }) => {
 
   const [chats, setChats] = useState({ results: [] });
   // chats = [{message, time, read,sender: {_id, username,gender, avatar}}]
-  const [empty, setEmpty] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
-  const [chatLoaded, setChatLoaded] = useState(false);
-  const [bools, setBools] = useState({ loadMore: false });
+  const [bools, setBools] = useState({ loadMore: false, chatLoaded: false });
 
   const flatRef = useRef();
   const { _id, username, avatar } = route.params.item;
@@ -46,7 +44,7 @@ const ChatUserScreen = ({ route }) => {
   const theme = useContext(ThemeContext);
 
   const handleSendChatMsg = (message, chatId) => {
-    chats.length < 1 && setEmpty(false);
+    // chats.length < 1 && setEmpty(false);
     const chatsArr = [...chats.results];
     const senderData = {
       _id: userInfo._id,
@@ -115,13 +113,14 @@ const ChatUserScreen = ({ route }) => {
   };
 
   const handleGetDone = async (chatz, shouldAddMore) => {
-    if (!chatz) return setChatLoaded(true);
+    if (!chatz) return setBools({ ...bools, chatLoaded: true });
     if (shouldAddMore) {
       setChats({ ...chatz, results: chatz?.results?.concat(chats?.results) });
     } else {
       setChats(chatz);
     }
-    chatz && chatz?.results.length == 0 ? setEmpty(true) : setEmpty(false);
+    // chatz && chatz?.results.length == 0 ? setEmpty(true) : setEmpty(false);
+    !bools.chatLoaded && setBools({ ...bools, chatLoaded: true });
     await AsyncStorage.setItem(`chat_${_id}`, JSON.stringify(chatz));
     flatRef?.current?.scrollToEnd();
   };
@@ -149,9 +148,10 @@ const ChatUserScreen = ({ route }) => {
     if (user_chat) {
       user_chat = JSON.parse(user_chat);
       setChats({ ...user_chat, results: user_chat?.results?.slice(-25) ?? [] });
-      setChatLoaded(true);
+      setBools({ ...bools, chatLoaded: true });
       flatRef?.current?.scrollToEnd();
     }
+    await AsyncStorage.removeItem(`chat_${_id}`);
   };
 
   const RenderChatFooter = () => {
@@ -231,6 +231,7 @@ const ChatUserScreen = ({ route }) => {
     getChatMessages(
       { senderId: userInfo._id, recipientId: _id, page: 1, limit: CHAT_COUNT },
       (data) => {
+        console.log({ res: data });
         handleGetDone(data);
         flatRef?.current?.scrollToEnd();
       },
@@ -253,7 +254,7 @@ const ChatUserScreen = ({ route }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.comment}
       >
-        {chatLoaded ? (
+        {bools.chatLoaded ? (
           <View style={[styles.content, { backgroundColor: theme.background }]}>
             <FlatList
               data={chats.results}
@@ -272,13 +273,17 @@ const ChatUserScreen = ({ route }) => {
                   )}
                 </>
               )}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyView}>
+                  <ActivityIndicator
+                    visible={true}
+                    style={styles.activityTwo}
+                    type="isEmpty"
+                    text={`Say hi to ${username}`}
+                  />
+                </View>
+              )}
               renderItem={renderChats}
-            />
-            <ActivityIndicator
-              visible={empty}
-              style={styles.activityTwo}
-              type="isEmpty"
-              text={`Say hi to ${username}`}
             />
           </View>
         ) : (
@@ -331,6 +336,10 @@ const styles = StyleSheet.create({
     borderTopEndRadius: width * 0.045,
     paddingTop: 18,
     elevation: 10,
+  },
+  emptyView: {
+    width,
+    height: height * 0.8,
   },
 });
 export default ChatUserScreen;

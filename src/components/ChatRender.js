@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import Animated, { BounceInDown } from "react-native-reanimated";
 
 import colors from "../constants/colors";
 import AppText from "./AppText";
@@ -70,7 +71,10 @@ const ChatRender = ({
       : true;
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={BounceInDown.duration(1000)}
+      style={styles.container}
+    >
       {!bool ? (
         <>
           {upperChat && showDay && (
@@ -111,7 +115,7 @@ const ChatRender = ({
           </View>
           {showTimerLeft && (
             <View style={styles.timerContLeft}>
-              <AppText style={styles.timer} bold>
+              <AppText size="xsmall" style={styles.timer} bold>
                 {timer}
               </AppText>
             </View>
@@ -150,16 +154,17 @@ const ChatRender = ({
           </View>
           {showTimerRight && (
             <View style={styles.timerCont}>
-              <AppText style={styles.timer} bold>
+              <AppText size="xsmall" style={styles.timer} bold>
                 {timer}
               </AppText>
             </View>
           )}
         </>
       )}
-    </View>
+    </Animated.View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

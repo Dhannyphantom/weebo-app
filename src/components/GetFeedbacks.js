@@ -22,7 +22,7 @@ import ActivityIndicator from "./ActivityIndicator";
 
 const { height, width } = Dimensions.get("screen");
 
-const ChatBubble = ({ item }) => {
+const ChatBubble = ({ item, index }) => {
   return (
     <Animated.View
       entering={BounceInDown.duration(1000)}
@@ -88,8 +88,8 @@ const RenderFeedBack = ({ setter }) => {
   const [feedData, setFeedData] = useState([]);
   const [bools, setBools] = useState({ loading: true });
 
-  const renderFeedChats = ({ item }) => {
-    return <ChatBubble item={item} />;
+  const renderFeedChats = ({ item, index }) => {
+    return <ChatBubble item={item} index={index} />;
   };
 
   const handleSendFeedback = (text) => {
@@ -180,7 +180,7 @@ const RenderFeedBack = ({ setter }) => {
         <View style={styles.feedbackFooter}>
           <CommentBar
             style={{ width: "100%" }}
-            placeholder="Tell us experience..."
+            placeholder="Tell us your experience..."
             onSend={handleSendFeedback}
             avatar={userInfo.avatar}
             cancelIcon

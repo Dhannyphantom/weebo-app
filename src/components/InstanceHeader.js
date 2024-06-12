@@ -489,12 +489,17 @@ const InstanceHeader = ({
         >
           <View style={styles.icons}>
             <Icon
-              name={leftColor ? "star" : "staro"}
+              name={leftColor ? "user" : "adduser"}
               activeOpacity={0.9}
               pack="A"
               size={55}
               onPress={() => handleLeftPress && handleLeftPress()}
-              color={leftColor ? colors.primary : colors.medium}
+              color={leftColor ? colors.white : colors.medium}
+              style={{
+                backgroundColor: leftColor
+                  ? colors.heartLight
+                  : theme.background,
+              }}
             />
             <ProfilePic
               source={owner?.avatar}

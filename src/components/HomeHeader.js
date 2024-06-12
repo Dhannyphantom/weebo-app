@@ -95,13 +95,16 @@ const CreatePostActions = ({
   fetcher,
   isMyPosts,
 }) => {
-  const [selectChar, setSelectChar] = useState([]);
-  const [cMode, setCMode] = useState(false);
-
   const theme = useContext(ThemeContext);
   const {
+    getUserData,
     state: { userInfo },
   } = useContext(AuthContext);
+
+  const [selectChar, setSelectChar] = useState([]);
+  const [bools, setBools] = useState({ loading: true, challengeMode: false });
+  const [myInstances, setMyInstances] = useState(userInfo?.instances);
+
   const navigation = useNavigation();
 
   const handleNav = async (type) => {
@@ -128,10 +131,10 @@ const CreatePostActions = ({
         });
       }
     } else if (type === "contest") {
-      setCMode(true);
+      setBools({ ...bools, challengeMode: true });
     } else if (type === "write") {
       setModalVis(false);
-      setCMode(false);
+      setBools({ ...bools, challengeMode: false });
       navigation.navigate("Post", {
         write: true,
         toScreen: "Home",
@@ -167,10 +170,26 @@ const CreatePostActions = ({
     );
   };
 
+  useEffect(() => {
+    if (!userInfo?.instances) {
+      getUserData(
+        { id: userInfo._id, type: "get_instances" },
+        (resData) => {
+          setMyInstances(resData);
+          setBools({ ...bools, loading: false });
+        },
+        (err) => {}
+      );
+    } else {
+      setMyInstances(userInfo?.instances);
+      setBools({ ...bools, loading: false });
+    }
+  }, [bools.challengeMode]);
+
   return (
     <View style={[styles.modalBg, { backgroundColor: theme.background }]}>
       <View style={[styles.links, { backgroundColor: theme.light }]}>
-        {cMode ? (
+        {bools.challengeMode ? (
           <View
             style={[styles.newChallenge, { backgroundColor: theme.background }]}
           >
@@ -181,8 +200,7 @@ const CreatePostActions = ({
               <Separator h={2} />
               <View>
                 <FlatList
-                  data={userInfo?.instances?.characters}
-                  extraData={cMode}
+                  data={myInstances.characters}
                   keyExtractor={(item) => item._id}
                   ListEmptyComponent={
                     <ActivityIndicator
@@ -215,9 +233,10 @@ const CreatePostActions = ({
                 style={styles.nextBtn}
                 bare
                 bareRed
-                onPress={() => setCMode(false)}
+                onPress={() => setBools({ ...bools, challengeMode: false })}
               />
             </View>
+            <ActivityIndicator visible={bools.loading} absolute />
           </View>
         ) : (
           <>
