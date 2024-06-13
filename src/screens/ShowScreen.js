@@ -415,21 +415,7 @@ const ShowScreen = ({ route, navigation }) => {
     listItems,
     coverLoading: isCoverLoading,
     setCoverLoading: setIsCoverLoading,
-    handleLeftPress: () =>
-      isMine
-        ? () => {
-            setAlertModal({
-              visible: true,
-              title: "Unfollow Instance",
-              message: `Are sure you want to unfollow ${capCapitalize(
-                dataState.name
-              )} Instance?\nYou will lose all management rights!`,
-              btn: "UNFOLLOW",
-              type: "unfollow_instance",
-              data: {},
-            });
-          }
-        : handleFollowShow(),
+    handleLeftPress: () => handleFollowShow(),
     leftColor: isFollowed,
     subscribers: null,
     verified: dataState.verified,
@@ -517,7 +503,7 @@ const ShowScreen = ({ route, navigation }) => {
   const handleOkAlert = () => {
     switch (alertModal.type) {
       case "unfollow_instance":
-        handleFollowShow();
+        handleFollowShow(true);
         break;
     }
     // if (alertModal.type === "followC") {
@@ -615,30 +601,53 @@ const ShowScreen = ({ route, navigation }) => {
     setDataState({ ...dataState, [prop]: val });
   };
 
-  const handleFollowShow = () => {
-    setIsFollowed(!isFollowed);
-    const lastIsFollowed = isFollowed;
-    let followObj = {
-      instance: "show",
-      instanceID: dataState._id,
-    };
-    if (isFollowed) {
-      // UNFOLLOWS
-      followObj.action = "unfollow";
+  const handleFollowShow = (shouldUnfollow) => {
+    if (isMine && isFollowed && !shouldUnfollow) {
+      setAlertModal({
+        visible: true,
+        title: "Unfollow Show",
+        message: `Are sure you want to unfollow ${capCapitalize(
+          dataState.name_j ?? dataState?.name_e
+        )} Show Instance?\nYou will lose all management rights!`,
+        btn: "UNFOLLOW",
+        type: "unfollow_instance",
+        data: {},
+      });
     } else {
-      followObj.action = "follow";
-    }
-    followInstance(
-      followObj,
-      (resData) => {
-        // setIsCoverLoading(false);
-      },
-      (err) => {
-        setErrMsg(err?.response.data);
-        // setIsCoverLoading(false);
-        setIsFollowed(lastIsFollowed);
+      setIsFollowed(!isFollowed);
+      const lastIsFollowed = isFollowed;
+      let followObj = {
+        instance: "show",
+        instanceID: dataState._id,
+      };
+      if (isFollowed) {
+        // UNFOLLOWS
+        followObj.action = "unfollow";
+      } else {
+        followObj.action = "follow";
       }
-    );
+      followInstance(
+        followObj,
+        (resData) => {
+          // setIsCoverLoading(false);
+        },
+        (err) => {
+          setErrMsg(err?.response.data);
+          // setIsCoverLoading(false);
+          setIsFollowed(lastIsFollowed);
+          setPopper({
+            vis: true,
+            msg: "Show Instance follow error",
+            type: "failed",
+          });
+        }
+      );
+      setPopper({
+        vis: true,
+        msg: "Show Instance followed!",
+        type: "success",
+      });
+    }
   };
 
   const handleStatusVisibility = (bool) => {

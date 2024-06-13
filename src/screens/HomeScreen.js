@@ -417,7 +417,7 @@ const HomeScreen = ({ navigation, route }) => {
           isMyPosts={bools.isMyPosts}
         />
         {errMsg && (
-          <AppText bold size="large" style={styles.error}>
+          <AppText bold style={styles.error}>
             {errMsg}
           </AppText>
         )}
@@ -558,10 +558,9 @@ const styles = StyleSheet.create({
   },
   error: {
     textAlign: "center",
-    width: width * 0.7,
     marginTop: 12,
     color: colors.heartDark,
-    marginBottom: 25,
+    marginBottom: 10,
   },
   statusHeader: {
     flex: 1,
