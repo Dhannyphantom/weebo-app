@@ -13,7 +13,8 @@ import commentAnim from "../../assets/animations/comment-anim.json";
 import networkAnim from "../../assets/animations/network-1.json";
 import emptyLoader from "../../assets/animations/nice.json";
 import ThemeContext from "../config/ThemeContext";
-import testAnim from "../../assets/animations/searching_animation.json";
+import testAnim from "../../assets/animations/next_arrow.json";
+import retryAnim from "../../assets/animations/retry.json";
 import uploadProgress from "../../assets/animations/progress.json";
 
 const { width, height } = Dimensions.get("window");
@@ -218,6 +219,22 @@ const ActivityIndicator = ({
               height: width * size,
             }}
             loop
+          />
+          {text && <AppText style={styles.text}> {text} </AppText>}
+        </>
+      )}
+      {type === "retry" && (
+        <>
+          <LottieView
+            source={retryAnim}
+            colorFilters={[]}
+            autoPlay={autoPlay}
+            style={{
+              width: width * size,
+              height: width * size,
+            }}
+            loop
+            speed={speed}
           />
           {text && <AppText style={styles.text}> {text} </AppText>}
         </>

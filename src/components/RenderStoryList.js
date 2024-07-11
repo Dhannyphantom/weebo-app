@@ -126,7 +126,9 @@ export default function RenderStoryList({
           ? LOTTIE_SPEED
           : PRGORESS_BAR_DURATION / item.durationMillis;
       setProgress(speed);
-      lottieRef?.current?.play();
+      setTimeout(() => {
+        lottieRef?.current?.play();
+      }, 1200);
       if (!bools.viewed) {
         onStoryReact("view");
         setBools({ ...bools, views: bools.views + 1, viewed: true });

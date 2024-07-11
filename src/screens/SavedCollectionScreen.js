@@ -4,8 +4,8 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  Modal,
   View,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Feather, AntDesign } from "@expo/vector-icons";
 
@@ -70,32 +70,37 @@ const CreateNewCollection = ({ setModalVis, modalVis, callBack }) => {
   }, [modalVis]);
 
   return (
-    <View style={[styles.content, { backgroundColor: theme.background }]}>
-      <AppText style={styles.headerText} size="large" bold>
-        New Collection
-      </AppText>
-      <Separator h={2} />
-      <GrowInput
-        text={text}
-        setText={setText}
-        mLine={false}
-        ref={textInputRef}
-        placeholder="New collection's name"
-      />
-      <AppButton
-        title={text.length > 1 ? "Save Collection" : "Cancel"}
-        onPress={handleCollBtnPress}
-        bare
-        style={{ alignSelf: "center", marginTop: 20 }}
-      />
+    <KeyboardAvoidingView
+      behavior="padding"
+      style={{ flex: 1, justifyContent: "center" }}
+    >
+      <View style={[styles.content, { backgroundColor: theme.background }]}>
+        <AppText style={styles.headerText} size="large" bold>
+          New Collection
+        </AppText>
+        <Separator h={2} />
+        <GrowInput
+          text={text}
+          setText={setText}
+          mLine={false}
+          ref={textInputRef}
+          placeholder="New collection's name"
+        />
+        <AppButton
+          title={text.length > 1 ? "Save Collection" : "Cancel"}
+          onPress={handleCollBtnPress}
+          bare
+          style={{ alignSelf: "center", marginTop: 20 }}
+        />
 
-      <ActivityIndicator
-        visible={loading}
-        wTransparent
-        type="spin"
-        style={styles.activityNew}
-      />
-    </View>
+        <ActivityIndicator
+          visible={loading}
+          wTransparent
+          type="spin"
+          style={styles.activityNew}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

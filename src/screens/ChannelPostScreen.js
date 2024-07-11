@@ -510,7 +510,10 @@ const ChannelPostScreen = ({ route, navigation }) => {
       <View style={{ ...styles.modal, backgroundColor: theme.background }}>
         <View>
           <TouchableOpacity
-            onPress={() => handleCoverChange("cover")}
+            onPress={() => {
+              setOpenMedia(false);
+              handleCoverChange("cover");
+            }}
             activeOpacity={0.8}
             style={styles.modalItem}
           >
@@ -528,7 +531,10 @@ const ChannelPostScreen = ({ route, navigation }) => {
             }}
           >
             <TouchableOpacity
-              onPress={() => handleUploadBtn("write")}
+              onPress={() => {
+                setOpenMedia(false);
+                handleUploadBtn("write");
+              }}
               style={styles.modalItem}
               activeOpacity={0.8}
             >
@@ -544,7 +550,10 @@ const ChannelPostScreen = ({ route, navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => handleUploadBtn("upload")}
+              onPress={() => {
+                setOpenMedia(false);
+                handleUploadBtn("upload");
+              }}
               activeOpacity={0.8}
               style={styles.modalItem}
             >
@@ -563,7 +572,10 @@ const ChannelPostScreen = ({ route, navigation }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.modalItem}
-            onPress={handleUploadStaus}
+            onPress={() => {
+              setOpenMedia(false);
+              handleUploadStaus();
+            }}
           >
             <Ionicons
               name="ellipse-outline"

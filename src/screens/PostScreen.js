@@ -143,7 +143,14 @@ const PostScreen = ({ route, navigation }) => {
         // try re-uploading
         await AsyncStorageLib.setItem(
           "failed_upload",
-          JSON.stringify({ data, url: "postPix", context: "FeedContext", err })
+          JSON.stringify({
+            data,
+            title: "From creating a new post",
+            mediaProp: "data.post",
+            url: "postPix",
+            context: "FeedContext",
+            err,
+          })
         );
       },
       {

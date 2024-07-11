@@ -18,6 +18,7 @@ import { Viewport } from "@skele/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import uuid from "react-native-uuid";
+import { FlashList } from "@shopify/flash-list";
 // import * as Notifications from "expo-notifications";
 // import { NativeAdsManager } from "react-native-fbads";
 // import NativeAds from "../components/NativeAds";
@@ -425,20 +426,18 @@ const HomeScreen = ({ navigation, route }) => {
           <RenderPageHeader />
         ) : (
           <Viewport.Tracker>
-            <FlatList
-              data={feeds?.results}
-              ListHeaderComponent={RenderPageHeader}
-              keyboardShouldPersistTaps="handled"
+            <FlashList
               ref={feedFlatRef}
-              renderToHardwareTextureAndroid
-              ListFooterComponent={() => (
-                <RenderLoadMore
-                  loader={loadMore}
-                  hasNext={feeds?.hasOwnProperty("next")}
-                />
-              )}
+              data={feeds?.results ?? []}
+              ListHeaderComponent={RenderPageHeader}
+              keyExtractor={keyExtractor}
+              estimatedItemSize={height * 0.35}
+              renderItem={renderHome}
+              keyboardShouldPersistTaps="handled"
+              onEndReached={handleEndReached}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: height * 0.1 }}
+              onEndReachedThreshold={70}
               refreshControl={
                 <RefreshControl
                   progressBackgroundColor={theme.extralight}
@@ -448,10 +447,12 @@ const HomeScreen = ({ navigation, route }) => {
                   onRefresh={onRefresh}
                 />
               }
-              onEndReached={handleEndReached}
-              onEndReachedThreshold={70}
-              keyExtractor={keyExtractor}
-              renderItem={renderHome}
+              ListFooterComponent={() => (
+                <RenderLoadMore
+                  loader={loadMore}
+                  hasNext={feeds?.hasOwnProperty("next")}
+                />
+              )}
             />
           </Viewport.Tracker>
         )}

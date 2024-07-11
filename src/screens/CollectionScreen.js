@@ -365,7 +365,12 @@ const CollectionScreen = ({ route, navigation }) => {
   }, []);
 
   return (
-    <Screen style={styles.container}>
+    <Screen
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundExtralight },
+      ]}
+    >
       <AppHeader
         title={`${collection?.name ?? pageData.name} Collection`}
         RightComponent={() => (
