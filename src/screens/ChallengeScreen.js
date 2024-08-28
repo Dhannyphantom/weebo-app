@@ -177,7 +177,8 @@ const ChallengeScreen = ({ navigation }) => {
   };
 
   const handleScreenGuide = async () => {
-    const tobiGuidesArr = JSON.parse(await AsyncStorage.getItem("tobi_guides"));
+    const tobiGuidesArr =
+      JSON.parse(await AsyncStorage.getItem("tobi_guides")) ?? [];
     if (!tobiGuidesArr.includes("challenge_guide")) {
       setGuide({ ...guide, vis: true });
 

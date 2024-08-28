@@ -49,7 +49,7 @@ const getLocatorAlert = (isOn) => ({
   visible: false,
   title: "Weebo Locator",
   btn: "OK",
-  message: `${isOn ? "Disable" : "Enable"} your locator. Nearby weebs ${
+  message: `${isOn ? "Disable" : "Enable"} your locator.\nNearby weebs ${
     isOn ? "may not" : "will"
   } be able to find you`,
   type: "locator",
@@ -649,7 +649,7 @@ const EditProfileScreen = ({ navigation, route }) => {
                       style={styles.btn}
                     />
                     <Link
-                      name={`Turn ${locatorStatus} my weebo locator`}
+                      name={`Turn ${locatorStatus.toUpperCase()} my weebo locator`}
                       onPress={() =>
                         setAlert({
                           ...getLocatorAlert(pageData?.location?.active),

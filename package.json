@@ -58,6 +58,7 @@
     "react-native-svg": "15.2.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-uuid": "^2.0.2",
+    "react-native-webview": "13.8.6",
     "socket.io-client": "^4.7.5",
     "yup": "^1.4.0"
   },

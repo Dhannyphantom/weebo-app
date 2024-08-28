@@ -449,6 +449,7 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
   const fetchScreenData = (bool) => {
     if (bool) setRefreshing(true);
     if (screen === "group") {
+      setErrMsg(null);
       getGroups(
         (data) => {
           setScreenData(data);
@@ -462,6 +463,7 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
       );
     } else if (screen === "show") {
       const fetchType = isRecommendation ? "recommendations" : "all shows";
+      setErrMsg(null);
       getShows(
         fetchType,
         (resData) => {
@@ -606,7 +608,7 @@ const ShowGroup = ({ screen, headerTitle, params }) => {
           you
         </AppText>
       )}
-      {errMsg && <AppText style={styles.error}> {errMsg} </AppText>}
+      {errMsg && <AppText style={styles.error}> {errMsg?.msg} </AppText>}
       {showSearch && (
         <>
           <SearchBar

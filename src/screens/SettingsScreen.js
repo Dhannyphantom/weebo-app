@@ -42,7 +42,7 @@ import AppButton from "../components/AppButton";
 
 //
 import buymeacoffeeImage from "../../assets/arts/bmac_button.png";
-import paydayLogo from "../../assets/arts/payday.webp";
+import payStackLogo from "../../assets/arts/Paystack_Logo.png";
 
 const { width, height } = Dimensions.get("window");
 
@@ -157,16 +157,16 @@ const RenderSupportWeebo = ({ setter }) => {
         activeOpacity={1}
         onPress={() => onLinkPress(paydayLink)}
         style={{
-          backgroundColor: "#14171C",
-          paddingVertical: 20,
+          backgroundColor: colors.light,
           borderRadius: 15,
           marginTop: 8,
+          width: "68%",
         }}
       >
         <Image
-          source={paydayLogo}
+          source={payStackLogo}
           resizeMode="contain"
-          style={{ width: 300, height: 25 }}
+          style={{ width: "55%", height: 55, alignSelf: "center" }}
         />
       </TouchableOpacity>
     </View>

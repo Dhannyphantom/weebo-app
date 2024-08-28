@@ -426,7 +426,7 @@ const HomeScreen = ({ navigation, route }) => {
           <RenderPageHeader />
         ) : (
           <Viewport.Tracker>
-            <FlashList
+            <FlatList
               ref={feedFlatRef}
               data={feeds?.results ?? []}
               ListHeaderComponent={RenderPageHeader}
@@ -457,11 +457,6 @@ const HomeScreen = ({ navigation, route }) => {
           </Viewport.Tracker>
         )}
       </Screen>
-      <AppSlider
-        visible={slider}
-        goCallBackFunc={() => handleHomeScreenGuide("set")}
-      />
-
       <ActivityIndicator
         visible={bools.loader}
         style={styles.activity}
@@ -478,6 +473,81 @@ const HomeScreen = ({ navigation, route }) => {
       />
     </>
   );
+  // <>
+  //   <Screen
+  //     style={{
+  //       ...styles.container,
+  //       backgroundColor: theme.backgroundExtralight,
+  //     }}
+  //   >
+  //     <HomeHeader
+  //       fetcher={fetchHomeData}
+  //       screenHash={bools.hash}
+  //       // scrollTop={() => {
+  //       //   feedFlatRef?.current?.scrollToIndex(1);
+  //       // }}
+  //       isMyPosts={bools.isMyPosts}
+  //     />
+  //     {errMsg && (
+  //       <AppText bold style={styles.error}>
+  //         {errMsg}
+  //       </AppText>
+  //     )}
+  //     {!feeds?.results[0] ? (
+  //       <RenderPageHeader />
+  //     ) : (
+  //       <Viewport.Tracker>
+  //         <FlashList
+  //           ref={feedFlatRef}
+  //           data={feeds?.results ?? []}
+  //           ListHeaderComponent={RenderPageHeader}
+  //           keyExtractor={keyExtractor}
+  //           estimatedItemSize={height * 0.35}
+  //           renderItem={renderHome}
+  //           keyboardShouldPersistTaps="handled"
+  //           onEndReached={handleEndReached}
+  //           showsVerticalScrollIndicator={false}
+  //           contentContainerStyle={{ paddingBottom: height * 0.1 }}
+  //           onEndReachedThreshold={70}
+  //           refreshControl={
+  //             <RefreshControl
+  //               progressBackgroundColor={theme.extralight}
+  //               colors={[colors.primary]}
+  //               tintColor={colors.primary}
+  //               refreshing={refreshing}
+  //               onRefresh={onRefresh}
+  //             />
+  //           }
+  //           ListFooterComponent={() => (
+  //             <RenderLoadMore
+  //               loader={loadMore}
+  //               hasNext={feeds?.hasOwnProperty("next")}
+  //             />
+  //           )}
+  //         />
+  //       </Viewport.Tracker>
+  //     )}
+  //   </Screen>
+  //   <AppSlider
+  //     visible={slider}
+  //     goCallBackFunc={() => handleHomeScreenGuide("set")}
+  //   />
+
+  //   <ActivityIndicator
+  //     visible={bools.loader}
+  //     style={styles.activity}
+  //     absolute
+  //     wTransparent
+  //   />
+  //   <PopMessage popData={popper} setter={() => setPopper({ vis: false })} />
+
+  //   <TobiGuide
+  //     data={guide}
+  //     title="Post Actions"
+  //     stateObj={homeGuide}
+  //     setData={setGuide}
+  //   />
+  // </>
 };
 
 async function registerForPushNotificationsAsync() {

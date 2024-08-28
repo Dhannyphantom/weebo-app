@@ -990,5 +990,5 @@ export const INSTANCE_FREE_PERIOD = 60 * 60 * 24 * 7 * 1000; // 7 DAYS
 export const EVENT_FOLLOWERS = 0;
 
 export const buymeacoffeeLink = "https://www.buymeacoffee.com/weeboapp";
-
-export const paydayLink = "https://usepayday.me/danielolojo455";
+export const paydayLink = "https://paystack.com/pay/strvolyaic";
+// export const paydayLink = "https://usepayday.me/danielolojo455";
