@@ -41,6 +41,7 @@ const createCharacter = (dispatch) => async (data, sc, cb) => {
         Accept: "application/json",
       },
       transformRequest: () => formData,
+      timeout: 15000,
     });
     sc && sc(res.data);
   } catch (err) {
@@ -71,6 +72,7 @@ const createShow = (dispatch) => async (data, sc, cb) => {
         Accept: "application/json",
       },
       transformRequest: () => formData,
+      timeout: 15000,
     });
     sc && sc(res.data);
   } catch (err) {
@@ -100,6 +102,7 @@ const createGroup = (dispatch) => async (data, sc, cb) => {
         Accept: "application/json",
       },
       transformRequest: () => formData,
+      timeout: 15000,
     });
     sc && sc(res.data);
   } catch (err) {

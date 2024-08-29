@@ -133,6 +133,7 @@ const signIn = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc();
   } catch (err) {
+    console.log(err);
     cb && cb({ err, data: err?.response?.data, msg: "Error signing in!" });
   }
 };
@@ -183,6 +184,7 @@ const signUp = (dispatch) => async (data, sc, cb) => {
     });
     sc && sc();
   } catch (err) {
+    console.log(err);
     cb && cb({ data: err?.response?.data, msg: "Error signing up!", err });
   }
 };

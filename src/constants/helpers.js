@@ -274,3 +274,7 @@ export const collectionStore = async (collectionArr) => {
     }
   }
 };
+
+export const randomArrIndex = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

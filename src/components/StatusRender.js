@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -27,9 +28,16 @@ import ThemeContext from "../config/ThemeContext";
 
 import { Context as FeedContext } from "../config/FeedContext";
 import { useNavigation } from "@react-navigation/native";
+import { actionDatas } from "../constants/data_store";
+import { getFeedNumber, randomArrIndex } from "../constants/helpers";
+import LoaderImage from "./LoaderImage";
+import getTimestamp from "../constants/getTimestamp";
 
 const { height, width } = Dimensions.get("window");
 const gradientColors = ["#4A10C7", "#17c8ff", "#00ffff"];
+const gradientGallery = actionDatas.map((action) => {
+  return [action.bg, action.bg1];
+});
 
 // TODO:: CACHE RESULTS TO ASYNCSTORAGE
 setBackgroundColorAsync("rgba(255,255,255,0.1)");
@@ -117,6 +125,23 @@ const CircularGradient = ({ children, onPress }) => {
   );
 };
 
+const ListEmptyComponent = ({ loadedOnce }) => {
+  if (loadedOnce === false) return null;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <AppText style={styles.empty} bold>
+        You don't have any recent stories
+      </AppText>
+    </View>
+  );
+};
+
 const StatusRender = ({ show, setter }) => {
   const [display, setDisplay] = useState({
     vis: false,
@@ -144,22 +169,6 @@ const StatusRender = ({ show, setter }) => {
     }).start(() => {
       setter && setter();
     });
-  };
-
-  const ListEmptyComponent = () => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <AppText style={styles.empty} bold>
-          You don't have any recent stories
-        </AppText>
-      </View>
-    );
   };
 
   const renderStatuses = ({ item }) => {
@@ -249,6 +258,198 @@ const StatusRender = ({ show, setter }) => {
     </Modal>
   );
 };
+
+export const RenderInstanceStories = ({ vis, data = {}, setter }) => {
+  const theme = useContext(ThemeContext);
+  const safeInset = useSafeAreaInsets();
+  const opaciter = useRef(new Animated.Value(0)).current;
+  const { fetchInstanceStory } = useContext(FeedContext);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [bools, setBools] = useState({ isLoading: true, loadedOnce: false });
+  const [story, setStory] = useState({ posts: [] });
+  const [display, setDisplay] = useState({
+    vis: false,
+    data: null,
+    loading: true,
+  });
+  const { posts } = story;
+
+  const onRefresh = () => {};
+
+  const handleCloseModal = () => {
+    Animated.timing(opaciter, {
+      toValue: 0,
+      duration: 350,
+      useNativeDriver: true,
+    }).start(() => {
+      setter && setter();
+    });
+  };
+
+  const fetchData = () => {
+    fetchInstanceStory(
+      data,
+      (resData) => {
+        setStory(resData);
+        setBools({ ...bools, loadedOnce: true, isLoading: false });
+      },
+      (errData) => {
+        console.log(errData);
+        setBools({
+          ...bools,
+          loadedOnce: true,
+          isLoading: false,
+          err: errData,
+        });
+      }
+    );
+  };
+
+  const renderStatuses = ({ item, index }) => {
+    const hasMargin = index % 2 === 0;
+    const randomIdx = randomArrIndex(0, actionDatas.length - 1);
+    const randomColorArr = gradientGallery[randomIdx];
+    const isVideo = item.type === "video";
+
+    const handlePress = () => {
+      setDisplay({
+        vis: true,
+        data: story, // for statusId
+        itemId: item._id,
+        stories: posts,
+      });
+    };
+
+    return (
+      <View
+        style={[
+          styles.postCardContainer,
+          {
+            marginRight: hasMargin ? width * 0.016 : 0,
+            marginLeft: hasMargin ? width * 0.016 : 0,
+          },
+        ]}
+      >
+        <Pressable onPress={handlePress}>
+          <LinearGradient
+            colors={randomColorArr}
+            style={[styles.postCard, { borderWidth: item.isViewed ? 0 : 2 }]}
+          >
+            <Image
+              source={{ uri: item.thumb }}
+              style={styles.postCardImage}
+              blurRadius={1.5}
+            />
+            {isVideo && (
+              <View style={styles.postCardIcon}>
+                <Feather
+                  name="play-circle"
+                  size={50}
+                  color={colors.extraLight}
+                />
+              </View>
+            )}
+          </LinearGradient>
+        </Pressable>
+        <View style={styles.row}>
+          <View style={[styles.row, { marginLeft: 2 }]}>
+            <Feather name="clock" size={12} color={colors.medium} />
+            <AppText
+              style={{ marginLeft: 3, color: colors.medium }}
+              size="small"
+            >
+              {getTimestamp(item._id, "status")}
+            </AppText>
+          </View>
+          <View style={[styles.row, { marginLeft: 5 }]}>
+            <Feather name="eye" size={12} color={colors.medium} />
+            <AppText
+              style={{ marginLeft: 3, color: colors.medium }}
+              size="small"
+            >
+              {getFeedNumber(item.viewers)}
+            </AppText>
+          </View>
+          <View style={[styles.row, { marginLeft: 5 }]}>
+            <Feather name="heart" size={12} color={colors.medium} />
+            <AppText
+              style={{ marginLeft: 3, color: colors.medium }}
+              size="small"
+            >
+              {getFeedNumber(item.likes)}
+            </AppText>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  useEffect(() => {
+    if (vis) {
+      Animated.timing(opaciter, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start(() => {
+        // fetchStories(null, "initial");
+        fetchData();
+      });
+    }
+  }, [vis]);
+
+  return (
+    <Modal visible={vis} statusBarTranslucent transparent>
+      <Animated.View
+        style={{
+          ...styles.container,
+          backgroundColor: theme.transparentBold,
+          paddingTop: safeInset.top,
+          opacity: opaciter,
+        }}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={handleCloseModal}
+          style={styles.header}
+        >
+          <Feather name="chevron-left" size={19} color={colors.medium} />
+          <AppText size="large" bold style={styles.headerText}>
+            {data.name} STORIES
+          </AppText>
+        </TouchableOpacity>
+        <FlatList
+          showsHorizontalScrollIndicator={false}
+          // ListFooterComponent={RenderFooter}
+          data={posts}
+          numColumns={2}
+          listKey="@statuses"
+          refreshControl={
+            <RefreshControl
+              progressBackgroundColor={theme.extralight}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          ListEmptyComponent={() => (
+            <ListEmptyComponent loadedOnce={bools.loadedOnce} />
+          )}
+          keyExtractor={(item) => item._id}
+          // keyExtractor={(item) => item._id}
+          renderItem={renderStatuses}
+        />
+        <ActivityIndicator
+          visible={bools.isLoading}
+          transparent
+          style={styles.activity}
+        />
+      </Animated.View>
+      <DisplayStatus modalObj={display} setVisible={setDisplay} isInstance />
+    </Modal>
+  );
+};
+
 const styles = StyleSheet.create({
   activity: {
     position: "absolute",
@@ -266,6 +467,7 @@ const styles = StyleSheet.create({
   circular: {
     borderRadius: 900,
     width: width * 0.15,
+    borderStyle: "dotted",
     height: width * 0.15,
     backgroundColor: "transparent",
     alignSelf: "center",
@@ -303,6 +505,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.extraLight,
     borderRadius: 11,
   },
+  postCardContainer: {
+    marginBottom: 16,
+  },
+  postCardIcon: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    opacity: 0.5,
+  },
+  postCardImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 9,
+  },
+  postCard: {
+    width: width * 0.475,
+    height: height * 0.4,
+    borderRadius: 10,
+    opacity: 0.8,
+    marginBottom: 6,
+    borderColor: colors.primary,
+    borderStyle: "dotted",
+  },
+
   profile: {
     alignSelf: "center",
     bottom: (width * 0.16) / 2,
@@ -320,6 +548,11 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
 
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 2,
+  },
   statusItem: {
     width: width * 0.45,
     height: height * 0.35,

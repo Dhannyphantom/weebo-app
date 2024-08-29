@@ -162,7 +162,7 @@ const RenderEmptyComponent = () => {
   );
 };
 
-export default function DisplayStatus({ modalObj, setVisible }) {
+export default function DisplayStatus({ modalObj, setVisible, isInstance }) {
   const [active, setActive] = useState(ACTIVE_DEFAULT);
   const [endList, setEndList] = useState(false);
   const [animationStatus, setAnimationStatus] = useState(null);
@@ -183,9 +183,9 @@ export default function DisplayStatus({ modalObj, setVisible }) {
     extrapolate: "clamp",
   });
 
-  const initialScrollIndexHeader = modalObj?.stories?.findIndex(
-    (obj) => obj._id == modalObj.itemId
-  );
+  const initialScrollIndexHeader = isInstance
+    ? 0
+    : modalObj?.stories?.findIndex((obj) => obj._id == modalObj.itemId);
 
   const handleCloseModal = () => {
     Animated.timing(translator, {
@@ -227,7 +227,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
   const getItemLayout = (data, index) => {
     return {
       length: height,
-      offset: (height + SCROLL_SEPARATOR) * index,
+      offset: SCROLL_INTERVAL * index,
       index,
     };
   };
@@ -259,36 +259,62 @@ export default function DisplayStatus({ modalObj, setVisible }) {
         useNativeDriver: true,
       }).start();
       //   FORMAT STATUSES
-      const posts = [];
-      for (let i = 0; i < modalObj.stories.length; i++) {
-        const e = modalObj.stories[i];
-        const modifiedPosts = e.posts.map((post, idxer) => {
-          let counter = e.posts.length - idxer;
-          const lastItem =
-            i == modalObj.stories.length - 1 && idxer == e.posts.length - 1;
+
+      if (isInstance) {
+        const modifiedPosts = modalObj.stories.map((post, idxer) => {
+          let counter = modalObj.stories.length - idxer;
+          const lastItem = idxer == modalObj.stories.length - 1;
           return {
             ...post,
-            storyLength: e.posts.length,
+            storyLength: modalObj.stories.length,
             storyNumber: idxer,
             lastItem,
-            statusId: e._id,
-            storyGroupNumber: i + 1,
+            statusId: modalObj.data?._id,
+            storyGroupNumber: 1,
             counter,
           };
         });
-        posts.push(...modifiedPosts);
+
+        // GET SCROLL INDEXES
+        const initialScrollIndex = modifiedPosts?.findIndex(
+          (obj) => obj._id == modalObj.itemId
+        );
+        setStatuses({
+          loading: false,
+          data: modifiedPosts,
+          initialScrollIndex,
+        });
+      } else {
+        const posts = [];
+        for (let i = 0; i < modalObj.stories.length; i++) {
+          const e = modalObj.stories[i];
+          const modifiedPosts = e.posts.map((post, idxer) => {
+            let counter = e.posts.length - idxer;
+            const lastItem =
+              i == modalObj.stories.length - 1 && idxer == e.posts.length - 1;
+            return {
+              ...post,
+              storyLength: e.posts.length,
+              storyNumber: idxer,
+              lastItem,
+              statusId: e._id,
+              storyGroupNumber: i + 1,
+              counter,
+            };
+          });
+          posts.push(...modifiedPosts);
+        }
+        // GET SCROLL INDEXES
+        const initialScrollIndex = posts?.findIndex(
+          (obj) => obj._id == modalObj.data
+        );
+        setStatuses({
+          loading: false,
+          data: posts,
+          initialScrollIndex,
+        });
       }
 
-      // GET SCROLL INDEXES
-      const initialScrollIndex = posts?.findIndex(
-        (obj) => obj._id == modalObj.data
-      );
-
-      setStatuses({
-        loading: false,
-        data: posts,
-        initialScrollIndex,
-      });
       setIsLoading(false);
     }
   }, [modalObj]);
@@ -335,7 +361,7 @@ export default function DisplayStatus({ modalObj, setVisible }) {
             renderItem={renderModalList}
           />
           <RenderHeader
-            modalData={modalObj?.stories}
+            modalData={isInstance ? [modalObj.data] : modalObj?.stories}
             headerScroll={headerScroll}
             initialScrollIndexHeader={initialScrollIndexHeader}
             setAnimationStatus={setAnimationStatus}

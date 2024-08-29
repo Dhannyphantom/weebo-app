@@ -37,6 +37,9 @@ import { ADS_INTERVAL } from "../constants/data_store";
 import BannerAds from "../components/BannerAds";
 import RenderLoadMore from "../components/RenderLoadMore";
 import FriendBox from "../components/FriendBox";
+import StatusRender, {
+  RenderInstanceStories,
+} from "../components/StatusRender";
 
 const { width, height } = Dimensions.get("window");
 
@@ -46,6 +49,7 @@ const boolsObj = {
   loadedOnce: false,
   loadMore: true,
   subscribers: false,
+  storyModal: false,
   hash: uuid.v4(),
 };
 
@@ -139,6 +143,14 @@ const RenderSubscribers = ({ fetcher, channelId }) => {
   );
 };
 
+const RenderStories = () => {
+  return (
+    <View>
+      <AppText>Hello Stories</AppText>
+    </View>
+  );
+};
+
 const ChannelPostScreen = ({ route, navigation }) => {
   const [page, setPage] = useState({});
   const [openMedia, setOpenMedia] = useState(false);
@@ -183,6 +195,14 @@ const ChannelPostScreen = ({ route, navigation }) => {
       onPress: () => setOpenMedia(!openMedia),
       icon: "upload",
       show: isMine,
+      selected: true,
+    },
+    {
+      id: "548530",
+      name: `${isMine ? "my " : ""}stories`,
+      onPress: () => setBools({ ...bools, storyModal: true }),
+      icon: "circle-outline",
+      show: true,
       selected: true,
     },
     {
@@ -746,6 +766,12 @@ const ChannelPostScreen = ({ route, navigation }) => {
             channelId={page?._id}
           />
         )}
+      />
+
+      <RenderInstanceStories
+        vis={bools.storyModal}
+        setter={() => setBools({ ...bools, storyModal: false })}
+        data={{ name: page.name, instance: "channel", instanceID: page._id }}
       />
 
       <AppFadeIn

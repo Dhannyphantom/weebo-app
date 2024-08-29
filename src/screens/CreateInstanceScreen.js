@@ -279,7 +279,7 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                       />
 
                       <CreateFormArray
-                        headerA="group or organizations"
+                        headerA="affiliations or organizations"
                         name="groups"
                         list="groups"
                         handleChange={handleCardState}
@@ -387,7 +387,11 @@ const CreateInstanceScreen = ({ route, navigation }) => {
                     placeholder={changeD ? name : null}
                     name="name_e"
                   />
-                  <CreateFormArray headerC="aliases" name="other_names" type1 />
+                  <CreateFormArray
+                    headerC="other aliases"
+                    name="other_names"
+                    type1
+                  />
                   <CreateFormArray
                     headerC="movies titles, spinoffs or manga related titles"
                     name="spinoffs"

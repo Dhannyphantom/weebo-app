@@ -540,6 +540,26 @@ const getStatuses = (dispatch) => async (sc, cb) => {
     cb && cb(err);
   }
 };
+const fetchInstanceStory = (dispatch) => async (data, sc, cb) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetchApi.get(
+      `/instanceStatus?instance=${data.instance}&instanceID=${data.instanceID}`,
+      {
+        headers: {
+          "x-auth-token": token,
+          "Cache-Control": "no-cache,no-store,must-revalidate",
+          Pragma: "no-cache",
+          Expires: 0,
+        },
+      }
+    );
+    // dispatch({ type: "get_statuses", payload: res.data });
+    sc && sc(res.data);
+  } catch (err) {
+    cb && cb({ err, msg: "Error occured, unable to fetch instace story data" });
+  }
+};
 
 const getCommentReplies = (dispatch) => async (data, sc, cb) => {
   const routeStr = `instanceID=${data.instanceID}&type=${data.type}&commentId=${data.commentId}&page=${data.page}&limit=${data.limit}`;
@@ -668,6 +688,7 @@ export const { Provider, Context } = createDataContext(
     viewPostVideo,
     followInstance,
     replyComments,
+    fetchInstanceStory,
     addNewCollection,
     updateInstance,
     viewStatus,
