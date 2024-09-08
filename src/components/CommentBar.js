@@ -86,7 +86,7 @@ const CommentBar = (
         </View>
         <TouchableOpacity
           activeOpacity={0.7}
-          style={styles.sendBtn}
+          style={[styles.sendBtn, { opacity: cancelIcon ? 0.3 : 1 }]}
           onPress={handleSend}
         >
           {cancelIcon && !text[1] ? (

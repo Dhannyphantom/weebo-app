@@ -170,14 +170,24 @@ const RenderFeedBack = ({ setter }) => {
     >
       <View style={[styles.feedback, { backgroundColor: theme.background }]}>
         <AppText size="large" bold style={styles.feedbackTitle}>
-          App Feedback
+          My Feedback
         </AppText>
 
-        <View style={{ flex: 1, marginTop: 20 }}>
+        <View
+          style={{
+            flex: 1,
+            marginTop: 20,
+            backgroundColor: theme.backgroundExtralight,
+            margin: 8,
+            borderRadius: 15,
+
+            elevation: 2,
+          }}
+        >
           <Animated.FlatList
             data={feedData}
             keyExtractor={(item) => item._id}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ paddingVertical: 20 }}
             ref={flatRef}
             // onContentSizeChange={() => flatRef?.current?.scrollToEnd()}
             ListEmptyComponent={() => (
@@ -185,6 +195,7 @@ const RenderFeedBack = ({ setter }) => {
                 visible
                 size={0.45}
                 type="isEmpty"
+                transparent
                 text={
                   "Your feedback is very valuable to us.\nLet us know about your app experience!"
                 }
@@ -253,7 +264,7 @@ const styles = StyleSheet.create({
   },
   feedback: {
     width: width * 0.95,
-    height: height * 0.5,
+    height: height * 0.6,
     borderRadius: 20,
     overflow: "hidden",
   },
@@ -263,6 +274,7 @@ const styles = StyleSheet.create({
   },
   feedbackFooter: {
     justifyContent: "flex-end",
+    marginTop: 10,
   },
   feedBubbleContainer: {
     marginHorizontal: 15,

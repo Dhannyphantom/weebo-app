@@ -29,6 +29,7 @@ const PRGORESS_BAR_DURATION = 15000;
 import heartLottie from "../../assets/animations/heartPop.json";
 import circleLottie from "../../assets/animations/circe_countdown.json";
 import { getFeedNumber } from "../constants/helpers";
+import ActivityIndicator from "./ActivityIndicator";
 
 export default function RenderStoryList({
   item,
@@ -47,6 +48,7 @@ export default function RenderStoryList({
     likes: item.likes,
     views: item.viewers,
     viewed: item.isViewed,
+    mediaLoading: true,
   });
   const safeInsets = useSafeAreaInsets();
 
@@ -107,12 +109,14 @@ export default function RenderStoryList({
         if (isVideo) {
           setShouldPlayVideo(true);
         }
+        bools.mediaLoading && setBools({ ...bools, mediaLoading: false });
         break;
       case "play":
         lottieRef?.current?.resume();
         if (isVideo) {
           setShouldPlayVideo(false);
         }
+        bools.mediaLoading && setBools({ ...bools, mediaLoading: false });
         break;
       default:
         break;
@@ -127,8 +131,8 @@ export default function RenderStoryList({
           : PRGORESS_BAR_DURATION / item.durationMillis;
       setProgress(speed);
       setTimeout(() => {
-        lottieRef?.current?.play();
-      }, 1200);
+        !bools.mediaLoading && lottieRef?.current?.play();
+      }, 800);
       if (!bools.viewed) {
         onStoryReact("view");
         setBools({ ...bools, views: bools.views + 1, viewed: true });
@@ -161,6 +165,7 @@ export default function RenderStoryList({
             <Image
               source={{ uri: item?.uri }}
               resizeMode="cover"
+              onLoad={() => animationControl("play")}
               style={{
                 ...styles.image,
                 aspectRatio: item?.width / item?.height,
@@ -175,6 +180,7 @@ export default function RenderStoryList({
                 autoPlay={isKey}
                 showPlayIcon={false}
                 disablePlayback
+                onLoadEnd={() => animationControl("play")}
                 shouldPlay={shouldPlayVideo}
               />
             </View>
@@ -211,6 +217,12 @@ export default function RenderStoryList({
               })}
             </View>
           )}
+          <ActivityIndicator
+            visible={bools.mediaLoading}
+            bTransparent
+            absolute
+            type="loader"
+          />
           <View style={styles.viewersContainer}>
             <View style={styles.viewersHeader}>
               <AntDesign name="eyeo" size={20} color={colors.white} />
