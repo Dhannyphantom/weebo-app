@@ -42,13 +42,13 @@ export default function RenderStoryList({
   idx,
 }) {
   const [progress, setProgress] = useState(LOTTIE_SPEED);
-  const [shouldPlayVideo, setShouldPlayVideo] = useState(null);
   const [bools, setBools] = useState({
     liked: item.isLiked,
     likes: item.likes,
     views: item.viewers,
     viewed: item.isViewed,
     mediaLoading: true,
+    shouldPlayVideo: null,
   });
   const safeInsets = useSafeAreaInsets();
 
@@ -107,14 +107,16 @@ export default function RenderStoryList({
       case "pause":
         lottieRef?.current?.pause();
         if (isVideo) {
-          setShouldPlayVideo(true);
+          isKey && setBools({ ...bools, shouldPlayVideo: true });
         }
         bools.mediaLoading && setBools({ ...bools, mediaLoading: false });
         break;
       case "play":
         lottieRef?.current?.resume();
         if (isVideo) {
-          setShouldPlayVideo(false);
+          console.log("Video Loaded", { isKey, type });
+          isKey &&
+            setBools({ ...bools, shouldPlayVideo: true, mediaLoading: false });
         }
         bools.mediaLoading && setBools({ ...bools, mediaLoading: false });
         break;
@@ -180,8 +182,9 @@ export default function RenderStoryList({
                 autoPlay={isKey}
                 showPlayIcon={false}
                 disablePlayback
+                // onLoadEnd={() => console.log("Video loaded")}
                 onLoadEnd={() => animationControl("play")}
-                shouldPlay={shouldPlayVideo}
+                shouldPlay={bools.shouldPlayVideo}
               />
             </View>
           )}
