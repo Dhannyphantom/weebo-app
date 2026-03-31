@@ -46,21 +46,9 @@ module.exports = {
       favicon: "./assets/favicon.png",
     },
     plugins: [
-      [
-        "react-native-fbsdk-next",
-        {
-          appID: "406752991548934",
-          clientToken: "c837b0ef8171ff028b8c0da3b7e9f4d7",
-          displayName: "Weebo App",
-          advertiserIDCollectionEnabled: true,
-          autoLogAppEventsEnabled: true,
-          isAutoInitEnabled: true,
-          iosUserTrackingPermission:
-            "This identifier will be used to deliver personalized ads to you.",
-        },
-      ],
-      "react-native-fbads",
+      "@react-native-community/datetimepicker",
       "@react-native-google-signin/google-signin",
+      "expo-asset",
     ],
     extra: {
       eas: {
